@@ -1,0 +1,63 @@
+{
+  "window": {
+    "minimize": "最小化应用窗口",
+    "maximize": "最大化应用窗口",
+    "restore": "还原应用窗口",
+    "close": "关闭应用窗口"
+  },
+  "product": {
+    "name": "OpenBitFun",
+    "remote": "OpenBitFun Remote"
+  },
+  "features": {
+    "remoteControl": "远程控制",
+    "codeAgent": "代码助手",
+    "deepReview": "严格审查",
+    "settings": "设置",
+    "workspace": "工作区"
+  },
+  "modes": {
+    "assistant": "助手模式",
+    "expert": "专家模式",
+    "review": "评审模式"
+  },
+  "agents": {
+    "Minimal": "极简",
+    "Standard": "标准",
+    "Ultimate": "极致",
+    "Creative": "创造",
+    "Claw": "助理",
+    "Cowork": "办公协作",
+    "DeepResearch": "深度研究",
+    "PaperWriting": "论文写作",
+    "ComputerUse": "电脑操作",
+    "default": "默认助手"
+  },
+  "tools": {
+    "explore": "探索",
+    "read": "读取",
+    "write": "写入",
+    "shell": "命令行",
+    "search": "搜索",
+    "edit": "编辑",
+    "todo": "待办"
+  },
+  "connectionMethods": {
+    "lan": "局域网",
+    "openbitfunServer": "OpenBitFun Server",
+    "customServer": "自定义服务器",
+    "botFeishu": "飞书机器人",
+    "botTelegram": "Telegram Bot",
+    "botWeixin": "微信机器人"
+  },
+  "statuses": {
+    "loading": "加载中",
+    "running": "运行中",
+    "done": "已完成",
+    "failed": "失败",
+    "cancelled": "已取消"
+  },
+  "sessions": {
+    "new": "新会话"
+  }
+}

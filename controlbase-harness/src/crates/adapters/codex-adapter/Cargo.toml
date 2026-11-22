@@ -1,0 +1,35 @@
+[package]
+name = "openbitfun-codex-adapter"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "Codex static source adapter for OpenBitFun"
+autotests = false
+
+[lib]
+name = "openbitfun_codex_adapter"
+crate-type = ["rlib"]
+
+[dependencies]
+openbitfun-product-domains = { path = "../../contracts/product-domains", features = ["external-sources"] }
+openbitfun-services-core = { path = "../../services/services-core", features = ["asar", "installed-apps"] }
+openbitfun-static-hook-support = { path = "../static-hook-support" }
+dirs = { workspace = true }
+dunce = { workspace = true }
+hex = { workspace = true }
+rusqlite = { workspace = true, features = ["bundled"] }
+sha2 = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+toml = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[[test]]
+name = "codex_source_contracts"
+path = "tests/codex_source_contracts.rs"
+
+[lints]
+workspace = true

@@ -1,0 +1,308 @@
+name: Linux Binary Build
+
+on:
+  workflow_call:
+    inputs:
+      checkout_ref:
+        description: "Tag or commit SHA to build."
+        required: true
+        type: string
+      version:
+        description: "Release version used by binaries and archive metadata."
+        required: true
+        type: string
+      artifact_prefix:
+        description: "Stable prefix that isolates artifacts in the caller run."
+        required: true
+        type: string
+      artifact_retention_days:
+        description: "Retention for uploaded build artifacts."
+        required: false
+        default: 7
+        type: number
+      upload_artifacts:
+        description: "Whether to upload archives for a publishing caller."
+        required: false
+        default: true
+        type: boolean
+      cache_write:
+        description: "Allow a trusted non-PR caller to refresh build caches."
+        required: false
+        default: false
+        type: boolean
+      validate_relay_image:
+        description: "Build the Relay runtime image for each native architecture without pushing it."
+        required: false
+        default: true
+        type: boolean
+    secrets:
+      release_signing_key:
+        description: "Tauri/minisign private key, base64. Absent on forks: archives ship unsigned."
+        required: false
+      release_signing_password:
+        description: "Password for release_signing_key."
+        required: false
+      release_pubkey:
+        description: "Tauri/minisign public key, base64. Compiled into the CLI as its trust root."
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Linux Binaries (${{ matrix.platform.name }})
+    runs-on: ${{ matrix.platform.os }}
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          # Both arches build on 22.04 (glibc 2.35) to keep one supported floor.
+          # arm64 used to build on ubuntu-24.04-arm (glibc 2.39), which produced
+          # a relay needing GLIBC_2.38 — unable to start on Debian 12 / Ubuntu
+          # 22.04 arm64, or in the deploy runtime image. The floor is asserted
+          # below rather than left to whatever the runner image happens to ship.
+          - os: ubuntu-22.04
+            name: linux-x64
+            target: x86_64-unknown-linux-gnu
+            docker_arch: amd64
+          - os: ubuntu-22.04-arm
+            name: linux-arm64
+            target: aarch64-unknown-linux-gnu
+            docker_arch: arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.checkout_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Resolve Bun executable cache
+        id: bun-cache-target
+        shell: bash
+        run: |
+          if [[ -f scripts/ci/bun-cache-target.mjs ]]; then
+            node scripts/ci/bun-cache-target.mjs 1.3.14
+          else
+            echo "::notice::Bun caching is unavailable for this older source revision; setup-bun will install it normally."
+          fi
+
+      - name: Restore Bun executable
+        id: bun-executable-cache
+        if: steps.bun-cache-target.outputs.key != ''
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.bun-cache-target.outputs.path }}
+          key: ${{ steps.bun-cache-target.outputs.key }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+          no-cache: true
+
+      - name: Save Bun executable
+        if: >-
+          inputs.cache_write && github.event_name != 'pull_request' &&
+          github.event_name != 'pull_request_target' &&
+          steps.bun-cache-target.outputs.key != '' &&
+          steps.bun-executable-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.bun-cache-target.outputs.path }}
+          key: ${{ steps.bun-cache-target.outputs.key }}
+
+      - name: Build plugin Host resources
+        run: |
+          bun install --cwd src/apps/extension-host --frozen-lockfile
+          bun run --cwd src/apps/extension-host build
+
+      - name: Install Linux system dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          # Select GStreamer's libunwind headers explicitly so apt can replace
+          # the conflicting LLVM libunwind-dev package preinstalled on Jammy.
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            clang \
+            cmake \
+            curl \
+            libxcb1-dev \
+            libxcb-render0-dev \
+            libxcb-shape0-dev \
+            libxcb-xfixes0-dev \
+            libunwind-dev \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            libtesseract-dev \
+            libleptonica-dev \
+            pkg-config \
+            python3
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          shared-key: "linux-binaries-v2-${{ github.base_ref || github.ref_name }}-${{ matrix.platform.name }}"
+          cache-bin: false
+          save-if: ${{ inputs.cache_write && github.event_name != 'pull_request' }}
+          cache-on-failure: ${{ inputs.cache_write && github.event_name != 'pull_request' }}
+
+      - name: Verify committed Cargo metadata
+        run: cargo metadata --locked --no-deps
+
+      - name: Patch build version
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          # Strip SemVer build metadata (`+<sha>`): GitHub rewrites non-alphanumeric
+          # characters in uploaded release asset names, so a `+` in a filename would
+          # make every URL in linux-binaries-v1.json a 404. Desktop packaging strips it
+          # the same way, which also keeps the two asset sets on one version string.
+          ASSET_VERSION="${RELEASE_VERSION%%+*}"
+          echo "ASSET_VERSION=${ASSET_VERSION}" >>"$GITHUB_ENV"
+          node scripts/set-build-version.mjs --version "$ASSET_VERSION"
+
+      - name: Verify projected Cargo metadata
+        run: cargo metadata --locked --no-deps
+
+      - name: Build CLI and Relay Server
+        shell: bash
+        env:
+          # Compiled into the CLI; its presence makes signature verification
+          # mandatory for self-update. Unset on forks, which then fall back to
+          # checksum-only.
+          OPENBITFUN_RELEASE_PUBKEY: ${{ secrets.release_pubkey }}
+        run: |
+          cargo build --locked --release \
+            --target ${{ matrix.platform.target }} \
+            -p openbitfun-cli \
+            -p openbitfun-relay-server \
+            --bins
+
+      # A binary above this floor cannot start on older distributions, and the
+      # relay one-click deploy installs it into a Debian runtime image. Catch it
+      # here, where the fix is a runner label, rather than as a container that
+      # exits instantly with a loader error.
+      - name: Verify glibc floor
+        shell: bash
+        run: |
+          rel="target/${{ matrix.platform.target }}/release"
+          bash scripts/ci/check-glibc-floor.sh 2.35 \
+            "$rel/openbitfun-relay-server" \
+            "$rel/relay-admin" \
+            "$rel/openbitfun" \
+            "$rel/openbitfun"
+
+      - name: Test CLI installer
+        shell: bash
+        env:
+          CARGO_BUILD_TARGET: ${{ matrix.platform.target }}
+        run: bash scripts/cli/test-install-unix.sh "${{ matrix.platform.target }}"
+
+      - name: Package CLI
+        id: cli-stage
+        shell: bash
+        env:
+          TARGET: ${{ matrix.platform.target }}
+        run: bash scripts/cli/package-unix.sh "$ASSET_VERSION" "$TARGET"
+
+      - name: Package Relay Server
+        id: relay-stage
+        shell: bash
+        env:
+          TARGET: ${{ matrix.platform.target }}
+        run: bash scripts/relay/package-unix.sh "$ASSET_VERSION" "$TARGET"
+
+      - name: Sign release archives
+        shell: bash
+        env:
+          OPENBITFUN_SIGNING_KEY: ${{ secrets.release_signing_key }}
+          OPENBITFUN_SIGNING_PASSWORD: ${{ secrets.release_signing_password }}
+          OPENBITFUN_SIGNING_PUBKEY: ${{ secrets.release_pubkey }}
+          CLI_ARCHIVE: ${{ steps.cli-stage.outputs.archive }}
+          RELAY_ARCHIVE: ${{ steps.relay-stage.outputs.archive }}
+        run: |
+          set -euo pipefail
+          # The .sha256 files are signed too: remote relay hosts have no
+          # minisign, so Desktop verifies the signature over the tiny checksum
+          # file locally and hands the trusted hash to the server, which then
+          # only needs sha256sum.
+          bash scripts/sign-release-assets.sh \
+            "$CLI_ARCHIVE" "${CLI_ARCHIVE}.sha256" \
+            "$RELAY_ARCHIVE" "${RELAY_ARCHIVE}.sha256"
+
+      - name: Verify Linux binary outputs
+        shell: bash
+        env:
+          CLI_ARCHIVE: ${{ steps.cli-stage.outputs.archive }}
+          CLI_CHECKSUM: ${{ steps.cli-stage.outputs.checksum }}
+          RELAY_ARCHIVE: ${{ steps.relay-stage.outputs.archive }}
+          RELAY_CHECKSUM: ${{ steps.relay-stage.outputs.checksum }}
+        run: |
+          set -euo pipefail
+          test -s "$CLI_ARCHIVE"
+          test -s "$CLI_CHECKSUM"
+          test -s "$RELAY_ARCHIVE"
+          test -s "$RELAY_CHECKSUM"
+          sha256sum --check "$CLI_CHECKSUM"
+          sha256sum --check "$RELAY_CHECKSUM"
+
+      - name: Stage Relay image validation context
+        if: ${{ inputs.validate_relay_image }}
+        shell: bash
+        env:
+          RELAY_ARCHIVE: ${{ steps.relay-stage.outputs.archive }}
+        run: |
+          set -euo pipefail
+          mkdir -p relay-image-context
+          cp "$RELAY_ARCHIVE" relay-image-context/
+          cp src/apps/relay-server/Dockerfile.release relay-image-context/
+
+      - name: Set up Docker Buildx
+        if: ${{ inputs.validate_relay_image }}
+        uses: docker/setup-buildx-action@v4
+
+      - name: Validate Relay runtime image
+        if: ${{ inputs.validate_relay_image }}
+        uses: docker/build-push-action@v7
+        with:
+          context: relay-image-context
+          file: relay-image-context/Dockerfile.release
+          platforms: linux/${{ matrix.platform.docker_arch }}
+          push: false
+          provenance: false
+          sbom: false
+          build-args: |
+            VERSION=${{ inputs.version }}
+            REVISION=${{ inputs.checkout_ref }}
+
+      - name: Upload Linux binary artifacts
+        if: ${{ inputs.upload_artifacts }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: openbitfun-linux-${{ inputs.artifact_prefix }}-${{ matrix.platform.name }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.artifact_retention_days }}
+          path: |
+            ${{ steps.cli-stage.outputs.archive }}
+            ${{ steps.cli-stage.outputs.checksum }}
+            ${{ steps.relay-stage.outputs.archive }}
+            ${{ steps.relay-stage.outputs.checksum }}
+            *.tar.gz.sig
+            *.tar.gz.sha256.sig

@@ -1,0 +1,781 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, 1.0.0-explore]
+    paths-ignore:
+      - 'png/**'
+  push:
+    branches: [main, 1.0.0-explore]
+    paths-ignore:
+      - 'png/**'
+
+# Cancel previous runs on same branch/PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Build impact: fast checks plus the smallest useful package set ──
+  build-impact:
+    name: Build Impact
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      rust_required: ${{ steps.classify.outputs.rust_required }}
+      frontend_required: ${{ steps.classify.outputs.frontend_required }}
+      desktop_packages_impacted: ${{ steps.classify.outputs.desktop_packages_impacted }}
+      desktop_platforms: ${{ steps.classify.outputs.desktop_platforms }}
+      linux_binaries_required: ${{ steps.classify.outputs.linux_binaries_required }}
+      relay_image_required: ${{ steps.classify.outputs.relay_image_required }}
+      dsh_profile_required: ${{ steps.classify.outputs.dsh_profile_required }}
+      pr_producer_required: ${{ steps.classify.outputs.pr_producer_required }}
+      reason: ${{ steps.classify.outputs.reason }}
+      changed_count: ${{ steps.classify.outputs.changed_count }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Pull requests need both base/head objects; main pushes need the
+          # previous commit even after a non-fast-forward update.
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Classify build impact
+        id: classify
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RANGE_MODE: ${{ github.event_name == 'pull_request' && 'merge-base' || 'direct' }}
+        run: node scripts/ci/classify-build-impact.mjs --base "$BASE_SHA" --head "$HEAD_SHA" --range-mode "$RANGE_MODE"
+
+  # ── Shell deploy assets: LF endings + syntax ───────────────────────
+  # Relay one-click deploy embeds these scripts into the Desktop binary and
+  # uploads them verbatim to a Linux host, where a single CR aborts the deploy
+  # with `$'\r': command not found`. .gitattributes pins LF; this is the guard.
+  shell-scripts:
+    name: Shell Deploy Scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Reject CRLF in shell and deploy assets
+        run: |
+          bad=$(git ls-files -z \
+                  '*.sh' '*.bash' 'Dockerfile' 'Dockerfile.*' '*.Dockerfile' 'Caddyfile' \
+                  'docker-compose.yml' 'docker-compose.*.yml' \
+                | xargs -0 -r grep -lU $'\r' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::CRLF line endings found; these must stay LF (see .gitattributes):"
+            echo "$bad"
+            exit 1
+          fi
+          echo "All shell and deploy assets are LF-only."
+
+      - name: bash -n every tracked shell script
+        run: |
+          rc=0
+          while IFS= read -r -d '' f; do
+            bash -n "$f" || { echo "::error file=$f::bash syntax error"; rc=1; }
+          done < <(git ls-files -z '*.sh' '*.bash')
+          exit "$rc"
+
+      - name: Verify release and version-generation contracts
+        run: node --test scripts/release-channel.test.mjs scripts/tauri-release-manifest.test.mjs scripts/linux-binaries-manifest.test.mjs scripts/version-generation.test.mjs
+
+      - name: Validate Relay deployment and packaging contracts
+        run: node --test scripts/relay/*.test.mjs
+
+      - name: Validate market image build contexts
+        run: node --test scripts/market/*.test.mjs
+
+      - name: Verify minisign download fallback
+        run: |
+          set -euo pipefail
+          test_root="$(mktemp -d)"
+          trap 'rm -rf "$test_root"' EXIT
+          mkdir -p "$test_root/stubs"
+          printf '#!/usr/bin/env bash\nexit 1\n' >"$test_root/stubs/sudo"
+          chmod +x "$test_root/stubs/sudo"
+
+          PATH="$test_root/stubs:/usr/bin:/bin" \
+            RUNNER_TEMP="$test_root" \
+            OPENBITFUN_SIGNING_KEY="YQ==" \
+            bash scripts/sign-release-assets.sh "$test_root/missing-asset"
+
+          "$test_root/openbitfun-minisign-0.12/bin/minisign" -v
+
+  # ── Runtime component tests ─────────────────────────────────────────
+  runtime-test:
+    name: Runtime Tests (${{ matrix.os }})
+    needs: build-impact
+    if: ${{ !cancelled() && needs.build-impact.outputs.rust_required != 'false' }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: ${{ matrix.timeout_minutes }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            cache_key: ubuntu
+            timeout_minutes: 30
+          # Keep the blocking macOS validation on Apple Silicon for predictable
+          # PR latency; release and Nightly matrices retain both architectures.
+          - os: macos-15
+            cache_key: macos-arm64
+            # Keep headroom for a cold macOS build.
+            timeout_minutes: 75
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            libtesseract-dev \
+            libleptonica-dev \
+            pkg-config \
+            build-essential \
+            libxcb1-dev \
+            libxcb-render0-dev \
+            libxcb-shape0-dev \
+            libxcb-xfixes0-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          shared-key: "runtime-ci-v1-${{ github.base_ref || github.ref_name }}-${{ matrix.cache_key }}"
+          cache-bin: false
+          # PRs restore trusted caches but never publish merge-ref artifacts.
+          save-if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') }}
+          cache-on-failure: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') }}
+
+      - name: Run ACP tests on macOS
+        if: runner.os == 'macOS'
+        run: cargo test --locked -p openbitfun-acp
+
+      - name: Run ACP and agent runtime tests
+        if: runner.os == 'Linux'
+        run: cargo test --locked -p openbitfun-acp -p openbitfun-agent-runtime
+
+      - name: Run SDK Host tests
+        if: runner.os == 'Linux'
+        run: cargo test --locked -p openbitfun-sdk-host -p openbitfun-sdk-host-app
+
+      - name: Run SDK Host terminal cleanup regressions
+        if: runner.os == 'Linux'
+        run: |
+          cargo test --locked -p terminal-core shutdown_returns_only_after_process_exit_is_confirmed -- --test-threads=1
+          cargo test --locked -p terminal-core shutdown_evicts_a_process_whose_controller_already_confirmed_exit -- --test-threads=1
+          cargo test --locked -p terminal-core background_only_binding_is_owned_by_the_session -- --test-threads=1
+
+  # ── Rust: build check ─────────────────────────────────────────────
+  rust-build-check:
+    name: Rust Build Check (${{ matrix.os }})
+    needs: build-impact
+    if: ${{ !cancelled() && needs.build-impact.outputs.rust_required != 'false' }}
+    runs-on: ${{ matrix.os }}
+    env:
+      # Keep the workspace check plus desktop test profiles within hosted-runner disk limits.
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-15
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Verify Rust stack diagnostic contracts
+        run: node --test scripts/ci/rust-stack-diagnostics.test.mjs
+
+      # Tauri code generation only requires its configured resource roots to
+      # exist during check/test; distributable assets remain frontend-build's owner.
+      - name: Create Tauri resource directories
+        shell: bash
+        run: |
+          mkdir -p dist src/mobile-web/dist src/apps/extension-host/dist
+          touch src/apps/extension-host/dist/extension-host.js
+
+      - name: Install Linux system dependencies (Tauri)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          if apt-cache show libwebkit2gtk-4.1-dev >/dev/null 2>&1; then
+            WEBKIT_PKG=libwebkit2gtk-4.1-dev
+          else
+            WEBKIT_PKG=libwebkit2gtk-4.0-dev
+          fi
+
+          if apt-cache show libappindicator3-dev >/dev/null 2>&1; then
+            APPINDICATOR_PKG=libappindicator3-dev
+          else
+            APPINDICATOR_PKG=libayatana-appindicator3-dev
+          fi
+
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config \
+            libglib2.0-dev \
+            libgtk-3-dev \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-pipewire \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            libxdo-dev \
+            "$WEBKIT_PKG" \
+            "$APPINDICATOR_PKG" \
+            librsvg2-dev \
+            patchelf \
+            libleptonica-dev \
+            libtesseract-dev \
+            tesseract-ocr \
+            tesseract-ocr-eng
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          shared-key: "ci-check-v6-${{ github.base_ref || github.ref_name }}-${{ runner.os }}-${{ runner.arch }}-no-cargo-bin"
+          cache-bin: false
+          # PR caches are scoped to merge refs; trusted main pushes own shared
+          # refreshes and retain completed dependency builds after late test failures.
+          save-if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') }}
+          cache-on-failure: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') }}
+
+      # Validate the committed manifests and lockfile before any release
+      # projection is allowed to rewrite workspace package entries.
+      - name: Verify committed Cargo metadata
+        run: cargo metadata --locked --no-deps
+
+      # rust-cache prunes the workspace target directory before saving it, so
+      # native libraries stored under target need an independent cache lifecycle.
+      - name: Restore Sherpa native libraries
+        id: sherpa-native-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: target/sherpa-onnx-prebuilt
+          key: sherpa-onnx-v2-${{ github.base_ref || github.ref_name }}-${{ runner.os }}-${{ runner.arch }}-1.13.4-static
+
+      - name: Repair missing Sherpa native state
+        shell: bash
+        run: |
+          if ! find target/sherpa-onnx-prebuilt -type f \
+            \( -name 'sherpa-onnx-c-api.lib' -o -name 'libsherpa-onnx-c-api.a' \) \
+            -print -quit 2>/dev/null | grep -q .; then
+            rm -rf target/sherpa-onnx-prebuilt
+            cargo clean -p sherpa-onnx-sys
+          fi
+
+      - name: Check compilation
+        run: cargo check --locked --workspace
+
+      - name: Save Sherpa native libraries
+        if: >-
+          github.event_name == 'push' &&
+          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') &&
+          steps.sherpa-native-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: target/sherpa-onnx-prebuilt
+          key: sherpa-onnx-v2-${{ github.base_ref || github.ref_name }}-${{ runner.os }}-${{ runner.arch }}-1.13.4-static
+
+      # The installer is intentionally excluded from the root Cargo workspace,
+      # so the workspace check above cannot catch drift in its shared Rust APIs.
+      - name: Check installer compilation
+        if: runner.os == 'Windows'
+        run: cargo check --manifest-path OpenBitFun-Installer/src-tauri/Cargo.toml
+
+      - name: Run core library tests
+        id: core-library-tests
+        if: runner.os != 'Linux'
+        run: node scripts/ci/rust-stack-diagnostics.mjs --output "${{ runner.temp }}/rust-stack-diagnostics" -- --locked -p openbitfun-core --lib
+
+      - name: Run portable Office document engine tests
+        run: cargo test --locked -p openbitfun-office-documents
+
+      - name: Run full core library tests on Linux
+        id: full-core-library-tests
+        if: runner.os == 'Linux'
+        # Capture the existing run; only stack overflows trigger bounded reruns.
+        # See scripts/ci/AGENTS.md for reuse and diagnostic limitations.
+        run: node scripts/ci/rust-stack-diagnostics.mjs --output "${{ runner.temp }}/rust-stack-diagnostics" -- --locked -p openbitfun-core --features product-full --lib
+
+      - name: Upload Rust stack diagnostics
+        if: ${{ failure() && (steps.core-library-tests.outputs.stack_overflow == 'true' || steps.full-core-library-tests.outputs.stack_overflow == 'true') }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: rust-stack-diagnostics-${{ runner.os }}
+          path: ${{ runner.temp }}/rust-stack-diagnostics
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Run desktop library tests
+        if: runner.os != 'Windows'
+        run: cargo test --locked -p openbitfun-desktop --lib
+
+      # Native tests moved out of Desktop with the shared provider. Run them
+      # on every OS, independently of Tauri's Windows test-loader limitation.
+      # Interactive delivery fixtures remain explicitly ignored.
+      - name: Run shared Computer Use provider regressions
+        run: cargo test --locked -p openbitfun-computer-use --lib
+
+      # Tauri issue #13419 prevents some Windows MSVC lib-test harnesses from
+      # entering Rust's test runner at all. Keep probing on every run so the
+      # full suite resumes automatically when upstream fixes it. Only the exact
+      # pre-test loader signature is tolerated; assertions and every other
+      # process failure remain blocking.
+      # https://github.com/tauri-apps/tauri/issues/13419
+      - name: Probe Windows desktop library tests
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $testOutput = cargo test --locked -p openbitfun-desktop --lib 2>&1
+          $testExitCode = $LASTEXITCODE
+          $testOutput | ForEach-Object { Write-Output $_ }
+          if ($testExitCode -eq 0) {
+            exit 0
+          }
+
+          $testLog = $testOutput | Out-String
+          $knownTauriLoaderFailure = (
+            $testLog -match 'process .*exit successfully:.*openbitfun_desktop_lib-' -and
+            $testLog -match 'exit code: 0xc0000139' -and
+            $testLog -match 'STATUS_ENTRYPOINT_NOT_FOUND' -and
+            $testLog -notmatch 'test result: FAILED'
+          )
+          if ($knownTauriLoaderFailure) {
+            Write-Output '::warning title=Tauri Windows test-loader limitation::The desktop test harness hit upstream Tauri issue #13419 before any Rust test ran. Compilation and the cross-platform product-control contracts remain blocking.'
+            exit 0
+          }
+
+          exit $testExitCode
+
+      - name: Run product-control domain and delivery-profile contracts
+        shell: bash
+        run: |
+          cargo test --locked -p openbitfun-product-domains --no-default-features product_control
+          cargo test --locked -p openbitfun-product-domains --no-default-features remote_surface
+          cargo test --locked -p openbitfun-product-capabilities every_agent_runtime_delivery_profile_includes_product_control_discovery
+
+      # These crates own platform-sensitive behavior that is not exercised by
+      # testing openbitfun-core/openbitfun-desktop alone. Keep their focused contract
+      # suites in the OS matrix so Linux success cannot hide Windows/macOS
+      # regressions in worker interruption, relay storage, or OAuth handling.
+      - name: Run Page Functions runtime tests
+        run: cargo test --locked -p openbitfun-page-function-runtime
+
+      # Every clipboard helper is a separate process: PowerShell plus WinForms on
+      # Windows, xclip/xsel or wl-copy on Linux. Parallel test threads starve each
+      # other past the helper timeout on a 2-4 vCPU runner, which is what turned a
+      # single contended process into a whole-suite failure. Keep this
+      # process-spawning suite serial.
+      - name: Run Computer Use clipboard contracts
+        run: cargo test --locked -p openbitfun-services-core --no-default-features --features process-runtime --lib system::local_actions -- --test-threads=1
+
+      # The native round trip needs a disposable clipboard. macOS uses a named
+      # pasteboard and Linux uses disposable X11/Wayland seats (below). Windows has
+      # only the runner's global clipboard, so that step is not a CI gate: the
+      # helper definition is asserted by
+      # windows_helper_matches_the_windows_clipboard_contract, and the real Windows
+      # clipboard is exercised on a Windows desktop.
+      - name: Run Linux clipboard round trips
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get install -y --no-install-recommends xvfb xauth xclip xsel wl-clipboard sway
+          bash scripts/test-linux-clipboard.sh
+
+      - name: Run Relay service tests
+        run: cargo test --locked -p openbitfun-relay-service
+
+      - name: Run subscription authentication tests
+        run: cargo test --locked -p openbitfun-ai-adapters --features subscription-auth --lib subscription_auth
+
+      # File watching is backed by a different OS API on every platform
+      # (ReadDirectoryChangesW / FSEvents / inotify), so watch registration,
+      # debounce, and atomic-rename regressions must stay in the full OS matrix.
+      # The suite is behind a non-default feature and would otherwise never run.
+      - name: Run file watch contract tests
+        run: cargo test --locked -p openbitfun-services-integrations --no-default-features --features file-watch --test file_watch_contracts
+
+      # Exercise native child cleanup outside the Tauri test harness. In
+      # particular, Windows update/restart cleanup must leave the host alive.
+      - name: Run process lifecycle contract tests
+        shell: bash
+        run: |
+          cargo test --locked -p openbitfun-services-core --no-default-features --features process-runtime --test process_runtime_contracts
+          cargo test --locked -p openbitfun-services-core --no-default-features --features process-runtime --lib process_tree::tests::
+
+      # Search tools share matching but retain provider-specific path and
+      # symlink handling. Keep the search module in the full OS matrix.
+      - name: Run search tool tests
+        run: "cargo test --locked -p tool-runtime --lib search::"
+
+      # Workspace providers own filesystem/link semantics and SSH cleanup;
+      # compiling them as Desktop dependencies does not execute their tests.
+      - name: Run workspace provider contracts
+        shell: bash
+        run: |
+          cargo test --locked -p openbitfun-services-core --no-default-features --features workspace-runtime --lib workspace::tests::
+          cargo test --locked -p openbitfun-services-integrations --no-default-features --features remote-ssh-concrete --lib remote_ssh::manager::tests::workspace_
+          cargo test --locked -p openbitfun-services-integrations --no-default-features --features remote-connect --lib remote_connect::html_preview
+          cargo test --locked -p tool-runtime --no-default-features --lib fs::read_file::tests::
+          cargo test --locked -p tool-runtime --no-default-features --test tool_io_contracts
+
+      # Linux's product-full suite above already covers these tools. The
+      # feature-free Core suites on macOS/Windows do not exercise workspace IO.
+      - name: Run workspace Agent contracts
+        if: runner.os != 'Linux'
+        run: >-
+          cargo test --locked -p openbitfun-core --no-default-features
+          --features agent-runtime,git,remote-workspace,document-read --lib --
+          file_read_tool::tests file_write_tool::tests file_edit_tool::tests
+          delete_file_tool::tests grep_tool::tests glob_tool::tests ls_tool::tests
+          tool_context_runtime::path_resolution_tests file_read_state_runtime::tests
+          service::snapshot:: product_runtime::tests::session_fork_
+
+  # Call the standalone Linux/Relay workflow directly. Calling the Nightly
+  # artifact orchestrator would register a misleading skipped Desktop package
+  # check on every producer-selected PR even when that matrix is disabled.
+  package-impact-contract:
+    name: Impact-selected Linux / Relay Contract
+    needs: build-impact
+    if: >-
+      !cancelled() &&
+      github.event_name == 'pull_request' &&
+      needs.build-impact.result == 'success' &&
+      needs.build-impact.outputs.pr_producer_required == 'true'
+    uses: ./.github/workflows/linux-binaries.yml
+    permissions:
+      contents: read
+    with:
+      checkout_ref: ${{ github.sha }}
+      version: 1.0.0-nightly.ci.${{ github.run_id }}
+      artifact_prefix: ci-${{ github.run_id }}
+      artifact_retention_days: 1
+      validate_relay_image: ${{ needs.build-impact.outputs.relay_image_required == 'true' }}
+      upload_artifacts: false
+      cache_write: false
+
+  # Stable required result: verify both fast Rust scheduling and whether the
+  # impact-selected PR producer contract ran or intentionally skipped.
+  rust-validation-result:
+    name: Rust / CLI Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() }}
+    needs: [build-impact, runtime-test, rust-build-check, package-impact-contract]
+    steps:
+      - name: Verify Rust build and runtime test results
+        shell: pwsh
+        env:
+          RUST_REQUIRED: ${{ needs.build-impact.outputs.rust_required }}
+          PR_PRODUCER_REQUIRED: ${{ needs.build-impact.outputs.pr_producer_required }}
+          EVENT_NAME: ${{ github.event_name }}
+          IMPACT_RESULT: ${{ needs.build-impact.result }}
+          RUNTIME_RESULT: ${{ needs.runtime-test.result }}
+          RUST_RESULT: ${{ needs.rust-build-check.result }}
+          BUILD_RESULT: ${{ needs.package-impact-contract.result }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:IMPACT_RESULT -ne 'success') {
+            throw "Build impact classification did not succeed: $env:IMPACT_RESULT"
+          }
+
+          switch ($env:RUST_REQUIRED) {
+            'false' {
+              if ($env:RUNTIME_RESULT -ne 'skipped' -or $env:RUST_RESULT -ne 'skipped') {
+                throw "Expected skipped Rust build and runtime jobs; Runtime=$env:RUNTIME_RESULT Rust=$env:RUST_RESULT"
+              }
+            }
+            'true' {
+              if ($env:RUNTIME_RESULT -ne 'success' -or $env:RUST_RESULT -ne 'success') {
+                throw "Expected successful Rust build and runtime jobs; Runtime=$env:RUNTIME_RESULT Rust=$env:RUST_RESULT"
+              }
+            }
+            default {
+              throw "Unexpected rust_required value: '$env:RUST_REQUIRED'"
+            }
+          }
+
+          $producerExpected = $env:EVENT_NAME -eq 'pull_request' -and $env:PR_PRODUCER_REQUIRED -eq 'true'
+          if ($producerExpected -and $env:BUILD_RESULT -ne 'success') {
+            throw "Expected successful impact-selected producer jobs; Build=$env:BUILD_RESULT"
+          }
+          if (-not $producerExpected -and $env:BUILD_RESULT -ne 'skipped') {
+            throw "Expected producer jobs to be skipped; Build=$env:BUILD_RESULT"
+          }
+
+  # ── DeepSeek Harness bridge: profile packaging on Windows ──────────
+  # `prepare:dsh-profile` runs from `frontend:build-all` / official desktop
+  # packaging, not from desktop:dev or cargo check. Until this job existed,
+  # its first Windows execution ever was a release build, and it failed there
+  # (`spawnSync npm ENOENT`: npm is a `.cmd` shim Node will not spawn without
+  # a shell). This job is the cheapest thing that exercises the whole
+  # packaging path — npm install, tsc, `npm pack`, tar, tree copy — on the
+  # platform whose path and process rules differ.
+  dsh-profile-windows:
+    name: DSH Profile Packaging (windows-latest)
+    needs: build-impact
+    if: ${{ !cancelled() && needs.build-impact.outputs.dsh_profile_required == 'true' }}
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Build the bridge profile
+        run: node scripts/prepare-dsh-profile.mjs
+
+      - name: Verify the profile is complete and stamped
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=packages/dsh-acp/dist-profile
+          for path in \
+            "$root/.openbitfun-bridge.json" \
+            "$root/cordis.patch.yml" \
+            "$root/package.json" \
+            "$root/lib/app.js" \
+            "$root/node_modules/@agentclientprotocol/sdk/package.json" \
+            "$root/node_modules/@deepseek-ai/dsh-agent-spine-demo/package.json"
+          do
+            [ -f "$path" ] || { echo "::error::missing $path"; exit 1; }
+          done
+          # A vendored tree copied with a broken separator filter drags
+          # node_modules along; the profile resolves those from the user's own
+          # dsh installation and must ship none of its own beyond the two above.
+          nested=$(find "$root/lib" "$root/presets" -name node_modules -o -name '*.map' || true)
+          if [ -n "$nested" ]; then
+            echo "::error::profile carries files it must not ship:"
+            echo "$nested"
+            exit 1
+          fi
+          node -e '
+            const stamp = require("./packages/dsh-acp/dist-profile/.openbitfun-bridge.json");
+            if (stamp.profile !== "openbitfun-acp") throw new Error("wrong profile name: " + stamp.profile);
+            if (!/^[0-9a-f]{64}$/.test(stamp.content)) throw new Error("no content digest");
+            process.stdout.write(`profile ${stamp.profile} @ ${stamp.bridge}, min dsh ${stamp.minDshVersion}\n`);
+          '
+
+  # ── Frontend: build ────────────────────────────────────────────────
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    needs: build-impact
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Check repository hygiene
+        run: pnpm run check:repo-hygiene
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate interactive capability contract
+        run: pnpm run capabilities:check && pnpm run capabilities:test && pnpm run website:test && pnpm run website:build
+
+      - name: Test core boundary contracts
+        run: pnpm run check:core-boundaries:test
+
+      - name: Check core boundaries
+        run: pnpm run check:core-boundaries
+
+      - name: Resolve Bun executable cache
+        id: bun-cache-target
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: node scripts/ci/bun-cache-target.mjs 1.3.14
+
+      - name: Restore Bun executable
+        id: bun-executable-cache
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.bun-cache-target.outputs.path }}
+          key: ${{ steps.bun-cache-target.outputs.key }}
+
+      - name: Setup Bun for package resource preflight
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+          # Cache reads and writes are separate so PRs remain restore-only.
+          no-cache: true
+
+      - name: Save Bun executable
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          needs.build-impact.outputs.frontend_required != 'false' &&
+          steps.bun-executable-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.bun-cache-target.outputs.path }}
+          key: ${{ steps.bun-cache-target.outputs.key }}
+
+      - name: Setup Rust for release projection preflight
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Verify committed release metadata
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: cargo metadata --locked --no-deps
+
+      - name: Build plugin Host resources
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: |
+          bun install --cwd src/apps/extension-host --frozen-lockfile
+          bun run --cwd src/apps/extension-host build
+
+      - name: Generate web API bindings
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm --dir src/web-ui run gen:types
+
+      - name: Validate PPT Live generated-file contract
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run test:ppt-live
+
+      - name: Validate GitHub config
+        run: pnpm run check:github-config
+
+      - name: Select i18n contract profile
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        shell: bash
+        run: |
+          if git rev-parse HEAD^1 >/dev/null 2>&1 &&
+            git diff --name-only HEAD^1 HEAD -- scripts/i18n-audit.mjs scripts/i18n-contract.test.mjs | grep -q .; then
+            echo "OPENBITFUN_I18N_CONTRACT_TEST_AUDIT_INTEGRATION=1" >> "$GITHUB_ENV"
+          fi
+
+      - name: Validate i18n contract
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run i18n:contract:test:ci
+
+      - name: Audit i18n resources
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run i18n:audit
+
+      - name: Validate theme color audit contract
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run theme:color-audit:test
+
+      - name: Audit theme color governance
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run theme:color-audit:all
+
+      - name: Validate theme visual governance contract
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run theme:visual-contract
+
+      - name: Validate WebKit compatibility gate
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run verify:webkit-compatibility:test
+
+      - name: Lint web UI
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run lint:web
+
+      - name: Run web UI tests
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm --dir src/web-ui run test:run
+
+      - name: Build web UI
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run build:web
+
+      - name: Type-check mobile web
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm --dir src/mobile-web run type-check
+
+      - name: Validate mobile-web build cache contract
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: node --test scripts/mobile-web-build.test.mjs scripts/mobile-client-build.contract.test.mjs
+
+      - name: Test mobile web account login and reload
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm --dir src/mobile-web run test:account-login
+
+      - name: Test mobile web browser account persistence and concurrency
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        timeout-minutes: 5
+        run: pnpm --dir src/mobile-web run test:account-browser
+
+      - name: Test mobile web conversation and input layouts
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        timeout-minutes: 3
+        run: |
+          pnpm --dir src/mobile-web run test:prompt-suggestion-browser
+          pnpm --dir src/mobile-web run test:rollback-browser
+          pnpm --dir src/mobile-web run test:session-model-browser
+          pnpm --dir src/mobile-web run test:chat-transcript-browser
+
+      - name: Upload mobile input layout screenshots
+        if: always() && needs.build-impact.outputs.frontend_required != 'false'
+        uses: actions/upload-artifact@v6
+        with:
+          name: mobile-input-layout-screenshots
+          path: |
+            /tmp/mobile-prompt-suggestion-*.png
+            /tmp/mobile-edit-*.png
+            /tmp/mobile-rollback-*.png
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Build mobile web
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: pnpm run build:mobile-web
+
+      - name: Project a Nightly version
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: node scripts/set-build-version.mjs --version "1.0.0-nightly.ci.${{ github.run_id }}"
+
+      - name: Verify projected release metadata
+        if: needs.build-impact.outputs.frontend_required != 'false'
+        run: cargo metadata --locked --no-deps

@@ -1,0 +1,482 @@
+use crate::agentic::inline_figure::{verify_written_figure, written_figure_uri, MAX_SOURCE_BYTES};
+use crate::agentic::tools::file_permissions::file_permission_intents_allowing_managed_plan_edits;
+use crate::agentic::tools::file_tool_guidance::file_tool_guidance_message;
+use crate::agentic::tools::framework::{
+    PermissionIntent, Tool, ToolPathResolution, ToolResult, ToolUseContext, ValidationResult,
+};
+use crate::agentic::tools::ToolPathOperation;
+use crate::util::errors::{OpenBitFunError, OpenBitFunResult};
+use async_trait::async_trait;
+use serde_json::{json, Value};
+use tool_runtime::fs::edit_file::{apply_edit_to_content, edit_success_message, EditContentError};
+
+pub struct FileEditTool;
+
+const EDIT_TOOL_PROMPT: &str = r#"Performs exact string replacements in files.
+
+- Inspect the current source before editing. Copy `old_string` exactly, preserving whitespace; omit Read's line-number/tab prefix.
+- A focused Read window is sufficient when it contains the full target block. Truncated lines and extracted document Markdown are not exact source; obtain a complete source view before editing.
+- Choose the smallest unique `old_string`. If it occurs more than once, add context or use `replace_all` only when every occurrence should change.
+- If matching fails, inspect the current target again and correct the text or scope before retrying.
+- `file_path` accepts a workspace-relative path, an absolute path inside the workspace, or an exact `openbitfun://...` URI returned by a tool."#;
+
+impl Default for FileEditTool {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl FileEditTool {
+    pub fn new() -> Self {
+        Self
+    }
+
+    fn content_failure(error: EditContentError) -> ValidationResult {
+        let detail = error.detail();
+        ValidationResult {
+            result: false,
+            message: Some(if detail.is_some() {
+                file_tool_guidance_message(error.to_string())
+            } else {
+                error.to_string()
+            }),
+            error_code: Some(400),
+            meta: detail
+                .map(|detail| json!({ "failure_kind": "guidance", "error_detail": detail })),
+        }
+    }
+
+    async fn read_current_file_content(
+        context: &ToolUseContext,
+        resolved: &ToolPathResolution,
+    ) -> OpenBitFunResult<String> {
+        context
+            .file_system_for_path(resolved)?
+            .read_file_text(&resolved.resolved_path)
+            .await
+            .map_err(|error| {
+                OpenBitFunError::tool(format!(
+                    "Failed to read file {}: {:#}",
+                    resolved.logical_path, error
+                ))
+            })
+    }
+}
+
+#[async_trait]
+impl Tool for FileEditTool {
+    fn name(&self) -> &str {
+        "Edit"
+    }
+
+    async fn description(&self) -> OpenBitFunResult<String> {
+        Ok(EDIT_TOOL_PROMPT.to_string())
+    }
+
+    fn short_description(&self) -> String {
+        "A tool for editing files".to_string()
+    }
+
+    fn input_schema(&self) -> Value {
+        json!({
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to modify"
+                },
+                "old_string": {
+                    "type": "string",
+                    "description": "Exact text to replace, copied verbatim from your latest Read of this file (content after the line-number tab only). Preserve indentation; do not reformat."
+                },
+                "new_string": {
+                    "type": "string",
+                    "description": "Replacement text with the same indentation style as old_string (must be different from old_string)"
+                },
+                "replace_all": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Replace all occurrences of old_string (default false)"
+                }
+            },
+            "required": ["file_path", "old_string", "new_string"],
+            "additionalProperties": false
+        })
+    }
+
+    fn output_schema(&self) -> Value {
+        json!({
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "success": {"type": "boolean"},
+                "match_count": {"type": "integer"}
+            },
+            "required": ["file_path", "success"],
+            "additionalProperties": false
+        })
+    }
+
+    fn is_readonly(&self) -> bool {
+        false
+    }
+
+    fn is_concurrency_safe(&self, _input: Option<&Value>) -> bool {
+        false
+    }
+
+    fn permission_intents(
+        &self,
+        input: &Value,
+        context: &ToolUseContext,
+    ) -> OpenBitFunResult<Vec<PermissionIntent>> {
+        let file_path = input
+            .get("file_path")
+            .and_then(Value::as_str)
+            .ok_or_else(|| OpenBitFunError::validation("file_path is required".to_string()))?;
+        file_permission_intents_allowing_managed_plan_edits("edit", [file_path], context)
+    }
+
+    async fn validate_input(
+        &self,
+        input: &Value,
+        context: Option<&ToolUseContext>,
+    ) -> ValidationResult {
+        let file_path = match input.get("file_path").and_then(|v| v.as_str()) {
+            Some(path) if !path.is_empty() => path,
+            _ => {
+                return ValidationResult {
+                    result: false,
+                    message: Some("file_path is required and cannot be empty".to_string()),
+                    error_code: Some(400),
+                    meta: None,
+                };
+            }
+        };
+
+        let rewrite_invariant = self.validate_input_rewrite_invariants(input, context).await;
+        if !rewrite_invariant.result {
+            return rewrite_invariant;
+        }
+
+        if input.get("old_string").is_none() {
+            return ValidationResult {
+                result: false,
+                message: Some("old_string is required".to_string()),
+                error_code: Some(400),
+                meta: None,
+            };
+        }
+
+        if input.get("new_string").is_none() {
+            return ValidationResult {
+                result: false,
+                message: Some("new_string is required".to_string()),
+                error_code: Some(400),
+                meta: None,
+            };
+        }
+
+        let old_string = input
+            .get("old_string")
+            .and_then(|v| v.as_str())
+            .unwrap_or("");
+        let new_string = input
+            .get("new_string")
+            .and_then(|v| v.as_str())
+            .unwrap_or("");
+        let replace_all = input
+            .get("replace_all")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+
+        if old_string.is_empty() {
+            return ValidationResult {
+                result: false,
+                message: Some("old_string cannot be empty".to_string()),
+                error_code: Some(400),
+                meta: None,
+            };
+        }
+        if old_string == new_string {
+            return Self::content_failure(EditContentError::no_change());
+        }
+
+        if let Some(ctx) = context {
+            let resolved = match ctx.resolve_tool_path(file_path) {
+                Ok(resolved) => resolved,
+                Err(err) => {
+                    return ValidationResult {
+                        result: false,
+                        message: Some(err.to_string()),
+                        error_code: Some(400),
+                        meta: None,
+                    };
+                }
+            };
+
+            if let Err(err) = ctx.enforce_path_operation(ToolPathOperation::Edit, &resolved) {
+                return ValidationResult {
+                    result: false,
+                    message: Some(err.to_string()),
+                    error_code: Some(400),
+                    meta: None,
+                };
+            }
+
+            let file_content = match Self::read_current_file_content(ctx, &resolved).await {
+                Ok(content) => content,
+                Err(error) => {
+                    return ValidationResult {
+                        result: false,
+                        message: Some(format!(
+                            "Failed to read file {}: {}",
+                            resolved.logical_path, error
+                        )),
+                        error_code: Some(400),
+                        meta: None,
+                    };
+                }
+            };
+
+            if let Err(error) =
+                apply_edit_to_content(&file_content, old_string, new_string, replace_all)
+            {
+                return Self::content_failure(error);
+            }
+        }
+
+        ValidationResult::default()
+    }
+
+    async fn validate_input_rewrite_invariants(
+        &self,
+        input: &Value,
+        context: Option<&ToolUseContext>,
+    ) -> ValidationResult {
+        let Some(file_path) = input
+            .get("file_path")
+            .and_then(Value::as_str)
+            .filter(|path| !path.is_empty())
+        else {
+            return ValidationResult::default();
+        };
+        let force_requested = input.get("force").and_then(Value::as_bool).unwrap_or(false);
+        crate::agentic::execution::edit_constraint_guard::check_edit(
+            context,
+            "Edit",
+            "edit",
+            file_path,
+            force_requested,
+        )
+        .await
+        .unwrap_or_default()
+    }
+
+    async fn call_impl(
+        &self,
+        input: &Value,
+        context: &ToolUseContext,
+    ) -> OpenBitFunResult<Vec<ToolResult>> {
+        let file_path = input
+            .get("file_path")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| OpenBitFunError::tool("file_path is required".to_string()))?;
+
+        let new_string = input
+            .get("new_string")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| OpenBitFunError::tool("new_string is required".to_string()))?;
+
+        let old_string = input
+            .get("old_string")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| OpenBitFunError::tool("old_string is required".to_string()))?;
+
+        let replace_all = input
+            .get("replace_all")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+
+        let resolved = context.resolve_tool_path(file_path)?;
+        context.enforce_path_operation(ToolPathOperation::Edit, &resolved)?;
+        context
+            .record_light_checkpoint(
+                "Edit",
+                &resolved.logical_path,
+                vec![resolved.logical_path.clone()],
+            )
+            .await?;
+
+        let file_system = context.file_system_for_path(&resolved)?;
+        let content = Self::read_current_file_content(context, &resolved).await?;
+        let edit_result = apply_edit_to_content(&content, old_string, new_string, replace_all)
+            .map_err(|error| {
+                if let Some(detail) = error.detail() {
+                    OpenBitFunError::ClassifiedTool {
+                        message: file_tool_guidance_message(error.to_string()),
+                        detail,
+                    }
+                } else {
+                    OpenBitFunError::tool(error.to_string())
+                }
+            })?;
+        file_system
+            .write_file(&resolved.resolved_path, edit_result.new_content.as_bytes())
+            .await
+            .map_err(|error| {
+                OpenBitFunError::tool(format!(
+                    "Failed to write file {}: {:#}",
+                    resolved.logical_path, error
+                ))
+            })?;
+
+        crate::agentic::execution::edit_constraint_guard::record_mutation_applied(
+            context,
+            "Edit",
+            "edit",
+            &resolved.logical_path,
+        )
+        .await;
+
+        let mut data = json!({
+                "file_path": resolved.logical_path,
+                "old_string": old_string,
+                "new_string": new_string,
+                "success": true,
+                "match_count": edit_result.match_count,
+                "start_line": edit_result.edit_result.start_line,
+                "old_end_line": edit_result.edit_result.old_end_line,
+                "new_end_line": edit_result.edit_result.new_end_line,
+        });
+        // The editor supports normalized and fuzzy matches. Preserve its exact
+        // output for inline replay instead of reimplementing those rules in JS.
+        let mut assistant_message = edit_success_message(&resolved.logical_path);
+        if let Some(uri) = written_figure_uri(context, &resolved) {
+            verify_written_figure(
+                context,
+                &uri,
+                &edit_result.new_content,
+                &mut data,
+                &mut assistant_message,
+            )
+            .await;
+            data["visualization_uri"] = json!(uri);
+            data["content_bytes"] = json!(edit_result.new_content.len());
+            if (1..=MAX_SOURCE_BYTES).contains(&edit_result.new_content.len()) {
+                data["visualization_source"] = json!(edit_result.new_content);
+            }
+        }
+        let result = ToolResult::Result {
+            data,
+            result_for_assistant: Some(assistant_message),
+            image_attachments: None,
+        };
+
+        Ok(vec![result])
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{FileEditTool, EDIT_TOOL_PROMPT};
+    use crate::agentic::tools::framework::Tool;
+    use serde_json::{json, Value};
+
+    #[tokio::test]
+    async fn equal_strings_are_guidance_but_missing_inputs_remain_errors() {
+        let tool = FileEditTool::new();
+        let result = tool
+            .validate_input(
+                &json!({"file_path":"a.txt", "old_string":"same", "new_string":"same"}),
+                None,
+            )
+            .await;
+        assert!(!result.result);
+        assert_eq!(
+            result.meta.unwrap()["error_detail"]["code"],
+            "edit_no_change"
+        );
+        assert!(result.message.unwrap().starts_with("[guidance] "));
+        let result = tool
+            .validate_input(&json!({"file_path":"a.txt", "old_string":"same"}), None)
+            .await;
+        assert!(!result.result);
+        assert!(result.meta.is_none());
+    }
+
+    #[test]
+    fn edit_tool_schema_describes_exact_copy_from_read() {
+        let schema = FileEditTool::new().input_schema();
+        let properties = schema
+            .get("properties")
+            .and_then(Value::as_object)
+            .expect("properties");
+
+        assert_eq!(
+            properties
+                .get("file_path")
+                .and_then(|value| value.get("description"))
+                .and_then(Value::as_str),
+            Some("The path to the file to modify")
+        );
+        assert!(properties
+            .get("old_string")
+            .and_then(|value| value.get("description"))
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .contains("latest Read"));
+        assert!(properties
+            .get("new_string")
+            .and_then(|value| value.get("description"))
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .contains("indentation"));
+        assert_eq!(
+            properties
+                .get("replace_all")
+                .and_then(|value| value.get("description"))
+                .and_then(Value::as_str),
+            Some("Replace all occurrences of old_string (default false)")
+        );
+        assert!(properties
+            .get("old_string")
+            .and_then(|value| value.get("minLength"))
+            .is_none());
+        assert!(properties.get("force").is_none());
+    }
+
+    #[test]
+    fn edit_tool_short_description_matches_claude_summary() {
+        assert_eq!(
+            FileEditTool::new().short_description(),
+            "A tool for editing files"
+        );
+    }
+
+    #[tokio::test]
+    async fn non_relaxable_edit_invariant_precedes_repairable_schema_errors() {
+        let validation = crate::agentic::execution::edit_constraint_guard::TEST_ENABLED
+            .scope(true, async {
+                FileEditTool::new()
+                    .validate_input(
+                        &json!({
+                            "file_path": "tests/a.rs",
+                            "old_string": "x",
+                            "force": true
+                        }),
+                        None,
+                    )
+                    .await
+            })
+            .await;
+
+        assert_eq!(validation.error_code, Some(403));
+        assert!(validation.blocks_input_rewrite());
+        assert!(!validation
+            .message
+            .as_deref()
+            .unwrap_or_default()
+            .contains("new_string is required"));
+    }
+}

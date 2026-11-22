@@ -1,0 +1,114 @@
+# AGENTS.md
+
+## Scope
+
+This file applies to `design-system/**`. Repository-wide rules in the root `AGENTS.md` still apply.
+
+## Architecture
+
+- Public packages live under `packages/`; private authoring and validation tools live under `tooling/`; Design Lab lives under `apps/`.
+- `@openbitfun/ui` owns React anatomy, behavior, accessibility, and stable variants. It must remain independent from product routes, stores, locale catalogs, Tauri APIs, and concrete themes.
+- `@openbitfun/design-tokens` owns theme-independent names and system scales. `@openbitfun/theme-openbitfun` supplies replaceable reference and semantic values.
+- Components consume semantic or system CSS variables. Raw colors are forbidden in public component CSS. Component-private variables use the `--_` prefix.
+- Floating surfaces use the document overlay coordinator through `Portal`. Opening order owns global ranks; keep `open` through retained exits and declare `ownerRef` for sibling/coordinate child portals. Modal focus, inert state and dismissal must use the same owner. Notification layout regions remain neutral, with one `OverlayLayer` per card. See the UI README overlay contract.
+- Menu and Listbox row spacing is owned by `overlay.menu.rowGap`, separately from in-row and section spacing. Use `MenuList` around menu rows inside custom scroll/animation wrappers; do not repair individual consumers with row margins or private list-gap overrides.
+- Single-line text slots use `OverflowText`: plain text defaults to fade-out truncation plus an interaction marquee; rich composition keeps its layout unless explicitly opted in. Keep icons/actions outside the text slot, mark the owning control with `data-overflow-trigger`, and preserve wrapping or native editing where appropriate. See the UI package README for the shared interaction contract.
+- Files under `dist/` are generated and must not be edited or committed.
+- Design Lab may alias `@openbitfun/ui` to source only during Vite development for HMR. Its production build must consume package exports.
+- `@openbitfun/ui/registry` is the source of truth for published components. Design Lab derives navigation, counts, token scopes, and detail routes from that registry; Lab-only previews or copy must never add, retain, or remove a package component.
+
+## CSS invalidation
+
+- Prefer component-owned classes for sibling rules in dynamic views; tag-only or universal sibling selectors can invalidate unrelated elements even under a scoped ancestor or CSS Module.
+- Use layout `gap` only where spacing semantics remain equivalent. Preserve adjacency, specificity, and state overrides when narrowing selectors; `:where()` can add class constraints without raising specificity.
+- Use Selector Stats for cause analysis and ordinary traces for performance comparisons. Invalidation records alone do not prove a scrolling speedup. See `src/web-ui/AGENTS.md` for generated-content guidance; do not blanket-ban sibling selectors.
+
+## Publication boundary
+
+- Public manifests expose only `dist/`, README, and package metadata.
+- React and React DOM stay peer dependencies of `@openbitfun/ui`.
+- Workspace dependencies use the `workspace:` protocol and must be converted to semver ranges by `pnpm pack`.
+- New public package boundaries require a real consumer; do not create empty placeholder packages.
+
+## Verification
+
+Use the narrowest matching command:
+
+```bash
+pnpm run design-system:build
+pnpm run design-system:test
+pnpm run design-system:check
+```
+
+Run `pnpm run design-system:check` for cross-package or release-boundary changes. Token and theme changes must also run the repository-level `pnpm run theme:color-audit:all`.
+
+For shared icon rendering or geometry changes, use the focused package checks:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/icon.test.mjs design-system/packages/ui/tests/icon-slots.test.mjs
+```
+
+For composer geometry and queue anatomy, disclosure and status presentation:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/chat-composer.test.mjs
+```
+
+These package contracts do not establish native rendering or live remote behavior.
+
+Do not use browser automation or mock screenshots as visual proof. Design Lab is the manual authoring surface; source, build, HTTP, and package checks do not establish final visual fidelity.
+
+For SplitView geometry, drag cancellation, and cached resize bounds:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/split-view.test.mjs
+pnpm --dir src/web-ui exec vitest run src/shared/ui/SplitView.test.tsx
+```
+
+For Select presentation, compact/expanded labels, native form participation and keyboard selection:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/select.test.mjs design-system/packages/ui/tests/registry.test.mjs
+pnpm --dir src/web-ui exec vitest run src/shared/ui/Select.test.tsx
+```
+
+These package and DOM checks do not establish native rendering or live remote behavior.
+
+For Spinner presentations, FlowChat integration and decorative playback:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/spinner.test.mjs design-system/packages/ui/tests/brand.test.mjs design-system/packages/ui/tests/registry.test.mjs
+pnpm --dir src/web-ui exec vitest run src/shared/ui/FlowChatRuntimeStatus.test.tsx src/flow_chat/components/modern/RuntimeStatusSlot.test.tsx
+```
+
+The runtime status fixture checks resident geometry ownership and playback through
+exit, reversal, cancellation and unmount. DOM tests do not prove native transition
+rendering; the workload E2E records actual status fade-out outside resource windows.
+
+For ColorPicker HEX drafts, flower selection, curved lightness dragging and keyboard input:
+
+```bash
+pnpm --dir design-system run build:ui && node --test design-system/packages/ui/tests/color-picker.test.mjs design-system/packages/ui/tests/registry.test.mjs
+pnpm --dir src/web-ui run test:run src/shared/ui/ColorPicker.test.tsx src/app/components/WorkspaceIcon/WorkspaceIconDialog.test.tsx
+```
+
+These package and DOM checks do not establish visual fidelity or live remote behavior.
+
+For Subagent motion rendering and playback, build UI and run the focused brand
+contract above. After building the production Web UI, the opt-in native geometry
+contract compares all 20 artworks, three sizes and authored actions to a named
+Git revision, including opacity, pause/resume, reduced motion and cleanup:
+
+```bash
+OPENBITFUN_WORKBENCH_MOTION_CONTRACT=1 OPENBITFUN_MOTION_REFERENCE_COMMIT=HEAD OPENBITFUN_WORKBENCH_PANELS_ONLY=1 node tests/e2e/scripts/run-workbench-performance.mjs
+```
+
+Use a pre-change reference commit when testing an already committed change.
+The native fixture runs outside performance windows. Geometry equivalence does
+not establish pixel-identical rasterization or coverage on other WebView engines.
+
+For shared queue dragging, arrow-key pass-through, cancellation and focus retention:
+
+```bash
+pnpm --dir src/web-ui exec vitest run src/flow_chat/components/useQueueReorder.test.tsx
+```

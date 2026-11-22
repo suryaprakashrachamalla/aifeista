@@ -1,0 +1,56 @@
+# terminal Agent Guide
+
+Scope: this guide applies to `src/crates/services/terminal`.
+
+`terminal-core` owns standalone terminal sessions, PTY process handling, shell
+integration and resolution, and terminal event/config contracts. It is reusable
+infrastructure, not a product command or UI layer.
+
+## Guardrails
+
+- Do not depend on `openbitfun-core`, app crates, Tauri, product domains, AI
+  providers, Git, MCP, transport adapters, or tool-runtime implementations.
+- Keep platform-specific behavior behind terminal abstractions and preserve
+  Windows, macOS, and Linux shell compatibility.
+- Do not change command execution, PTY lifecycle, persistence, output
+  buffering, cancellation, or shell integration semantics as a side effect of
+  refactoring.
+- Product-specific terminal policies, remote workspace routing, and UI command
+  wiring belong in higher layers.
+
+## Verification
+
+```bash
+cargo check -p terminal-core
+cargo test -p terminal-core --lib exec:: # process output, encoding, polling and lifecycle
+cargo test --locked -p terminal-core --lib runtime_port::tests::exec_command_wait_interrupt # initial wait steering, live process and continued output
+cargo test --locked -p terminal-core --lib runtime_port::tests::write_stdin_wait_interrupt # live Unix PTY steering and continued input
+cargo test -p terminal-core --lib workspace_origin_contract_tests # terminal response compatibility
+node scripts/check-core-boundaries.mjs
+```
+
+For documentation-only changes, run `git diff --check`.
+
+The optional wait-interrupt token for ExecCommand and WriteStdin ends only output
+collection. Return the collected bytes and commit the cursor before yielding; do not signal or
+drop the process, replay stdin, or conflate wait interruption with completion.
+Session cleanup uses the closure snapshot from the final output drain so an
+exit immediately after that drain leaves its trailing bytes pollable.
+The live PTY fixture is Unix-only; these tests do not establish remote behavior.
+
+For natural PTY exit, output draining, confirmed shutdown and Unix hangup
+escalation, run `cargo test -p terminal-core --lib pty::process::tests` and
+`cargo check -p terminal-core`. These local child-process tests do not establish
+live SSH, Peer, relay, dispatch or other-platform behavior. The native terminal
+workload in `tests/e2e/AGENTS.md` additionally checks UI input, native process
+reaping and retained terminal buffers after exit.
+
+For Windows App Execution Alias termination, install Python Install Manager and
+run this opt-in regression with its working alias (not the Store redirector):
+
+```powershell
+$env:OPENBITFUN_TEST_PYTHON_ALIAS = "$env:LOCALAPPDATA/Microsoft/WindowsApps/python.exe"
+cargo test -p terminal-core --lib control_terminates_python_app_execution_alias -- --ignored
+```
+
+This covers both kill and interrupt without changing the machine PATH.

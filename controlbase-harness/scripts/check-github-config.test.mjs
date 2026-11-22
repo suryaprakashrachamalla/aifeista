@@ -1,0 +1,2621 @@
+import assert from 'node:assert/strict';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { runInNewContext } from 'node:vm';
+import { bunCacheTarget } from './ci/bun-cache-target.mjs';
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const scriptPath = path.join(repoRoot, 'scripts/check-github-config.mjs');
+const requireFromWebUi = createRequire(
+  path.join(repoRoot, 'src/web-ui/package.json'),
+);
+const yaml = requireFromWebUi('yaml');
+
+function createRepo({ workflow, nodeVersionFile }) {
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-github-config-'));
+  mkdirSync(path.join(root, '.github/workflows'), { recursive: true });
+  writeFileSync(
+    path.join(root, 'package.json'),
+    `${JSON.stringify({ engines: { node: '>=22.12.0' } }, null, 2)}\n`,
+  );
+  writeFileSync(path.join(root, '.github/workflows/ci.yml'), workflow);
+
+  if (nodeVersionFile) {
+    writeFileSync(path.join(root, nodeVersionFile.path), `${nodeVersionFile.value}\n`);
+  }
+
+  return root;
+}
+
+function enableProductControlContract(root) {
+  const manifestPath = path.join(root, 'package.json');
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  manifest.scripts = { 'capabilities:check': 'node scripts/check.mjs' };
+  writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
+function runCheck(root) {
+  return spawnSync(process.execPath, [scriptPath], {
+    cwd: repoRoot,
+    env: {
+      ...process.env,
+      OPENBITFUN_GITHUB_CONFIG_TEST_ROOT: root,
+    },
+    encoding: 'utf8',
+  });
+}
+
+test('partial Desktop publication requires successful trusted producers and leaves update feeds untouched', (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/publish-ready-desktop.yml'), 'utf8'));
+  const steps = workflow.jobs.publish.steps;
+  const setupNode = steps.find((step) => step.uses?.startsWith('actions/setup-node@'));
+  assert.equal(setupNode.with['package-manager-cache'], false,
+    'standalone publication uses Node built-ins and has no pnpm installation');
+  const validate = steps.find((step) => step.name === 'Validate source and completed producers').run;
+  const publish = steps.find((step) => step.name === 'Publish available installers without changing update feeds').run;
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-partial-release-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(path.join(root, 'bin'));
+  function executable(name, source) {
+    const file = path.join(root, 'bin', name);
+    writeFileSync(file, `#!/usr/bin/env bash\nset -euo pipefail\n${source}\n`, { mode: 0o755 });
+  }
+  executable('git', 'if [[ "$1" == merge-base && "${REJECT_ANCESTRY:-}" == true ]]; then exit 1; fi; if [[ "$1" == show ]]; then echo \'{"version":"1.0.6"}\'; fi');
+  executable('gh', `
+    if [[ "$1" == api ]]; then
+      case "$2" in
+        *'/jobs?'*) cat "$FIXTURE/jobs.json" ;;
+        *'/artifacts?'*) cat "$FIXTURE/artifacts.json" ;;
+        *'/releases/tags/'*) cat "$FIXTURE/state.json" ;;
+        *) cat "$FIXTURE/run.json" ;;
+      esac
+      exit 0
+    fi
+    printf '%s\\n' "$*" >> "$FIXTURE/calls"
+    case "$1 $2" in
+      'release view') cat "$FIXTURE/state.json" ;;
+      'release download')
+        shift 2
+        names=()
+        while [[ $# -gt 0 ]]; do
+          case "$1" in --pattern) names+=("$2"); shift;; --dir) dest="$2"; shift;; esac
+          shift
+        done
+        mkdir -p "$dest"
+        for name in "\${names[@]}"; do cp "$FIXTURE/release-upload-assets/$name" "$dest/$name"; done
+        ;;
+    esac
+  `);
+  executable('curl', 'cp "$FIXTURE/state.json" release-state.json; printf 200');
+  const env = {
+    ...process.env, PATH: `${path.join(root, 'bin')}:${process.env.PATH}`,
+    FIXTURE: root, GITHUB_ENV: path.join(root, 'env'),
+    GITHUB_REPOSITORY: 'GCWing/OpenBitFun', RELEASE_TAG: 'v1.0.6', SOURCE_RUN: '123',
+    OPENBITFUN_SIGNING_KEY: 'fixture-only', OPENBITFUN_SIGNING_PUBKEY: 'fixture-only', GH_TOKEN: 'fixture-only',
+  };
+  const run = {
+    repository: { full_name: env.GITHUB_REPOSITORY },
+    head_repository: { full_name: env.GITHUB_REPOSITORY },
+    path: '.github/workflows/desktop-package.yml', event: 'workflow_dispatch', head_sha: 'a'.repeat(40),
+  };
+  const names = ['Prepare', 'Package (windows-x64)', 'Package (linux-x64)', 'Package (linux-arm64)',
+    'Linux CLI and Relay Server / Linux Binaries (linux-x64)',
+    'Linux CLI and Relay Server / Linux Binaries (linux-arm64)', 'Publish Relay Server Image'];
+  const jobs = { jobs: names.map((name) => ({ name, conclusion: 'success' })) };
+  function execute(script, overrides = {}) {
+    return spawnSync('bash', ['-c', script], { cwd: root, env: { ...env, ...overrides }, encoding: 'utf8', windowsHide: true });
+  }
+  function fixtures(nextRun = run, nextJobs = jobs) {
+    writeFileSync(path.join(root, 'run.json'), JSON.stringify(nextRun));
+    writeFileSync(path.join(root, 'jobs.json'), JSON.stringify(nextJobs));
+  }
+  fixtures();
+  let result = execute(validate);
+  assert.equal(result.status, 0, result.stderr);
+  for (const name of names) {
+    fixtures(run, { jobs: jobs.jobs.map((job) => job.name === name ? { ...job, conclusion: 'failure' } : job) });
+    assert.notEqual(execute(validate).status, 0, name);
+  }
+  for (const nextRun of [
+    { ...run, head_repository: { full_name: 'untrusted/fork' } },
+    { ...run, path: '.github/workflows/ci.yml' },
+    { ...run, event: 'pull_request' },
+  ]) {
+    fixtures(nextRun);
+    assert.notEqual(execute(validate).status, 0);
+  }
+  fixtures();
+  assert.notEqual(execute(validate, { RELEASE_TAG: 'v1.0.6;echo injected' }).status, 0);
+  assert.notEqual(execute(validate, { OPENBITFUN_SIGNING_KEY: '' }).status, 0);
+  mkdirSync(path.join(root, 'release-upload-assets'));
+  writeFileSync(path.join(root, 'release-upload-assets/fixture.exe'), 'signed fixture payload');
+  writeFileSync(path.join(root, 'state.json'), JSON.stringify({ assets: [{ name: 'latest-v1.json' }] }));
+  assert.notEqual(execute(publish).status, 0, 'must refuse to modify an already complete release');
+  assert.equal(existsSync(path.join(root, 'calls')), false);
+  writeFileSync(path.join(root, 'state.json'), JSON.stringify({ assets: [] }));
+  result = execute(publish);
+  assert.equal(result.status, 0, result.stderr);
+  const calls = readFileSync(path.join(root, 'calls'), 'utf8');
+  assert.match(calls, /release upload v1\.0\.6/);
+  assert.match(calls, /release edit v1\.0\.6 .*--draft=false --prerelease=false --latest=false/);
+  assert.doesNotMatch(calls, /latest-v1|latest\.json|channel-v1/);
+  assert.ok(calls.indexOf('release upload') < calls.indexOf('release edit'));
+  assert.ok(calls.lastIndexOf('release download') > calls.indexOf('release edit'));
+  const stage = steps.find((step) => step.name === 'Sign and stage available assets').run;
+  assert.match(stage, /minisign -Vm/);
+  assert.match(stage, /sha256sum --check/);
+  assert.doesNotMatch(stage, /generate-tauri-latest-json/);
+
+  const mac = workflow.jobs['publish-macos'];
+  assert.equal(workflow.jobs.publish.if, "${{ inputs.macos_run_id == '' }}");
+  assert.equal(mac.if, "${{ inputs.macos_run_id != '' }}");
+  const macValidate = mac.steps.find((step) => step.name === 'Validate verified macOS producer').run;
+  const macPublish = mac.steps.find((step) => step.name === 'Publish ready macOS assets without changing update feeds').run;
+  const macEnv = { SOURCE_RUN: '', MACOS_RUN: '456', MACOS_PLATFORM: 'macos-arm64' };
+  const macJobs = { jobs: ['Prepare', 'Package (macos-arm64)'].map((name) => ({
+    name, conclusion: 'success', steps: [{ name: 'Verify Apple signature and notarization', conclusion: 'success' }],
+  })) };
+  const artifact = { name: 'openbitfun-v1.0.6-macos-arm64-bundle', expired: false };
+  function macFixtures(nextRun = run, nextJobs = macJobs, artifacts = [artifact]) {
+    fixtures(nextRun, nextJobs);
+    writeFileSync(path.join(root, 'artifacts.json'), JSON.stringify({ artifacts }));
+  }
+  macFixtures();
+  result = execute(macValidate, macEnv);
+  assert.equal(result.status, 0, result.stderr);
+  for (const nextJobs of [
+    { jobs: macJobs.jobs.filter((job) => job.name !== 'Prepare') },
+    { jobs: macJobs.jobs.map((job) => ({ ...job, conclusion: 'failure' })) },
+    { jobs: macJobs.jobs.map((job) => ({ ...job, steps: [{ name: 'Verify Apple signature and notarization', conclusion: 'skipped' }] })) },
+    { jobs: [{ name: 'Prepare', conclusion: 'success' }, { name: 'Package (macos-x64)', conclusion: 'success' }] },
+  ]) {
+    macFixtures(run, nextJobs);
+    assert.notEqual(execute(macValidate, macEnv).status, 0);
+  }
+  for (const artifacts of [[], [{ ...artifact, expired: true }], [artifact, artifact],
+    [{ ...artifact, name: 'openbitfun-v1.0.6-macos-arm64-verification-recovery' }]]) {
+    macFixtures(run, macJobs, artifacts);
+    assert.notEqual(execute(macValidate, macEnv).status, 0);
+  }
+  for (const nextRun of [
+    { ...run, repository: { full_name: 'untrusted/fork' } },
+    { ...run, head_repository: { full_name: 'untrusted/fork' } },
+    { ...run, path: '.github/workflows/ci.yml' },
+    { ...run, event: 'pull_request' }, { ...run, head_sha: 'invalid' },
+  ]) {
+    macFixtures(nextRun);
+    assert.notEqual(execute(macValidate, macEnv).status, 0);
+  }
+  macFixtures();
+  for (const overrides of [
+    { SOURCE_RUN: '123' }, { MACOS_RUN: '456;echo injected' },
+    { MACOS_PLATFORM: 'linux-x64' }, { REJECT_ANCESTRY: 'true' },
+  ]) {
+    const rejected = execute(macValidate, { ...macEnv, ...overrides });
+    assert.notEqual(rejected.status, 0, `${JSON.stringify(overrides)}\n${rejected.stderr}`);
+  }
+  const macStage = mac.steps.find((step) => step.name === 'Sign and verify ready macOS assets').run;
+  assert.match(macStage, /cmp release-assets\/minisign.pub existing-key\/minisign.pub/);
+  assert.match(macStage, /minisign -Vm/);
+  assert.doesNotMatch(macStage, /generate-tauri-latest-json/);
+  writeFileSync(path.join(root, 'state.json'), JSON.stringify({ draft: false, prerelease: false, assets: [{ name: 'latest-v1.json' }] }));
+  assert.notEqual(execute(macPublish, macEnv).status, 0);
+  writeFileSync(path.join(root, 'state.json'), JSON.stringify({ draft: false, prerelease: false, assets: [] }));
+  result = execute(macPublish, macEnv);
+  assert.equal(result.status, 0, result.stderr);
+  assert.doesNotMatch(macPublish, /release edit|--clobber.*upload|generate-tauri-latest-json/);
+  // Retrying publication must reuse the existing signature only for identical bytes.
+  writeFileSync(path.join(root, 'source.dmg'), 'verified dmg bytes');
+  writeFileSync(path.join(root, 'release-upload-assets/source.dmg'), 'verified dmg bytes');
+  writeFileSync(path.join(root, 'release-upload-assets/source.dmg.sig'), 'original signature');
+  writeFileSync(path.join(root, 'state.json'), JSON.stringify({ assets: [{ name: 'source.dmg.sig' }] }));
+  const reuseSignature = 'set -euo pipefail\ndmgs=("$FIXTURE/source.dmg")\n' + macStage.slice(
+    macStage.indexOf('name="$(basename'), macStage.indexOf('bash scripts/sign-release-assets.sh'),
+  );
+  result = execute(reuseSignature, macEnv);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(readFileSync(path.join(root, 'source.dmg.sig'), 'utf8'), 'original signature');
+  writeFileSync(path.join(root, 'source.dmg'), 'different dmg bytes');
+  assert.notEqual(execute(reuseSignature, macEnv).status, 0);
+});
+
+test('rejects setup-node node-version-file below the project baseline', (t) => {
+  const root = createRepo({
+    nodeVersionFile: { path: '.node-version', value: '20' },
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /node-version-file \.node-version resolves to 20/);
+  assert.match(result.stderr, /Node\.js 22\.12\.0 or newer/);
+});
+
+test('rejects removal or weakening of the ProductControl and Playbook gates', (t) => {
+  const root = createRepo({
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate interactive capability contract
+        continue-on-error: true
+        run: pnpm run capabilities:check
+`,
+  });
+  enableProductControlContract(root);
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /interactive capability gate must run exactly/u);
+  assert.match(result.stderr, /interactive capability gate must remain blocking/u);
+  assert.match(result.stderr, /ProductControl owner\/delivery-profile gate is missing/u);
+});
+
+test('rejects explicit setup-node node-version below the project baseline when node-version-file is valid', (t) => {
+  const root = createRepo({
+    nodeVersionFile: { path: '.node-version', value: '22' },
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          node-version-file: .node-version
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /node-version resolves to 20/);
+});
+
+test('accepts package.json node-version-file from engines.node', (t) => {
+  const root = createRepo({
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('accepts tool-versions node-version-file syntax', (t) => {
+  const root = createRepo({
+    nodeVersionFile: { path: '.tool-versions', value: 'nodejs 22.12.0' },
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('rejects floating setup-node minor below the project baseline', (t) => {
+  const root = createRepo({
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22.11.x"
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /node-version resolves to 22.11.x/);
+});
+
+test('accepts floating setup-node minor at the project baseline', (t) => {
+  const root = createRepo({
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22.12.x"
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('accepts explicit setup-node semver range at the project baseline', (t) => {
+  const root = createRepo({
+    workflow: `
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ">=22.12.0"
+`,
+  });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+
+  const result = runCheck(root);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /GitHub YAML config check passed/);
+});
+
+test('workflows leave CLI functional tests to local runs', () => {
+  const directory = path.join(repoRoot, '.github/workflows');
+  for (const file of readdirSync(directory).filter((name) => /\.ya?ml$/.test(name))) {
+    const workflow = yaml.parse(readFileSync(path.join(directory, file), 'utf8'));
+    for (const job of Object.values(workflow.jobs)) {
+      for (const step of job.steps ?? []) {
+        const command = (step.run ?? '').replaceAll('\\\n', ' ');
+        assert.doesNotMatch(command, /\bcargo (?:test|nextest run)\b[^\n]*\bopenbitfun-cli\b/, file);
+      }
+    }
+  }
+});
+
+test('keeps Rust CI independent, restore-only on PRs, and target-focused', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/ci.yml'), 'utf8'),
+  );
+  const rustJob = workflow.jobs['rust-build-check'];
+  const frontendJob = workflow.jobs['frontend-build'];
+  const trustedBase =
+    "${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') }}";
+
+  assert.equal(
+    rustJob.needs,
+    'build-impact',
+    'Rust validation must not wait for the frontend build',
+  );
+  assert.deepEqual(
+    rustJob.strategy.matrix.os,
+    ['ubuntu-latest', 'macos-15', 'windows-latest'],
+    'Rust validation must retain the reviewed Linux, Apple Silicon macOS, and Windows matrix',
+  );
+  assert.equal(
+    rustJob.steps.some((step) => step.uses?.startsWith('actions/download-artifact@')),
+    false,
+    'Rust validation must not download frontend artifacts',
+  );
+  assert.match(
+    rustJob.steps.find((step) => step.name === 'Create Tauri resource directories')
+      ?.run ?? '',
+    /mkdir -p dist src\/mobile-web\/dist/,
+  );
+  assert.equal(
+    frontendJob.steps.some(
+      (step) =>
+        step.uses?.startsWith('actions/upload-artifact@') &&
+        step.with?.name === 'frontend-dist',
+    ),
+    false,
+    'The frontend build must not upload an artifact with no consumer',
+  );
+
+  for (const jobName of ['runtime-test', 'rust-build-check']) {
+    const job = workflow.jobs[jobName];
+    const cache = job.steps.find((step) =>
+      step.uses?.startsWith('swatinem/rust-cache@'),
+    );
+    assert.equal(
+      job.steps.some((step) => step.run?.includes('cargo generate-lockfile')),
+      false,
+      `${jobName} must consume the committed Cargo.lock`,
+    );
+    assert.equal(cache?.with?.['save-if'], trustedBase);
+    assert.equal(cache?.with?.['cache-on-failure'], trustedBase);
+    assert.match(
+      cache?.with?.['shared-key'] ?? '',
+      /github\.base_ref \|\| github\.ref_name/,
+      `${jobName} must not mix main and explore build outputs`,
+    );
+    if (jobName === 'rust-build-check') {
+      assert.match(
+        cache?.with?.['shared-key'] ?? '',
+        /runner\.arch/,
+        'Rust validation caches must stay isolated by architecture',
+      );
+    }
+  }
+
+  const runtimeJob = workflow.jobs['runtime-test'];
+  assert.deepEqual(
+    runtimeJob.strategy.matrix.include.map((entry) => entry.os),
+    ['ubuntu-latest', 'macos-15'],
+  );
+  const runtimeSteps = runtimeJob.steps.filter((step) => step.run?.startsWith('cargo test'));
+  assert.deepEqual(
+    runtimeSteps.filter((step) => step.if === "runner.os == 'macOS'").map((step) => step.run),
+    ['cargo test --locked -p openbitfun-acp'],
+  );
+  assert.ok(runtimeSteps.every((step) => step['continue-on-error'] !== true));
+  const linuxCommands = runtimeSteps
+    .filter((step) => step.if === "runner.os == 'Linux'")
+    .map((step) => step.run);
+  assert.ok(linuxCommands.includes('cargo test --locked -p openbitfun-acp -p openbitfun-agent-runtime'));
+  assert.ok(linuxCommands.includes('cargo test --locked -p openbitfun-sdk-host -p openbitfun-sdk-host-app'));
+  assert.ok(linuxCommands.some((command) => command.startsWith('cargo test --locked -p terminal-core ')));
+
+  const rustCache = rustJob.steps.find((step) =>
+    step.uses?.startsWith('swatinem/rust-cache@'),
+  );
+  assert.equal(
+    rustCache?.with?.['cache-directories'],
+    undefined,
+    'Rust cache cleanup must not own native libraries stored under target',
+  );
+
+  const restoreSherpaCache = rustJob.steps.find(
+    (step) => step.name === 'Restore Sherpa native libraries',
+  );
+  const repairSherpaState = rustJob.steps.find(
+    (step) => step.name === 'Repair missing Sherpa native state',
+  );
+  const checkCompilation = rustJob.steps.find(
+    (step) => step.name === 'Check compilation',
+  );
+  const createTauriResources = rustJob.steps.find(
+    (step) => step.name === 'Create Tauri resource directories',
+  );
+  const saveSherpaCache = rustJob.steps.find(
+    (step) => step.name === 'Save Sherpa native libraries',
+  );
+  const sherpaCacheKey =
+    'sherpa-onnx-v2-${{ github.base_ref || github.ref_name }}-${{ runner.os }}-${{ runner.arch }}-1.13.4-static';
+
+  assert.equal(restoreSherpaCache?.uses, 'actions/cache/restore@v5');
+  assert.equal(restoreSherpaCache?.with?.path, 'target/sherpa-onnx-prebuilt');
+  assert.equal(restoreSherpaCache?.with?.key, sherpaCacheKey);
+  assert.match(
+    repairSherpaState?.run ?? '',
+    /rm -rf target\/sherpa-onnx-prebuilt/,
+  );
+  assert.match(repairSherpaState?.run ?? '', /cargo clean -p sherpa-onnx-sys/);
+  assert.equal(saveSherpaCache?.uses, 'actions/cache/save@v5');
+  assert.equal(saveSherpaCache?.with?.path, 'target/sherpa-onnx-prebuilt');
+  assert.equal(saveSherpaCache?.with?.key, sherpaCacheKey);
+  assert.match(
+    createTauriResources?.run ?? '',
+    /src\/apps\/extension-host\/dist\/extension-host\.js/,
+    'clean Rust checks must provide the generated extension Host resource path without building the Host',
+  );
+  assert.ok(
+    rustJob.steps.indexOf(createTauriResources) <
+      rustJob.steps.indexOf(checkCompilation),
+    'Tauri resource placeholders must exist before cargo check',
+  );
+  assert.equal(
+    saveSherpaCache?.if,
+    "github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/1.0.0-explore') && steps.sherpa-native-cache.outputs.cache-hit != 'true'",
+  );
+  assert.ok(
+    rustJob.steps.indexOf(restoreSherpaCache) <
+      rustJob.steps.indexOf(checkCompilation),
+    'Sherpa native libraries must be restored before cargo check',
+  );
+  assert.ok(
+    rustJob.steps.indexOf(checkCompilation) <
+      rustJob.steps.indexOf(saveSherpaCache),
+    'Sherpa native libraries must be saved before rust-cache post cleanup',
+  );
+
+  const commandByStep = new Map(
+    rustJob.steps.map((step) => [step.name, step.run]),
+  );
+  const verifyMetadata = rustJob.steps.find(
+    (step) => step.name === 'Verify committed Cargo metadata',
+  );
+  assert.equal(verifyMetadata?.run, 'cargo metadata --locked --no-deps');
+  assert.ok(
+    rustJob.steps.indexOf(verifyMetadata) < rustJob.steps.indexOf(checkCompilation),
+    'CI must validate the committed Cargo.lock before the workspace check',
+  );
+  assert.equal(
+    commandByStep.get('Run subscription authentication tests'),
+    'cargo test --locked -p openbitfun-ai-adapters --features subscription-auth --lib subscription_auth',
+  );
+  const installerCheck = rustJob.steps.find(
+    (step) => step.name === 'Check installer compilation',
+  );
+  assert.equal(installerCheck?.if, "runner.os == 'Windows'");
+  assert.equal(
+    installerCheck?.run,
+    'cargo check --manifest-path OpenBitFun-Installer/src-tauri/Cargo.toml',
+  );
+  const coreLibraryTests = rustJob.steps.find(
+    (step) => step.name === 'Run core library tests',
+  );
+  const linuxFullCoreLibraryTests = rustJob.steps.find(
+    (step) => step.name === 'Run full core library tests on Linux',
+  );
+  const linuxCoreCommand = 'node scripts/ci/rust-stack-diagnostics.mjs --output "${{ runner.temp }}/rust-stack-diagnostics" -- --locked -p openbitfun-core --features product-full --lib';
+  const otherCoreCommand = 'node scripts/ci/rust-stack-diagnostics.mjs --output "${{ runner.temp }}/rust-stack-diagnostics" -- --locked -p openbitfun-core --lib';
+  const coreLibraryTestSteps = rustJob.steps.filter(
+    (step) => /^(?:cargo test|node scripts\/ci\/rust-stack-diagnostics\.mjs .* --) --locked -p openbitfun-core\b.*\s--lib$/.test(step.run ?? ''),
+  );
+  const desktopLibraryTests = rustJob.steps.find(
+    (step) => step.name === 'Run desktop library tests',
+  );
+  const windowsDesktopProbe = rustJob.steps.find(
+    (step) => step.name === 'Probe Windows desktop library tests',
+  );
+  const productControlContracts = rustJob.steps.find(
+    (step) => step.name === 'Run product-control domain and delivery-profile contracts',
+  );
+  assert.equal(
+    coreLibraryTests?.if,
+    "runner.os != 'Linux'",
+  );
+  assert.equal(
+    coreLibraryTests?.run,
+    otherCoreCommand,
+  );
+  assert.equal(
+    linuxFullCoreLibraryTests?.if,
+    "runner.os == 'Linux'",
+  );
+  assert.equal(
+    linuxFullCoreLibraryTests?.run,
+    linuxCoreCommand,
+  );
+  assert.equal(coreLibraryTests?.id, 'core-library-tests');
+  assert.equal(coreLibraryTests?.['continue-on-error'], undefined);
+  assert.equal(linuxFullCoreLibraryTests?.id, 'full-core-library-tests');
+  assert.equal(linuxFullCoreLibraryTests?.['continue-on-error'], undefined);
+  const stackArtifact = rustJob.steps.find((step) => step.name === 'Upload Rust stack diagnostics');
+  assert.equal(stackArtifact?.if, "${{ failure() && (steps.core-library-tests.outputs.stack_overflow == 'true' || steps.full-core-library-tests.outputs.stack_overflow == 'true') }}");
+  assert.equal(stackArtifact?.uses, 'actions/upload-artifact@v6');
+  assert.equal(stackArtifact?.with?.path, '${{ runner.temp }}/rust-stack-diagnostics');
+  assert.equal(stackArtifact?.with?.['retention-days'], 7);
+  assert.equal(stackArtifact?.with?.name, 'rust-stack-diagnostics-${{ runner.os }}');
+  assert.equal(rustJob.steps.find(
+    (step) => step.name === 'Verify Rust stack diagnostic contracts',
+  )?.run, 'node --test scripts/ci/rust-stack-diagnostics.test.mjs');
+  assert.deepEqual(
+    coreLibraryTestSteps.map((step) => ({ if: step.if, run: step.run })),
+    [
+      {
+        if: "runner.os != 'Linux'",
+        run: otherCoreCommand,
+      },
+      {
+        if: "runner.os == 'Linux'",
+        run: linuxCoreCommand,
+      },
+    ],
+    'Core library validation must contain exactly the reviewed complementary steps',
+  );
+  assert.equal(desktopLibraryTests?.if, "runner.os != 'Windows'");
+  assert.equal(
+    desktopLibraryTests?.run,
+    'cargo test --locked -p openbitfun-desktop --lib',
+  );
+  assert.equal(windowsDesktopProbe?.if, "runner.os == 'Windows'");
+  assert.equal(windowsDesktopProbe?.shell, 'pwsh');
+  assert.match(
+    windowsDesktopProbe?.run ?? '',
+    /cargo test --locked -p openbitfun-desktop --lib 2>&1/,
+  );
+  assert.match(windowsDesktopProbe?.run ?? '', /0xc0000139/);
+  assert.match(windowsDesktopProbe?.run ?? '', /STATUS_ENTRYPOINT_NOT_FOUND/);
+  assert.match(windowsDesktopProbe?.run ?? '', /test result: FAILED/);
+  assert.match(windowsDesktopProbe?.run ?? '', /exit \$testExitCode/);
+  assert.equal(
+    productControlContracts?.if,
+    undefined,
+    'product-control contracts must run on every supported CI OS',
+  );
+  assert.match(
+    productControlContracts?.run ?? '',
+    /openbitfun-product-domains --no-default-features product_control/,
+  );
+  assert.match(
+    productControlContracts?.run ?? '',
+    /openbitfun-product-capabilities every_agent_runtime_delivery_profile_includes_product_control_discovery/,
+  );
+  const fileWatchContracts = rustJob.steps.find(
+    (step) => step.name === 'Run file watch contract tests',
+  );
+  assert.equal(
+    fileWatchContracts?.run,
+    'cargo test --locked -p openbitfun-services-integrations --no-default-features --features file-watch --test file_watch_contracts',
+  );
+  assert.equal(
+    fileWatchContracts?.if,
+    undefined,
+    'file-watch contracts must exercise FSEvents on macOS',
+  );
+  assert.equal(
+    commandByStep.get('Run search tool tests'),
+    'cargo test --locked -p tool-runtime --lib search::',
+  );
+});
+
+test('gates fast checks and PR packaging behind one fail-closed build decision', (t) => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/ci.yml'), 'utf8'),
+  );
+  for (const eventName of ['pull_request', 'push']) {
+    assert.deepEqual(
+      workflow.on[eventName]?.['paths-ignore'],
+      ['png/**'],
+      'nested Markdown may be a Rust compile-time input and must trigger classification',
+    );
+  }
+  const impactJob = workflow.jobs['build-impact'];
+  const runtimeJob = workflow.jobs['runtime-test'];
+  const rustJob = workflow.jobs['rust-build-check'];
+  const buildJob = workflow.jobs['package-impact-contract'];
+  const resultJob = workflow.jobs['rust-validation-result'];
+  const frontendJob = workflow.jobs['frontend-build'];
+
+  assert.equal(
+    frontendJob.steps.find((step) => step.name === 'Test core boundary contracts')?.run,
+    'pnpm run check:core-boundaries:test',
+  );
+  assert.equal(
+    frontendJob.steps.find((step) => step.name === 'Check core boundaries')?.run,
+    'pnpm run check:core-boundaries',
+  );
+  assert.equal(frontendJob.needs, 'build-impact');
+  const frontendNode = frontendJob.steps.find((step) =>
+    step.uses?.startsWith('actions/setup-node@'));
+  assert.equal(frontendNode?.with?.cache, undefined);
+  assert.equal(frontendNode?.with?.['package-manager-cache'], false);
+  const frontendGate = "needs.build-impact.outputs.frontend_required != 'false'";
+  for (const stepName of [
+    'Verify committed release metadata',
+    'Build plugin Host resources',
+    'Generate web API bindings',
+    'Build web UI',
+    'Build mobile web',
+    'Project a Nightly version',
+    'Verify projected release metadata',
+  ]) {
+    assert.equal(
+      frontendJob.steps.find((step) => step.name === stepName)?.if,
+      frontendGate,
+      `${stepName} must run for code changes and skip documentation-only changes`,
+    );
+  }
+  for (const stepName of [
+    'Verify Installer i18n projection',
+    'Verify Installer Tauri package alignment',
+  ]) {
+    assert.equal(
+      frontendJob.steps.find((step) => step.name === stepName),
+      undefined,
+      `${stepName} belongs to Nightly, not pull-request CI`,
+    );
+  }
+  const releaseMetadata = 'cargo metadata --locked --no-deps';
+  assert.equal(
+    frontendJob.steps.find((step) => step.name === 'Verify committed release metadata')?.run,
+    releaseMetadata,
+  );
+  assert.equal(
+    frontendJob.steps.find((step) => step.name === 'Verify projected release metadata')?.run,
+    releaseMetadata,
+  );
+
+  assert.equal(impactJob.name, 'Build Impact');
+  assert.equal(impactJob['timeout-minutes'], 5);
+  assert.equal(
+    impactJob.outputs.rust_required,
+    '${{ steps.classify.outputs.rust_required }}',
+  );
+  assert.equal(
+    impactJob.outputs.desktop_platforms,
+    '${{ steps.classify.outputs.desktop_platforms }}',
+  );
+  assert.equal(
+    impactJob.outputs.desktop_packages_impacted,
+    '${{ steps.classify.outputs.desktop_packages_impacted }}',
+  );
+  assert.equal(
+    impactJob.outputs.pr_producer_required,
+    '${{ steps.classify.outputs.pr_producer_required }}',
+  );
+  assert.equal(
+    impactJob.outputs.relay_image_required,
+    '${{ steps.classify.outputs.relay_image_required }}',
+  );
+  assert.equal(
+    impactJob.outputs.dsh_profile_required,
+    '${{ steps.classify.outputs.dsh_profile_required }}',
+  );
+  const checkout = impactJob.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
+  assert.equal(checkout?.with?.['fetch-depth'], 0);
+  const classify = impactJob.steps.find((step) => step.id === 'classify');
+  assert.match(classify?.run ?? '', /scripts\/ci\/classify-build-impact\.mjs/);
+  assert.equal(
+    classify?.env?.BASE_SHA,
+    '${{ github.event.pull_request.base.sha || github.event.before }}',
+  );
+  assert.equal(
+    classify?.env?.HEAD_SHA,
+    '${{ github.event.pull_request.head.sha || github.sha }}',
+  );
+  assert.equal(
+    classify?.env?.RANGE_MODE,
+    "${{ github.event_name == 'pull_request' && 'merge-base' || 'direct' }}",
+  );
+  assert.match(classify?.run ?? '', /--range-mode "\$RANGE_MODE"/);
+
+  for (const job of [runtimeJob, rustJob]) {
+    assert.equal(job.needs, 'build-impact');
+    assert.match(job.if, /!cancelled\(\)/);
+    assert.doesNotMatch(job.if, /always\(\)/);
+    assert.match(job.if, /rust_required != 'false'/);
+  }
+
+  assert.equal(buildJob.name, 'Impact-selected Linux / Relay Contract');
+  assert.equal(buildJob.needs, 'build-impact');
+  assert.equal(buildJob.uses, './.github/workflows/linux-binaries.yml');
+  assert.match(buildJob.if, /github\.event_name == 'pull_request'/);
+  assert.match(buildJob.if, /pr_producer_required == 'true'/);
+  assert.deepEqual(buildJob.permissions, { contents: 'read' });
+  assert.deepEqual(buildJob.with, {
+    checkout_ref: '${{ github.sha }}',
+    version: '1.0.0-nightly.ci.${{ github.run_id }}',
+    artifact_prefix: 'ci-${{ github.run_id }}',
+    artifact_retention_days: 1,
+    validate_relay_image:
+      "${{ needs.build-impact.outputs.relay_image_required == 'true' }}",
+    upload_artifacts: false,
+    cache_write: false,
+  });
+
+  assert.equal(resultJob.name, 'Rust / CLI Validation');
+  assert.equal(resultJob.if, '${{ always() }}');
+  assert.deepEqual(
+    [...resultJob.needs].sort(),
+    ['build-impact', 'package-impact-contract', 'runtime-test', 'rust-build-check'],
+  );
+  const verify = resultJob.steps.find((step) => step.name === 'Verify Rust build and runtime test results');
+  assert.equal(verify?.env?.RUST_REQUIRED, '${{ needs.build-impact.outputs.rust_required }}');
+  assert.equal(
+    verify?.env?.PR_PRODUCER_REQUIRED,
+    '${{ needs.build-impact.outputs.pr_producer_required }}',
+  );
+  assert.equal(verify?.env?.EVENT_NAME, '${{ github.event_name }}');
+  assert.equal(verify?.env?.IMPACT_RESULT, '${{ needs.build-impact.result }}');
+  assert.equal(verify?.env?.RUNTIME_RESULT, '${{ needs.runtime-test.result }}');
+  assert.equal(verify?.env?.RUST_RESULT, '${{ needs.rust-build-check.result }}');
+  assert.equal(
+    verify?.env?.BUILD_RESULT,
+    '${{ needs.package-impact-contract.result }}',
+  );
+  assert.equal(verify?.shell, 'pwsh');
+  assert.match(verify?.run ?? '', /successful impact-selected producer jobs/i);
+  assert.match(verify?.run ?? '', /successful Rust build and runtime jobs/i);
+
+  const dshJob = workflow.jobs['dsh-profile-windows'];
+  assert.equal(dshJob.needs, 'build-impact');
+  assert.match(dshJob.if, /dsh_profile_required == 'true'/);
+
+  const statuses = ['success', 'skipped', 'failure', 'cancelled'];
+  const cases = [];
+  for (const impactResult of statuses.filter((status) => status !== 'success')) {
+    cases.push({
+      rustRequired: 'true',
+      producerRequired: 'true',
+      eventName: 'pull_request',
+      impactResult,
+      runtimeResult: 'success',
+      rustResult: 'success',
+      buildResult: 'success',
+      expectedSuccess: false,
+    });
+  }
+  for (const rustRequired of ['false', 'true']) {
+    for (const producerRequired of ['false', 'true']) {
+      for (const eventName of ['pull_request', 'push']) {
+        for (const runtimeResult of statuses) {
+          for (const rustResult of statuses) {
+            for (const buildResult of statuses) {
+              const packageExpected = eventName === 'pull_request'
+                && producerRequired === 'true';
+              cases.push({
+                rustRequired,
+                producerRequired,
+                eventName,
+                impactResult: 'success',
+                runtimeResult,
+                rustResult,
+                buildResult,
+                expectedSuccess: (packageExpected
+                  ? buildResult === 'success'
+                  : buildResult === 'skipped') && (rustRequired === 'false'
+                  ? runtimeResult === 'skipped' && rustResult === 'skipped'
+                  : runtimeResult === 'success' && rustResult === 'success'),
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+  cases.push({
+    rustRequired: '',
+    producerRequired: 'false',
+    eventName: 'push',
+    impactResult: 'success',
+    runtimeResult: 'skipped',
+    rustResult: 'skipped',
+    buildResult: 'success',
+    expectedSuccess: false,
+  });
+  const truthTable = spawnSync(
+    'pwsh',
+    [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      `$cases = ConvertFrom-Json ([Console]::In.ReadToEnd())
+$verify = {
+${verify.run}
+}
+foreach ($case in $cases) {
+  $env:RUST_REQUIRED = [string]$case.rustRequired
+  $env:PR_PRODUCER_REQUIRED = [string]$case.producerRequired
+  $env:EVENT_NAME = [string]$case.eventName
+  $env:IMPACT_RESULT = [string]$case.impactResult
+  $env:RUNTIME_RESULT = [string]$case.runtimeResult
+  $env:RUST_RESULT = [string]$case.rustResult
+  $env:BUILD_RESULT = [string]$case.buildResult
+  $succeeded = $true
+  try { & $verify } catch { $succeeded = $false }
+  if ($succeeded -ne [bool]$case.expectedSuccess) {
+    throw "Unexpected result: $($case | ConvertTo-Json -Compress) succeeded=$succeeded"
+  }
+}`,
+    ],
+    {
+      cwd: repoRoot,
+      env: process.env,
+      encoding: 'utf8',
+      input: JSON.stringify(cases),
+    },
+  );
+  if (truthTable.error?.code === 'ENOENT') {
+    t.skip('pwsh is not installed; GitHub-hosted runners execute this truth table');
+    return;
+  }
+  assert.equal(truthTable.status, 0, `${truthTable.stdout}${truthTable.stderr}`);
+});
+
+test('nightly validates generated inputs and projected lockfiles before packaging', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/nightly-artifacts.yml'),
+      'utf8',
+    ),
+  );
+  const callInputs = workflow.on.workflow_call.inputs;
+  const packageJob = workflow.jobs.package;
+  const linuxJob = workflow.jobs['linux-binaries'];
+  const steps = packageJob.steps;
+  const committedMetadataIndex = steps.findIndex(
+    (step) => step.name === 'Verify committed Cargo metadata',
+  );
+  const generationIndex = steps.findIndex(
+    (step) => step.name === 'Generate web API bindings',
+  );
+  const typeCheckIndex = steps.findIndex(
+    (step) => step.name === 'Type-check web UI',
+  );
+  const patchIndex = steps.findIndex(
+    (step) => step.name === 'Patch nightly version',
+  );
+  const tauriAlignmentIndex = steps.findIndex(
+    (step) => step.name === 'Verify Installer Tauri package alignment',
+  );
+  const installerI18nIndex = steps.findIndex(
+    (step) => step.name === 'Verify Installer i18n projection',
+  );
+  const metadataIndex = steps.findIndex(
+    (step) => step.name === 'Verify projected Cargo metadata',
+  );
+  const buildIndex = steps.findIndex(
+    (step) => step.name === 'Build desktop app',
+  );
+
+  assert.equal(callInputs.checkout_ref.required, true);
+  assert.equal(callInputs.version.required, true);
+  assert.equal(callInputs.artifact_prefix.required, true);
+  assert.equal(callInputs.artifact_retention_days.default, 1);
+  assert.equal(callInputs.build_desktop_packages.default, true);
+  assert.equal(callInputs.build_linux_binaries.default, true);
+  assert.equal(callInputs.build_relay_image.default, true);
+  assert.equal(callInputs.upload_artifacts.default, true);
+  assert.equal(callInputs.cache_write.default, false);
+  assert.equal(
+    callInputs.desktop_platforms.default,
+    '["linux-x64","linux-arm64","macos-arm64","macos-x64","windows-x64"]',
+  );
+  assert.equal(workflow.permissions.contents, 'read');
+  assert.equal(
+    linuxJob.if,
+    '${{ inputs.build_linux_binaries || inputs.build_relay_image }}',
+  );
+  assert.equal(
+    linuxJob.with.validate_relay_image,
+    '${{ inputs.build_relay_image }}',
+  );
+
+  const node = steps.find((step) => step.name === 'Setup Node.js');
+  assert.equal(node?.with?.cache, undefined);
+  assert.equal(node?.with?.['package-manager-cache'], false);
+  const rustCache = steps.find((step) =>
+    step.uses?.startsWith('swatinem/rust-cache@'));
+  const restoreOnlyOnPr =
+    "${{ inputs.cache_write && github.event_name != 'pull_request' }}";
+  assert.equal(rustCache?.with?.['save-if'], restoreOnlyOnPr);
+  assert.equal(rustCache?.with?.['cache-on-failure'], restoreOnlyOnPr);
+  const upload = steps.find((step) => step.uses?.startsWith('actions/upload-artifact@'));
+  const verifyOutputs = steps.find((step) => step.name === 'Verify package outputs');
+  assert.match(verifyOutputs?.run ?? '', /openbitfun-installer\.exe/);
+  assert.match(verifyOutputs?.run ?? '', /\*\.AppImage/);
+  assert.ok(steps.indexOf(verifyOutputs) < steps.indexOf(upload));
+  assert.equal(upload?.if, '${{ inputs.upload_artifacts }}');
+
+  assert.notEqual(committedMetadataIndex, -1);
+  assert.notEqual(installerI18nIndex, -1);
+  assert.notEqual(tauriAlignmentIndex, -1);
+  assert.notEqual(generationIndex, -1);
+  assert.notEqual(typeCheckIndex, -1);
+  assert.equal(
+    steps[generationIndex].run,
+    'pnpm --dir src/web-ui run gen:types',
+  );
+  assert.ok(
+    generationIndex < typeCheckIndex,
+    'nightly must generate web API bindings before type-checking the web UI',
+  );
+  assert.ok(
+    committedMetadataIndex < patchIndex &&
+      installerI18nIndex < patchIndex &&
+      tauriAlignmentIndex < patchIndex &&
+      typeCheckIndex < patchIndex &&
+      patchIndex < metadataIndex &&
+      metadataIndex < buildIndex,
+    'nightly must verify the projected lockfile before nested locked build hooks run',
+  );
+  const expectedMetadata = 'cargo metadata --locked --no-deps';
+  assert.equal(steps[committedMetadataIndex].run, expectedMetadata);
+  assert.equal(steps[metadataIndex].run, expectedMetadata);
+  assert.equal(steps[installerI18nIndex].if, "runner.os == 'Windows'");
+  assert.equal(
+    steps[installerI18nIndex].run,
+    'pnpm --dir OpenBitFun-Installer run sync:i18n',
+  );
+  assert.equal(steps[tauriAlignmentIndex].if, "runner.os == 'Windows'");
+  assert.match(
+    steps[tauriAlignmentIndex].run,
+    /Found version mismatched Tauri packages/,
+  );
+  assert.equal(
+    steps.some((step) => step.run?.includes('cargo generate-lockfile')),
+    false,
+    'nightly must not hide stale committed lockfiles by regenerating them ad hoc',
+  );
+});
+
+test('nightly orchestrates the shared build before the separately privileged publish', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/nightly.yml'), 'utf8'),
+  );
+  const build = workflow.jobs['build-artifacts'];
+  const publish = workflow.jobs['publish-nightly'];
+
+  assert.equal(workflow.on.workflow_call, undefined);
+  assert.deepEqual(workflow.concurrency, {
+    group: 'nightly-${{ github.repository }}',
+    'cancel-in-progress': true,
+  });
+  assert.equal(build.uses, './.github/workflows/nightly-artifacts.yml');
+  assert.deepEqual(build.permissions, { contents: 'read' });
+  assert.deepEqual(build.with, {
+    checkout_ref: '${{ github.sha }}',
+    version: '${{ needs.check-changes.outputs.nightly_version }}',
+    artifact_prefix: 'nightly',
+    artifact_retention_days:
+      "${{ fromJSON(inputs.artifact_retention_days || '7') }}",
+    build_desktop_packages: true,
+    desktop_platforms:
+      '["linux-x64","linux-arm64","macos-arm64","macos-x64","windows-x64"]',
+    build_linux_binaries: true,
+    build_relay_image: true,
+    upload_artifacts: true,
+    cache_write: "${{ github.repository_id == '1147866277' }}",
+  });
+  assert.deepEqual(publish.needs, ['check-changes', 'build-artifacts']);
+  assert.match(publish.if, /inputs\.build_only != true/);
+  assert.deepEqual(publish.permissions, {
+    contents: 'write',
+    packages: 'write',
+  });
+});
+
+test('Linux binary packaging uses the shared locked version projection contract', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/linux-binaries.yml'), 'utf8'),
+  );
+  const inputs = workflow.on.workflow_call.inputs;
+  const steps = workflow.jobs.build.steps;
+  const nodeSteps = steps.filter(
+    (step) => step.name === 'Setup Node.js',
+  );
+  const nodeIndex = steps.findIndex(
+    (step) => step.name === 'Setup Node.js',
+  );
+  const committedIndex = steps.findIndex(
+    (step) => step.name === 'Verify committed Cargo metadata',
+  );
+  const patchIndex = steps.findIndex(
+    (step) => step.name === 'Patch build version',
+  );
+  const projectedIndex = steps.findIndex(
+    (step) => step.name === 'Verify projected Cargo metadata',
+  );
+  const buildIndex = steps.findIndex(
+    (step) => step.name === 'Build CLI and Relay Server',
+  );
+
+  assert.equal(inputs.artifact_retention_days.default, 7);
+  assert.equal(inputs.upload_artifacts.default, true);
+  assert.equal(inputs.cache_write.default, false);
+  assert.equal(inputs.validate_relay_image.default, true);
+  assert.equal(nodeSteps.length, 1);
+  assert.equal(steps[nodeIndex].uses, 'actions/setup-node@v5');
+  assert.equal(steps[nodeIndex].with['node-version-file'], 'package.json');
+  assert.ok(
+    nodeIndex < patchIndex &&
+      committedIndex < patchIndex &&
+      patchIndex < projectedIndex &&
+      projectedIndex < buildIndex,
+  );
+  assert.match(steps[patchIndex].run, /node scripts\/set-build-version\.mjs/);
+  assert.doesNotMatch(steps[patchIndex].run, /sed -i/);
+  assert.equal(steps[committedIndex].run, 'cargo metadata --locked --no-deps');
+  assert.equal(steps[projectedIndex].run, 'cargo metadata --locked --no-deps');
+  assert.match(steps[buildIndex].run, /cargo build --locked --release/);
+  const rustCache = steps.find((step) =>
+    step.uses?.startsWith('swatinem/rust-cache@'));
+  const restoreOnlyOnPr =
+    "${{ inputs.cache_write && github.event_name != 'pull_request' }}";
+  assert.equal(rustCache?.with?.['save-if'], restoreOnlyOnPr);
+  assert.equal(rustCache?.with?.['cache-on-failure'], restoreOnlyOnPr);
+  const upload = steps.find((step) => step.uses?.startsWith('actions/upload-artifact@'));
+  const verifyOutputs = steps.find((step) => step.name === 'Verify Linux binary outputs');
+  const validateImage = steps.find((step) => step.name === 'Validate Relay runtime image');
+  assert.match(verifyOutputs?.run ?? '', /sha256sum --check/);
+  assert.ok(steps.indexOf(verifyOutputs) < steps.indexOf(upload));
+  assert.equal(validateImage?.if, '${{ inputs.validate_relay_image }}');
+  assert.equal(validateImage?.with?.push, false);
+  assert.equal(validateImage?.with?.platforms, 'linux/${{ matrix.platform.docker_arch }}');
+  assert.equal(upload?.if, '${{ inputs.upload_artifacts }}');
+  assert.equal(
+    upload?.with?.['retention-days'],
+    '${{ inputs.artifact_retention_days }}',
+  );
+});
+
+test('PR-capable release builds cannot save repository caches or upload CI packages', () => {
+  const ci = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/ci.yml'), 'utf8'),
+  );
+  const artifacts = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/nightly-artifacts.yml'), 'utf8'),
+  );
+  const linux = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/linux-binaries.yml'), 'utf8'),
+  );
+
+  for (const workflow of [artifacts, linux]) {
+    for (const job of Object.values(workflow.jobs)) {
+      for (const cache of (job.steps ?? []).filter((step) =>
+        step.uses?.startsWith('swatinem/rust-cache@'))) {
+        assert.match(cache.with['save-if'], /github\.event_name != 'pull_request'/);
+        assert.match(cache.with['cache-on-failure'], /github\.event_name != 'pull_request'/);
+        assert.match(cache.with['shared-key'], /github\.base_ref \|\| github\.ref_name/);
+      }
+    }
+  }
+
+  for (const workflow of [ci, artifacts, linux]) {
+    for (const job of Object.values(workflow.jobs)) {
+      for (const bun of (job.steps ?? []).filter((step) =>
+        step.uses?.startsWith('oven-sh/setup-bun@'))) {
+        assert.equal(bun.with?.['no-cache'], true);
+      }
+    }
+  }
+
+  const packageCaller = ci.jobs['package-impact-contract'];
+  assert.equal(packageCaller.with.cache_write, false);
+  assert.equal(packageCaller.with.upload_artifacts, false);
+  const node = artifacts.jobs.package.steps.find(
+    (step) => step.name === 'Setup Node.js',
+  );
+  assert.equal(node.with.cache, undefined);
+  assert.equal(node.with['package-manager-cache'], false);
+});
+
+test('Bun executable caches isolate versions, platforms, architectures, and AVX2 requirements', () => {
+  const targets = [
+    ['linux', 'x64', 'flags: avx2', 'linux-x64', '/home/runner/.bun/bin/bun'],
+    ['linux', 'x64', 'flags: sse2', 'linux-x64-baseline', '/home/runner/.bun/bin/bun'],
+    ['linux', 'arm64', '', 'linux-aarch64', '/home/runner/.bun/bin/bun'],
+    ['darwin', 'x64', '', 'darwin-x64', '/home/runner/.bun/bin/bun'],
+    ['darwin', 'arm64', '', 'darwin-aarch64', '/home/runner/.bun/bin/bun'],
+    ['win32', 'x64', '', 'windows-x64', 'C:\\Users\\runner\\.bun\\bin\\bun.exe'],
+    ['win32', 'arm64', '', 'windows-aarch64', 'C:\\Users\\runner\\.bun\\bin\\bun.exe'],
+  ];
+  const keys = new Set();
+  for (const [platform, arch, cpuInfo, artifact, executable] of targets) {
+    const options = {
+      version: '1.3.14', platform, arch, cpuInfo,
+      home: platform === 'win32' ? 'C:\\Users\\runner' : '/home/runner',
+    };
+    const target = bunCacheTarget(options);
+    assert.equal(target.key, `bun-executable-v1-1.3.14-${artifact}`);
+    assert.equal(target.path, executable, 'cache only the executable, not credentials or dependencies');
+    assert.notEqual(target.key, bunCacheTarget({ ...options, version: '1.3.15' }).key);
+    keys.add(target.key);
+  }
+  assert.equal(keys.size, targets.length);
+  assert.equal(bunCacheTarget({
+    version: '1.3.14', platform: 'linux', arch: 'x64', home: '/home/runner',
+  }).key, 'bun-executable-v1-1.3.14-linux-x64-baseline', 'unknown CPU capabilities use the baseline');
+  for (const version of ['latest', 'canary', '1.3.x', '1.3.14\npath=other']) {
+    assert.throws(() => bunCacheTarget({ version }), /pinned release/);
+  }
+  assert.throws(() => bunCacheTarget({
+    version: '1.3.14', platform: 'linux', arch: 'ia32',
+  }), /Unsupported Bun cache target/);
+});
+
+test('Bun cache target CLI appends GitHub outputs without installing or downloading Bun', (t) => {
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-bun-cache-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const outputPath = path.join(root, 'outputs');
+  writeFileSync(outputPath, 'previous=value\n');
+  const result = spawnSync(process.execPath, ['scripts/ci/bun-cache-target.mjs', '1.3.14'], {
+    cwd: repoRoot,
+    env: { ...process.env, GITHUB_OUTPUT: outputPath },
+    encoding: 'utf8',
+    windowsHide: true,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const outputs = Object.fromEntries(readFileSync(outputPath, 'utf8').trim().split('\n')
+    .map((line) => [line.slice(0, line.indexOf('=')), line.slice(line.indexOf('=') + 1)]));
+  assert.equal(outputs.previous, 'value');
+  assert.match(outputs.key, /^bun-executable-v1-1\.3\.14-/);
+  assert.ok(path.isAbsolute(outputs.path));
+  assert.equal(path.basename(outputs.path), process.platform === 'win32' ? 'bun.exe' : 'bun');
+});
+
+test('Bun caches restore before setup and save only on a permitted cache miss', () => {
+  const cases = [
+    ['ci.yml', 'frontend-build', 'main'],
+    ['nightly-artifacts.yml', 'package', 'caller'],
+    ['linux-binaries.yml', 'build', 'caller'],
+    ['desktop-package.yml', 'package', 'release'],
+  ];
+  for (const [file, jobId, policy] of cases) {
+    const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows', file), 'utf8'));
+    const steps = workflow.jobs[jobId].steps;
+    const target = steps.find((step) => step.id === 'bun-cache-target');
+    const restore = steps.find((step) => step.id === 'bun-executable-cache');
+    const setup = steps.find((step) => step.uses === 'oven-sh/setup-bun@v2');
+    const save = steps.find((step) => step.name === 'Save Bun executable');
+    const node = steps.find((step) => step.uses?.startsWith('actions/setup-node@'));
+    assert.ok(target.run.includes(`node scripts/ci/bun-cache-target.mjs ${setup.with['bun-version']}`));
+    assert.equal(restore.uses, 'actions/cache/restore@v5');
+    assert.equal(restore.with.path, '${{ steps.bun-cache-target.outputs.path }}');
+    assert.equal(restore.with.key, '${{ steps.bun-cache-target.outputs.key }}');
+    assert.equal(restore.with['restore-keys'], undefined, 'never restore another version or CPU variant');
+    assert.equal(restore.with['fail-on-cache-miss'], undefined, 'a cold cache must proceed to setup');
+    assert.equal(setup.with['no-cache'], true, 'setup-bun must not save implicitly');
+    assert.equal(setup.if, target.if);
+    if (policy === 'main') assert.equal(setup.if, restore.if);
+    else assert.equal(restore.if, "steps.bun-cache-target.outputs.key != ''");
+    assert.equal(save.uses, 'actions/cache/save@v5');
+    assert.deepEqual(save.with, restore.with);
+    for (const [before, after] of [[node, target], [target, restore], [restore, setup], [setup, save]]) {
+      assert.ok(steps.indexOf(before) < steps.indexOf(after), `${file}: cache/setup ordering`);
+    }
+    const build = steps.find((step) => step.name === 'Build plugin Host resources' || step.name === 'Build desktop app');
+    assert.ok(steps.indexOf(save) < steps.indexOf(build), 'save the installed tool before repository build commands use it');
+
+    // Evaluate the actual workflow condition, including a PR caller trying to
+    // opt into writes and the cold-cache empty-string output from restore.
+    const expression = save.if
+      .replaceAll('steps.bun-cache-target.outputs.key', 'cacheKey')
+      .replaceAll('steps.bun-executable-cache.outputs.cache-hit', 'cacheHit')
+      .replaceAll('needs.build-impact.outputs.frontend_required', 'frontendRequired');
+    const allows = (event, { ref = 'refs/heads/main', write = true, hit = '', frontend = 'true', key = 'bun-key' } = {}) =>
+      runInNewContext(expression, {
+        github: { event_name: event, ref }, inputs: { cache_write: write },
+        cacheHit: hit, frontendRequired: frontend, cacheKey: key,
+      });
+    for (const event of ['pull_request', 'pull_request_target']) {
+      assert.equal(allows(event), false, `${file}: PRs cannot save, even if cache_write is true`);
+    }
+    const writerEvent = policy === 'release' ? 'release' : 'push';
+    assert.equal(allows(writerEvent), true, `${file}: permitted builds fill a cold cache`);
+    assert.equal(allows(writerEvent, { hit: 'false' }), true);
+    assert.equal(allows(writerEvent, { hit: 'true' }), false, `${file}: exact hits are not re-uploaded`);
+    if (policy === 'caller') assert.equal(allows('push', { write: false }), false);
+    if (policy === 'main') {
+      assert.equal(allows('push', { ref: 'refs/heads/feature' }), false);
+      assert.equal(allows('workflow_dispatch'), false);
+      assert.equal(allows('push', { frontend: 'false' }), false);
+    } else assert.equal(allows(writerEvent, { key: '' }), false, 'older sources have no cache target');
+    if (policy === 'release') {
+      assert.equal(allows('workflow_dispatch'), true);
+      assert.equal(allows('push'), false);
+    }
+  }
+});
+
+test('packaging older source revisions skips Bun caching without skipping installation', (t) => {
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-old-source-bun-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const [file, jobId] of [
+    ['nightly-artifacts.yml', 'package'], ['linux-binaries.yml', 'build'], ['desktop-package.yml', 'package'],
+  ]) {
+    const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows', file), 'utf8'));
+    const steps = workflow.jobs[jobId].steps;
+    const target = steps.find((step) => step.id === 'bun-cache-target');
+    const setup = steps.find((step) => step.uses === 'oven-sh/setup-bun@v2');
+    assert.equal(target.shell, 'bash');
+    const output = path.join(root, 'outputs');
+    writeFileSync(output, '');
+    const result = spawnSync('bash', ['-c', target.run], {
+      cwd: root, env: { ...process.env, GITHUB_OUTPUT: output }, encoding: 'utf8', windowsHide: true,
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /::notice::Bun caching is unavailable/);
+    assert.equal(readFileSync(output, 'utf8'), '');
+    assert.equal(setup.if, undefined, 'cache availability must not gate Bun installation');
+  }
+});
+
+test('nightly publishes and verifies the Relay image in the current repository owner scope', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/nightly.yml'), 'utf8'),
+  );
+  const steps = workflow.jobs['publish-nightly'].steps;
+  const metadata = steps.find(
+    (step) => step.name === 'Resolve nightly image metadata',
+  );
+  const publish = steps.find(
+    (step) => step.name === 'Build and push multi-platform Relay image',
+  );
+  const smoke = steps.find(
+    (step) => step.name === 'Smoke-test published Relay image on both platforms',
+  );
+  const manifest = steps.find(
+    (step) => step.name === 'Generate Linux binaries manifest',
+  );
+  const verifyDescriptor = steps.find(
+    (step) => step.name === 'Verify published Relay image descriptor',
+  );
+  const verifyMacCli = steps.find(
+    (step) => step.name === 'Verify published macOS CLI assets',
+  );
+  const image = '${{ steps.nightly-image-meta.outputs.image }}';
+
+  assert.match(
+    metadata?.run ?? '',
+    /image=ghcr\.io\/\$\{GITHUB_REPOSITORY_OWNER,,\}\/openbitfun-relay-server/,
+  );
+  assert.equal(
+    publish?.with?.tags,
+    `${image}:${'${{ env.NIGHTLY_TAG }}'}\n${image}:${'${{ steps.nightly-image-meta.outputs.asset_version }}'}\n`,
+  );
+  assert.match(publish?.with?.labels ?? '', /org\.opencontainers\.image\.source=\$\{\{ github\.server_url \}\}\/\$\{\{ github\.repository \}\}/);
+  assert.equal(
+    smoke?.run,
+    `bash scripts/relay/smoke-image.sh \\\n  "${image}@\${IMAGE_DIGEST}"\n`,
+  );
+  assert.match(manifest?.run ?? '', /--repo "\$\{\{ github\.repository \}\}"/);
+  assert.match(
+    verifyDescriptor?.run ?? '',
+    /\$\{GITHUB_SERVER_URL\}\/\$\{GITHUB_REPOSITORY\}\/releases\/download/,
+  );
+  assert.match(
+    verifyMacCli?.run ?? '',
+    /\$\{GITHUB_SERVER_URL\}\/\$\{GITHUB_REPOSITORY\}\/releases\/download/,
+  );
+});
+
+test('passes the verification key when signing the versioned Windows installer', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/desktop-package.yml'),
+      'utf8',
+    ),
+  );
+  const signingStep = workflow.jobs['upload-release-assets'].steps.find(
+    (step) => step.name === 'Sign versioned Windows installer',
+  );
+
+  assert.equal(
+    signingStep?.env?.OPENBITFUN_SIGNING_PUBKEY,
+    '${{ secrets.TAURI_UPDATER_PUBKEY }}',
+    'release signatures must be self-verified with the configured public key',
+  );
+});
+
+test('stages unique release asset names before publishing', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/desktop-package.yml'),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['upload-release-assets'].steps;
+  const stagingIndexes = [
+    steps.findIndex((step) => step.name === 'Stage release assets'),
+  ];
+  const uploadIndex = steps.findIndex((step) => step.name === 'Upload to release');
+
+  assert.equal(stagingIndexes.every((index) => index >= 0), true);
+  assert.notEqual(uploadIndex, -1);
+  for (const stagingIndex of stagingIndexes) {
+    assert.ok(stagingIndex < uploadIndex);
+    assert.match(
+      steps[stagingIndex].run,
+      /node scripts\/stage-github-release-assets\.mjs/,
+    );
+    assert.doesNotMatch(
+      steps[stagingIndex].run,
+      /release-assets\/\*\*\/\*\.sig(?:\s|\\)/,
+      'raw updater signatures have colliding names across macOS architectures',
+    );
+    assert.doesNotMatch(
+      steps[stagingIndex].run,
+      /release-assets\/\*\*\/\*(?:\.AppImage|\.deb|\.rpm)(?:\s|\\)/,
+      'raw Linux bundles must not duplicate canonical updater assets in the public release',
+    );
+  }
+  assert.match(steps[uploadIndex].run, /--clobber release-upload-assets\/\*/);
+});
+
+test('Desktop release notes link the migrated native mobile repository', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/desktop-package.yml'),
+      'utf8',
+    ),
+  );
+  const uploadStep = workflow.jobs['upload-release-assets'].steps.find(
+    (step) => step.name === 'Upload to release',
+  );
+  assert.match(uploadStep.run, /github\.com\/openBitFun\/OpenBitFun-Mobile\/releases/);
+  assert.doesNotMatch(uploadStep.run, /src\/apps\/mobile\//);
+  assert.match(uploadStep.run, /--notes-file release-notes\.md/);
+});
+
+
+test('Desktop packaging preserves old-tag source bytes before Windows checkout', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'),
+  );
+  const steps = workflow.jobs.package.steps;
+  const preserveIndex = steps.findIndex((step) => step.name === 'Preserve source bytes on Windows');
+  const checkoutIndex = steps.findIndex((step) => step.uses?.startsWith('actions/checkout@'));
+  assert.ok(preserveIndex >= 0 && preserveIndex < checkoutIndex);
+  assert.equal(steps[preserveIndex].if, "runner.os == 'Windows'");
+  assert.equal(steps[preserveIndex].shell, 'bash');
+  assert.equal(steps[preserveIndex].run, 'git config --global core.autocrlf false');
+});
+
+test('Desktop packaging installs Bun before preparing the OpenCode extension Host', () => {
+  const workflow = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'),
+  );
+  const steps = workflow.jobs.package.steps;
+  const bunIndex = steps.findIndex((step) => step.uses === 'oven-sh/setup-bun@v2');
+  const buildIndex = steps.findIndex((step) => step.name === 'Build desktop app');
+  assert.ok(bunIndex >= 0 && bunIndex < buildIndex);
+  assert.equal(steps[bunIndex].if, undefined, 'every Desktop platform needs Bun');
+  assert.equal(steps[bunIndex].with['bun-version'], '1.3.14');
+});
+
+test('Desktop packaging keeps beta identity explicit and stable-safe', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/desktop-package.yml'),
+      'utf8',
+    ),
+  );
+  const inputs = workflow.on.workflow_dispatch.inputs;
+  assert.deepEqual(inputs.release_channel.options, ['stable', 'beta']);
+  assert.equal(inputs.release_channel.default, 'stable');
+
+  const prepareStep = workflow.jobs.prepare.steps.find(
+    (step) => step.name === 'Resolve version metadata',
+  );
+  assert.match(prepareStep.run, /GITHUB_REPOSITORY_ID.*1147866277/);
+  assert.match(prepareStep.run, /merge-base --is-ancestor/);
+  assert.match(prepareStep.run, /rev-parse --verify --quiet/);
+
+  const packageJob = workflow.jobs.package;
+  assert.equal(
+    packageJob.env.OPENBITFUN_RELEASE_CHANNEL,
+    '${{ needs.prepare.outputs.release_channel }}',
+  );
+  assert.match(packageJob.env.TAURI_UPDATER_ENDPOINT, /github\.repository_id != '1147866277'/);
+  assert.match(packageJob.env.TAURI_UPDATER_ENDPOINT, /channel-v1-beta/);
+  assert.ok(packageJob.env.TAURI_UPDATER_ENDPOINT.includes("format('https://github.com/{0}/releases/latest/download/latest-v1.json', github.repository)"));
+  assert.equal(packageJob.env.TAURI_UPDATER_ENDPOINT, packageJob.env.TAURI_UPDATER_FALLBACK_ENDPOINT);
+  assert.match(packageJob.env.OPENBITFUN_RELEASE_PUBKEY, /OPENBITFUN_RELEASE_PUBKEY/);
+  const appleSetupIndex = packageJob.steps.findIndex(
+    (step) => step.name === 'Configure Apple Developer ID signing and notarization',
+  );
+  const desktopBuildIndex = packageJob.steps.findIndex(
+    (step) => step.name === 'Build desktop app',
+  );
+  const appleVerifyIndex = packageJob.steps.findIndex(
+    (step) => step.name === 'Verify Apple signature and notarization',
+  );
+  assert.ok(
+    appleSetupIndex >= 0 &&
+      appleSetupIndex < desktopBuildIndex &&
+      desktopBuildIndex < appleVerifyIndex,
+    'Apple credentials must be configured before packaging and verified afterwards',
+  );
+  assert.equal(packageJob.steps[appleSetupIndex].if, "runner.os == 'macOS'");
+  assert.equal(
+    packageJob.steps[appleSetupIndex].env.OPENBITFUN_REQUIRE_APPLE_SIGNING,
+    '${{ needs.prepare.outputs.upload_to_release }}',
+  );
+  assert.equal(packageJob.steps[appleVerifyIndex].if, "runner.os == 'macOS'");
+  const patchIndex = packageJob.steps.findIndex(
+    (step) => step.name === 'Project beta build version',
+  );
+  const verifyIndex = packageJob.steps.findIndex(
+    (step) => step.name === 'Verify release version metadata',
+  );
+  assert.ok(patchIndex >= 0 && patchIndex < verifyIndex);
+  assert.equal(
+    packageJob.steps[patchIndex].if,
+    "needs.prepare.outputs.release_channel == 'beta'",
+  );
+
+  const uploadSteps = workflow.jobs['upload-release-assets'].steps;
+  assert.equal(uploadSteps.find((step) => step.name === 'Request openbitfun mirror sync').if,
+    "github.repository_id == '1147866277'");
+  const release = uploadSteps.find((step) => step.name === 'Upload to release');
+  assert.equal(
+    release.env.RELEASE_PRERELEASE,
+    "${{ needs.prepare.outputs.release_channel == 'beta' }}",
+  );
+  const verifyIndexPublished = uploadSteps.findIndex(
+    (step) => step.name === 'Verify published updater manifest',
+  );
+  const promoteIndex = uploadSteps.findIndex(
+    (step) => step.name === 'Publish beta channel manifest',
+  );
+  assert.ok(verifyIndexPublished >= 0 && verifyIndexPublished < promoteIndex);
+  const requiredManual = 'windows-x86_64,darwin-aarch64,darwin-x86_64';
+  assert.match(
+    uploadSteps.find((step) => step.name === 'Verify updater manifest').run,
+    new RegExp(`--required-manual-platforms "${requiredManual}"`),
+  );
+  assert.match(
+    uploadSteps[verifyIndexPublished].run,
+    new RegExp(`--required-manual-platforms "${requiredManual}"`),
+  );
+  assert.doesNotMatch(workflow.jobs['linux-binaries'].if, /release_channel/);
+  assert.equal(
+    uploadSteps.find((step) => step.name === 'Stage release assets').if,
+    undefined,
+  );
+  assert.match(
+    uploadSteps.find((step) => step.name === 'Generate updater manifest').run,
+    /github\.repository/,
+  );
+  const signingStep = uploadSteps.find(
+    (step) => step.name === 'Sign installer packages',
+  );
+  assert.match(signingStep.run, /write-minisign-public-key\.mjs/);
+  assert.doesNotMatch(signingStep.run, /OPENBITFUN_SIGNING_PUBKEY.*base64 -d/);
+  const promotionStep = uploadSteps.find(
+    (step) => step.name === 'Resolve beta channel promotion',
+  );
+  assert.doesNotMatch(promotionStep.run, /current\.beta\.json \|\| true/);
+  assert.match(promotionStep.run, /case "\$\{channel_status\}" in/);
+  assert.match(promotionStep.run, /404\)/);
+  assert.match(promotionStep.run, /GitHub API returned/);
+  const publishStep = uploadSteps.find(
+    (step) => step.name === 'Publish beta channel manifest',
+  );
+  assert.equal(
+    publishStep.env.CHANNEL_EXISTS,
+    '${{ steps.beta-channel.outputs.channel_exists }}',
+  );
+});
+
+test('beta publishing cannot advance the Relay latest image tag', () => {
+  const workflow = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/desktop-package.yml'),
+      'utf8',
+    ),
+  );
+  const imageTags = workflow.jobs['publish-relay-image'].steps.find(
+    (step) => step.name === 'Resolve image tags',
+  );
+  assert.equal(
+    imageTags.env.RELEASE_CHANNEL,
+    '${{ needs.prepare.outputs.release_channel }}',
+  );
+  assert.match(imageTags.run, /RELEASE_CHANNEL.*stable/);
+  assert.doesNotMatch(imageTags.run, /RELEASE_PRERELEASE/);
+});
+
+test('stable and beta publication require every producer, while artifact-only runs never publish', () => {
+  const { jobs } = yaml.parse(readFileSync(
+    path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8',
+  ));
+  // These workflow conditions use the shared Boolean/string subset of Actions
+  // expressions and JavaScript. Exercise the actual conditions, not a copy.
+  const condition = (job, needs) => {
+    const expression = job.if.replace(/needs\.([\w-]+)/g, 'needs["$1"]');
+    return Function('needs', 'always', 'inputs', `return Boolean(${expression});`)(needs, () => true, { artifact_run_ids: '' });
+  };
+  const results = ['success', 'failure', 'cancelled', 'skipped'];
+  for (const channel of ['stable', 'beta']) {
+    for (const upload of ['true', 'false']) {
+      for (const target of ['all', 'macos-arm64', 'macos-x64']) {
+        for (const desktop of results) for (const linux of results) for (const image of results) {
+          const needs = {
+            prepare: { result: 'success', outputs: { release_channel: channel, upload_to_release: upload, relay_image_only: 'false', target_platform: target } },
+            package: { result: desktop },
+            'linux-binaries': { result: linux },
+            'publish-relay-image': { result: image },
+          };
+          assert.equal(condition(jobs['linux-binaries'], needs), target === 'all');
+          assert.equal(condition(jobs['publish-relay-image'], needs), target === 'all' && upload === 'true' && linux === 'success');
+          assert.equal(condition(jobs['upload-release-assets'], needs),
+            target === 'all' && upload === 'true' && [desktop, linux, image].every((result) => result === 'success'),
+            JSON.stringify(needs));
+        }
+      }
+    }
+    const backfill = {
+      prepare: { result: 'success', outputs: { release_channel: channel, upload_to_release: 'true', relay_image_only: 'true', target_platform: 'all' } },
+      package: { result: 'skipped' },
+      'linux-binaries': { result: 'skipped' },
+      'publish-relay-image': { result: 'success' },
+    };
+    assert.equal(condition(jobs['linux-binaries'], backfill), false);
+    assert.equal(condition(jobs['publish-relay-image'], backfill), true);
+    assert.equal(condition(jobs['upload-release-assets'], backfill), false);
+  }
+  const backfillRelease = jobs['publish-relay-image'].steps.find(
+    (step) => step.name === 'Attach descriptor to an existing release (image-only backfill)',
+  );
+  assert.equal(backfillRelease.with.prerelease, "${{ needs.prepare.outputs.release_channel == 'beta' }}");
+  assert.equal(backfillRelease.with.make_latest, 'false');
+  const steps = jobs['upload-release-assets'].steps;
+  for (const name of [
+    'Download Linux binary artifacts', 'Download Relay image descriptor',
+    'Generate Linux binaries manifest', 'Verify staged Relay image descriptor', 'Stage release assets',
+    'Verify published Linux binaries manifest', 'Verify published Relay image descriptor',
+  ]) {
+    assert.equal(steps.find((step) => step.name === name)?.if, name.startsWith('Download') ? '${{ !inputs.artifact_run_ids }}' : undefined, name);
+    assert.ok(steps.some((step) => step.name === name), name);
+  }
+  const stage = steps.find((step) => step.name === 'Stage release assets');
+  for (const pattern of [
+    'linux-release-assets/openbitfun-cli-*.tar.gz',
+    'linux-release-assets/openbitfun-relay-server-*.tar.gz',
+    'linux-release-assets/*.tar.gz.sig', 'linux-release-assets/*.tar.gz.sha256.sig',
+    'linux-release-assets/linux-binaries-v1.json', 'relay-image-assets/relay-image.json.sig',
+  ]) assert.ok(stage.run.includes(pattern), pattern);
+  assert.match(steps.find((step) => step.name === 'Generate Linux binaries manifest').run, /--repo "\$\{\{ github.repository \}\}"/);
+  for (const name of ['Verify published Linux binaries manifest', 'Verify published Relay image descriptor']) {
+    const verification = steps.find((step) => step.name === name);
+    assert.match(verification.run, /github.repository/);
+    assert.ok(steps.indexOf(verification) < steps.findIndex((step) => step.name === 'Publish beta channel manifest'));
+  }
+});
+
+
+test('Desktop release and nightly package Linux on Ubuntu 22.04 and verify before upload', () => {
+  const readPackageJob = (file) =>
+    yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows', file), 'utf8')).jobs.package;
+  const release = readPackageJob('desktop-package.yml');
+  const nightly = readPackageJob('nightly-artifacts.yml');
+  const dependencies = (job) => job.steps.find((step) => step.name === 'Install Linux desktop build dependencies');
+
+  assert.equal(release.container, "${{ startsWith(matrix.platform.name, 'linux-') && 'ubuntu:22.04' || '' }}");
+  assert.equal(nightly.container, "${{ startsWith(matrix.platform, 'linux-') && 'ubuntu:22.04' || '' }}");
+  assert.equal(dependencies(release).run, dependencies(nightly).run);
+
+  for (const job of [release, nightly]) {
+    const checkout = job.steps.find((step) => step.uses === 'actions/checkout@v5');
+    const trust = job.steps.find((step) => step.name === 'Trust the Linux build checkout');
+    const verify = job.steps.find((step) => step.name === 'Verify Linux desktop package');
+    const buildIndex = job.steps.findIndex((step) => step.name === 'Build desktop app');
+    const uploadIndex = job.steps.findIndex((step) => step.name === 'Upload bundles');
+    assert.equal(trust.if, "runner.os == 'Linux'");
+    assert.equal(trust.run, 'git config --global --add safe.directory "$GITHUB_WORKSPACE"');
+    assert.ok(job.steps.indexOf(checkout) < job.steps.indexOf(trust));
+    assert.ok(job.steps.indexOf(trust) < buildIndex);
+    assert.equal(verify.if, "runner.os == 'Linux'");
+    assert.match(verify.run, /verify-linux-desktop-package\.sh/);
+    assert.match(verify.run, /linux-appimage-tray-libraries\.json/);
+    assert.ok(buildIndex >= 0 && buildIndex < job.steps.indexOf(verify));
+    assert.ok(job.steps.indexOf(verify) < uploadIndex);
+  }
+});
+
+test('Desktop recovery selects one platform and cannot publish an incomplete release', (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const step = workflow.jobs.prepare.steps.find((entry) => entry.name === 'Select Desktop package platforms');
+  const windows = workflow.jobs.package.steps.find((entry) => entry.name === 'Build and sign custom Windows installer');
+  assert.match(windows.run, /git show '\$\{\{ github\.workflow_sha \}\}:scripts\/windows\/stage-desktop-runtime\.mjs'/);
+  assert.ok(windows.run.indexOf('node $stagingScript') < windows.run.indexOf('pnpm run installer:build:only'));
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-platform-recovery-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const target of ['all', 'macos-arm64', 'macos-x64', 'windows-x64', 'unknown']) {
+    for (const relay of ['true', 'false']) {
+      const output = path.join(root, `${target}-${relay}`);
+      const result = spawnSync('bash', ['-c', step.run], {
+        cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+        env: { ...process.env, TARGET_PLATFORM: target, RELAY_IMAGE_ONLY: relay, ARTIFACT_RUN_IDS: '', GITHUB_OUTPUT: output },
+      });
+      if (target === 'unknown' || (target !== 'all' && relay === 'true')) {
+        assert.notEqual(result.status, 0);
+        continue;
+      }
+      assert.equal(result.status, 0, result.stderr);
+      const matrix = JSON.parse(readFileSync(output, 'utf8').trim().slice('matrix='.length));
+      assert.deepEqual(matrix.map((platform) => platform.name), target === 'all'
+        ? ['linux-x64', 'linux-arm64', 'macos-arm64', 'macos-x64', 'windows-x64'] : [target]);
+      for (const platform of matrix) {
+        assert.ok(platform.os && platform.target && platform.build_command);
+      }
+      if (target === 'macos-arm64') assert.equal(matrix[0].build_command, 'pnpm run desktop:build:arm64');
+      if (target === 'macos-x64') assert.equal(matrix[0].build_command, 'pnpm run desktop:build:x86_64');
+    }
+  }
+  for (const [target, relay, runs, success] of [
+    ['all', 'false', '123,456', true], ['all', 'false', 'not-a-run', false],
+    ['macos-arm64', 'false', '123', false], ['windows-x64', 'false', '123', false],
+    ['all', 'true', '123', false],
+  ]) {
+    const result = spawnSync('bash', ['-c', step.run], {
+      cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, TARGET_PLATFORM: target, RELAY_IMAGE_ONLY: relay, ARTIFACT_RUN_IDS: runs, GITHUB_OUTPUT: path.join(root, 'finalize') },
+    });
+    assert.equal(result.status === 0, success, result.stderr);
+  }
+  assert.equal(workflow.jobs.package.strategy.matrix.platform, '${{ fromJSON(needs.prepare.outputs.package_matrix) }}');
+  for (const name of ['linux-binaries', 'publish-relay-image', 'upload-release-assets']) {
+    const condition = workflow.jobs[name].if;
+    assert.ok(condition.includes("needs.prepare.outputs.target_platform == 'all'"), name);
+  }
+  assert.equal(workflow.jobs.package.env.OPENBITFUN_ENABLE_UPDATER_ARTIFACTS, '${{ needs.prepare.outputs.upload_to_release }}');
+  assert.match(workflow.concurrency.group, /inputs.target_platform/);
+  assert.equal(workflow.concurrency['cancel-in-progress'], false);
+  for (const [target, upload, run, artifacts, success] of [
+    ['macos-x64', 'true', '123', '', true], ['macos-arm64', 'true', '123', '', true],
+    ['all', 'true', '123', '', false], ['windows-x64', 'true', '123', '', false],
+    ['macos-x64', 'false', '123', '', false],
+    ['macos-x64', 'true', 'invalid', '', false], ['macos-x64', 'true', '123', '456', false],
+  ]) {
+    const result = spawnSync('bash', ['-c', step.run], {
+      cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, TARGET_PLATFORM: target, RELAY_IMAGE_ONLY: 'false', ARTIFACT_RUN_IDS: artifacts,
+        VERIFICATION_RECOVERY_RUN_ID: run, UPLOAD_TO_RELEASE: upload, GITHUB_OUTPUT: path.join(root, 'verify-recovery') },
+    });
+    assert.equal(result.status === 0, success, result.stderr);
+  }
+  assert.match(workflow.jobs.package.if, /!inputs.verification_recovery_run_id/);
+  const recover = workflow.jobs['recover-macos'];
+  assert.equal(recover.name, workflow.jobs.package.name);
+  assert.equal(recover.if, "inputs.verification_recovery_run_id != ''");
+  assert.ok(recover.steps.find((entry) => entry.name === 'Verify Apple signature and notarization'));
+  const checkpoint = recover.steps.find((entry) => entry.name === 'Upload macOS verification recovery bundles');
+  assert.equal(checkpoint.if, "failure() && steps.apple_verification.outcome == 'failure'");
+  assert.doesNotMatch(JSON.stringify(recover.steps), /desktop:build|cargo build|pnpm install/);
+});
+
+test('Mac verification recovery requires the exact failed trusted producer and unexpired checkpoint', async () => {
+  const { planMacVerificationRecovery } = await import('./restore-macos-verification-bundle.mjs');
+  const repo = 'GCWing/OpenBitFun', tag = 'v1.0.6', platform = 'macos-x64';
+  const source = {
+    run: { id: 123, repository: { full_name: repo }, head_repository: { full_name: repo },
+      path: '.github/workflows/desktop-package.yml', event: 'workflow_dispatch', head_sha: 'a'.repeat(40) },
+    jobs: [{ name: 'Prepare', conclusion: 'success' }, { name: 'Package (macos-x64)', conclusion: 'failure', steps: [
+      { name: 'Build desktop app', conclusion: 'success' },
+      { name: 'Verify Apple signature and notarization', conclusion: 'failure' },
+      { name: 'Upload macOS verification recovery bundles', conclusion: 'success' },
+    ] }],
+    artifacts: [{ name: 'openbitfun-v1.0.6-macos-x64-verification-recovery', expired: false }],
+  };
+  assert.equal(planMacVerificationRecovery(repo, tag, platform, source).runId, '123');
+  const mutations = [
+    (s) => { s.run.head_repository.full_name = 'untrusted/fork'; },
+    (s) => { s.run.repository.full_name = 'untrusted/fork'; },
+    (s) => { s.run.path = '.github/workflows/ci.yml'; },
+    (s) => { s.run.event = 'pull_request'; }, (s) => { s.run.head_sha = 'invalid'; },
+    (s) => { s.jobs[0].conclusion = 'failure'; },
+    (s) => { s.jobs[1].conclusion = 'success'; },
+    (s) => { s.jobs[1].steps[0].conclusion = 'failure'; },
+    (s) => { s.jobs[1].steps[1].conclusion = 'skipped'; },
+    (s) => { s.jobs[1].steps[2].conclusion = 'failure'; },
+    (s) => { s.jobs[1].steps.push({ name: 'Other stage', conclusion: 'failure' }); },
+    (s) => { s.artifacts[0].expired = true; }, (s) => { s.artifacts = []; },
+    (s) => { s.artifacts.push({ ...s.artifacts[0] }); },
+  ];
+  for (const mutate of mutations) {
+    const next = structuredClone(source); mutate(next);
+    assert.throws(() => planMacVerificationRecovery(repo, tag, platform, next));
+  }
+  assert.throws(() => planMacVerificationRecovery(repo, tag, 'macos-arm64', source));
+  const resumed = structuredClone(source);
+  resumed.jobs[1].steps.splice(0, 1, { name: 'Restore prior macOS bundles', conclusion: 'success' },
+    { name: 'Repair missing application ticket', conclusion: 'success' });
+  assert.equal(planMacVerificationRecovery(repo, tag, platform, resumed).runId, '123');
+});
+
+test('Mac recovery architecture command accepts a real Mach-O executable', { skip: process.platform !== 'darwin' }, (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const restore = workflow.jobs['recover-macos'].steps.find((step) => step.name === 'Restore prior macOS bundles').run;
+  const start = restore.indexOf('case "$MACOS_TARGET"');
+  assert.ok(start >= 0);
+  const script = restore.slice(start);
+  assert.match(script, /lipo /);
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-recovery-architecture-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const target = process.arch === 'arm64' ? 'aarch64-apple-darwin' : 'x86_64-apple-darwin';
+  const executable = path.join(root, 'target', target, 'release/bundle/macos/OpenBitFun.app/Contents/MacOS/openbitfun-desktop');
+  mkdirSync(path.dirname(executable), { recursive: true });
+  symlinkSync(process.execPath, executable);
+  const result = spawnSync('bash', ['-c', `set -euo pipefail\n${script}`], {
+    cwd: root, env: { ...process.env, MACOS_TARGET: target }, encoding: 'utf8', windowsHide: true,
+  });
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('Mac ticket repair repacks both distributions and fails closed on unrelated errors', (t) => {
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-staple-repair-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const bundle = path.join(root, 'target/x86_64-apple-darwin/release/bundle');
+  const app = path.join(bundle, 'macos/OpenBitFun.app');
+  const dmg = path.join(bundle, 'dmg/OpenBitFun_1.0.6_x64.dmg');
+  mkdirSync(path.join(root, 'bin'));
+  mkdirSync(path.join(root, 'scripts'));
+  mkdirSync(path.join(app, 'Contents'), { recursive: true });
+  mkdirSync(path.dirname(dmg), { recursive: true });
+  copyFileSync(path.join(repoRoot, 'scripts/write-minisign-public-key.mjs'), path.join(root, 'scripts/write-minisign-public-key.mjs'));
+  function stub(name, source) {
+    writeFileSync(path.join(root, 'bin', name), `#!/usr/bin/env bash\nset -euo pipefail\n${source}\n`, { mode: 0o755 });
+  }
+  stub('codesign', 'if [[ "$1" == -dv ]]; then echo "Authority=Developer ID Application: Fixture"; fi');
+  stub('spctl', 'if [[ "${REJECT_GATEKEEPER:-}" == true ]]; then exit 1; fi');
+  stub('minisign', 'if [[ "${REJECT_SIGNATURE:-}" == true ]]; then exit 1; fi');
+  stub('sleep', 'printf "sleep %s\\n" "$*" >> "$FIXTURE/calls"');
+  stub('xcrun', `
+    printf '%s\\n' "$*" >> "$FIXTURE/calls"
+    app="$3"
+    if [[ "$2" == validate && "$app" == */mount/* ]]; then
+      attempts=0
+      [[ ! -f "$FIXTURE/mounted-attempts" ]] || read -r attempts < "$FIXTURE/mounted-attempts"
+      attempts=$((attempts + 1)); printf '%s\\n' "$attempts" > "$FIXTURE/mounted-attempts"
+      if [[ "$attempts" -le "\${MOUNT_VALIDATION_NETWORK_FAILURES:-0}" ]]; then
+        echo 'Error Domain=NSURLErrorDomain Code=-1005'; exit 68
+      fi
+    fi
+    if [[ "$2" == staple ]]; then
+      printf stapled > "$app/Contents/stapled-fixture"
+    elif [[ "\${TICKET_ERROR:-}" == network ]]; then
+      echo 'Error Domain=NSURLErrorDomain Code=-1005'; exit 68
+    elif [[ "\${TICKET_ERROR:-}" == invalid ]]; then
+      echo 'Invalid ticket'; exit 65
+    elif [[ "\${VALID_TICKET:-}" != true && ! -f "$app/Contents/stapled-fixture" ]]; then
+      echo 'OpenBitFun.app does not have a ticket stapled to it.'; exit 65
+    fi
+  `);
+  stub('hdiutil', `
+    case "$1" in
+      convert)
+        format="$3"; output="$5"; input="$6"
+        if [[ "$format" == UDRW ]]; then cp "$input" "$output";
+        else mount="$(cat "$FIXTURE/mount-path")"; cat "$mount/OpenBitFun.app/Contents/stapled-fixture" > "$output"; fi
+        ;;
+      attach)
+        mount="$5"; printf '%s' "$mount" > "$FIXTURE/mount-path"
+        mkdir -p "$mount/OpenBitFun.app"
+        ;;
+      detach) ;;
+    esac
+  `);
+  stub('ditto', 'cp -R "$1" "$2"');
+  writeFileSync(path.join(root, 'scripts/sign-release-assets.sh'), '#!/usr/bin/env bash\nset -euo pipefail\nprintf signed | base64 > "$1.sig"\n');
+  const env = { ...process.env, PATH: `${path.join(root, 'bin')}:${process.env.PATH}`, FIXTURE: root,
+    OPENBITFUN_APPLE_SIGNING_CONFIGURED: 'true', APPLE_SIGNING_IDENTITY: 'Fixture Developer ID',
+    OPENBITFUN_SIGNING_KEY: 'fixture', OPENBITFUN_SIGNING_PUBKEY: 'untrusted comment: fixture\nfixture-key' };
+  function reset() {
+    rmSync(path.join(root, 'mounted-attempts'), { force: true });
+    rmSync(path.join(app, 'Contents/stapled-fixture'), { force: true });
+    rmSync(`${dmg}.notary-submission.json`, { force: true });
+    writeFileSync(dmg, 'original dmg');
+    writeFileSync(`${app}.tar.gz`, 'original updater');
+    writeFileSync(`${app}.tar.gz.sig`, Buffer.from('original signature').toString('base64'));
+    writeFileSync(path.join(root, 'calls'), '');
+  }
+  function execute(overrides = {}) {
+    return spawnSync('bash', [path.join(repoRoot, 'scripts/ci/repair-macos-stapling.sh'), 'x86_64-apple-darwin'], {
+      cwd: root, env: { ...env, ...overrides }, encoding: 'utf8', windowsHide: true,
+    });
+  }
+  for (const overrides of [{ TICKET_ERROR: 'network' }, { TICKET_ERROR: 'invalid' }, { REJECT_SIGNATURE: 'true' }]) {
+    reset(); const result = execute(overrides);
+    assert.notEqual(result.status, 0);
+    assert.equal(readFileSync(dmg, 'utf8'), 'original dmg');
+    assert.equal(existsSync(path.join(app, 'Contents/stapled-fixture')), false);
+  }
+  reset();
+  writeFileSync(`${dmg}.notary-submission.json`, 'retained receipt');
+  assert.notEqual(execute().status, 0);
+  assert.equal(readFileSync(dmg, 'utf8'), 'original dmg');
+  assert.equal(execute({ VALID_TICKET: 'true' }).status, 0, 'existing valid ticket retains the submission and bytes');
+  assert.equal(readFileSync(`${dmg}.notary-submission.json`, 'utf8'), 'retained receipt');
+  reset();
+  writeFileSync(`${dmg}.sig`, 'obsolete signature for original bytes');
+  const repaired = execute({ MOUNT_VALIDATION_NETWORK_FAILURES: '2' });
+  assert.equal(repaired.status, 0, repaired.stderr);
+  assert.equal(readFileSync(dmg, 'utf8'), 'stapled');
+  assert.equal(existsSync(`${dmg}.sig`), false);
+  assert.equal(Buffer.from(readFileSync(`${app}.tar.gz.sig`, 'utf8'), 'base64').toString(), 'signed');
+  const contents = spawnSync('tar', ['-tzf', `${app}.tar.gz`], { encoding: 'utf8', windowsHide: true });
+  assert.equal(contents.status, 0, contents.stderr);
+  assert.match(contents.stdout, /OpenBitFun.app\/Contents\/stapled-fixture/);
+  assert.equal(readFileSync(path.join(root, 'calls'), 'utf8').match(/stapler staple/g)?.length, 1);
+  assert.equal(readFileSync(path.join(root, 'mounted-attempts'), 'utf8').trim(), '3');
+  assert.match(readFileSync(path.join(root, 'calls'), 'utf8'), /sleep 10[\s\S]*sleep 20/);
+  reset();
+  assert.equal(execute({ MOUNT_VALIDATION_NETWORK_FAILURES: '99' }).status, 68);
+  assert.equal(readFileSync(dmg, 'utf8'), 'original dmg');
+  assert.equal(readFileSync(`${app}.tar.gz`, 'utf8'), 'original updater');
+  assert.equal(readFileSync(path.join(root, 'mounted-attempts'), 'utf8').trim(), '3');
+});
+
+
+test('release finalization requires the complete unique successful producer set', async (t) => {
+  const { planReleaseArtifactDownloads } = await import('./download-desktop-release-artifacts.mjs');
+  const repo = 'GCWing/OpenBitFun';
+  const tag = 'v1.0.6';
+  const platforms = ['windows-x64', 'linux-x64', 'linux-arm64', 'macos-arm64', 'macos-x64'];
+  const entries = [
+    ...platforms.map((platform) => [`openbitfun-${tag}-${platform}-bundle`, `Package (${platform})`]),
+    ...['linux-x64', 'linux-arm64'].map((platform) => [`openbitfun-linux-${tag}-${platform}`, `Linux CLI and Relay Server / Linux Binaries (${platform})`]),
+    [`openbitfun-relay-image-${tag}`, 'Publish Relay Server Image'],
+  ];
+  const source = {
+    run: { id: 123, repository: { full_name: repo }, head_repository: { full_name: repo },
+      path: '.github/workflows/desktop-package.yml', event: 'workflow_dispatch', head_sha: 'a'.repeat(40) },
+    jobs: [{ name: 'Prepare', conclusion: 'success' }, ...entries.map(([, name]) => ({ name, conclusion: 'success' }))],
+    artifacts: entries.map(([name]) => ({ name, expired: false })),
+  };
+  assert.equal(planReleaseArtifactDownloads(repo, tag, [source]).length, 8);
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-finalize-history-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(path.join(root, 'bin'));
+  writeFileSync(path.join(root, 'run.json'), JSON.stringify(source.run));
+  writeFileSync(path.join(root, 'jobs.json'), JSON.stringify({ jobs: source.jobs }));
+  writeFileSync(path.join(root, 'artifacts.json'), JSON.stringify({ artifacts: source.artifacts }));
+  writeFileSync(path.join(root, 'bin/gh'), `#!/usr/bin/env bash
+    set -euo pipefail
+    if [[ "$1" == api ]]; then
+      case "$2" in
+        *'/jobs?'*) cat "$FIXTURE/jobs.json" ;;
+        *'/artifacts?'*) cat "$FIXTURE/artifacts.json" ;;
+        *) cat "$FIXTURE/run.json" ;;
+      esac
+    else
+      printf '%s\\n' "$*" >> "$FIXTURE/downloads"
+    fi
+  `, { mode: 0o755 });
+  writeFileSync(path.join(root, 'bin/git'), `#!/usr/bin/env bash
+    set -euo pipefail
+    if [[ "$1" == merge-base && "$3" == aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa && "$FAIL_HISTORY" == true ]]; then exit 1; fi
+  `, { mode: 0o755 });
+  function download(failHistory) {
+    return spawnSync(process.execPath, [path.join(repoRoot, 'scripts/download-desktop-release-artifacts.mjs'),
+      '--repo', repo, '--tag', tag, '--run-ids', '123'], {
+      cwd: root, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, FIXTURE: root, FAIL_HISTORY: String(failHistory), PATH: `${path.join(root, 'bin')}:${process.env.PATH}` },
+    });
+  }
+  assert.notEqual(download(true).status, 0, 'source outside protected main must fail');
+  assert.throws(() => readFileSync(path.join(root, 'downloads')), { code: 'ENOENT' });
+  const downloaded = download(false);
+  assert.equal(downloaded.status, 0, downloaded.stderr);
+  assert.equal(readFileSync(path.join(root, 'downloads'), 'utf8').trim().split('\n').length, 8);
+  const original = structuredClone(source);
+  original.artifacts = source.artifacts.filter((artifact) => !artifact.name.includes('macos-arm64'));
+  const recovery = structuredClone(source);
+  recovery.run.id = 456;
+  recovery.artifacts = source.artifacts.filter((artifact) => artifact.name.includes('macos-arm64'));
+  recovery.jobs = source.jobs.filter((job) => job.name === 'Prepare' || job.name === 'Package (macos-arm64)');
+  assert.equal(planReleaseArtifactDownloads(repo, tag, [original, recovery]).filter((item) => item.runId === '456').length, 1);
+  assert.throws(() => planReleaseArtifactDownloads(repo, tag, [original]), /Missing verified/);
+  assert.throws(() => planReleaseArtifactDownloads(repo, tag, [source, recovery]), /Duplicate/);
+  for (const [name, job] of entries) {
+    const bad = structuredClone(source);
+    bad.jobs.find((item) => item.name === job).conclusion = 'failure';
+    assert.throws(() => planReleaseArtifactDownloads(repo, tag, [bad]), /successful producer/, name);
+    const expired = structuredClone(source);
+    expired.artifacts.find((item) => item.name === name).expired = true;
+    assert.throws(() => planReleaseArtifactDownloads(repo, tag, [expired]), /successful producer/, name);
+  }
+  for (const mutate of [
+    (item) => { item.run.head_repository.full_name = 'untrusted/fork'; },
+    (item) => { item.run.path = '.github/workflows/ci.yml'; },
+    (item) => { item.run.event = 'pull_request'; },
+    (item) => { item.jobs[0].conclusion = 'failure'; },
+  ]) {
+    const bad = structuredClone(source); mutate(bad);
+    assert.throws(() => planReleaseArtifactDownloads(repo, tag, [bad]), /Untrusted or unprepared/);
+  }
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  for (const prepare of ['success', 'failure', 'skipped']) {
+    const needs = { prepare: { result: prepare, outputs: { upload_to_release: 'true', target_platform: 'all', relay_image_only: 'false' } },
+      package: { result: 'skipped' }, 'linux-binaries': { result: 'skipped' }, 'publish-relay-image': { result: 'skipped' } };
+    const inputs = { artifact_run_ids: '123,456' };
+    const evaluate = (job) => Function('needs', 'inputs', 'always', `return Boolean(${job.if.replace(/needs\.([\w-]+)/g, 'needs["$1"]')});`)(needs, inputs, () => true);
+    for (const name of ['package', 'linux-binaries', 'publish-relay-image']) assert.equal(evaluate(workflow.jobs[name]), false);
+    assert.equal(evaluate(workflow.jobs['upload-release-assets']), prepare === 'success');
+  }
+});
+
+test('Relay image rebuild resolves the release tag instead of the newer workflow commit', (t) => {
+  const { jobs } = yaml.parse(readFileSync(
+    path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8',
+  ));
+  const step = jobs.prepare.steps.find((entry) => entry.name === 'Resolve version metadata');
+  const verification = jobs['upload-release-assets'].steps.find((entry) => entry.name === 'Verify published Relay image descriptor');
+  assert.match(verification.run, /cmp relay-image-assets\/relay-image.json relay-image.published.json/);
+  assert.match(verification.run, /cmp relay-image-assets\/relay-image.json.sig relay-image.published.json.sig/);
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-relay-rebuild-ref-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const tagSha = 'a'.repeat(40);
+  const headSha = 'b'.repeat(40);
+  for (const [checkoutRef, protectedHistory, failure] of [
+    ['', 'yes', null], ['newer-branch', 'yes', /not requested commit/],
+    ['', 'no', /not part of the protected main history/],
+  ]) {
+    const output = path.join(root, `output-${checkoutRef || 'tag'}-${protectedHistory}`);
+    const result = spawnSync('bash', ['-c', `
+      git() {
+        case "$1" in
+          fetch) return 0 ;;
+          merge-base) [[ "$PROTECTED_HISTORY" == yes ]] ;;
+          rev-parse)
+            case "\${!#}" in
+              'v1.0.0^{commit}') echo "$TAG_SHA" ;;
+              *) echo "$GITHUB_SHA" ;;
+            esac ;;
+        esac
+      }
+      ${step.run.replaceAll('${{ github.event.release.prerelease }}', 'false')}
+    `], {
+      cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+      env: {
+        ...process.env,
+        GITHUB_EVENT_NAME: 'workflow_dispatch', GITHUB_SHA: headSha,
+        GITHUB_REPOSITORY: 'openBitFun/OpenBitFun', GITHUB_REPOSITORY_ID: '1147866277', GITHUB_OUTPUT: output,
+        INPUT_TAG_NAME: 'v1.0.0', INPUT_CHECKOUT_REF: checkoutRef,
+        INPUT_RELEASE_CHANNEL: 'stable', INPUT_UPLOAD_TO_RELEASE: 'true',
+        INPUT_RELAY_IMAGE_ONLY: 'true', TAG_SHA: tagSha, PROTECTED_HISTORY: protectedHistory,
+      },
+    });
+    if (failure) {
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, failure);
+    } else {
+      assert.equal(result.status, 0, result.stderr);
+      assert.match(readFileSync(output, 'utf8'), new RegExp(`checkout_ref=${tagSha}`));
+    }
+  }
+});
+
+test('Desktop finalization selects the Windows updater format from the release source', {
+  skip: process.platform === 'win32',
+}, () => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const step = workflow.jobs['upload-release-assets'].steps.find((entry) => entry.name === 'Collect updater assets');
+  assert.equal(step.env.RELEASE_SOURCE, '${{ needs.prepare.outputs.checkout_ref }}');
+  for (const [ref, grepStatus, modern] of [['old-tag', '1', false], ['new-tag', '0', true], ['unknown', '128', false]]) {
+    const result = spawnSync('bash', ['-c', `
+      git() {
+        [[ "$*" == "grep -q OPENBITFUN_MAINTENANCE_V1 $RELEASE_SOURCE -- OpenBitFun-Installer/src-tauri/src/installer/commands.rs" ]] || return 128
+        return "$GREP_STATUS"
+      }
+      node() { printf '%s\n' "$@"; }
+      ${step.run.replaceAll('${{ needs.prepare.outputs.version }}', '1.0.10')}
+    `], {
+      cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, RELEASE_SOURCE: ref, GREP_STATUS: grepStatus, REQUIRED_UPDATER_PLATFORMS: 'windows-x86_64' },
+    });
+    assert.equal(result.status, grepStatus === '128' ? 1 : 0, result.stderr);
+    assert.equal(result.stdout.includes('--windows-installer-dir\nrelease-manual-assets\n'), modern);
+  }
+});
+
+test('CLI dispatches only to a configured Homebrew tap or the historical token-only destination', {
+  skip: process.platform === 'win32' || spawnSync('jq', ['--version'], { windowsHide: true }).status !== 0,
+}, () => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/cli-package.yml'), 'utf8'));
+  const step = workflow.jobs['upload-release-assets'].steps.find((entry) => entry.name === 'Notify homebrew-tap (post-publication)');
+  assert.equal(step.env.TAP_REPOSITORY, '${{ vars.HOMEBREW_TAP_REPOSITORY }}');
+  for (const [tap, token, status, destination] of [
+    ['', '', 0, ''], ['openBitFun/homebrew-tap', '', 1, ''],
+    ['openBitFun/homebrew-tap', 'fixture', 0, 'openBitFun/homebrew-tap'],
+    ['', 'fixture', 0, 'GCWing/homebrew-tap'], ['../bad!tap', 'fixture', 1, ''],
+  ]) {
+    const result = spawnSync('bash', ['-c', `curl() { printf 'request %s\n' "$@"; }\n${step.run}`], {
+      cwd: repoRoot, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, TAP_REPOSITORY: tap, GH_TOKEN: token,
+        GITHUB_API_URL: 'https://api.github.com', RELEASE_TAG: 'v1.0.10' },
+    });
+    assert.equal(result.status, status, result.stderr);
+    const url = result.stdout.split('\n').find((line) => line.startsWith('request https://'));
+    assert.equal(url, destination ? `request https://api.github.com/repos/${destination}/dispatches` : undefined);
+  }
+});
+
+test('Relay descriptor validation allows pre-transfer images only for official artifact recovery', {
+  skip: process.platform === 'win32' || spawnSync('jq', ['--version'], { windowsHide: true }).status !== 0,
+}, (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const steps = workflow.jobs['upload-release-assets'].steps;
+  const validation = steps.find((step) => step.name === 'Verify staged Relay image descriptor');
+  assert.ok(steps.indexOf(validation) < steps.findIndex((step) => step.name === 'Upload to release'));
+  const build = workflow.jobs['publish-relay-image'].steps.find((step) => step.name === 'Build and push multi-platform image');
+  assert.match(build.with.labels, /org\.opencontainers\.image\.source=\$\{\{ github\.server_url \}\}\/\$\{\{ github\.repository \}\}/);
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-release-descriptor-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(path.join(root, 'relay-image-assets'));
+  writeFileSync(path.join(root, 'relay-image-assets/relay-image.json.sig'), 'signature fixture');
+  for (const [owner, repoId, runIds, namespace, version, accepted] of [
+    ['openBitFun', '1147866277', '', 'openbitfun', '1.0.10', true],
+    ['openBitFun', '1147866277', '123', 'gcwing', '1.0.10', true],
+    ['openBitFun', '1147866277', '', 'gcwing', '1.0.10', false],
+    ['openBitFun', '1147866277', '123', 'gcwing', '1.0.9', false],
+    ['fork', '1234567', '123', 'gcwing', '1.0.10', false],
+    ['fork', '1234567', '', 'fork', '1.0.10', true],
+  ]) {
+    writeFileSync(path.join(root, 'relay-image-assets/relay-image.json'), JSON.stringify({
+      schema_version: 1, version, tag: `v${version}`, image: `ghcr.io/${namespace}/openbitfun-relay-server`,
+      digest: `sha256:${'a'.repeat(64)}`, platforms: ['linux/amd64', 'linux/arm64'],
+    }));
+    const result = spawnSync('bash', ['-c', validation.run], {
+      cwd: root, encoding: 'utf8', windowsHide: true,
+      env: { ...process.env, GITHUB_REPOSITORY_OWNER: owner, GITHUB_REPOSITORY_ID: repoId,
+        ARTIFACT_RUN_IDS: runIds, RELEASE_TAG: 'v1.0.10', RELEASE_VERSION: '1.0.10' },
+    });
+    assert.equal(result.status, accepted ? 0 : 1, `${owner}/${namespace} ${version} (${runIds}): ${result.stderr}`);
+  }
+});
+
+test('Relay image tag selection keeps Beta and old stable backfills away from latest', {
+  skip: process.platform === 'win32',
+}, (t) => {
+  const { jobs } = yaml.parse(readFileSync(
+    path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8',
+  ));
+  const step = jobs['publish-relay-image'].steps.find((entry) => entry.name === 'Resolve image tags');
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-image-tags-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const scenario of [
+    { channel: 'beta', version: '1.0.0-beta.3', imageOnly: 'false', latest: false },
+    { channel: 'beta', version: '1.0.0-beta.3', imageOnly: 'true', latest: false },
+    { channel: 'stable', version: '1.0.0-beta', imageOnly: 'false', latest: true },
+    { channel: 'stable', version: '1.0.0', imageOnly: 'false', latest: true },
+    { channel: 'stable', version: '1.0.0', imageOnly: 'true', latest: true },
+    { channel: 'stable', version: '0.2.19', imageOnly: 'true', latest: false },
+  ]) {
+    const output = path.join(root, 'output');
+    writeFileSync(output, '');
+    const result = spawnSync('bash', ['-c', `gh() { printf 'v1.0.0\\n'; }\n${step.run}`], {
+      env: { ...process.env, GITHUB_OUTPUT: output, GITHUB_REPOSITORY: 'test-owner/OpenBitFun',
+        IMAGE: 'ghcr.io/test-owner/openbitfun-relay-server', RELEASE_TAG: `v${scenario.version}`,
+        RELEASE_VERSION: scenario.version, RELEASE_CHANNEL: scenario.channel, IMAGE_ONLY: scenario.imageOnly },
+      encoding: 'utf8', windowsHide: true,
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const tags = readFileSync(output, 'utf8').trim().split('\n');
+    assert.deepEqual(tags, [
+      'value<<EOF', `ghcr.io/test-owner/openbitfun-relay-server:v${scenario.version}`,
+      `ghcr.io/test-owner/openbitfun-relay-server:${scenario.version}`,
+      ...(scenario.latest ? ['ghcr.io/test-owner/openbitfun-relay-server:latest'] : []), 'EOF',
+    ]);
+  }
+});
+
+test('beta channel readback retries stale content and fails if it never converges', {
+  skip: process.platform === 'win32' || spawnSync('jq', ['--version'], { windowsHide: true }).status !== 0,
+}, (t) => {
+  const workflow = yaml.parse(readFileSync(
+    path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8',
+  ));
+  const step = workflow.jobs['upload-release-assets'].steps.find(
+    (entry) => entry.name === 'Publish beta channel manifest',
+  );
+  assert.equal(step.env.CANDIDATE_VERSION, '${{ steps.beta-channel.outputs.candidate_version }}');
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-beta-readback-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const bin = path.join(root, 'bin');
+  mkdirSync(bin);
+  for (const command of ['gh', 'sleep']) {
+    writeFileSync(path.join(bin, command), '#!/bin/sh\nexit 0\n', { mode: 0o755 });
+  }
+  writeFileSync(path.join(bin, 'curl'), `#!/usr/bin/env node
+const fs = require('node:fs');
+const count = fs.existsSync('requests') ? Number(fs.readFileSync('requests', 'utf8')) + 1 : 1;
+fs.writeFileSync('requests', String(count));
+if (process.env.READBACK_CASE === 'transport' && count === 1) process.exit(22);
+const output = process.argv[process.argv.indexOf('-o') + 1];
+const content = process.env.READBACK_CASE === 'malformed' && count === 1
+  ? 'not json'
+  : JSON.stringify({ version: process.env.READBACK_CASE === 'stale' || count === 1 ? '0.2.19-beta.1' : '1.0.0-beta.1' });
+fs.writeFileSync(output, content);
+`, { mode: 0o755 });
+  for (const scenario of ['converges', 'transport', 'malformed', 'stale']) {
+    const cwd = path.join(root, scenario);
+    mkdirSync(cwd);
+    writeFileSync(path.join(cwd, 'latest.published.json'), '{"version":"1.0.0-beta.1"}');
+    const result = spawnSync('bash', ['-c', step.run], {
+      cwd,
+      env: {
+        ...process.env,
+        PATH: `${bin}${path.delimiter}${process.env.PATH}`,
+        READBACK_CASE: scenario,
+        CHANNEL_EXISTS: 'true',
+        GITHUB_REPOSITORY: 'test/repo',
+        CANDIDATE_VERSION: '1.0.0-beta.1',
+      },
+      encoding: 'utf8',
+      timeout: 10000,
+      windowsHide: true,
+    });
+    assert.equal(result.status, scenario === 'stale' ? 1 : 0, `${scenario}: ${result.stderr}`);
+    const requests = Number(readFileSync(path.join(cwd, 'requests'), 'utf8'));
+    assert.ok(requests > 1 && requests <= 60, `${scenario}: bounded content retries`);
+    if (scenario === 'stale') assert.match(result.stderr, /did not converge/);
+  }
+});
+
+test('nightly and beta use the shared build-version projection', () => {
+  const artifacts = yaml.parse(
+    readFileSync(
+      path.join(repoRoot, '.github/workflows/nightly-artifacts.yml'),
+      'utf8',
+    ),
+  );
+  const nightly = yaml.parse(
+    readFileSync(path.join(repoRoot, '.github/workflows/nightly.yml'), 'utf8'),
+  );
+  const patch = artifacts.jobs.package.steps.find(
+    (step) => step.name === 'Patch nightly version',
+  );
+  assert.match(patch.run, /node scripts\/set-build-version\.mjs/);
+  assert.equal(artifacts.jobs.package.env.OPENBITFUN_RELEASE_CHANNEL, 'nightly');
+  assert.equal(
+    artifacts.jobs.package.env.TAURI_UPDATER_ENDPOINT,
+    'https://github.com/openBitFun/OpenBitFun/releases/latest/download/latest-v1.json',
+  );
+  assert.equal(
+    artifacts.jobs.package.env.TAURI_UPDATER_FALLBACK_ENDPOINT,
+    'https://openbitfun.com/release/latest-v1.json',
+  );
+  assert.equal(artifacts.jobs.package.env.OPENBITFUN_ENABLE_UPDATER_ARTIFACTS, undefined);
+  const signingStep = nightly.jobs['publish-nightly'].steps.find(
+    (step) => step.name === 'Sign installer packages',
+  );
+  assert.match(signingStep.run, /write-minisign-public-key\.mjs/);
+});
+
+
+test('Linux Rust workflows do not install an unused native OpenSSL toolchain', () => {
+  for (const workflowPath of [
+    '.github/workflows/ci.yml',
+    '.github/workflows/cli-package-manual.yml',
+    '.github/workflows/linux-binaries.yml',
+  ]) {
+    const workflow = readFileSync(path.join(repoRoot, workflowPath), 'utf8');
+    assert.doesNotMatch(
+      workflow,
+      /\blibssl-dev\b/,
+      `${workflowPath} must rely on the reviewed Cargo-owned Git2 build profile`,
+    );
+  }
+});
+
+
+test('public beta launch uses Latest while legacy updater feeds stay on the pinned notice manifest', () => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const steps = workflow.jobs['upload-release-assets'].steps;
+  const upload = steps.find((step) => step.name === 'Upload to release');
+  assert.equal(upload.env.RELEASE_LATEST, "${{ needs.prepare.outputs.release_channel == 'stable' }}");
+  assert.equal(upload.env.RELEASE_PRERELEASE, "${{ needs.prepare.outputs.release_channel == 'beta' }}");
+  const preserve = steps.find((step) => step.name === 'Preserve legacy update feeds');
+  assert.equal(preserve.if, "needs.prepare.outputs.release_channel == 'stable'");
+  assert.ok(steps.indexOf(preserve) < steps.indexOf(upload));
+  assert.match(steps.find((step) => step.name === 'Generate updater manifest').run, /--out release-updater-assets\/latest-v1\.json/);
+  // The pinned legacy manifests must come from the repository, so the notice
+  // manifest survives every future release without manual re-upload.
+  assert.match(preserve.run, /scripts\/fixtures\/legacy-update-feeds/);
+  assert.doesNotMatch(preserve.run, /curl/);
+  assert.match(preserve.run, /0\.2\.20/);
+  assert.match(preserve.run, /0\.2\.19/);
+  assert.match(preserve.run, /notes/);
+  // The pinned step downloads nothing, so the released version can never leak
+  // into a legacy feed; the sandbox only proves the copy + guard behavior.
+  const cwd = mkdtempSync(path.join(tmpdir(), 'openbitfun-legacy-feed-'));
+  try {
+    // The step reads its pinned manifests via a repo-root-relative path and
+    // writes into release-upload-assets/, so mirror the CI working tree
+    // inside the sandbox instead of running against the real checkout.
+    mkdirSync(path.join(cwd, 'scripts/fixtures/legacy-update-feeds'), { recursive: true });
+    mkdirSync(path.join(cwd, 'release-upload-assets'));
+    for (const name of ['latest.json', 'linux-binaries.json']) {
+      copyFileSync(
+        path.join(repoRoot, 'scripts/fixtures/legacy-update-feeds', name),
+        path.join(cwd, 'scripts/fixtures/legacy-update-feeds', name),
+      );
+    }
+    const candidate = '{"version":"1.0.0-beta"}';
+    writeFileSync(path.join(cwd, 'release-upload-assets/latest-v1.json'), candidate);
+    const result = spawnSync('bash', ['-c', preserve.run], {
+      cwd, encoding: 'utf8', windowsHide: true,
+    });
+    assert.equal(result.status, 0, result.stderr);
+    for (const name of ['latest.json', 'linux-binaries.json']) {
+      assert.equal(
+        readFileSync(path.join(cwd, 'release-upload-assets', name), 'utf8'),
+        readFileSync(path.join(repoRoot, 'scripts/fixtures/legacy-update-feeds', name), 'utf8'),
+      );
+    }
+    assert.equal(readFileSync(path.join(cwd, 'release-upload-assets/latest-v1.json'), 'utf8'), candidate);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+
+test('release publication omits target overrides and uploads before publishing', (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const step = workflow.jobs['upload-release-assets'].steps.find((entry) => entry.name === 'Upload to release');
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-publish-api-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const status of ['200', '404', '403']) {
+    const cwd = path.join(root, status);
+    mkdirSync(cwd);
+    mkdirSync(path.join(cwd, 'release-upload-assets'));
+    writeFileSync(path.join(cwd, 'release-upload-assets/latest-v1.json'), '{}');
+    const result = spawnSync('bash', ['-c', `
+      curl() { printf '%s' "$HTTP_STATUS"; }
+      gh() { printf '%s\\n' "$*" >> calls; }
+      ${step.run}
+    `], { cwd, encoding: 'utf8', windowsHide: true, env: { ...process.env,
+      HTTP_STATUS: status, GH_TOKEN: 'fixture', GITHUB_REPOSITORY: 'test/repo',
+      RELEASE_TAG: 'v1.0.0-beta', RELEASE_VERSION: '1.0.0-beta',
+      RELEASE_PRERELEASE: 'false', RELEASE_LATEST: 'true' } });
+    if (status === '403') {
+      assert.notEqual(result.status, 0);
+      continue;
+    }
+    assert.equal(result.status, 0, result.stderr);
+    const calls = readFileSync(path.join(cwd, 'calls'), 'utf8');
+    assert.doesNotMatch(calls, /--target|target_commitish/);
+    assert.equal(calls.includes('release create'), status === '404');
+    if (status === '404') assert.match(calls, /--verify-tag --draft/);
+    assert.ok(calls.indexOf('release upload') < calls.indexOf('release edit'));
+    assert.match(calls, /--draft=false --prerelease=false --latest=true/);
+  }
+  const prepare = workflow.jobs.prepare.steps.find((entry) => entry.id === 'meta').run;
+  assert.match(prepare, /UPLOAD.*true.*-z.*TAG_SHA/);
+});
+
+test('macOS release verification uses the pinned workflow revision without changing old-tag artifacts', (t) => {
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const step = workflow.jobs.package.steps.find(entry => entry.name === 'Verify Apple signature and notarization');
+  const root = mkdtempSync(path.join(tmpdir(), 'openbitfun-apple-policy-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const source = path.join(root, 'source');
+  const checkout = path.join(root, 'checkout');
+  mkdirSync(path.join(source, 'scripts/ci'), { recursive: true });
+  const git = (cwd, ...args) => {
+    const result = spawnSync('git', args, { cwd, encoding: 'utf8', windowsHide: true });
+    assert.equal(result.status, 0, result.stderr);
+    return result.stdout.trim();
+  };
+  const commit = () => git(source, '-c', 'user.name=Release Fixture', '-c', 'user.email=release@example.invalid',
+    '-c', 'commit.gpgsign=false', 'commit', '-qm', 'Fixture');
+  const verifier = path.join(source, 'scripts/ci/verify-macos-signing.sh');
+  const microphone = path.join(source, 'scripts/ci/verify-macos-microphone.sh');
+  git(source, 'init', '-q');
+  git(source, 'config', 'core.autocrlf', 'false');
+  writeFileSync(verifier, 'exit 99\n');
+  writeFileSync(microphone, 'exit 99\n');
+  git(source, 'add', '.');
+  commit();
+  const oldSha = git(source, 'rev-parse', 'HEAD');
+  git(source, 'tag', 'fixture-old');
+  writeFileSync(verifier, 'source "$(dirname "$0")/macos-ticket-network.sh"\nprintf "workflow-revision:%s\\n" "$1" > policy-result\nbash "$(dirname "$0")/verify-macos-microphone.sh"\n');
+  writeFileSync(microphone, 'printf "workflow-helper\\n" > helper-result\n');
+  writeFileSync(path.join(source, 'scripts/ci/macos-ticket-network.sh'), 'printf "workflow-network\\n" > network-result\n');
+  git(source, 'add', '.');
+  commit();
+  const workflowSha = git(source, 'rev-parse', 'HEAD');
+  writeFileSync(verifier, 'exit 98\n');
+  git(source, 'add', '.');
+  commit();
+  git(root, 'clone', '--no-local', '--depth=1', '--branch', 'fixture-old', source, checkout);
+  const artifact = path.join(checkout, 'signed-asset.bin');
+  writeFileSync(artifact, 'signed immutable fixture');
+  const result = spawnSync('bash', ['-c', step.run
+    .replaceAll('${{ github.workflow_sha }}', workflowSha)
+    .replaceAll('${{ matrix.platform.target }}', 'fixture-target')], {
+    cwd: checkout, encoding: 'utf8', windowsHide: true,
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.equal(readFileSync(path.join(checkout, 'policy-result'), 'utf8'), 'workflow-revision:fixture-target\n');
+  assert.equal(readFileSync(path.join(checkout, 'helper-result'), 'utf8'), 'workflow-helper\n');
+  assert.equal(readFileSync(path.join(checkout, 'network-result'), 'utf8'), 'workflow-network\n');
+  assert.equal(git(checkout, 'rev-parse', 'HEAD'), oldSha);
+  assert.equal(readFileSync(artifact, 'utf8'), 'signed immutable fixture');
+});
+
+test('failed Mac verification retains a tar archive without publishing it', (t) => {
+  if (process.platform === 'win32') { t.skip('Mac archive mode checks run on Unix'); return; }
+  const workflow = yaml.parse(readFileSync(path.join(repoRoot, '.github/workflows/desktop-package.yml'), 'utf8'));
+  const steps = workflow.jobs.package.steps;
+  const verify = steps.find((step) => step.name === 'Verify Apple signature and notarization');
+  const preserve = steps.find((step) => step.name === 'Preserve macOS verification recovery bundles');
+  const upload = steps.find((step) => step.name === 'Upload macOS verification recovery bundles');
+  assert.equal(verify.id, 'apple_verification');
+  assert.equal(verify['continue-on-error'], undefined);
+  for (const step of [preserve, upload]) {
+    for (const failed of [true, false]) for (const os of ['macOS', 'Linux', 'Windows']) for (const outcome of ['success', 'failure']) {
+      const enabled = Function('failure', 'runner', 'steps', `return (${step.if});`)(() => failed, { os }, { apple_verification: { outcome } });
+      assert.equal(enabled, failed && os === 'macOS' && outcome === 'failure');
+    }
+  }
+  assert.match(upload.with.name, /-verification-recovery$/);
+  assert.doesNotMatch(upload.with.name, /-bundle$/);
+  const cwd = mkdtempSync(path.join(tmpdir(), 'openbitfun-notary-archive-'));
+  t.after(() => rmSync(cwd, { recursive: true, force: true }));
+  const app = path.join(cwd, 'target/fixture/release/bundle/macos/Test.app');
+  mkdirSync(app, { recursive: true });
+  writeFileSync(path.join(app, 'tool'), 'signed executable fixture', { mode: 0o755 });
+  assert.equal(spawnSync('ln', ['-s', 'tool', path.join(app, 'tool-link')], { windowsHide: true }).status, 0);
+  const archived = spawnSync('bash', ['-c', preserve.run.replaceAll('${{ matrix.platform.target }}', 'fixture')], { cwd, encoding: 'utf8', windowsHide: true });
+  assert.equal(archived.status, 0, archived.stderr);
+  mkdirSync(path.join(cwd, 'restored'));
+  assert.equal(spawnSync('tar', ['-xzf', 'macos-verification-recovery.tar.gz', '-C', 'restored'], { cwd, windowsHide: true }).status, 0);
+  const restored = path.join(cwd, 'restored/bundle/macos/Test.app');
+  assert.equal(readFileSync(path.join(restored, 'tool-link'), 'utf8'), 'signed executable fixture');
+  assert.equal(spawnSync('bash', ['-c', 'test -x "$1"', 'fixture', path.join(restored, 'tool')], { windowsHide: true }).status, 0);
+  assert.equal(spawnSync('readlink', [path.join(restored, 'tool-link')], { encoding: 'utf8', windowsHide: true }).stdout.trim(), 'tool');
+});
+
+for (const scenario of [
+  { name: 'accepts a transient app ticket connection loss', failures: 2, network: true, attempts: 3, status: 0, submissions: 1 },
+  { name: 'retries DMG stapling without resubmitting notarization', action: 'staple', kind: 'dmg', failures: 1, network: true, attempts: 2, status: 0, submissions: 1 },
+  { name: 'retries DMG validation without resubmitting notarization', kind: 'dmg', failures: 2, network: true, attempts: 3, status: 0, submissions: 1 },
+  { name: 'rejects exhausted ticket connection retries', failures: 99, network: true, attempts: 3, status: 68, submissions: 0 },
+  { name: 'rejects invalid tickets without retrying', failures: 99, network: false, attempts: 1, status: 68, submissions: 0 },
+  { name: 'preserves other stapler exit codes', failures: 99, network: true, ticketStatus: 65, attempts: 1, status: 65, submissions: 0 },
+  { name: 'rejects signature errors before contacting Apple', signatureStatus: 1, attempts: 0, status: 1, submissions: 0 },
+  { name: 'preserves Gatekeeper rejection', gatekeeperStatus: 3, attempts: 1, status: 3, submissions: 0 },
+  { name: 'preserves notarization submission rejection', notaryStatus: 4, attempts: 1, status: 4, submissions: 1 },
+  { name: 'resumes an uploaded DMG after transient offline polling', waitFailures: 2, waitCode: -1009, waitAttempts: 3, attempts: 1, status: 0, submissions: 1 },
+  { name: 'resumes polling after a lost connection', waitFailures: 1, waitCode: -1005, waitAttempts: 2, attempts: 1, status: 0, submissions: 1 },
+  { name: 'retains a receipt after exhausted polling retries', waitFailures: 99, waitCode: -1009, waitAttempts: 3, attempts: 1, status: 1, submissions: 1, resume: true },
+  { name: 'does not retry unrelated polling failures', waitFailures: 99, waitCode: -1001, waitAttempts: 1, attempts: 1, status: 1, submissions: 1 },
+  { name: 'rejects a missing submission ID without retrying upload', submissionId: 'invalid', waitAttempts: 0, attempts: 1, status: 1, submissions: 1 },
+  { name: 'rejects a response for another submission', responseId: '22222222-2222-4222-8222-222222222222', waitAttempts: 1, attempts: 1, status: 1, submissions: 1 },
+  { name: 'rejects an Invalid notarization response', waitStatus: 'Invalid', waitAttempts: 1, attempts: 1, status: 1, submissions: 1 },
+
+]) {
+  test(`macOS verification ${scenario.name}`, (t) => {
+    const cwd = mkdtempSync(path.join(tmpdir(), 'openbitfun-apple-ticket-'));
+    t.after(() => rmSync(cwd, { recursive: true, force: true }));
+    mkdirSync(path.join(cwd, 'scripts/ci'), { recursive: true });
+    copyFileSync(path.join(repoRoot, 'scripts/ci/verify-macos-signing.sh'), path.join(cwd, 'scripts/ci/verify-macos-signing.sh'));
+    copyFileSync(path.join(repoRoot, 'scripts/ci/macos-ticket-network.sh'), path.join(cwd, 'scripts/ci/macos-ticket-network.sh'));
+    writeFileSync(path.join(cwd, 'scripts/ci/verify-macos-microphone.sh'), 'printf "microphone\\n" >> "$FIXTURE_CALLS"\n');
+    const app = path.join(cwd, 'target/fixture/release/bundle/macos/Test App.app');
+    mkdirSync(app, { recursive: true });
+    writeFileSync(path.join(app, 'fixture'), 'fixture');
+    mkdirSync(path.join(cwd, 'target/fixture/release/bundle/dmg'), { recursive: true });
+    writeFileSync(path.join(cwd, 'target/fixture/release/bundle/dmg/Test App.dmg'), 'fixture');
+    const result = spawnSync('bash', ['-c', `
+      codesign() {
+        printf 'codesign %s\\n' "$*" >> "$FIXTURE_CALLS"
+        if [[ "$*" == *--verify* ]]; then return "$SIGNATURE_STATUS"; fi
+        printf 'Authority=Developer ID Application: Fixture\\nflags=0x10000(runtime)\\nTimestamp=fixture\\n'
+      }
+      file() { printf 'Mach-O fixture\\n'; }
+      spctl() { printf 'spctl %s\\n' "$*" >> "$FIXTURE_CALLS"; return "$GATEKEEPER_STATUS"; }
+      sleep() { printf 'sleep %s\\n' "$*" >> "$FIXTURE_CALLS"; }
+      xcrun() {
+        printf 'xcrun %s\\n' "$*" >> "$FIXTURE_CALLS"
+        if [[ "$1" == notarytool ]]; then
+          if [[ "$2" == submit ]]; then
+            [[ "$NOTARY_STATUS" == 0 ]] || return "$NOTARY_STATUS"
+            printf '{"id":"%s"}\\n' "$SUBMISSION_ID"
+          else
+            local waits=0
+            [[ ! -f waits ]] || read -r waits < waits
+            waits=$((waits + 1))
+            printf '%s\\n' "$waits" > waits
+            if [[ "$waits" -le "$WAIT_FAILURES" ]]; then
+              printf 'Error Domain=NSURLErrorDomain Code=%s "Network error"\\n' "$WAIT_CODE" >&2
+              return 1
+            fi
+            printf '{"id":"%s","status":"%s"}\\n' "$RESPONSE_ID" "$WAIT_STATUS"
+          fi
+          return 0
+        fi
+        local kind=app count=0
+        [[ "$3" == *.dmg ]] && kind=dmg
+        if [[ "$2" == "$TICKET_ACTION" && "$kind" == "$TICKET_KIND" ]]; then
+          [[ ! -f attempts ]] || read -r count < attempts
+          count=$((count + 1))
+          printf '%s\\n' "$count" > attempts
+          if [[ "$count" -le "$TICKET_FAILURES" ]]; then
+            if [[ "$TICKET_NETWORK" == true ]]; then
+              printf 'Error Domain=NSURLErrorDomain Code=-1005 "The network connection was lost."\\n' >&2
+            else
+              printf 'The ticket is invalid. The validate action failed! Error 68.\\n' >&2
+            fi
+            return "$TICKET_EXIT_CODE"
+          fi
+        fi
+        return 0
+      }
+      export -f codesign file spctl sleep xcrun
+      bash scripts/ci/verify-macos-signing.sh fixture
+    `], { cwd, encoding: 'utf8', windowsHide: true, env: { ...process.env,
+      OPENBITFUN_APPLE_SIGNING_CONFIGURED: 'true', FIXTURE_CALLS: path.join(cwd, 'calls'),
+      SIGNATURE_STATUS: String(scenario.signatureStatus ?? 0), GATEKEEPER_STATUS: String(scenario.gatekeeperStatus ?? 0),
+      SUBMISSION_ID: scenario.submissionId ?? '11111111-1111-4111-8111-111111111111', RESPONSE_ID: scenario.responseId ?? '11111111-1111-4111-8111-111111111111',
+      WAIT_FAILURES: String(scenario.waitFailures ?? 0), WAIT_CODE: String(scenario.waitCode ?? -1009), WAIT_STATUS: scenario.waitStatus ?? 'Accepted',
+      NOTARY_STATUS: String(scenario.notaryStatus ?? 0), APPLE_API_ISSUER: 'fixture', APPLE_API_KEY: 'fixture', APPLE_API_KEY_PATH: 'fixture',
+      TICKET_ACTION: scenario.action ?? 'validate', TICKET_KIND: scenario.kind ?? 'app',
+      TICKET_FAILURES: String(scenario.failures ?? 0), TICKET_NETWORK: String(scenario.network ?? false),
+      TICKET_EXIT_CODE: String(scenario.ticketStatus ?? 68),
+    } });
+    const calls = readFileSync(path.join(cwd, 'calls'), 'utf8');
+    assert.equal(result.status, scenario.status, `${result.stdout}\n${result.stderr}`);
+    assert.equal((calls.match(/^xcrun notarytool submit /gm) ?? []).length, scenario.submissions, calls);
+    assert.equal((calls.match(/^microphone$/gm) ?? []).length, scenario.signatureStatus ? 0 : 1, calls);
+    const attempts = scenario.attempts === 0 ? 0 : Number(readFileSync(path.join(cwd, 'attempts'), 'utf8'));
+    assert.equal(attempts, scenario.attempts, calls);
+    assert.equal((calls.match(/^sleep /gm) ?? []).length, Math.max(0, scenario.attempts - 1) + Math.max(0, (scenario.waitAttempts ?? 1) - 1), calls);
+    assert.equal((calls.match(/^xcrun notarytool wait /gm) ?? []).length,
+      scenario.waitAttempts ?? (scenario.notaryStatus ? 0 : scenario.submissions), calls);
+    if (scenario.resume) {
+      const receipt = path.join(cwd, 'target/fixture/release/bundle/dmg/Test App.dmg.notary-submission.json');
+      assert.equal(JSON.parse(readFileSync(receipt, 'utf8')).id, '11111111-1111-4111-8111-111111111111');
+      const retryScript = `
+        codesign() { printf 'Authority=Developer ID Application: Fixture\\nflags=0x10000(runtime)\\nTimestamp=fixture\\n'; }
+        file() { printf 'Mach-O fixture\\n'; }
+        spctl() { return 0; }
+        xcrun() {
+          printf '%s\\n' "$*" >> resumed
+          if [[ "$1 $2" == 'notarytool submit' ]]; then return 99; fi
+          if [[ "$1 $2" == 'notarytool wait' ]]; then
+            printf '{"id":"11111111-1111-4111-8111-111111111111","status":"Accepted"}\\n'
+          fi
+        }
+        export -f codesign file spctl xcrun
+        bash scripts/ci/verify-macos-signing.sh fixture
+      `;
+      const retryOptions = { cwd, encoding: 'utf8', windowsHide: true, env: { ...process.env,
+        OPENBITFUN_APPLE_SIGNING_CONFIGURED: 'true', FIXTURE_CALLS: path.join(cwd, 'calls'),
+        APPLE_API_ISSUER: 'fixture', APPLE_API_KEY: 'fixture', APPLE_API_KEY_PATH: 'fixture' } };
+      const retry = spawnSync('bash', ['-c', retryScript], retryOptions);
+      assert.equal(retry.status, 0, retry.stderr);
+      assert.doesNotMatch(readFileSync(path.join(cwd, 'resumed'), 'utf8'), /notarytool submit/);
+      writeFileSync(path.join(cwd, 'target/fixture/release/bundle/dmg/Test App.dmg'), 'changed after receipt');
+      const changed = spawnSync('bash', ['-c', retryScript], retryOptions);
+      assert.notEqual(changed.status, 0);
+      assert.match(changed.stderr, /receipt does not match/);
+
+    }
+    if (scenario.status === 0) assert.match(result.stdout, /Verified Developer ID signatures/);
+    else assert.doesNotMatch(result.stdout, /Verified Developer ID signatures/);
+  });
+}

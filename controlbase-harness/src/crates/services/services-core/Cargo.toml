@@ -1,0 +1,265 @@
+[package]
+name = "openbitfun-services-core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "OpenBitFun core service owner crate"
+autotests = false
+
+[lib]
+name = "openbitfun_services_core"
+crate-type = ["rlib"]
+
+[dependencies]
+image = { workspace = true, optional = true }
+zip = { workspace = true, optional = true }
+uuid = { workspace = true, features = ["v4"], optional = true }
+anyhow = { workspace = true, optional = true }
+aes-gcm = { workspace = true, optional = true }
+async-trait = { workspace = true, optional = true }
+openbitfun-core-types = { path = "../../contracts/core-types", optional = true }
+openbitfun-events = { path = "../../contracts/events", optional = true }
+openbitfun-runtime-ports = { path = "../../contracts/runtime-ports", optional = true }
+openbitfun-product-domains = { path = "../../contracts/product-domains", optional = true }
+tokio = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true, optional = true }
+base64 = { workspace = true, optional = true }
+chrono = { workspace = true, optional = true }
+chrono-tz = { workspace = true, optional = true }
+git2 = { workspace = true, optional = true }
+dunce = { workspace = true, optional = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+fs2 = { workspace = true, optional = true }
+filetime = { workspace = true, optional = true }
+rand = { workspace = true, optional = true }
+ignore = { workspace = true, optional = true }
+globset = { workspace = true, optional = true }
+sha2 = { workspace = true, optional = true }
+which = { workspace = true, optional = true }
+similar = { workspace = true, optional = true }
+regex = { workspace = true, optional = true }
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+rustls = { workspace = true, features = ["ring", "std", "tls12"], optional = true }
+
+[target.'cfg(windows)'.dependencies]
+win32job = { workspace = true, optional = true }
+windows = { workspace = true, optional = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true, optional = true }
+
+[features]
+asar = []
+installed-apps = ["dep:windows", "windows/Win32_Foundation", "windows/Win32_System_Registry"]
+default = []
+session-recovery = ["local-storage", "workspace-persistence", "dep:anyhow"]
+pet-packages = ["dep:image", "image/png", "image/webp", "image/jpeg", "image/gif", "dep:zip", "dep:uuid", "dep:sha2", "dep:base64", "dep:dunce", "dep:fs2"]
+workspace-icons = ["dep:image", "image/png", "image/jpeg", "image/webp", "dep:base64", "dep:sha2", "dep:uuid"]
+workspace-persistence = ["workspace-identity", "dep:openbitfun-core-types", "dep:openbitfun-runtime-ports", "dep:chrono"]
+coordination-store = ["dep:rusqlite"]
+routing-state = ["json-io", "dep:sha2"]
+resource-capacity = ["json-io", "dep:sha2", "dep:uuid"]
+session-event-format = ["dep:openbitfun-events"]
+tls-provider = ["dep:rustls"]
+system-proxy = ["dep:windows", "windows/Win32_Foundation", "windows/Win32_System_Registry"]
+credential-vault = [
+    "dep:aes-gcm",
+    "dep:anyhow",
+    "dep:base64",
+    "dep:fs2",
+    "dep:libc",
+    "dep:rand",
+    "dep:tokio",
+    "tokio/fs",
+    "tokio/io-util",
+    "tokio/rt",
+]
+diagnostics = ["dep:regex"]
+diff = ["dep:similar", "dep:tokio", "tokio/rt", "tokio/time"]
+filesystem = [
+    "tokio/sync",
+    "dep:base64",
+    "dep:chrono",
+    "dep:ignore",
+    "dep:openbitfun-core-types",
+    "dep:regex",
+    "dep:sha2",
+    "dep:tokio",
+    "tokio/fs",
+    "tokio/rt",
+]
+json-io = [
+    "dep:fs2",
+    "dep:tokio",
+    "dep:windows",
+    "tokio/fs",
+    "tokio/rt",
+    "tokio/sync",
+    "tokio/time",
+    "windows/Win32_Foundation",
+    "windows/Win32_Storage_FileSystem",
+]
+local-storage = [
+    "dep:openbitfun-core-types",
+    "dep:openbitfun-events",
+    "dep:chrono",
+    "dep:fs2",
+    "dep:libc",
+    "dep:regex",
+    "dep:sha2",
+    "dep:similar",
+    "dep:tokio",
+    "dep:windows",
+    "tokio/fs",
+    "tokio/rt",
+    "tokio/sync",
+    "tokio/time",
+    "windows/Win32_Foundation",
+    "windows/Win32_Storage_FileSystem",
+]
+memory-store = ["dep:rusqlite"]
+product-identity = ["dep:openbitfun-core-types"]
+token-usage-statistics = ["local-storage", "dep:chrono-tz"]
+process-runtime = [
+    "dep:libc",
+    "dep:tokio",
+    "dep:which",
+    "dep:win32job",
+    "dep:windows",
+    "tokio/io-util",
+    "tokio/process",
+    "tokio/rt",
+    "tokio/time",
+    "windows/Win32_Foundation",
+    "windows/Win32_System_Diagnostics_ToolHelp",
+    "windows/Win32_System_JobObjects",
+    "windows/Win32_System_Threading",
+]
+workspace-instructions = [
+    "dep:globset",
+    "dep:regex",
+    "dep:serde_yaml",
+    "dep:tokio",
+    "tokio/fs",
+    "tokio/io-util",
+    "tokio/rt",
+]
+markdown = ["dep:regex", "dep:serde_yaml"]
+workspace-transfer = [
+    "dep:anyhow",
+    "dep:openbitfun-runtime-ports",
+    "openbitfun-runtime-ports/workspace-ports",
+    "dep:sha2",
+    "dep:tokio",
+    "tokio/fs",
+    "tokio/io-util",
+    "tokio/rt",
+    "tokio/sync",
+]
+workspace-runtime = [
+    "dep:anyhow",
+    "dep:async-trait",
+    "dep:openbitfun-runtime-ports",
+    "openbitfun-runtime-ports/runtime-event-port",
+    "openbitfun-runtime-ports/workspace-ports",
+    "dep:dunce",
+    "dep:filetime",
+    "process-runtime",
+    "tokio/fs",
+    "tokio/io-util",
+    "tokio/sync",
+]
+workspace-identity = ["dep:dunce", "dep:sha2"]
+runtime-ownership = ["dep:dunce", "dep:fs2", "dep:sha2"]
+permission = [
+    "dep:async-trait",
+    "dep:openbitfun-runtime-ports",
+    "dep:rusqlite",
+    "dep:tokio",
+    "openbitfun-runtime-ports/permission",
+    "tokio/rt",
+]
+session-search = [
+    "dep:openbitfun-product-domains",
+    "dep:rusqlite",
+    "dep:tokio",
+    "tokio/rt",
+]
+dispatch-workspace = ["dep:anyhow", "dep:sha2"]
+session-git = ["local-storage", "dep:git2"]
+workspace-text-runtime = ["dep:tokio", "tokio/rt"]
+
+[dev-dependencies]
+filetime = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "time"] }
+
+[[test]]
+name = "markdown_owner_contracts"
+path = "tests/markdown_owner_contracts.rs"
+required-features = ["markdown"]
+
+[[test]]
+name = "declarative_workspace_instruction_contracts"
+path = "tests/declarative_workspace_instruction_contracts.rs"
+required-features = ["workspace-instructions"]
+
+[[test]]
+name = "runtime_ownership_contracts"
+path = "tests/runtime_ownership_contracts.rs"
+required-features = ["runtime-ownership"]
+
+[[test]]
+name = "local_runtime_ports"
+path = "tests/local_runtime_ports.rs"
+required-features = ["workspace-runtime"]
+
+[[test]]
+name = "permission_store_contracts"
+path = "tests/permission_store_contracts.rs"
+required-features = ["permission"]
+
+[[test]]
+name = "workspace_instruction_contracts"
+path = "tests/workspace_instruction_contracts.rs"
+required-features = ["workspace-instructions", "workspace-runtime"]
+
+[[test]]
+name = "session_write_lock_contracts"
+path = "tests/session_write_lock_contracts.rs"
+required-features = ["local-storage"]
+
+[[test]]
+name = "exclusive_file_lease_contracts"
+path = "tests/exclusive_file_lease_contracts.rs"
+required-features = ["local-storage"]
+
+[[test]]
+name = "process_runtime_contracts"
+path = "tests/process_runtime_contracts.rs"
+required-features = ["process-runtime"]
+
+[[test]]
+name = "service_contracts"
+path = "tests/service_contracts.rs"
+
+[[test]]
+name = "storage_owner_contracts"
+path = "tests/storage_owner_contracts.rs"
+required-features = ["local-storage"]
+
+[[test]]
+name = "session_contracts"
+path = "tests/session_contracts.rs"
+required-features = ["local-storage"]
+
+[[test]]
+name = "session_usage_contracts"
+path = "tests/session_usage_contracts.rs"
+required-features = ["local-storage"]
+
+[lints]
+workspace = true

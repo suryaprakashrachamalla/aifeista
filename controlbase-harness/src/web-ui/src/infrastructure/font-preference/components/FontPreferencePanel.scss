@@ -1,0 +1,8 @@
+.font-pref-panel {
+  &__custom-controls,
+  &__preview,
+  &__preview-input {
+    width: 100%;
+    min-width: 0;
+  }
+}

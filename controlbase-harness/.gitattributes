@@ -1,0 +1,66 @@
+#**
+# Line-ending policy.
+#
+# Git for Windows defaults to `core.autocrlf=true`, which rewrites every text
+# file to CRLF on checkout. Two OpenBitFun paths break silently when that happens:
+#
+#   1. `src/apps/relay-server/*.sh` is embedded into the Desktop binary with
+#      `include_str!` and uploaded verbatim to the relay host. A CR turns each
+#      blank line into `$'\r': command not found`, and `set -e` aborts the
+#      one-click deploy on the first one.
+#   2. Rust raw string literals (`r#"..."#`) that hold remote bash carry the
+#      checkout's CRLF into the generated scripts the same way.
+#
+# Force LF for everything that has to run on a POSIX host, regardless of where
+# it was checked out. Windows-only scripts (`*.ps1`) are left alone — PowerShell
+# reads LF fine and pinning them would churn every non-Windows working tree.
+#**
+
+/.gitattributes     text eol=lf
+*.sh                text eol=lf
+*.bash              text eol=lf
+*.rs                text eol=lf
+*.py                text eol=lf
+*.mjs               text eol=lf
+*.cjs               text eol=lf
+
+# Generated frontend/mobile contracts compare exact file contents. Keep both
+# their source fragments and generated outputs stable on every checkout so a
+# Windows or hosted runner cannot report newline-only generated drift.
+MiniApp/Demo/git-graph/source/** text eol=lf
+src/crates/assembly/core/builtin_skills/miniapp-dev/references/examples/demo-git-graph/source/** text eol=lf
+
+# The Product Operation Registry embeds and compares this generated JSON byte for byte.
+src/crates/contracts/product-domains/src/generated/remote-surface-registry.json text eol=lf
+
+# Release workflows byte-compare these pinned legacy updater feeds against the
+# uploaded assets, so their newlines must survive every checkout unchanged.
+scripts/fixtures/legacy-update-feeds/*.json text eol=lf
+
+# Native icon export provenance hashes the exact source bytes on every platform.
+assets/brand/macos/openbitfun.icon/icon.json text eol=lf
+assets/brand/macos/legacy-canvas.json text eol=lf
+
+# models.dev provenance hashes exact redistributed bytes. Keep these assets
+# stable across checkout platforms so the offline release check is reproducible.
+src/crates/services/services-integrations/assets/models-dev.json text eol=lf
+src/crates/services/services-integrations/assets/models-dev.LICENSE.txt text eol=lf
+src/crates/services/services-integrations/assets/models-dev.provenance.json text eol=lf
+
+# The Gradle wrapper is an extensionless POSIX shell script, so the `*.sh` rule
+# above does not cover it. Its `.bat` sibling is the mirror case: cmd.exe needs
+# CRLF. The wrapper jar is binary and must never be filtered.
+gradlew             text eol=lf
+gradlew.bat         text eol=crlf
+*.jar               binary
+
+Dockerfile          text eol=lf
+Dockerfile.*        text eol=lf
+*.Dockerfile        text eol=lf
+.dockerignore       text eol=lf
+docker-compose.yml  text eol=lf
+docker-compose.*.yml text eol=lf
+Caddyfile           text eol=lf
+
+# Pinned guest scripts and map datasets are verified byte-for-byte.
+third_party/visualize/** -text -diff

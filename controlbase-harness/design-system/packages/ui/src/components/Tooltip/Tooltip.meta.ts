@@ -1,0 +1,37 @@
+import type { ComponentMeta } from "../../registry.types";
+
+export const tooltipMeta = {
+  category: "feedback",
+  description: "A portaled, delay-managed label with optional click persistence, cursor-following and interactive content; dismisses immediately on scrolling or when its trigger leaves the visible viewport.",
+  maturity: "stable",
+  name: "Tooltip",
+  props: [
+    { name: "children", type: "ReactElement" },
+    { name: "content", type: "ReactNode" },
+    { defaultValue: "top", name: "placement", type: "top | bottom | left | right" },
+    { defaultValue: "hover", name: "trigger", type: "hover | click | focus | hover-focus" },
+    { defaultValue: "450", name: "delay", type: "number" },
+    { defaultValue: "false", name: "disabled", type: "boolean" },
+    { defaultValue: "false", name: "followCursor", type: "boolean" },
+    { defaultValue: "false", name: "interactive", type: "boolean" },
+    { defaultValue: "false", name: "openOnClick", type: "boolean" },
+    { name: "portalContainer", type: "TooltipPortalTarget" },
+  ],
+  states: ["default", "visible", "interactive", "instant"],
+  tokens: [
+    "color.surface.raised",
+    "color.content.primary",
+    "color.border.subtle",
+    "color.border.default",
+    "color.border.strong",
+    "shadow.sm",
+    "overlay.tooltip.maxInlineSize",
+    "overlay.tooltip.maxBlockSize",
+    "overlay.tooltip.paddingBlock",
+    "overlay.tooltip.paddingInline",
+    "overlay.tooltip.surfaceRadius",
+    "overlay.tooltip.arrowSize",
+    "overlay.tooltip.gap",
+    "type.support.fontSize",
+  ],
+} as const satisfies ComponentMeta;

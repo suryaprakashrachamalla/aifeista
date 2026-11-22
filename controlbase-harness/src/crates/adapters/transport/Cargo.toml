@@ -1,0 +1,31 @@
+[package]
+name = "openbitfun-transport"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "OpenBitFun Transport Layer - Cross-platform communication adapters"
+
+[lib]
+name = "openbitfun_transport"
+
+[dependencies]
+# Events layer
+openbitfun-events = { path = "../../contracts/events" }
+
+# Inherited from workspace
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+log = { workspace = true }
+thiserror = { workspace = true }
+
+# Tauri adapter dependency (optional, enable only when needed)
+tauri = { workspace = true, optional = true }
+
+[features]
+default = []
+tauri-adapter = ["tauri"]
+
+[lints]
+workspace = true

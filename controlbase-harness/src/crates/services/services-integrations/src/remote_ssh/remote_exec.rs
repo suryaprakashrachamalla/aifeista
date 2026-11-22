@@ -1,0 +1,1861 @@
+//! Model-facing remote command execution runtime.
+//!
+//! This mirrors the local `terminal_core::ExecProcessManager` semantics for SSH
+//! workspaces while keeping tool-owned command sessions separate from UI
+//! terminal sessions.
+
+use crate::remote_ssh::transport::{ssh_exit_code_for_signal, SSH_EXIT_STATUS_AFTER_EOF_GRACE};
+use crate::remote_ssh::SSHConnectionManager;
+use anyhow::{anyhow, Context};
+use rand::Rng;
+use russh::client::Msg;
+use russh::{Channel, ChannelMsg, Sig};
+use std::collections::{HashMap, VecDeque};
+use std::sync::{Arc, Mutex as StdMutex, OnceLock};
+use terminal_core::{spawn_pty, PtyEvent, ShellConfig, ShellType};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::sync::{mpsc, Mutex, Notify};
+use tokio::time::{Duration, Instant};
+use uuid::Uuid;
+
+const DEFAULT_YIELD_TIME_MS: u64 = 10_000;
+pub(super) const EXEC_TERMINAL_SIZE: openbitfun_runtime_ports::ExecTerminalSize =
+    openbitfun_runtime_ports::ExecTerminalSize { cols: 80, rows: 24 };
+const MAX_RETAINED_OUTPUT_BYTES: usize = 1024 * 1024;
+const MAX_REMOTE_EXEC_SESSIONS: usize = 64;
+const MAX_COMPLETED_REMOTE_EXEC_SESSIONS: usize = 64;
+const REMOTE_INTERRUPT_GRACE_TIMEOUT_MS: u64 = 3_000;
+const REMOTE_CONTROL_DRAIN_TIMEOUT_MS: u64 = 500;
+
+static GLOBAL_REMOTE_EXEC_MANAGER: OnceLock<Arc<RemoteExecProcessManager>> = OnceLock::new();
+
+pub fn get_global_remote_exec_process_manager() -> Arc<RemoteExecProcessManager> {
+    GLOBAL_REMOTE_EXEC_MANAGER
+        .get_or_init(|| Arc::new(RemoteExecProcessManager::default()))
+        .clone()
+}
+
+#[derive(Clone)]
+pub struct RemoteExecCommandRequest {
+    pub ssh_manager: SSHConnectionManager,
+    pub connection_id: String,
+    pub command: String,
+    pub tty: bool,
+    pub yield_time_ms: Option<u64>,
+    pub max_output_chars: Option<usize>,
+    /// End only the initial output wait; the launched process remains active.
+    pub wait_interrupt: Option<tokio_util::sync::CancellationToken>,
+    pub lifecycle_tx: Option<mpsc::UnboundedSender<RemoteExecProcessLifecycleEvent>>,
+    pub output_capture_tx: Option<mpsc::UnboundedSender<String>>,
+}
+
+#[derive(Debug, Clone)]
+pub struct RemoteWriteStdinRequest {
+    pub session_id: i32,
+    pub chars: String,
+    pub append_enter: bool,
+    pub yield_time_ms: Option<u64>,
+    pub max_output_chars: Option<usize>,
+    /// End only this output wait; submitted input and the process remain active.
+    pub wait_interrupt: Option<tokio_util::sync::CancellationToken>,
+}
+
+#[derive(Debug, Clone)]
+pub struct RemoteSendStdinRequest {
+    pub session_id: i32,
+    pub chars: String,
+    pub append_enter: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RemoteExecControlAction {
+    Interrupt,
+    Kill,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RemoteExecControlOrigin {
+    ModelTool,
+    OutOfBand,
+}
+
+#[derive(Debug, Clone)]
+pub struct RemoteExecControlRequest {
+    pub session_id: i32,
+    pub action: RemoteExecControlAction,
+    pub origin: RemoteExecControlOrigin,
+    pub yield_time_ms: Option<u64>,
+    pub max_output_chars: Option<usize>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RemoteExecSessionCompletionStatus {
+    Exited,
+    Interrupted,
+    Killed,
+    Pruned,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RemoteExecSessionCompletionSource {
+    Process,
+    OutOfBandControl,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RemoteExecSessionCompletion {
+    pub status: RemoteExecSessionCompletionStatus,
+    pub source: RemoteExecSessionCompletionSource,
+}
+
+#[derive(Debug, Clone)]
+pub struct RemoteExecCommandResponse {
+    pub chunk_id: String,
+    pub wall_time_seconds: f64,
+    pub output: String,
+    pub session_id: Option<i32>,
+    pub exit_code: Option<i32>,
+    pub original_output_chars: usize,
+    pub completion: Option<RemoteExecSessionCompletion>,
+    /// The output wait yielded cooperatively, independently of process completion.
+    pub wait_interrupted: bool,
+}
+
+pub type RemoteExecResult<T> = std::result::Result<T, RemoteExecError>;
+
+#[derive(Debug, thiserror::Error)]
+pub enum RemoteExecError {
+    #[error("session not found: {0}")]
+    SessionNotFound(i32),
+
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RemoteExecProcessLifecycleStatus {
+    Running,
+    Exited,
+    Interrupted,
+    Killed,
+    Pruned,
+}
+
+#[derive(Debug, Clone)]
+pub struct RemoteExecProcessLifecycleEvent {
+    pub session_id: i32,
+    pub status: RemoteExecProcessLifecycleStatus,
+    pub exit_code: Option<i32>,
+}
+
+pub struct RemoteExecProcessManager {
+    sessions: Mutex<HashMap<i32, RemoteExecSessionEntry>>,
+    completed_sessions: Mutex<HashMap<i32, CompletedRemoteExecSession>>,
+}
+
+impl Default for RemoteExecProcessManager {
+    fn default() -> Self {
+        Self {
+            sessions: Mutex::new(HashMap::new()),
+            completed_sessions: Mutex::new(HashMap::new()),
+        }
+    }
+}
+
+struct RemoteExecSessionEntry {
+    process: Arc<RemoteExecProcess>,
+    tty: bool,
+    cursor: OutputCursor,
+    last_used: Instant,
+    lifecycle_tx: Option<mpsc::UnboundedSender<RemoteExecProcessLifecycleEvent>>,
+}
+
+#[derive(Clone)]
+struct CompletedRemoteExecSession {
+    output: String,
+    exit_code: Option<i32>,
+    original_output_chars: usize,
+    completion: RemoteExecSessionCompletion,
+    completed_at: Instant,
+}
+
+struct RemoteExecProcess {
+    output: Arc<OutputState>,
+    command_tx: mpsc::Sender<RemoteExecProcessCommand>,
+    out_of_band_control_action: StdMutex<Option<RemoteExecControlAction>>,
+}
+
+enum RemoteExecProcessCommand {
+    Write(Vec<u8>),
+    Control(RemoteExecControlAction),
+}
+
+#[derive(Debug, Clone, Copy)]
+enum RemotePipeControlState {
+    InterruptGrace { deadline: Instant },
+    KillDrain { deadline: Instant },
+}
+
+impl RemotePipeControlState {
+    fn deadline(self) -> Instant {
+        match self {
+            Self::InterruptGrace { deadline } | Self::KillDrain { deadline } => deadline,
+        }
+    }
+}
+
+struct OutputState {
+    inner: Mutex<OutputInner>,
+    notify: Notify,
+    output_capture_tx: Option<mpsc::UnboundedSender<String>>,
+}
+
+struct OutputInner {
+    chunks: VecDeque<(u64, OutputStream, Vec<u8>)>,
+    next_seq: u64,
+    retained_bytes: usize,
+    capture_pending_utf8: PendingUtf8Streams,
+    closed: bool,
+    exit_code: Option<i32>,
+}
+
+#[derive(Clone)]
+struct OutputCursor {
+    next_seq: u64,
+    pending_utf8: PendingUtf8Streams,
+}
+
+#[derive(Clone, Copy)]
+enum OutputStream {
+    Combined,
+    Stdout,
+    Stderr,
+}
+
+#[derive(Clone, Default)]
+struct PendingUtf8Streams {
+    combined: Vec<u8>,
+    stdout: Vec<u8>,
+    stderr: Vec<u8>,
+}
+
+impl PendingUtf8Streams {
+    fn get_mut(&mut self, stream: OutputStream) -> &mut Vec<u8> {
+        match stream {
+            OutputStream::Combined => &mut self.combined,
+            OutputStream::Stdout => &mut self.stdout,
+            OutputStream::Stderr => &mut self.stderr,
+        }
+    }
+
+    fn clear(&mut self) {
+        self.combined.clear();
+        self.stdout.clear();
+        self.stderr.clear();
+    }
+
+    fn finish(&mut self) -> String {
+        let mut output = String::new();
+        output.push_str(&decode_utf8_stream(&mut self.combined, &[], true));
+        output.push_str(&decode_utf8_stream(&mut self.stdout, &[], true));
+        output.push_str(&decode_utf8_stream(&mut self.stderr, &[], true));
+        output
+    }
+}
+
+struct CollectedOutput {
+    output: String,
+    original_output_chars: usize,
+    cursor: OutputCursor,
+    closed: bool,
+    wait_interrupted: bool,
+}
+
+struct HeadTailText {
+    head_budget: usize,
+    tail_budget: usize,
+    head: String,
+    tail: VecDeque<char>,
+    head_chars: usize,
+    tail_chars: usize,
+    omitted_chars: usize,
+    total_chars: usize,
+}
+
+impl RemoteExecProcessManager {
+    pub async fn is_session_active(&self, session_id: i32) -> bool {
+        let process = self
+            .sessions
+            .lock()
+            .await
+            .get(&session_id)
+            .map(|entry| Arc::clone(&entry.process));
+
+        match process {
+            Some(process) => !process.output.is_closed().await,
+            None => false,
+        }
+    }
+
+    pub async fn exec_command(
+        &self,
+        request: RemoteExecCommandRequest,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        self.exec_command_inner(request, None).await
+    }
+
+    pub async fn exec_command_streaming(
+        &self,
+        request: RemoteExecCommandRequest,
+        output_tx: mpsc::Sender<String>,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        self.exec_command_inner(request, Some(output_tx)).await
+    }
+
+    async fn exec_command_inner(
+        &self,
+        request: RemoteExecCommandRequest,
+        output_tx: Option<mpsc::Sender<String>>,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        let process = Arc::new(spawn_remote_process(request.clone()).await?);
+        self.wait_for_initial_output(process, request, output_tx)
+            .await
+    }
+
+    async fn wait_for_initial_output(
+        &self,
+        process: Arc<RemoteExecProcess>,
+        request: RemoteExecCommandRequest,
+        output_tx: Option<mpsc::Sender<String>>,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        let cursor = OutputCursor {
+            next_seq: 0,
+            pending_utf8: PendingUtf8Streams::default(),
+        };
+        let session_id = self
+            .store_session(
+                Arc::clone(&process),
+                request.tty,
+                cursor.clone(),
+                request.lifecycle_tx,
+            )
+            .await;
+        let started_at = Instant::now();
+        let collected = process
+            .output
+            .collect_until_interruptible(
+                cursor,
+                deadline_from_now(request.yield_time_ms),
+                request.max_output_chars.unwrap_or(usize::MAX),
+                output_tx.as_ref(),
+                request.wait_interrupt.as_ref(),
+            )
+            .await;
+
+        // Keep bytes arriving after the final drain available to the next poll.
+        let closed = collected.closed;
+        let exit_code = if closed {
+            process.output.exit_code().await
+        } else {
+            None
+        };
+        let completion = if closed {
+            Some(completion_for_closed_remote_process(
+                process.out_of_band_control_action(),
+            ))
+        } else {
+            None
+        };
+        self.update_or_remove_session(
+            session_id,
+            closed,
+            collected.cursor.clone(),
+            None,
+            exit_code,
+        )
+        .await;
+
+        Ok(RemoteExecCommandResponse {
+            wait_interrupted: collected.wait_interrupted,
+            chunk_id: new_chunk_id(),
+            wall_time_seconds: started_at.elapsed().as_secs_f64(),
+            output: collected.output,
+            session_id: (!closed).then_some(session_id),
+            exit_code,
+            original_output_chars: collected.original_output_chars,
+            completion,
+        })
+    }
+
+    pub async fn write_stdin(
+        &self,
+        request: RemoteWriteStdinRequest,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        self.write_stdin_inner(request, None).await
+    }
+
+    pub async fn write_stdin_streaming(
+        &self,
+        request: RemoteWriteStdinRequest,
+        output_tx: mpsc::Sender<String>,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        self.write_stdin_inner(request, Some(output_tx)).await
+    }
+
+    pub async fn send_stdin(&self, request: RemoteSendStdinRequest) -> RemoteExecResult<()> {
+        let (process, tty) = {
+            let mut sessions = self.sessions.lock().await;
+            let entry = sessions
+                .get_mut(&request.session_id)
+                .ok_or(RemoteExecError::SessionNotFound(request.session_id))?;
+            entry.last_used = Instant::now();
+            (Arc::clone(&entry.process), entry.tty)
+        };
+
+        let input = input_bytes_for_write(&request.chars, request.append_enter);
+        if input.is_empty() {
+            return Ok(());
+        }
+        if !tty {
+            return Err(anyhow!("stdin input requires a tty session").into());
+        }
+
+        process
+            .command_tx
+            .send(RemoteExecProcessCommand::Write(input))
+            .await
+            .context("remote process has already exited")
+            .map_err(RemoteExecError::from)
+    }
+
+    async fn write_stdin_inner(
+        &self,
+        request: RemoteWriteStdinRequest,
+        output_tx: Option<mpsc::Sender<String>>,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        let (process, tty, cursor) = {
+            let mut sessions = self.sessions.lock().await;
+            let Some(entry) = sessions.get_mut(&request.session_id) else {
+                drop(sessions);
+                if request.chars.is_empty() {
+                    if let Some(completed) = self.take_completed_session(request.session_id).await {
+                        return Ok(RemoteExecCommandResponse {
+                            wait_interrupted: false,
+                            chunk_id: new_chunk_id(),
+                            wall_time_seconds: 0.0,
+                            output: completed.output,
+                            session_id: None,
+                            exit_code: completed.exit_code,
+                            original_output_chars: completed.original_output_chars,
+                            completion: Some(completed.completion),
+                        });
+                    }
+                }
+                return Err(RemoteExecError::SessionNotFound(request.session_id));
+            };
+            entry.last_used = Instant::now();
+            (Arc::clone(&entry.process), entry.tty, entry.cursor.clone())
+        };
+
+        let input = input_bytes_for_write(&request.chars, request.append_enter);
+        if !input.is_empty() && tty {
+            process
+                .command_tx
+                .send(RemoteExecProcessCommand::Write(input))
+                .await
+                .context("remote process has already exited")?;
+        }
+
+        let started_at = Instant::now();
+        let collected = process
+            .output
+            .collect_until_interruptible(
+                cursor,
+                deadline_from_now(request.yield_time_ms),
+                request.max_output_chars.unwrap_or(usize::MAX),
+                output_tx.as_ref(),
+                request.wait_interrupt.as_ref(),
+            )
+            .await;
+
+        // Use the same closure snapshot as the final drain. A later exit must
+        // remain pollable so its final bytes cannot be lost during cleanup.
+        let closed = collected.closed;
+        let exit_code = if closed {
+            process.output.exit_code().await
+        } else {
+            None
+        };
+        let completion = if closed {
+            Some(completion_for_closed_remote_process(
+                process.out_of_band_control_action(),
+            ))
+        } else {
+            None
+        };
+        self.update_or_remove_session(
+            request.session_id,
+            closed,
+            collected.cursor.clone(),
+            completion.map(|completion| lifecycle_status_for_completion(completion.status)),
+            exit_code,
+        )
+        .await;
+
+        Ok(RemoteExecCommandResponse {
+            wait_interrupted: collected.wait_interrupted,
+            chunk_id: new_chunk_id(),
+            wall_time_seconds: started_at.elapsed().as_secs_f64(),
+            output: collected.output,
+            session_id: (!closed).then_some(request.session_id),
+            exit_code,
+            original_output_chars: collected.original_output_chars,
+            completion,
+        })
+    }
+
+    pub async fn control_session(
+        &self,
+        request: RemoteExecControlRequest,
+    ) -> RemoteExecResult<RemoteExecCommandResponse> {
+        let (process, cursor) = {
+            let mut sessions = self.sessions.lock().await;
+            let entry = sessions
+                .get_mut(&request.session_id)
+                .ok_or(RemoteExecError::SessionNotFound(request.session_id))?;
+            entry.last_used = Instant::now();
+            if request.origin == RemoteExecControlOrigin::OutOfBand {
+                entry.process.mark_out_of_band_control(request.action);
+            }
+            (Arc::clone(&entry.process), entry.cursor.clone())
+        };
+
+        process
+            .command_tx
+            .send(RemoteExecProcessCommand::Control(request.action))
+            .await
+            .context("remote process has already exited")?;
+
+        let started_at = Instant::now();
+        let collected = process
+            .output
+            .collect_until(
+                cursor.clone(),
+                deadline_from_now(request.yield_time_ms),
+                request.max_output_chars.unwrap_or(usize::MAX),
+                None,
+            )
+            .await;
+
+        let closed = process.output.is_closed().await;
+        let exit_code = process.output.exit_code().await;
+        let completion = closed.then_some(RemoteExecSessionCompletion {
+            status: completion_status_for_control_action(request.action),
+            source: match request.origin {
+                RemoteExecControlOrigin::ModelTool => RemoteExecSessionCompletionSource::Process,
+                RemoteExecControlOrigin::OutOfBand => {
+                    RemoteExecSessionCompletionSource::OutOfBandControl
+                }
+            },
+        });
+        let lifecycle_status =
+            completion.map(|completion| lifecycle_status_for_completion(completion.status));
+        self.update_or_remove_session(
+            request.session_id,
+            closed,
+            if request.origin == RemoteExecControlOrigin::ModelTool {
+                collected.cursor.clone()
+            } else {
+                cursor
+            },
+            lifecycle_status,
+            exit_code,
+        )
+        .await;
+        if request.origin == RemoteExecControlOrigin::OutOfBand && closed {
+            self.store_completed_session(
+                request.session_id,
+                CompletedRemoteExecSession {
+                    output: collected.output.clone(),
+                    exit_code,
+                    original_output_chars: collected.original_output_chars,
+                    completion: completion.expect("closed process should have completion"),
+                    completed_at: Instant::now(),
+                },
+            )
+            .await;
+        }
+
+        Ok(RemoteExecCommandResponse {
+            wait_interrupted: false,
+            chunk_id: new_chunk_id(),
+            wall_time_seconds: started_at.elapsed().as_secs_f64(),
+            output: collected.output,
+            session_id: (!closed).then_some(request.session_id),
+            exit_code,
+            original_output_chars: collected.original_output_chars,
+            completion,
+        })
+    }
+
+    async fn store_session(
+        &self,
+        process: Arc<RemoteExecProcess>,
+        tty: bool,
+        cursor: OutputCursor,
+        lifecycle_tx: Option<mpsc::UnboundedSender<RemoteExecProcessLifecycleEvent>>,
+    ) -> i32 {
+        let (session_id, pruned_entry) = {
+            let mut sessions = self.sessions.lock().await;
+            let pruned = if sessions.len() >= MAX_REMOTE_EXEC_SESSIONS {
+                sessions
+                    .iter()
+                    .min_by_key(|(_, entry)| entry.last_used)
+                    .map(|(id, _)| *id)
+                    .and_then(|id| sessions.remove(&id).map(|entry| (id, entry)))
+            } else {
+                None
+            };
+
+            let session_id = new_session_id(&sessions);
+            sessions.insert(
+                session_id,
+                RemoteExecSessionEntry {
+                    process: Arc::clone(&process),
+                    tty,
+                    cursor,
+                    last_used: Instant::now(),
+                    lifecycle_tx: lifecycle_tx.clone(),
+                },
+            );
+            (session_id, pruned)
+        };
+
+        if let Some((pruned_session_id, entry)) = pruned_entry {
+            emit_lifecycle(
+                entry.lifecycle_tx.clone(),
+                RemoteExecProcessLifecycleEvent {
+                    session_id: pruned_session_id,
+                    status: RemoteExecProcessLifecycleStatus::Pruned,
+                    exit_code: None,
+                },
+            );
+            entry.process.request_control(RemoteExecControlAction::Kill);
+        }
+
+        emit_lifecycle(
+            lifecycle_tx.clone(),
+            RemoteExecProcessLifecycleEvent {
+                session_id,
+                status: RemoteExecProcessLifecycleStatus::Running,
+                exit_code: None,
+            },
+        );
+        spawn_lifecycle_exit_watcher(session_id, process, lifecycle_tx);
+
+        session_id
+    }
+
+    async fn update_or_remove_session(
+        &self,
+        session_id: i32,
+        closed: bool,
+        cursor: OutputCursor,
+        lifecycle_status: Option<RemoteExecProcessLifecycleStatus>,
+        exit_code: Option<i32>,
+    ) {
+        if closed {
+            let mut sessions = self.sessions.lock().await;
+            if let Some(entry) = sessions.remove(&session_id) {
+                if let Some(status) = lifecycle_status {
+                    emit_lifecycle(
+                        entry.lifecycle_tx.clone(),
+                        RemoteExecProcessLifecycleEvent {
+                            session_id,
+                            status,
+                            exit_code,
+                        },
+                    );
+                }
+            }
+        } else {
+            let mut sessions = self.sessions.lock().await;
+            if let Some(entry) = sessions.get_mut(&session_id) {
+                entry.cursor = cursor;
+            }
+        }
+    }
+
+    async fn store_completed_session(
+        &self,
+        session_id: i32,
+        completed: CompletedRemoteExecSession,
+    ) {
+        let mut completed_sessions = self.completed_sessions.lock().await;
+        if completed_sessions.len() >= MAX_COMPLETED_REMOTE_EXEC_SESSIONS {
+            if let Some(oldest_session_id) = completed_sessions
+                .iter()
+                .min_by_key(|(_, session)| session.completed_at)
+                .map(|(id, _)| *id)
+            {
+                completed_sessions.remove(&oldest_session_id);
+            }
+        }
+        completed_sessions.insert(session_id, completed);
+    }
+
+    async fn take_completed_session(&self, session_id: i32) -> Option<CompletedRemoteExecSession> {
+        self.completed_sessions.lock().await.remove(&session_id)
+    }
+}
+
+impl Drop for RemoteExecProcess {
+    fn drop(&mut self) {
+        self.request_control(RemoteExecControlAction::Kill);
+    }
+}
+
+impl RemoteExecProcess {
+    fn mark_out_of_band_control(&self, action: RemoteExecControlAction) {
+        if let Ok(mut out_of_band_action) = self.out_of_band_control_action.lock() {
+            *out_of_band_action = Some(action);
+        }
+    }
+
+    fn out_of_band_control_action(&self) -> Option<RemoteExecControlAction> {
+        self.out_of_band_control_action
+            .lock()
+            .ok()
+            .and_then(|action| *action)
+    }
+
+    fn request_control(&self, action: RemoteExecControlAction) {
+        let _ = self
+            .command_tx
+            .try_send(RemoteExecProcessCommand::Control(action));
+    }
+}
+
+async fn spawn_remote_process(
+    request: RemoteExecCommandRequest,
+) -> anyhow::Result<RemoteExecProcess> {
+    if request.tty {
+        if let Some(spec) = request
+            .ssh_manager
+            .local_process_exec_spec(&request.connection_id, &request.command, true)
+            .await?
+        {
+            return spawn_local_workspace_pty_process(request, spec).await;
+        }
+        return spawn_remote_pty_process(request).await;
+    }
+    spawn_remote_pipe_process(request).await
+}
+
+async fn spawn_local_workspace_pty_process(
+    request: RemoteExecCommandRequest,
+    (executable, args): (String, Vec<String>),
+) -> anyhow::Result<RemoteExecProcess> {
+    let shell_type = ShellType::Custom(
+        if executable == super::wsl::EXECUTABLE {
+            "WSL"
+        } else {
+            "Docker"
+        }
+        .to_string(),
+    );
+    let shell_config = ShellConfig {
+        executable,
+        args,
+        env: HashMap::new(),
+        cwd: None,
+        login: false,
+    };
+    let process_id = u32::from_le_bytes(
+        Uuid::new_v4().as_bytes()[..4]
+            .try_into()
+            .expect("UUID prefix is four bytes"),
+    );
+    let spawned = spawn_pty(
+        process_id,
+        &shell_config,
+        shell_type,
+        EXEC_TERMINAL_SIZE.cols,
+        EXEC_TERMINAL_SIZE.rows,
+    )
+    .map_err(|error| anyhow!("Failed to start local workspace PTY: {}", error))?;
+    let output = Arc::new(OutputState::new(request.output_capture_tx.clone()));
+    let (command_tx, mut command_rx) = mpsc::channel::<RemoteExecProcessCommand>(64);
+    let owner_output = output.clone();
+    let mut events = spawned.events;
+    let writer = spawned.writer;
+    let controller = spawned.controller;
+    tokio::spawn(async move {
+        let mut exit_code = None;
+        loop {
+            tokio::select! {
+                biased;
+                command = command_rx.recv() => {
+                    match command {
+                        Some(RemoteExecProcessCommand::Write(bytes)) => {
+                            if writer.write(&bytes).await.is_err() {
+                                break;
+                            }
+                        }
+                        Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Interrupt)) => {
+                            let _ = writer.write(&[0x03]).await;
+                        }
+                        Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Kill)) | None => {
+                            let _ = controller.shutdown(true).await;
+                            exit_code = Some(137);
+                            break;
+                        }
+                    }
+                }
+                event = events.recv() => {
+                    match event {
+                        Some(PtyEvent::Data(data)) => {
+                            owner_output.push_chunk(OutputStream::Combined, data).await
+                        }
+                        Some(PtyEvent::Exit { exit_code: code }) => {
+                            exit_code = code.map(|code| code as i32);
+                            break;
+                        }
+                        None => break,
+                        Some(_) => {}
+                    }
+                }
+            }
+        }
+        owner_output.close(exit_code).await;
+    });
+    Ok(RemoteExecProcess {
+        output,
+        command_tx,
+        out_of_band_control_action: StdMutex::new(None),
+    })
+}
+
+async fn spawn_remote_pipe_process(
+    request: RemoteExecCommandRequest,
+) -> anyhow::Result<RemoteExecProcess> {
+    let transport = request
+        .ssh_manager
+        .open_workspace_stdio(&request.connection_id, &request.command)
+        .await?;
+    let output = Arc::new(OutputState::new(request.output_capture_tx.clone()));
+    let (command_tx, command_rx) = mpsc::channel::<RemoteExecProcessCommand>(8);
+    tokio::spawn(workspace_pipe_owner(transport, command_rx, output.clone()));
+
+    Ok(RemoteExecProcess {
+        output,
+        command_tx,
+        out_of_band_control_action: StdMutex::new(None),
+    })
+}
+
+async fn spawn_remote_pty_process(
+    request: RemoteExecCommandRequest,
+) -> anyhow::Result<RemoteExecProcess> {
+    let channel = request
+        .ssh_manager
+        .open_pty_exec_channel(
+            &request.connection_id,
+            &request.command,
+            EXEC_TERMINAL_SIZE.cols.into(),
+            EXEC_TERMINAL_SIZE.rows.into(),
+        )
+        .await?;
+    let output = Arc::new(OutputState::new(request.output_capture_tx.clone()));
+    let (command_tx, command_rx) = mpsc::channel::<RemoteExecProcessCommand>(64);
+    tokio::spawn(remote_pty_owner(channel, command_rx, output.clone()));
+
+    Ok(RemoteExecProcess {
+        output,
+        command_tx,
+        out_of_band_control_action: StdMutex::new(None),
+    })
+}
+
+async fn workspace_pipe_owner(
+    transport: crate::remote_ssh::WorkspaceStdio,
+    mut command_rx: mpsc::Receiver<RemoteExecProcessCommand>,
+    output: Arc<OutputState>,
+) {
+    let (mut stdin, mut stdout, mut stderr, control, completion) = transport.into_parts();
+    let mut completion_task = tokio::spawn(completion.wait());
+    let mut exit_code = None;
+    let mut process_completed = false;
+    let mut control_state: Option<RemotePipeControlState> = None;
+    let mut stdout_closed = false;
+    let mut stderr_closed = false;
+    let mut stdout_buffer = vec![0u8; 16 * 1024];
+    let mut stderr_buffer = vec![0u8; 16 * 1024];
+
+    loop {
+        if process_completed && stdout_closed && stderr_closed {
+            break;
+        }
+        if let Some(state) = control_state {
+            if Instant::now() >= state.deadline() {
+                match state {
+                    RemotePipeControlState::InterruptGrace { .. } => {
+                        let _ = control.kill().await;
+                        control_state = Some(RemotePipeControlState::KillDrain {
+                            deadline: Instant::now()
+                                + Duration::from_millis(REMOTE_CONTROL_DRAIN_TIMEOUT_MS),
+                        });
+                    }
+                    RemotePipeControlState::KillDrain { .. } => {
+                        break;
+                    }
+                }
+            }
+        }
+
+        let wait_budget = control_state
+            .map(RemotePipeControlState::deadline)
+            .map(|deadline| deadline.saturating_duration_since(Instant::now()))
+            .filter(|duration| !duration.is_zero())
+            .unwrap_or_else(|| Duration::from_millis(100));
+
+        tokio::select! {
+            biased;
+
+            command = command_rx.recv() => {
+                match command {
+                    Some(RemoteExecProcessCommand::Write(bytes)) => {
+                        if stdin.write_all(&bytes).await.is_err() {
+                            break;
+                        }
+                        let _ = stdin.flush().await;
+                    }
+                    Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Interrupt)) => {
+                        let _ = control.interrupt().await;
+                        control_state = Some(RemotePipeControlState::InterruptGrace {
+                            deadline: Instant::now()
+                                + Duration::from_millis(REMOTE_INTERRUPT_GRACE_TIMEOUT_MS),
+                        });
+                    }
+                    Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Kill)) => {
+                        let _ = control.kill().await;
+                        control_state = Some(RemotePipeControlState::KillDrain {
+                            deadline: Instant::now()
+                                + Duration::from_millis(REMOTE_CONTROL_DRAIN_TIMEOUT_MS),
+                        });
+                    }
+                    None => {
+                        let _ = control.kill().await;
+                        control_state = Some(RemotePipeControlState::KillDrain {
+                            deadline: Instant::now()
+                                + Duration::from_millis(REMOTE_CONTROL_DRAIN_TIMEOUT_MS),
+                        });
+                    }
+                }
+            }
+
+            read = stdout.read(&mut stdout_buffer), if !stdout_closed => {
+                match read {
+                    Ok(0) | Err(_) => stdout_closed = true,
+                    Ok(read) => {
+                        output
+                            .push_chunk(OutputStream::Stdout, stdout_buffer[..read].to_vec())
+                            .await
+                    }
+                }
+            }
+
+            read = stderr.read(&mut stderr_buffer), if !stderr_closed => {
+                match read {
+                    Ok(0) | Err(_) => stderr_closed = true,
+                    Ok(read) => {
+                        output
+                            .push_chunk(OutputStream::Stderr, stderr_buffer[..read].to_vec())
+                            .await
+                    }
+                }
+            }
+
+            // An unknown status stays unknown. Reporting a synthetic `-1` here
+            // used to make a command that ran fine look like it failed, and the
+            // model cannot tell that apart from a real non-zero exit.
+            completed = &mut completion_task, if !process_completed => {
+                exit_code = completed.ok().and_then(|exit| exit.exit_code);
+                process_completed = true;
+            }
+
+            _ = tokio::time::sleep(wait_budget), if control_state.is_some() => {}
+        }
+    }
+
+    let _ = stdin.shutdown().await;
+    if !completion_task.is_finished() {
+        completion_task.abort();
+    }
+    output.close(exit_code).await;
+}
+
+async fn remote_pty_owner(
+    mut channel: Channel<Msg>,
+    mut command_rx: mpsc::Receiver<RemoteExecProcessCommand>,
+    output: Arc<OutputState>,
+) {
+    let mut exit_code = None;
+    let mut close_after_control_at: Option<Instant> = None;
+    let mut exit_status_deadline: Option<Instant> = None;
+
+    loop {
+        if close_after_control_at.is_some_and(|deadline| Instant::now() >= deadline) {
+            let _ = channel.close().await;
+            break;
+        }
+        if exit_status_deadline.is_some_and(|deadline| Instant::now() >= deadline) {
+            break;
+        }
+
+        let wait_budget = close_after_control_at
+            .into_iter()
+            .chain(exit_status_deadline)
+            .min()
+            .map(|deadline| deadline.saturating_duration_since(Instant::now()))
+            .filter(|duration| !duration.is_zero())
+            .unwrap_or_else(|| Duration::from_millis(100));
+
+        tokio::select! {
+            biased;
+
+            command = command_rx.recv() => {
+                match command {
+                    Some(RemoteExecProcessCommand::Write(bytes)) => {
+                        let _ = channel.data(&bytes[..]).await;
+                    }
+                    Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Interrupt)) => {
+                        let _ = channel.data(&[0x03u8][..]).await;
+                    }
+                    Some(RemoteExecProcessCommand::Control(RemoteExecControlAction::Kill)) => {
+                        let _ = channel.signal(Sig::KILL).await;
+                        let _ = channel.eof().await;
+                        close_after_control_at = Some(
+                            Instant::now() + Duration::from_millis(REMOTE_CONTROL_DRAIN_TIMEOUT_MS)
+                        );
+                    }
+                    None => {
+                        let _ = channel.signal(Sig::KILL).await;
+                        let _ = channel.close().await;
+                        break;
+                    }
+                }
+            }
+
+            message = channel.wait() => {
+                match message {
+                    Some(ChannelMsg::Data { data }) | Some(ChannelMsg::ExtendedData { data, .. }) => {
+                        output
+                            .push_chunk(OutputStream::Combined, data.to_vec())
+                            .await;
+                    }
+                    Some(ChannelMsg::ExitStatus { exit_status }) => {
+                        exit_code = Some(exit_status as i32);
+                        if exit_status_deadline.is_some() {
+                            break;
+                        }
+                    }
+                    Some(ChannelMsg::ExitSignal { ref signal_name, .. }) => {
+                        if exit_code.is_none() {
+                            exit_code = ssh_exit_code_for_signal(signal_name);
+                        }
+                        if exit_status_deadline.is_some() && exit_code.is_some() {
+                            break;
+                        }
+                    }
+                    // See `run_ssh_channel`: EOF may precede the exit status, so
+                    // keep the channel open long enough to collect it.
+                    Some(ChannelMsg::Eof) => {
+                        if exit_code.is_some() {
+                            break;
+                        }
+                        exit_status_deadline.get_or_insert_with(|| {
+                            Instant::now() + SSH_EXIT_STATUS_AFTER_EOF_GRACE
+                        });
+                    }
+                    Some(ChannelMsg::Close) | None => break,
+                    Some(_) => {}
+                }
+            }
+
+            _ = tokio::time::sleep(wait_budget),
+                if close_after_control_at.is_some() || exit_status_deadline.is_some() => {}
+        }
+    }
+
+    output.close(exit_code).await;
+}
+
+/// Incrementally decode a UTF-8 byte stream without treating a code point split
+/// across transport chunks as invalid. Truly invalid sequences keep the
+/// previous lossy-decoding contract.
+fn decode_utf8_stream(pending: &mut Vec<u8>, chunk: &[u8], finish: bool) -> String {
+    pending.extend_from_slice(chunk);
+    let mut output = String::new();
+
+    loop {
+        match std::str::from_utf8(pending) {
+            Ok(valid) => {
+                output.push_str(valid);
+                pending.clear();
+                break;
+            }
+            Err(error) => {
+                let valid_up_to = error.valid_up_to();
+                if valid_up_to > 0 {
+                    output.push_str(
+                        std::str::from_utf8(&pending[..valid_up_to])
+                            .expect("UTF-8 validator reported a valid prefix"),
+                    );
+                    pending.drain(..valid_up_to);
+                }
+                match error.error_len() {
+                    Some(invalid_len) => {
+                        output.push('\u{fffd}');
+                        pending.drain(..invalid_len);
+                    }
+                    None => break,
+                }
+            }
+        }
+    }
+
+    if finish && !pending.is_empty() {
+        output.push_str(&String::from_utf8_lossy(pending));
+        pending.clear();
+    }
+    output
+}
+
+impl OutputState {
+    fn new(output_capture_tx: Option<mpsc::UnboundedSender<String>>) -> Self {
+        Self {
+            inner: Mutex::new(OutputInner {
+                chunks: VecDeque::new(),
+                next_seq: 0,
+                retained_bytes: 0,
+                capture_pending_utf8: PendingUtf8Streams::default(),
+                closed: false,
+                exit_code: None,
+            }),
+            notify: Notify::new(),
+            output_capture_tx,
+        }
+    }
+
+    async fn push_chunk(&self, stream: OutputStream, chunk: Vec<u8>) {
+        if chunk.is_empty() {
+            return;
+        }
+        let capture_text = {
+            let mut inner = self.inner.lock().await;
+            let capture_text = self.output_capture_tx.as_ref().map(|_| {
+                decode_utf8_stream(inner.capture_pending_utf8.get_mut(stream), &chunk, false)
+            });
+            let seq = inner.next_seq;
+            inner.next_seq = inner.next_seq.saturating_add(1);
+            inner.retained_bytes = inner.retained_bytes.saturating_add(chunk.len());
+            inner.chunks.push_back((seq, stream, chunk));
+            while inner.retained_bytes > MAX_RETAINED_OUTPUT_BYTES {
+                if let Some((_, _, dropped)) = inner.chunks.pop_front() {
+                    inner.retained_bytes = inner.retained_bytes.saturating_sub(dropped.len());
+                } else {
+                    break;
+                }
+            }
+            capture_text
+        };
+        if let (Some(tx), Some(text)) = (&self.output_capture_tx, capture_text) {
+            if !text.is_empty() {
+                let _ = tx.send(text);
+            }
+        }
+        self.notify.notify_waiters();
+    }
+
+    async fn close(&self, exit_code: Option<i32>) {
+        let capture_tail = {
+            let mut inner = self.inner.lock().await;
+            inner.closed = true;
+            inner.exit_code = exit_code;
+            inner.capture_pending_utf8.finish()
+        };
+        if let Some(tx) = &self.output_capture_tx {
+            if !capture_tail.is_empty() {
+                let _ = tx.send(capture_tail);
+            }
+        }
+        self.notify.notify_waiters();
+    }
+
+    async fn is_closed(&self) -> bool {
+        self.inner.lock().await.closed
+    }
+
+    async fn exit_code(&self) -> Option<i32> {
+        self.inner.lock().await.exit_code
+    }
+
+    async fn wait_closed(&self) -> Option<i32> {
+        loop {
+            let notified = self.notify.notified();
+            {
+                let inner = self.inner.lock().await;
+                if inner.closed {
+                    return inner.exit_code;
+                }
+            }
+            notified.await;
+        }
+    }
+
+    async fn drain_since_with_output(
+        &self,
+        cursor: &mut OutputCursor,
+        sink: &mut HeadTailText,
+        output_tx: Option<&mpsc::Sender<String>>,
+    ) -> bool {
+        let inner = self.inner.lock().await;
+        if let Some((first_seq, _, _)) = inner.chunks.front() {
+            if cursor.next_seq < *first_seq {
+                // Retention pruning may discard the beginning of a split code
+                // point. Never combine that orphaned suffix with later bytes.
+                cursor.pending_utf8.clear();
+                cursor.next_seq = *first_seq;
+            }
+        }
+        for (seq, stream, chunk) in inner.chunks.iter() {
+            if *seq >= cursor.next_seq {
+                let text = decode_utf8_stream(cursor.pending_utf8.get_mut(*stream), chunk, false);
+                if !text.is_empty() {
+                    sink.push_str(&text);
+                    if let Some(tx) = output_tx {
+                        let _ = tx.try_send(text);
+                    }
+                }
+            }
+        }
+        cursor.next_seq = inner.next_seq;
+        if inner.closed {
+            let tail = cursor.pending_utf8.finish();
+            if !tail.is_empty() {
+                sink.push_str(&tail);
+                if let Some(tx) = output_tx {
+                    let _ = tx.try_send(tail);
+                }
+            }
+        }
+        inner.closed
+    }
+
+    async fn collect_until(
+        &self,
+        cursor: OutputCursor,
+        deadline: Instant,
+        max_output_chars: usize,
+        output_tx: Option<&mpsc::Sender<String>>,
+    ) -> CollectedOutput {
+        self.collect_until_interruptible(cursor, deadline, max_output_chars, output_tx, None)
+            .await
+    }
+
+    async fn collect_until_interruptible(
+        &self,
+        mut cursor: OutputCursor,
+        deadline: Instant,
+        max_output_chars: usize,
+        output_tx: Option<&mpsc::Sender<String>>,
+        wait_interrupt: Option<&tokio_util::sync::CancellationToken>,
+    ) -> CollectedOutput {
+        let mut sink = HeadTailText::new(max_output_chars);
+
+        let (closed, wait_interrupted) = loop {
+            // Register before draining so output/exit notifications cannot be
+            // lost between inspecting the buffer and going to sleep.
+            let notified = self.notify.notified();
+            tokio::pin!(notified);
+            notified.as_mut().enable();
+            let interrupted = wait_interrupt.is_some_and(|token| token.is_cancelled());
+            let closed = self
+                .drain_since_with_output(&mut cursor, &mut sink, output_tx)
+                .await;
+            if closed || interrupted || tokio::time::Instant::now() >= deadline {
+                // A fully drained process exit wins over a simultaneous yield.
+                break (closed, interrupted && !closed);
+            }
+
+            tokio::select! {
+                _ = &mut notified => {}
+                _ = tokio::time::sleep_until(deadline) => {}
+                _ = async {
+                    match wait_interrupt {
+                        Some(token) => token.cancelled().await,
+                        None => std::future::pending::<()>().await,
+                    }
+                } => {}
+            }
+            // Every wake, including interruption/timeout, gets a final drain.
+        };
+
+        let original_output_chars = sink.total_chars;
+        CollectedOutput {
+            output: sink.render(),
+            original_output_chars,
+            cursor,
+            closed,
+            wait_interrupted,
+        }
+    }
+}
+
+fn emit_lifecycle(
+    lifecycle_tx: Option<mpsc::UnboundedSender<RemoteExecProcessLifecycleEvent>>,
+    event: RemoteExecProcessLifecycleEvent,
+) {
+    if let Some(tx) = lifecycle_tx {
+        let _ = tx.send(event);
+    }
+}
+
+fn completion_status_for_control_action(
+    action: RemoteExecControlAction,
+) -> RemoteExecSessionCompletionStatus {
+    match action {
+        RemoteExecControlAction::Interrupt => RemoteExecSessionCompletionStatus::Interrupted,
+        RemoteExecControlAction::Kill => RemoteExecSessionCompletionStatus::Killed,
+    }
+}
+
+fn completion_for_closed_remote_process(
+    out_of_band_control_action: Option<RemoteExecControlAction>,
+) -> RemoteExecSessionCompletion {
+    if let Some(action) = out_of_band_control_action {
+        return RemoteExecSessionCompletion {
+            status: completion_status_for_control_action(action),
+            source: RemoteExecSessionCompletionSource::OutOfBandControl,
+        };
+    }
+
+    RemoteExecSessionCompletion {
+        status: RemoteExecSessionCompletionStatus::Exited,
+        source: RemoteExecSessionCompletionSource::Process,
+    }
+}
+
+fn lifecycle_status_for_completion(
+    status: RemoteExecSessionCompletionStatus,
+) -> RemoteExecProcessLifecycleStatus {
+    match status {
+        RemoteExecSessionCompletionStatus::Exited => RemoteExecProcessLifecycleStatus::Exited,
+        RemoteExecSessionCompletionStatus::Interrupted => {
+            RemoteExecProcessLifecycleStatus::Interrupted
+        }
+        RemoteExecSessionCompletionStatus::Killed => RemoteExecProcessLifecycleStatus::Killed,
+        RemoteExecSessionCompletionStatus::Pruned => RemoteExecProcessLifecycleStatus::Pruned,
+    }
+}
+
+fn spawn_lifecycle_exit_watcher(
+    session_id: i32,
+    process: Arc<RemoteExecProcess>,
+    lifecycle_tx: Option<mpsc::UnboundedSender<RemoteExecProcessLifecycleEvent>>,
+) {
+    if lifecycle_tx.is_none() {
+        return;
+    }
+
+    tokio::spawn(async move {
+        let exit_code = process.output.wait_closed().await;
+        let completion = completion_for_closed_remote_process(process.out_of_band_control_action());
+        emit_lifecycle(
+            lifecycle_tx,
+            RemoteExecProcessLifecycleEvent {
+                session_id,
+                status: lifecycle_status_for_completion(completion.status),
+                exit_code,
+            },
+        );
+    });
+}
+
+impl HeadTailText {
+    fn new(max_chars: usize) -> Self {
+        let head_budget = max_chars / 2;
+        let tail_budget = max_chars.saturating_sub(head_budget);
+        Self {
+            head_budget,
+            tail_budget,
+            head: String::new(),
+            tail: VecDeque::new(),
+            head_chars: 0,
+            tail_chars: 0,
+            omitted_chars: 0,
+            total_chars: 0,
+        }
+    }
+
+    fn push_str(&mut self, text: &str) {
+        for ch in text.chars() {
+            self.total_chars += 1;
+            if self.head_chars < self.head_budget {
+                self.head.push(ch);
+                self.head_chars += 1;
+                continue;
+            }
+
+            self.tail.push_back(ch);
+            self.tail_chars += 1;
+            if self.tail_chars > self.tail_budget {
+                self.tail.pop_front();
+                self.tail_chars -= 1;
+                self.omitted_chars = self.omitted_chars.saturating_add(1);
+            }
+        }
+    }
+
+    fn render(self) -> String {
+        if self.omitted_chars == 0 {
+            let mut output = self.head;
+            output.extend(self.tail);
+            return output;
+        }
+
+        let mut output = self.head;
+        output.push_str("\n... [truncated, middle omitted] ...\n");
+        output.extend(self.tail);
+        output
+    }
+}
+
+fn deadline_from_now(yield_time_ms: Option<u64>) -> Instant {
+    Instant::now() + Duration::from_millis(yield_time_ms.unwrap_or(DEFAULT_YIELD_TIME_MS))
+}
+
+fn input_bytes_for_write(chars: &str, append_enter: bool) -> Vec<u8> {
+    let mut bytes = chars.as_bytes().to_vec();
+    if append_enter {
+        bytes.push(b'\n');
+    }
+    bytes
+}
+
+fn new_session_id(sessions: &HashMap<i32, RemoteExecSessionEntry>) -> i32 {
+    loop {
+        let session_id = if cfg!(test) {
+            sessions
+                .keys()
+                .copied()
+                .max()
+                .map(|max| std::cmp::max(max, 999) + 1)
+                .unwrap_or(1000)
+        } else {
+            rand::thread_rng().gen_range(1_000..100_000)
+        };
+
+        if !sessions.contains_key(&session_id) {
+            return session_id;
+        }
+    }
+}
+
+fn new_chunk_id() -> String {
+    Uuid::new_v4().to_string()[..8].to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        decode_utf8_stream, new_session_id, workspace_pipe_owner, HeadTailText, OutputState,
+        OutputStream, PendingUtf8Streams,
+    };
+    use crate::remote_ssh::transport::WorkspaceStdio;
+    use std::collections::HashMap;
+    use std::sync::Arc;
+    use tokio::sync::mpsc;
+    use tokio::time::Duration;
+
+    #[cfg(unix)]
+    async fn pipe_owner_exit_code(script: &str) -> Option<i32> {
+        let transport =
+            WorkspaceStdio::spawn_local_process("sh", &["-lc".to_string(), script.to_string()])
+                .expect("local workspace process should start");
+        let output = Arc::new(OutputState::new(None));
+        let (_command_tx, command_rx) = mpsc::channel(8);
+        tokio::spawn(workspace_pipe_owner(
+            transport,
+            command_rx,
+            Arc::clone(&output),
+        ));
+
+        tokio::time::timeout(Duration::from_secs(10), output.wait_closed())
+            .await
+            .expect("pipe owner should close the output state")
+    }
+
+    #[tokio::test]
+    #[cfg(unix)]
+    async fn pipe_owner_reports_successful_process_exit_code() {
+        assert_eq!(pipe_owner_exit_code("df -h >/dev/null 2>&1").await, Some(0));
+    }
+
+    #[tokio::test]
+    #[cfg(unix)]
+    async fn pipe_owner_reports_failing_process_exit_code() {
+        assert_eq!(pipe_owner_exit_code("exit 3").await, Some(3));
+    }
+
+    #[tokio::test]
+    #[cfg(unix)]
+    async fn pipe_owner_reports_exit_code_after_large_output() {
+        assert_eq!(
+            pipe_owner_exit_code("head -c 400000 /dev/zero | tr '\\0' 'a'").await,
+            Some(0)
+        );
+    }
+
+    #[tokio::test]
+    #[cfg(unix)]
+    async fn pipe_owner_reports_signal_death_as_conventional_status() {
+        assert_eq!(pipe_owner_exit_code("kill -TERM $$").await, Some(143));
+    }
+
+    #[test]
+    fn remote_exec_session_ids_match_local_test_baseline() {
+        let sessions = HashMap::new();
+
+        assert_eq!(new_session_id(&sessions), 1000);
+    }
+
+    #[test]
+    fn head_tail_text_keeps_full_output_when_unbounded() {
+        let mut buffer = HeadTailText::new(usize::MAX);
+        buffer.push_str("abcdefghijklmnop");
+
+        assert_eq!(buffer.total_chars, 16);
+        assert_eq!(buffer.render(), "abcdefghijklmnop");
+    }
+
+    #[test]
+    fn utf8_stream_decoder_preserves_code_points_split_across_chunks() {
+        let bytes = "路径/文件.txt".as_bytes();
+        let mut pending = Vec::new();
+        let mut decoded = String::new();
+
+        for byte in bytes {
+            decoded.push_str(&decode_utf8_stream(&mut pending, &[*byte], false));
+        }
+        decoded.push_str(&decode_utf8_stream(&mut pending, &[], true));
+
+        assert_eq!(decoded, "路径/文件.txt");
+        assert!(pending.is_empty());
+    }
+
+    #[test]
+    fn utf8_stream_decoder_keeps_stdout_and_stderr_boundaries_independent() {
+        let chinese = "路".as_bytes();
+        let mut pending = PendingUtf8Streams::default();
+
+        assert_eq!(
+            decode_utf8_stream(pending.get_mut(OutputStream::Stdout), &chinese[..1], false),
+            ""
+        );
+        assert_eq!(
+            decode_utf8_stream(pending.get_mut(OutputStream::Stderr), b"error", false),
+            "error"
+        );
+        assert_eq!(
+            decode_utf8_stream(pending.get_mut(OutputStream::Stdout), &chinese[1..], false),
+            "路"
+        );
+    }
+}
+
+#[cfg(test)]
+mod wait_interrupt_tests {
+    use super::*;
+    use tokio_util::sync::CancellationToken;
+
+    async fn session() -> (
+        Arc<RemoteExecProcessManager>,
+        Arc<OutputState>,
+        mpsc::Receiver<RemoteExecProcessCommand>,
+    ) {
+        let manager = Arc::new(RemoteExecProcessManager::default());
+        let output = Arc::new(OutputState::new(None));
+        let (command_tx, rx) = mpsc::channel(8);
+        manager.sessions.lock().await.insert(
+            42,
+            RemoteExecSessionEntry {
+                process: Arc::new(RemoteExecProcess {
+                    output: output.clone(),
+                    command_tx,
+                    out_of_band_control_action: StdMutex::new(None),
+                }),
+                tty: true,
+                cursor: OutputCursor {
+                    next_seq: 0,
+                    pending_utf8: PendingUtf8Streams::default(),
+                },
+                last_used: Instant::now(),
+                lifecycle_tx: None,
+            },
+        );
+        (manager, output, rx)
+    }
+
+    fn poll(wait_interrupt: Option<CancellationToken>) -> RemoteWriteStdinRequest {
+        RemoteWriteStdinRequest {
+            session_id: 42,
+            chars: String::new(),
+            append_enter: false,
+            yield_time_ms: Some(600_000),
+            max_output_chars: None,
+            wait_interrupt,
+        }
+    }
+
+    fn exec_request(
+        directory: &std::path::Path,
+        token: CancellationToken,
+    ) -> RemoteExecCommandRequest {
+        RemoteExecCommandRequest {
+            ssh_manager: super::SSHConnectionManager::new(directory.into()),
+            connection_id: "simulated-ssh".into(),
+            command: "command".into(),
+            tty: true,
+            yield_time_ms: Some(600_000),
+            max_output_chars: None,
+            wait_interrupt: Some(token),
+            lifecycle_tx: None,
+            output_capture_tx: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn exec_command_wait_interrupt_commits_initial_cursor_and_preserves_process() {
+        for streaming in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let (manager, output, mut commands) = session().await;
+            let process = manager.sessions.lock().await.remove(&42).unwrap().process;
+            output
+                .push_chunk(OutputStream::Stdout, b"before".to_vec())
+                .await;
+            let bytes = "\u{1f680}".as_bytes();
+            output
+                .push_chunk(OutputStream::Stdout, bytes[..2].to_vec())
+                .await;
+            let token = CancellationToken::new();
+            let request = exec_request(directory.path(), token.clone());
+            let (tx, mut rx) = mpsc::channel(8);
+            if !streaming {
+                token.cancel();
+            }
+            let (response, ()) = tokio::time::timeout(Duration::from_secs(2), async {
+                tokio::join!(
+                    manager.wait_for_initial_output(process, request, streaming.then_some(tx)),
+                    async {
+                        if streaming {
+                            assert_eq!(rx.recv().await.as_deref(), Some("before"));
+                            token.cancel();
+                        }
+                    }
+                )
+            })
+            .await
+            .unwrap();
+            let response = response.unwrap();
+            assert!(response.wait_interrupted);
+            assert_eq!(response.output, "before");
+            assert_eq!(response.exit_code, None);
+            assert_eq!(response.completion, None);
+            let session_id = response.session_id.unwrap();
+            assert!(manager.is_session_active(session_id).await);
+            assert!(
+                commands.try_recv().is_err(),
+                "yield must not control the process"
+            );
+
+            output
+                .push_chunk(OutputStream::Stdout, bytes[2..].to_vec())
+                .await;
+            output.close(Some(0)).await;
+            let mut request = poll(None);
+            request.session_id = session_id;
+            let last = manager.write_stdin(request).await.unwrap();
+            assert_eq!(last.output, "\u{1f680}");
+            assert!(!last.wait_interrupted);
+            assert_eq!(last.session_id, None);
+            assert_eq!(last.exit_code, Some(0));
+            assert_eq!(
+                last.completion.unwrap().status,
+                RemoteExecSessionCompletionStatus::Exited
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn exec_command_wait_interrupt_does_not_override_drained_exit() {
+        let directory = tempfile::tempdir().unwrap();
+        let (manager, output, _commands) = session().await;
+        let process = manager.sessions.lock().await.remove(&42).unwrap().process;
+        output
+            .push_chunk(OutputStream::Stdout, b"final".to_vec())
+            .await;
+        output.close(Some(7)).await;
+        let token = CancellationToken::new();
+        token.cancel();
+        let response = manager
+            .wait_for_initial_output(process, exec_request(directory.path(), token), None)
+            .await
+            .unwrap();
+        assert!(!response.wait_interrupted);
+        assert_eq!(response.output, "final");
+        assert_eq!(response.exit_code, Some(7));
+        assert_eq!(response.session_id, None);
+        assert_eq!(
+            response.completion.unwrap().status,
+            RemoteExecSessionCompletionStatus::Exited
+        );
+    }
+
+    #[tokio::test]
+    async fn wait_interrupt_preserves_partial_output_and_split_utf8_across_polls() {
+        let (manager, output, mut commands) = session().await;
+        output
+            .push_chunk(OutputStream::Stdout, b"before".to_vec())
+            .await;
+        let token = CancellationToken::new();
+        let (tx, mut rx) = mpsc::channel(8);
+        let waiting_manager = manager.clone();
+        let request = poll(Some(token.clone()));
+        let wait =
+            tokio::spawn(async move { waiting_manager.write_stdin_streaming(request, tx).await });
+        assert_eq!(rx.recv().await.as_deref(), Some("before"));
+        let bytes = "\u{1f680}".as_bytes();
+        output
+            .push_chunk(OutputStream::Stdout, bytes[..2].to_vec())
+            .await;
+        output
+            .push_chunk(OutputStream::Stderr, b"-tail".to_vec())
+            .await;
+        token.cancel();
+        let response = tokio::time::timeout(Duration::from_secs(2), wait)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        assert_eq!(response.output, "before-tail");
+        assert_eq!(response.original_output_chars, 11);
+        assert!(response.wait_interrupted);
+        assert_eq!(response.session_id, Some(42));
+        assert_eq!(response.exit_code, None);
+        assert_eq!(response.completion, None);
+        assert!(manager.is_session_active(42).await);
+        assert!(
+            commands.try_recv().is_err(),
+            "yield must not send a process control command"
+        );
+        assert_eq!(rx.recv().await.as_deref(), Some("-tail"));
+        assert!(rx.recv().await.is_none());
+
+        output
+            .push_chunk(OutputStream::Stdout, bytes[2..].to_vec())
+            .await;
+        output.close(Some(0)).await;
+        let next = manager.write_stdin(poll(None)).await.unwrap();
+        assert_eq!(next.output, "\u{1f680}");
+        assert_eq!(next.original_output_chars, 1);
+        assert!(!next.wait_interrupted);
+        assert_eq!(next.session_id, None);
+        assert_eq!(next.exit_code, Some(0));
+        assert_eq!(
+            next.completion.unwrap().status,
+            RemoteExecSessionCompletionStatus::Exited
+        );
+        assert!(!manager.sessions.lock().await.contains_key(&42));
+    }
+
+    #[tokio::test]
+    async fn wait_interrupt_wakes_without_output() {
+        let (manager, _, _commands) = session().await;
+        let token = CancellationToken::new();
+        let request = poll(Some(token.clone()));
+        let (response, ()) = tokio::time::timeout(Duration::from_secs(2), async {
+            tokio::join!(manager.write_stdin(request), async {
+                tokio::task::yield_now().await;
+                token.cancel();
+            })
+        })
+        .await
+        .unwrap();
+        let response = response.unwrap();
+        assert!(response.wait_interrupted);
+        assert!(response.output.is_empty());
+        assert!(manager.is_session_active(42).await);
+    }
+
+    #[tokio::test]
+    async fn wait_interrupt_keeps_submitted_input_exactly_once_including_enter_only() {
+        for chars in ["answer", ""] {
+            let (manager, _, mut commands) = session().await;
+            let token = CancellationToken::new();
+            token.cancel();
+            let mut request = poll(Some(token));
+            request.chars = chars.into();
+            request.append_enter = true;
+            assert!(manager.write_stdin(request).await.unwrap().wait_interrupted);
+            let RemoteExecProcessCommand::Write(bytes) = commands.recv().await.unwrap() else {
+                panic!("expected input, not a process control command");
+            };
+            assert_eq!(bytes, format!("{chars}\n").as_bytes());
+            let mut next = poll(None);
+            next.yield_time_ms = Some(0);
+            assert!(!manager.write_stdin(next).await.unwrap().wait_interrupted);
+            assert!(commands.try_recv().is_err());
+            assert!(manager.is_session_active(42).await);
+        }
+    }
+
+    #[tokio::test]
+    async fn wait_interrupt_does_not_override_drained_process_exit() {
+        let (manager, output, _commands) = session().await;
+        output
+            .push_chunk(OutputStream::Stdout, b"final".to_vec())
+            .await;
+        output.close(Some(7)).await;
+        let token = CancellationToken::new();
+        token.cancel();
+        let response = manager.write_stdin(poll(Some(token))).await.unwrap();
+        assert!(!response.wait_interrupted);
+        assert_eq!(response.output, "final");
+        assert_eq!(response.exit_code, Some(7));
+        assert_eq!(response.session_id, None);
+        assert_eq!(
+            response.completion.unwrap().status,
+            RemoteExecSessionCompletionStatus::Exited
+        );
+    }
+
+    #[tokio::test]
+    async fn wait_interrupt_exit_after_drain_keeps_final_bytes_pollable() {
+        let (manager, output, _commands) = session().await;
+        let cursor = manager.sessions.lock().await[&42].cursor.clone();
+        output
+            .push_chunk(OutputStream::Stdout, b"last bytes".to_vec())
+            .await;
+        output.close(Some(0)).await;
+        // The wait had observed an open process; closure after that snapshot
+        // must not remove the session before another poll drains the new bytes.
+        manager
+            .update_or_remove_session(42, false, cursor, None, None)
+            .await;
+        let response = manager.write_stdin(poll(None)).await.unwrap();
+        assert_eq!(response.output, "last bytes");
+        assert_eq!(response.exit_code, Some(0));
+    }
+}
