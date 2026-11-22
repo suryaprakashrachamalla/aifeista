@@ -47,9 +47,8 @@ final class AppleTTSClient: NSObject {
             return enhancedVoice
         }
 
-        // 4. Default fallback: Indian English (Rishi) or standard English
-        return allVoices.first(where: { $0.language == "en-IN" && ($0.gender == .male || $0.name.lowercased().contains("rishi")) })
-            ?? allVoices.first(where: { $0.language == "en-IN" })
+        // 4. Natural fallback: Samantha (Siri's original voice, smooth and coherent)
+        return allVoices.first(where: { $0.name.localizedCaseInsensitiveContains("samantha") })
             ?? AVSpeechSynthesisVoice(language: "en-US")
     }
 
