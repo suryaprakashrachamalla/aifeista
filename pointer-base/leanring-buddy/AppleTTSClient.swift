@@ -15,14 +15,14 @@ final class AppleTTSClient: NSObject {
     // The speech synthesizer is long-lived — creating one per utterance causes audio glitches.
     private let synthesizer = AVSpeechSynthesizer()
 
-    // The best available English voice: prefers Enhanced/Premium quality, falls back to default.
+    // Indian English male voice (Rishi / en-IN), falls back to any en-IN or default English voice.
     private let preferredVoice: AVSpeechSynthesisVoice? = {
-        let englishVoices = AVSpeechSynthesisVoice.speechVoices()
-            .filter { $0.language.hasPrefix("en") }
+        let inVoices = AVSpeechSynthesisVoice.speechVoices()
+            .filter { $0.language == "en-IN" }
 
-        // Prefer Premium, then Enhanced, then any English voice.
-        return englishVoices.first(where: { $0.quality == .premium })
-            ?? englishVoices.first(where: { $0.quality == .enhanced })
+        return inVoices.first(where: { $0.gender == .male || $0.name.lowercased().contains("rishi") })
+            ?? inVoices.first
+            ?? AVSpeechSynthesisVoice(language: "en-IN")
             ?? AVSpeechSynthesisVoice(language: "en-US")
     }()
 
@@ -40,12 +40,12 @@ final class AppleTTSClient: NSObject {
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate   = AVSpeechUtteranceDefaultSpeechRate
-        utterance.pitchMultiplier = 1.1  // Slightly higher pitch sounds more natural
+        utterance.pitchMultiplier = 1.0  // Natural male pitch
         utterance.volume = 1.0
         utterance.voice  = preferredVoice
 
         synthesizer.speak(utterance)
-        print("🔊 Apple TTS: speaking \(text.count) characters via \(preferredVoice?.name ?? "default voice")")
+        print("🔊 Apple TTS: speaking \(text.count) characters via \(preferredVoice?.name ?? "default voice") (\(preferredVoice?.language ?? "en-IN"))")
     }
 
     /// Whether TTS audio is currently playing back.
