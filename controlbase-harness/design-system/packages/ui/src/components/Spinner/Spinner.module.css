@@ -1,0 +1,132 @@
+@layer openbitfun.components {
+  .root,
+  .loadingState,
+  .cell,
+  .label {
+    box-sizing: border-box;
+  }
+
+  .root {
+    --_spinner-cell: var(--openbitfun-layout-spinner-matrix-cell-md);
+    --_spinner-gap: var(--openbitfun-layout-spinner-matrix-gap-md);
+    --_spinner-size: calc(3 * var(--_spinner-cell) + 2 * var(--_spinner-gap));
+
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: currentColor;
+    vertical-align: middle;
+  }
+
+  .root[data-variant="logo"] {
+    inline-size: var(--_spinner-size);
+    block-size: var(--_spinner-size);
+  }
+
+  .root[data-variant="logo"][data-size="xs"] {
+    --_spinner-cell: var(--openbitfun-layout-spinner-matrix-cell-xs);
+    --_spinner-gap: var(--openbitfun-layout-spinner-matrix-gap-sm);
+  }
+
+  .root[data-variant="logo"][data-size="sm"] {
+    --_spinner-cell: var(--openbitfun-layout-spinner-matrix-cell-sm);
+    --_spinner-gap: var(--openbitfun-layout-spinner-matrix-gap-sm);
+  }
+
+  .root[data-variant="logo"][data-size="lg"] {
+    --_spinner-cell: var(--openbitfun-layout-spinner-matrix-cell-lg);
+    --_spinner-gap: var(--openbitfun-layout-spinner-matrix-gap-md);
+  }
+
+  .glyph,
+  .artwork {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .glyph {
+    font-size: var(--_spinner-size);
+    transform-origin: center;
+  }
+
+  .artwork {
+    background: currentColor;
+    mask: url("../../brand/assets/openbitfun-loading-mark.svg") center / contain no-repeat;
+  }
+
+  .root[data-variant="bars"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2em;
+    font-size: var(--openbitfun-type-flow-section-title-font-size);
+  }
+
+  .root[data-variant="bars"][data-size="xs"] { font-size: var(--openbitfun-type-support-font-size); }
+  .root[data-variant="bars"][data-size="sm"] { font-size: var(--openbitfun-type-body-md-font-size); }
+  .root[data-variant="bars"][data-size="lg"] { font-size: var(--openbitfun-type-flow-page-title-font-size); }
+
+  .root[data-variant="bars"] .cell {
+    inline-size: 0.22em;
+    border-radius: var(--openbitfun-radius-pill);
+    background: currentColor;
+    animation: openbitfun-spinner-bars-pulse var(--openbitfun-motion-duration-loop) ease-in-out infinite;
+  }
+
+  .root[data-variant="bars"] .cell:nth-child(1),
+  .root[data-variant="bars"] .cell:nth-child(3) { block-size: 0.55em; }
+  .root[data-variant="bars"] .cell:nth-child(2) {
+    block-size: 0.85em;
+    animation-delay: 150ms;
+  }
+  .root[data-variant="bars"] .cell:nth-child(3) { animation-delay: 300ms; }
+
+  .loadingState {
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--openbitfun-space-2);
+    color: var(--openbitfun-color-content-secondary);
+  }
+
+  .label {
+    color: var(--openbitfun-color-content-muted);
+    font-family: var(--openbitfun-type-support-font-family);
+    font-size: var(--openbitfun-type-support-font-size);
+    font-weight: var(--openbitfun-type-support-font-weight);
+    line-height: var(--openbitfun-type-support-line-height);
+    letter-spacing: var(--openbitfun-type-support-letter-spacing);
+    text-align: center;
+  }
+
+  .root[data-active="false"] .cell {
+    animation: none;
+    opacity: 0.75;
+    transform: none;
+  }
+
+  @keyframes openbitfun-spinner-bars-pulse {
+    0%, 100% { opacity: 0.35; transform: scaleY(0.7); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+    .glyph {
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
+    }
+
+    .cell {
+      animation: none !important;
+      opacity: 0.75;
+      transform: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .artwork { forced-color-adjust: none; }
+  }
+}

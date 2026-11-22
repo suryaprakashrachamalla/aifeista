@@ -1,0 +1,504 @@
+[package]
+name = "openbitfun-core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "OpenBitFun Core Library - Platform-agnostic business logic"
+
+[lib]
+name = "openbitfun_core"
+crate-type = ["rlib"]
+
+[dependencies]
+# Inherit shared dependencies from workspace
+tokio = { workspace = true, features = ["fs", "sync"] }
+tokio-util = { workspace = true, optional = true }
+async-trait = { workspace = true }
+futures = { workspace = true, optional = true }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true, optional = true }
+ts-rs = { workspace = true, optional = true }
+
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+log = { workspace = true }
+
+uuid = { workspace = true }
+chrono = { workspace = true }
+chrono-tz = { workspace = true, optional = true }
+cron = { workspace = true, optional = true }
+regex = { workspace = true, optional = true }
+base64 = { workspace = true, optional = true }
+image = { workspace = true, features = ["bmp", "gif", "jpeg", "png", "webp"], optional = true }
+md5 = { workspace = true, optional = true }
+hex = { workspace = true }
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+dashmap = { workspace = true, optional = true }
+indexmap = { workspace = true, optional = true }
+
+reqwest = { workspace = true, optional = true }
+semver = { workspace = true, optional = true }
+axum = { workspace = true, optional = true }
+
+notify = { workspace = true, optional = true }
+dirs = { workspace = true }
+dunce = { workspace = true }
+filetime = { workspace = true, optional = true }
+fs2 = { workspace = true, optional = true }
+flate2 = { workspace = true, optional = true }
+include_dir = { workspace = true, optional = true }
+
+# Command detection (cross-platform)
+similar = { workspace = true, optional = true }
+
+# Shared AI protocol adapters
+openbitfun-ai-adapters = { path = "../../adapters/ai-adapters", optional = true }
+
+# Lightweight agent stream processing
+openbitfun-agent-stream = { path = "../../execution/agent-stream", optional = true }
+
+# Immutable built-in Agent prompt content
+openbitfun-agent-content = { path = "../agent-content", optional = true }
+
+# Agent runtime owner contracts
+openbitfun-agent-runtime = { path = "../../execution/agent-runtime", optional = true }
+openbitfun-agent-workflows = { path = "../../execution/agent-workflows", optional = true }
+
+# Product capability pack contracts
+openbitfun-product-capabilities = { path = "../product-capabilities", optional = true }
+
+# Ecosystem-neutral external source lifecycle coordinator
+openbitfun-external-sources = { path = "../external-sources", optional = true }
+
+# Agent tool contracts
+openbitfun-agent-tools = { path = "../../execution/tool-contracts", optional = true }
+
+# Tool pack provider plan
+openbitfun-tool-packs = { path = "../../execution/tool-provider-groups", optional = true }
+openbitfun-office-documents = { path = "../../execution/office-documents", optional = true }
+
+# Core service owner crate
+openbitfun-services-core = { path = "../../services/services-core", features = ["json-io", "product-identity", "workspace-identity"] }
+
+# Integration service owner crate
+openbitfun-services-integrations = { path = "../../services/services-integrations", optional = true }
+
+# Optional compatibility export for the independent offline migration adapters.
+openbitfun-legacy-migration-adapters = { path = "../../services/legacy-migration-adapters", optional = true }
+
+# Product domain owner crate
+openbitfun-product-domains = { path = "../../contracts/product-domains", optional = true }
+openbitfun-config-contracts = { path = "../../contracts/config-contracts" }
+
+# Tool runtime
+tool-runtime = { path = "../../execution/tool-execution", optional = true }
+
+# terminal
+terminal-core = { path = "../../services/terminal", optional = true }
+
+# I18n internationalization
+fluent-bundle = { workspace = true, optional = true }
+unic-langid = { workspace = true, optional = true }
+
+sha2 = { workspace = true }
+urlencoding = { workspace = true }
+
+# QR code generation
+
+# WebSocket client
+tokio-tungstenite = { workspace = true, default-features = true, optional = true }
+
+# Event layer dependency (lowest layer)
+openbitfun-core-types = { path = "../../contracts/core-types" }
+openbitfun-events = { path = "../../contracts/events" }
+openbitfun-runtime-ports = { path = "../../contracts/runtime-ports", features = ["permission", "workspace-ports"] }
+openbitfun-runtime-services = { path = "../../execution/runtime-services", optional = true }
+
+# Reviewed product-full plugin composition root.
+openbitfun-opencode-adapter = { path = "../../adapters/opencode-adapter", optional = true }
+openbitfun-pi-adapter = { path = "../../adapters/pi-adapter", optional = true }
+openbitfun-dsh-adapter = { path = "../../adapters/dsh-adapter", optional = true }
+openbitfun-opencode-plugin-host = { path = "../../adapters/opencode-plugin-host", optional = true }
+openbitfun-claude-code-adapter = { path = "../../adapters/claude-code-adapter", optional = true }
+openbitfun-codex-adapter = { path = "../../adapters/codex-adapter", optional = true }
+openbitfun-cursor-adapter = { path = "../../adapters/cursor-adapter", optional = true }
+openbitfun-zcode-adapter = { path = "../../adapters/zcode-adapter", optional = true }
+openbitfun-plugin-runtime-client = { path = "../../execution/plugin-runtime-client", optional = true }
+
+[features]
+# Full product runtime compatibility set. Product entrypoints with a narrower
+# construction path select stable owner features instead of inheriting this
+# union.
+default = []
+# Derive `ts_rs::TS` on selected wire types (e.g. `AgentProfileView`) for
+# downstream TypeScript binding export. Propagates `ts` to the upstream crates
+# whose types core re-exports (git types live in `services-integrations`,
+# permission/session types in `runtime-ports`/`product-domains`). Weak feature
+# references add the TS derives only when their optional dependencies are
+# already enabled by an owning capability, so `ts` stays orthogonal to the
+# product matrix. The other two upstream crates are non-optional and propagate
+# their `ts` features directly.
+ts = [
+    "openbitfun-config-contracts/ts",
+    "dep:ts-rs",
+    "openbitfun-core-types/ts",
+    "openbitfun-services-integrations?/ts",
+    "openbitfun-product-domains?/ts",
+    "openbitfun-runtime-ports/ts",
+]
+product-full = [
+    "agent-runtime",
+    "decision-model-credentials",
+    "product-search",
+    "document-read",
+    "diagnostics",
+    "diff",
+    "subscription-auth",
+    "i18n-runtime",
+    "model-catalog",
+    "mcp-runtime",
+    "remote-connect",
+    "workspace-search",
+    "browser-control",
+    "web-tools",
+    "deep-research",
+    "scheduled-jobs",
+    "tools-basic",
+    "tools-git",
+    "tools-mcp",
+    "tools-browser-web",
+    "tools-computer-use",
+    "tools-image-analysis",
+    "tools-image-generation",
+    "tools-office-documents",
+    "tools-miniapp",
+    "tools-pages",
+    "tools-creation",
+    "tools-agent-control",
+    "function-agents",
+    "external-sources",
+    "plugin-runtime",
+    "opencode-plugin-host",
+    "file-watch",
+    "workspace-watch",
+    "workspace-icons",
+    "ssh-remote",
+    "dispatch-store",
+    "ptc-runtime",
+    "filesystem",
+    "git",
+    "local-storage",
+    "process-runtime",
+    "remote-workspace",
+    "review-platform",
+    "terminal",
+    "workspace-runtime",
+    "product-capabilities",
+    "runtime-services",
+    "tool-packs",
+]
+# Test-only constructors for downstream in-process tests, such as
+# `WorkspaceService::new_isolated_for_tests`, which keep fixture workspace
+# records out of the developer's real user data directory. Enable only from
+# `[dev-dependencies]`; it is not part of any product assembly.
+test-support = []
+# Core compatibility facade and concrete product Agent Runtime assembly. This
+# owns the existing agent/session/tool lifecycle, not app presentation or
+# external ecosystem discovery.
+agent-runtime = [
+    "dep:openbitfun-product-domains",
+    "openbitfun-services-core/coordination-store",
+    "openbitfun-services-core/session-event-format",
+    "ai-adapter-runtime",
+    "openbitfun-ai-adapters/local-tokenizer",
+    "dep:openbitfun-agent-runtime",
+    "openbitfun-agent-runtime/agent-runtime",
+    "dep:openbitfun-agent-content",
+    "dep:openbitfun-agent-stream",
+    "dep:openbitfun-agent-tools",
+    "openbitfun-agent-tools/computer-use-contract",
+    "openbitfun-runtime-ports/agent-api",
+    "openbitfun-runtime-ports/git-port",
+    "openbitfun-runtime-ports/remote-exec-port",
+    "openbitfun-runtime-ports/remote-workspace-ports",
+    "openbitfun-runtime-ports/runtime-event-port",
+    "openbitfun-runtime-ports/terminal-port",
+    "openbitfun-runtime-ports/tool-runtime-handles",
+    "openbitfun-runtime-ports/workspace-ports",
+    "dep:base64",
+    "dep:dashmap",
+    "dep:filetime",
+    "dep:flate2",
+    "dep:fs2",
+    "dep:futures",
+    "dep:include_dir",
+    "dep:indexmap",
+    "dep:image",
+    "dep:md5",
+    "dep:rusqlite",
+    "dep:regex",
+    "dep:similar",
+    "dep:tokio-util",
+    "dep:tool-runtime",
+    "tool-runtime/shell-analysis",
+    "openbitfun-services-core/permission",
+    "openbitfun-services-core/memory-store",
+    "openbitfun-services-core/runtime-ownership",
+    "openbitfun-services-core/workspace-text-runtime",
+    "openbitfun-services-core/session-git",
+    "openbitfun-services-core/token-usage-statistics",
+    "filesystem",
+    "local-storage",
+    "process-runtime",
+    "terminal",
+    "workspace-runtime",
+    "product-capabilities",
+    "openbitfun-product-domains/external-sources",
+    "runtime-services",
+    "tool-packs",
+    "tools-basic",
+    "tools-agent-control",
+    "tokio/io-util",
+    "tokio/macros",
+    "tokio/rt",
+    "tokio/time",
+]
+decision-model-credentials = ["openbitfun-services-core/credential-vault"]
+product-search = [
+    "dep:openbitfun-product-domains",
+    "agent-runtime",
+    "openbitfun-runtime-ports/product-search",
+    "openbitfun-services-core/session-search",
+]
+# Backend Fluent translation state. Locale contracts and model-facing language
+# facts remain available without this runtime implementation.
+i18n-runtime = ["dep:fluent-bundle", "dep:unic-langid"]
+external-sources = [
+    "agent-runtime",
+    "model-catalog",
+    "mcp-runtime",
+    "script-tool-runtime",
+    "dep:openbitfun-opencode-adapter",
+    "dep:openbitfun-dsh-adapter",
+    "dep:openbitfun-pi-adapter",
+    "dep:openbitfun-claude-code-adapter",
+    "dep:openbitfun-codex-adapter",
+    "dep:openbitfun-cursor-adapter",
+    "dep:openbitfun-zcode-adapter",
+    "dep:openbitfun-external-sources",
+    "openbitfun-services-integrations/hook-import",
+    "plugin-source",
+    "file-watch",
+    "workspace-watch",
+]
+
+# Concrete service capabilities are selected independently from the portable
+# Agent lifecycle. Product entrypoints compose only the owners they expose.
+model-catalog = [
+    "ai-adapter-runtime",
+    "openbitfun-services-integrations/models-dev",
+    "runtime-services",
+]
+mcp-runtime = [
+    "agent-runtime",
+    "openbitfun-agent-tools/mcp-bridge",
+    "dep:axum",
+    "dep:reqwest",
+    "openbitfun-services-integrations/mcp",
+    "tokio/rt-multi-thread",
+]
+remote-connect = [
+    "openbitfun-services-core/workspace-transfer",
+    "agent-runtime",
+    "git",
+    "model-catalog",
+    "openbitfun-services-integrations/remote-connect",
+]
+workspace-search = [
+    "workspace-runtime",
+    "openbitfun-services-integrations/workspace-search",
+]
+browser-control = [
+    "dep:tokio-tungstenite",
+    "openbitfun-services-integrations/browser-control",
+    "tokio/net",
+    "tokio/rt",
+    "tokio/time",
+]
+web-tools = [
+    "openbitfun-runtime-ports/web-search-port",
+    "openbitfun-services-core/credential-vault",
+    "openbitfun-services-integrations/web-tools",
+    "tool-runtime/web-readable",
+]
+deep-research = [
+    "dep:openbitfun-agent-workflows",
+    "openbitfun-services-integrations/deep-research",
+]
+script-tool-runtime = [
+    "openbitfun-runtime-ports/script-tool-runtime",
+    "openbitfun-services-integrations/script-tool-runtime",
+]
+ptc-runtime = [
+    "agent-runtime",
+    "git",
+    "openbitfun-runtime-ports/ptc-runtime",
+    "openbitfun-services-integrations/ptc-runtime",
+]
+scheduled-jobs = [
+    "dep:chrono-tz",
+    "dep:cron",
+]
+# Additive dependency modifiers. Weak dependency feature references preserve
+# the owning runtime boundary instead of activating that runtime by themselves.
+document-read = ["tool-runtime?/document-read"]
+subscription-auth = ["openbitfun-ai-adapters?/subscription-auth"]
+
+# Tool groups mirror the provider-neutral groups in openbitfun-tool-packs. They
+# compose concrete service owners but never form a product-shaped umbrella.
+tools-basic = [
+    "openbitfun-tool-packs/basic",
+    "workspace-search",
+]
+tools-git = [
+    "openbitfun-tool-packs/git",
+    "git",
+    "review-platform",
+]
+tools-mcp = [
+    "openbitfun-tool-packs/mcp",
+    "mcp-runtime",
+]
+tools-browser-web = [
+    "openbitfun-tool-packs/browser-web",
+    "browser-control",
+    "web-tools",
+]
+tools-computer-use = [
+    "openbitfun-tool-packs/computer-use",
+]
+tools-image-analysis = [
+    "openbitfun-tool-packs/image-analysis",
+]
+tools-image-generation = [
+    "openbitfun-tool-packs/image-generation",
+    "ai-adapter-runtime",
+    "openbitfun-ai-adapters/image-generation",
+]
+tools-office-documents = [
+    "openbitfun-tool-packs/office-documents",
+    "dep:openbitfun-office-documents",
+]
+tools-miniapp = [
+    "dep:openbitfun-product-domains",
+    "openbitfun-tool-packs/miniapp",
+    "openbitfun-product-domains/miniapp",
+    "openbitfun-services-integrations/miniapp-runtime",
+    "openbitfun-services-integrations/miniapp-market",
+    "runtime-services",
+    "dep:reqwest",
+    "dep:semver",
+]
+tools-pages = [
+    "openbitfun-tool-packs/pages",
+]
+tools-creation = [
+    "openbitfun-tool-packs/creation",
+]
+tools-agent-control = [
+    "openbitfun-tool-packs/agent-control",
+    "scheduled-jobs",
+]
+plugin-runtime = [
+    "external-sources",
+    "dep:openbitfun-plugin-runtime-client",
+    "openbitfun-runtime-ports/plugin-runtime",
+]
+# Managed OpenCode Host assembly. Its HTTP compatibility routes consume the
+# Agent lifecycle plus model, Git, and Remote Connect owners; keep that
+# product-shaped closure separate from the portable plugin client boundary.
+opencode-plugin-host = [
+    "plugin-runtime",
+    "remote-connect",
+    "git",
+    "dep:openbitfun-opencode-plugin-host",
+    "openbitfun-runtime-ports/hook-function-runtime",
+]
+ai-adapter-runtime = [
+    "dep:openbitfun-ai-adapters",
+    "dep:openbitfun-agent-runtime",
+    "openbitfun-agent-runtime/account-routing",
+    "openbitfun-services-core/routing-state",
+]
+product-capabilities = ["dep:openbitfun-product-capabilities"]
+plugin-source = [
+    "dep:openbitfun-product-domains",
+    "openbitfun-product-domains/plugin-source",
+    "openbitfun-services-integrations/plugin-source",
+]
+function-agents = [
+    "dep:openbitfun-product-domains",
+    "ai-adapter-runtime",
+    "openbitfun-product-domains/function-agents",
+    "openbitfun-services-integrations/function-agents",
+    "runtime-services",
+]
+runtime-services = ["dep:openbitfun-runtime-services"]
+legacy-migration = ["dep:openbitfun-legacy-migration-adapters"]
+file-watch = ["openbitfun-services-integrations/file-watch"]
+git = ["openbitfun-services-integrations/git"]
+review-platform = ["openbitfun-services-integrations/review-platform"]
+service-integrations = ["file-watch", "git", "review-platform"]
+diagnostics = ["openbitfun-services-core/diagnostics"]
+diff = ["openbitfun-services-core/diff"]
+dispatch-store = ["dep:base64", "local-storage", "openbitfun-services-core/dispatch-workspace"]
+filesystem = ["openbitfun-services-core/filesystem"]
+local-storage = ["dep:openbitfun-agent-tools", "openbitfun-services-core/local-storage"]
+process-runtime = ["openbitfun-services-core/process-runtime"]
+terminal = ["dep:terminal-core"]
+workspace-icons = ["workspace-runtime", "openbitfun-services-core/workspace-icons"]
+workspace-runtime = [
+    "openbitfun-services-core/workspace-persistence",
+    "dep:serde_yaml",
+    "filesystem",
+    "local-storage",
+    "process-runtime",
+    "openbitfun-services-core/markdown",
+    "openbitfun-services-core/workspace-identity",
+    "openbitfun-services-core/workspace-instructions",
+    "openbitfun-services-core/workspace-runtime",
+]
+workspace-watch = ["workspace-runtime", "dep:notify"]
+remote-workspace = [
+    "workspace-runtime",
+    "dep:openbitfun-services-integrations",
+    "openbitfun-services-integrations/remote-ssh",
+]
+tool-packs = ["dep:openbitfun-tool-packs"]
+# Deprecated compatibility feature. Tauri integration is desktop-owned now;
+# keep the public feature name as a no-op for downstream manifests.
+tauri-support = []
+ssh-remote = [
+    "remote-workspace",
+    "openbitfun-services-integrations/remote-ssh-concrete",
+]
+
+[dev-dependencies]
+# Loopback Socket.IO fixture for remote controller interaction tests.
+tokio-tungstenite = { workspace = true, default-features = true }
+openbitfun-runtime-services = { path = "../../execution/runtime-services", features = ["test-support"] }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "test-util"] }
+
+[[test]]
+name = "git_contracts"
+required-features = ["git"]
+
+[build-dependencies]
+sha2 = { workspace = true }
+
+[lints]
+workspace = true

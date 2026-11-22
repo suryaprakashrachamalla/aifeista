@@ -1,0 +1,474 @@
+[中文](AGENTS-CN.md) | **English**
+
+# AGENTS.md
+
+## Scope
+
+This file applies to `src/apps/desktop`. Use the top-level `AGENTS.md` for repository-wide rules.
+
+## What matters here
+
+`src/apps/desktop` is the Tauri host / integration layer.
+
+Main areas:
+
+- `src/api/`: Tauri commands
+- `src/api/peer_host_invoke.rs`: Peer Device Mode host-invoke bridge + control attach;
+  allow/deny and capabilities come from the Product Operation Registry
+  (`openbitfun_product_domains::remote_surface`), not from a local table
+- `src/api/remote_workspace_policy.rs`: closure test proving every registered Tauri
+  command has one registry row
+- `src/lib.rs`, `src/main.rs`: app setup and wiring
+- `src/computer_use/`: OS-specific automation support
+
+Peer Device Mode ownership and boundaries:
+`docs/architecture/peer-device-mode.md`.
+Frontend regression guards:
+`src/web-ui/src/infrastructure/peer-device/README.md`.
+
+OpenBitFun account identity (GitHub or email-code sign-in) is shared through `account_identity_api.rs`. Relay device
+registration and lifecycle live in `src/api/remote_connect_api.rs`; settings
+remain on their owning device and there is no cloud/local sync choice.
+
+The Relay deployment wizard is retired. Preserve the developer scripts under
+`src/apps/relay-server` and their [operator guide](../relay-server/README.md).
+The retained Tauri wrapper and services orchestration are compatibility tools,
+not an entry point to restore in the product UI.
+
+If a change affects behavior shared by multiple runtimes, place stable contracts,
+execution policy, and services in their owning lower-layer crates. Keep only
+product wiring and compatibility bridges in `src/crates/assembly/core`.
+
+## Local rules
+
+- Keep desktop-only integrations here; do not move them into shared core
+- Window lifecycle behavior, including close/minimize-to-tray defaults, is a
+  desktop surface concern. Preserve saved user preferences when changing it.
+- Main-window lifecycle and geometry use `get_window("main")`. Embedded browser
+  child WebViews make `get_webview_window("main")` return `None` even while the
+  native window exists; use `get_webview("main")` for the frontend view itself.
+  Main-frontend commands accept `tauri::Webview` and validate its own label before
+  accessing `webview.window()`; accepting only the parent window would let a
+  browser child pass a main-window label check. `WebviewWindow` command extraction
+  also fails once the main host has browser children.
+- `window_state_support` owns main-window geometry validation and atomic
+  persistence in the legacy `.window-state.json` format. Do not reinstall the
+  window-state plugin alongside it: the plugin's exit cache can overwrite repairs.
+
+## Commands
+
+Use these for the desktop development loop. Verification commands are kept in
+the Verification section below.
+
+```bash
+pnpm run desktop:dev
+pnpm run desktop:preview:debug
+pnpm run prepare:dsh-profile   # optional: local DeepSeek Harness sessions
+```
+
+Data Tools runs independently. Desktop development launchers do not build,
+launch, or supervise the tool; use its own development and release entry
+points under `src/apps/data-tools`.
+
+## Fast builds
+
+| Command | When to use |
+|---|---|
+| `pnpm run desktop:build:fast` | Debug build without bundling; fastest compile for manual testing |
+| `pnpm run desktop:build:release-fast` | Release-like no-bundle build with reduced LTO; run it in place and never distribute the raw executable alone |
+| `pnpm run desktop:build:nsis:fast` | Windows installer using `release-fast` profile; for quick installer validation |
+
+Set `CARGO_PROFILE_DEV_DEBUG=2` when full breakpoint debug information is
+required. The default dev profile keeps line tables while reducing PDB size.
+
+## Target cache GC
+
+`desktop:dev` (on exit), `desktop:preview:debug` (on shutdown), and `desktop:build*` prune stale `target/<profile>` cache generations. Incremental roots keep the latest crate/session. Cargo fingerprint JSON identifies distinct lib, test, bin, and build-script units; GC keeps the latest generation of each unit plus every generation whose Cargo-managed `invoked.timestamp` was refreshed within the last 24 hours, then removes orphaned `deps` files and `build` directories. Busy detection is scoped to Cargo lock files in the selected profile, so an unrelated worktree build does not suppress GC. Manual: `pnpm run target:gc -- --profile debug`. Disable with `OPENBITFUN_TARGET_GC=0`; dry-run with `OPENBITFUN_TARGET_GC_DRY_RUN=1`; adjust the grace window with `OPENBITFUN_TARGET_GC_MIN_AGE_HOURS`.
+
+`release-fast` profile (`Cargo.toml`): inherits `release` but disables LTO, increases `codegen-units` to 16, enables incremental compilation. Significantly faster at the cost of binary size and marginal runtime performance.
+
+All commands that pass `--no-bundle` emit a staged runtime tree rather than a
+single-file application. The executable depends on the adjacent `frontend`,
+`flashgrep`, `mobile-web`, and `resources` directories. Use
+`pnpm run desktop:build:nsis` for a distributable Windows installer.
+
+## DevTools feature (model rule)
+
+The `devtools` Cargo feature exists for debugging UI/UX in the desktop app. When adding or modifying debug-related code:
+
+- Guard all debug-only APIs and commands with `#[cfg(any(debug_assertions, feature = "devtools"))]`
+- Provide no-op stubs under `#[cfg(not(any(debug_assertions, feature = "devtools")))]` so commands can always be registered in `invoke_handler`
+- The feature is enabled automatically in `dev` builds and `release-fast` profile builds via `--features devtools`
+- Never enable in `release` profile builds intended for end users
+
+## Verification
+
+For ACP cancellation request compatibility, run
+`cargo test --locked -p openbitfun-desktop --no-default-features --lib acp_cancel_request`.
+It covers legacy payload deserialization/round trips and the optional Turn binding.
+Native ACP queue recovery uses the focused runner in `tests/e2e/AGENTS.md`.
+
+Application updates use the official `tauri-plugin-updater` for discovery,
+download and signature verification. `src/update_maintenance` owns native
+authorization, publication/recovery and Windows process handoff; keep those
+behaviors out of third-party source patches. Installation of a verified cached
+package must not require another update-server request.
+
+For updater adapter and persisted-record changes, run:
+
+```bash
+cargo test --locked -p openbitfun-desktop --no-default-features --lib update_maintenance
+cargo test --locked -p openbitfun-desktop --no-default-features --lib api::update_api::tests
+node --test scripts/updater-maintenance.test.mjs scripts/market/market-image-context.test.mjs
+pnpm --dir src/web-ui exec vitest run src/infrastructure/api/service-api/SystemAPI.test.ts src/infrastructure/update
+```
+
+The filesystem/process tests use disposable fixtures. Real UAC and alternate
+administrator accounts require a clean Windows VM; native macOS authorization
+and Linux package/AppImage replacement require their respective platforms.
+
+For application icon resources and packaging, run `pnpm run generate-brand-assets`
+and `node --test scripts/generate-brand-assets.test.mjs scripts/macos-icon-bundle.test.mjs scripts/desktop-tauri-build.test.mjs`.
+The [brand guide](../../../assets/brand/README.md#macos-icons) owns native exports.
+On a Mac with full Xcode 26+, also run
+`OPENBITFUN_TEST_MACOS_BUNDLE=1 node --test scripts/macos-icon-bundle.test.mjs`;
+CI requires this on both macOS architectures. The fixture bundles a Mach-O
+without launching UI. Resource-only edits do not require the Rust suites below;
+packaging/startup code changes still require the desktop build. These checks do
+not establish visual Dock equivalence on an older OS. Keep modern `.icon`
+resources in the macOS config overlay and preserve the dev/legacy ICNS path.
+
+For macOS microphone signing metadata, run
+`plutil -lint src/apps/desktop/Info.plist src/apps/desktop/Entitlements.plist`
+and `node --test scripts/ci/verify-macos-microphone.test.mjs` on macOS.
+For metadata-only changes, these focused checks replace the Rust build/test commands below.
+Before distributing, run `bash scripts/ci/verify-macos-microphone.sh <signed-app-bundle>`
+(also required by the release signing verification), then verify microphone consent
+and recording in the signed app on macOS. Ad-hoc fixture tests do not prove TCC behavior.
+
+```bash
+cargo check -p openbitfun-desktop && cargo test -p openbitfun-desktop
+```
+
+Token-usage bootstrap must construct and register the host's service before
+`RoundExecutor::new`; that constructor captures the service for direct attempt
+records. The subscriber and AppState must reuse the same authority. An unknown
+usage failure/cancellation emits no TokenUsageUpdated event, so subscribing to
+events alone cannot record it. For this wiring, run the Desktop check above and
+the [Core factory-backed acceptance paths](../../crates/assembly/core/src/agentic/execution/AGENTS.md),
+whose process fixture uses the production round constructor and host service
+registration rather than assigning the executor's private usage field.
+
+Guarded E2E startup also isolates subscription metadata and secrets under
+the guarded PathManager user-data root, using the existing encrypted fixture
+vault instead of any native credential store. Debug-only subscription mock TLS
+may add the CA from `OPENBITFUN_E2E_SUBSCRIPTION_CA_FILE` under that same guard;
+it does not turn off certificate verification. The native application fixture
+is `node tests/e2e/scripts/run-subscription-pool.mjs` (see its E2E guide).
+
+For desktop card stacking, native parenting rollback, and legacy record/request compatibility,
+run `cargo test --locked -p openbitfun-desktop --no-default-features --lib desktop_cards`.
+This also checks host-stamped Peer turn metadata for legacy controllers. Tool
+admission is turn-scoped: attached Peer controllers are observers and must not
+block local card creation or display. Run the Core guide's `desktop_card` tests
+for request-origin propagation; these fixtures do not establish live remote behavior.
+On a graphical Windows session with Explorer running, also run
+`cargo test --locked -p openbitfun-desktop --no-default-features --lib live_explorer_attachment_round_trip -- --ignored`.
+The native fixtures use hidden disposable windows; they do not establish WebView rendering,
+Win+D behavior, Explorer restart recovery, mixed-DPI monitor dragging, or remote behavior.
+After rebuilding, manually verify those native interactions and switching between desktop pinning,
+global always-on-top, and hide/show. For Explorer restart (`taskkill /f /im explorer.exe`, then
+start it again) a pinned card must reattach within about 30 s, or come back unpinned with the
+pin-failure notice; it must never stay "Shown" without a window. UI, hidden-card pinning, and old-host negotiation coverage:
+`pnpm --dir src/web-ui run test:run src/app/components/DesktopCard/DesktopCardWindow.test.tsx src/infrastructure/api/service-api/DesktopCardAPI.test.ts src/app/scenes/personal-overview/OverviewDesktopCardsSection.test.tsx src/app/scenes/settings/pages/application/DesktopCardsSettingsSection.test.tsx`.
+
+For frontend customization with background Peer subscribers, direct Peer tool
+refusal, revision recovery, and legacy state compatibility, run
+`cargo test --locked -p openbitfun-desktop --no-default-features --lib frontend_workbench`.
+The Core guide's `frontend_workbench` tests cover per-turn origin admission.
+These fixtures do not launch the native confirmation controls or a live Peer connection.
+
+For session storage directory access, run
+`cargo test -p openbitfun-desktop --lib api::session_storage_directory::tests`
+for session storage directory resolution (these tests do not launch a file manager),
+and `cargo test -p openbitfun-desktop --lib remote_workspace_policy` after registration changes.
+
+For whole-session copy routing, run
+`cargo test --locked -p openbitfun-desktop --lib whole_session_copy_uses_the_latest_persisted_turn_fork`.
+After command registration changes, also run the `remote_workspace_policy` filter.
+
+For optional workspace catalog query payload compatibility, run
+`cargo test --locked -p openbitfun-desktop --lib api::session_api::catalog_request_tests`.
+
+For MCP ProductControl provider wiring, run
+`cargo test --locked -p openbitfun-desktop --lib openbitfun_control_host::tests`.
+The shared MCP behavior fixtures are documented in the Core guide.
+
+For model selector request compatibility and configuration effect routing:
+
+```bash
+cargo test --locked -p openbitfun-desktop --lib update_session_model_distinguishes_omitted_null_and_explicit_reasoning_presets
+cargo test --locked -p openbitfun-desktop --lib model_routing_status_preserves_legacy_requests_and_internal_session_opt_in
+cargo test --locked -p openbitfun-desktop --lib session_permission_read
+cargo test --locked -p openbitfun-desktop --lib backend_effect_routing_is_owned_by_the_control_transaction
+```
+
+Use the Core guide's session-model tests for cold persistence, no-op writes,
+rollback, and ownership; the Desktop adapter must not restore history for a
+model selection alone. Permission reads use the same header path, preserve a
+missing override as `null`, and obtain active-Turn facts only from the live runtime.
+Legacy scope-less reads require a loaded session; an unknown override must fail
+instead of pretending to inherit the default.
+
+For MiniApp Agent session and context changes, run
+`cargo test --locked -p openbitfun-desktop --lib api::miniapp_agent_api::tests`.
+This covers legacy payloads, exact context paths, trust instructions, and snapshot cleanup.
+
+For tray unread synchronization, run
+`pnpm --dir src/web-ui run test:run src/flow_chat/services/trayUnreadService.test.ts src/flow_chat/services/sessionNavStatusService.test.ts`
+and `cargo test -p openbitfun-desktop --lib remote_workspace_policy` after command changes.
+
+For independent official/LAN Relay routing and scoped teardown, run
+`cargo test --locked -p openbitfun-desktop --lib api::remote_connect_api`
+and `cargo test --locked -p openbitfun-desktop --lib api::peer_host_invoke::tests`.
+The dual-Relay test runs actual sockets and encrypted RPC in a child process with
+temporary product storage; it does not exercise physical LAN interfaces, SSH
+workspaces, or the production Relay. UI coverage lives in
+`remoteConnectionState.test.ts`, `RemoteConnectDialog.status.test.tsx` and
+`deviceInterconnectionOverview.test.ts` under the Web UI owner.
+
+For shared GitHub sign-in and token redaction, use
+`cargo test -p openbitfun-desktop --lib api::account_identity_api::tests`.
+For the matching cross-entry UI state, run
+`pnpm --dir src/web-ui run test:run src/infrastructure/account-identity/AccountIdentityService.test.ts src/features/market-account/AccountIdentityControls.test.tsx src/app/components/RemoteConnectDialog/ensureAccountSession.test.ts`.
+
+For Pages Agent startup registration and Desktop-owned account execution, run
+`cargo test --locked -p openbitfun-desktop --lib api::remote_connect_api::page_tool_tests`.
+This child-process fixture invokes the actual registered tool against a loopback
+Relay and covers account-switch fencing; it does not launch the native UI or
+exercise a live remote device.
+
+For side-question request compatibility, initial model selection, and optional
+message metadata, use
+`cargo test -p openbitfun-desktop --no-default-features --lib api::btw_api::tests`.
+
+For snapshot workspace identity and remote rollback admission, use
+`cargo test --locked -p openbitfun-desktop --lib api::snapshot_service::tests` and
+`pnpm --dir src/web-ui run test:run src/infrastructure/api/service-api/SnapshotAPI.test.ts`.
+
+For skill discovery response compatibility and timeouts, use
+`cargo test -p openbitfun-desktop --lib api::skill_api::tests`.
+For companion pet manifest versions and package metadata, use
+`cargo test -p openbitfun-desktop --lib api::commands::pet_package_tests`.
+For content-search routing and remote fallback protection, use
+`cargo test --locked -p openbitfun-desktop --lib api::search_api::tests`.
+For controller-local peer download staging, atomic replacement, and failed transfer cleanup,
+run `cargo test -p openbitfun-desktop --lib api::local_file_download::tests`.
+After changing its registration, also run
+`cargo test -p openbitfun-desktop --lib remote_workspace_policy`.
+
+For Windows external-file drag previews, run
+`cargo test --locked -p openbitfun-desktop --lib file_drop_preview_api` and
+`pnpm --dir src/web-ui run test:run src/infrastructure/files/useWindowsFileDropPreview.test.tsx src/app/scenes/session/FileDropPreviewCards.test.tsx`.
+After rebuilding Desktop, manually check Explorer drags with one image, more than
+four images, mixed file formats, Escape, leaving the pane, and a scene switch.
+Verify HTML text/tab/file-tree drags still work. The temporary OLE child only
+covers the active chat target during an external file drag; do not enable Wry's
+window-wide Windows handler as a replacement. After command registration changes,
+also run `cargo test -p openbitfun-desktop --lib remote_workspace_policy`.
+
+For macOS HTML versus native file drag routing, use the focused command in
+[`third_party/wry/OPENBITFUN-PATCH.md`](../../../third_party/wry/OPENBITFUN-PATCH.md)
+and `cargo build -p openbitfun-desktop`. The host keeps the native file receiver
+enabled for Finder paths; the Wry adapter delegates non-file gestures to WebKit.
+Frontend HMR and synthetic DOM drag tests cannot verify that native boundary.
+
+For unavailable macOS browser URLs and native navigation failures, run the `wkwebview_url` native regression in
+[`third_party/wry/OPENBITFUN-PATCH.md`](../../../third_party/wry/OPENBITFUN-PATCH.md)
+and the Desktop build below. The test covers native URL readback and
+page-load callbacks, navigation failure and explicit recovery; it does not exercise remote hosts. Panic hooks must report
+failures without claiming that returning from the hook catches a panic.
+
+The layered receiver requires the compatibility declaration in
+`windows-app.manifest`; keep it wired through `build.rs` for dev and release.
+After changes to that contract, run
+`node --test scripts/desktop-tauri-build.test.mjs` and `cargo build -p openbitfun-desktop`.
+The focused native test creates and destroys 50 real, hidden receiver windows.
+The Shell regression also uses a real `IDataObject` and drag-image helpers to
+verify 20 takeovers leave no `SysDragImage`, and that the next target can restore
+the source image and clean it up on drop/cancel. `IDropTargetHelper::Show(false)`
+alone does not dismiss the modern layered image; end the Shell renderer session
+before displaying the custom preview, while keeping the OLE receiver active.
+If the Windows Tauri library test loader fails before running tests, embed the
+same desktop manifest into a temporary copy of the generated test executable
+using the Windows SDK `mt.exe`, then run the `file_drop_preview_api` filter on
+that copy. A Common Controls-only manifest cannot exercise layered children.
+
+For staged application-update cache and signature behavior, use
+`cargo test -p openbitfun-desktop --lib api::update_api::tests`.
+For peer system-info response compatibility, run
+`cargo test -p openbitfun-desktop --lib system_info_home_contract`.
+For window geometry recovery, legacy state compatibility, and snapshot persistence,
+run `cargo test -p openbitfun-desktop --lib window_state_support::tests`.
+For window resize layout scheduling, run
+`cargo check --locked -p openbitfun-desktop --no-default-features --lib` and
+`pnpm --dir src/web-ui exec vitest run src/app/layout/WindowResizeLayout.test.tsx src/infrastructure/runtime/windowResize.test.ts src/infrastructure/runtime/sceneBackdrop.test.ts src/app/workbench/WorkbenchLayout.test.tsx`.
+These checks cover bounded measurement batches, native completion, micro-adjustments,
+cancellation, older-host fallback and retained content. They do not establish native
+paint timing or live remote behavior. Resize completion stays on the local controller
+even in Peer Device Mode; it must not use the peer product transport.
+On macOS also run `node scripts/test-macos-window-resize.mjs`. It reproduces the
+old child-view size lag and verifies synchronous main-view geometry, fractional
+sizes and independent browser child bounds using unattached NSViews, without
+opening a window or controlling a browser. The host replaces Tauri's queued
+proportional resize owner only for the main frontend with AppKit autoresizing;
+do not apply this full-container policy to embedded browser views. The fixture
+also covers native scene background growth, zoom and invalid-payload fallback.
+Scene paint is below the main WebView and above the OS material; it receives the
+resolved opaque CSS background through a versioned controller-local event, with
+no native palette, capture or reveal timer. Transparent/image surfaces opt out.
+Run `pnpm run theme:color-audit:all` when changing this projection. The fixture
+does not measure WebKit paint latency; native visual verification remains manual.
+For main-window activation with embedded browsers, build Desktop and run
+`node tests/e2e/scripts/run-browser-window-activation.mjs` with completed frontend
+assets. It checks the native command shared by pet/bubble clicks with zero, one
+and two browser children, hide/show, minimize/restore, focus and state persistence
+in an isolated profile. It also checks main-view command extraction, remote
+child-view ACL rejection and DevTools. It does not exercise remote hosts or pet
+pointer events.
+For macOS close-to-hide fullscreen sequencing, run
+`cargo check --locked -p openbitfun-desktop` and
+`node scripts/test-macos-window-close.mjs` on a graphical macOS session.
+The latter compiles the production close lifecycle in isolation and checks real
+AppKit fullscreen entry/exit, duplicate requests, cancellation and reopen; it
+does not launch the complete Desktop frontend or exercise remote scenarios.
+For Windows main-WebView minimize/restore size filtering, run
+`cargo test -p openbitfun-desktop --no-default-features --lib window_webview_geometry::tests`.
+The desktop host owns main-WebView resizing on Windows so minimized client bounds
+do not trigger page reflow; embedded browser WebViews keep their existing owners.
+After rebuilding, manually compare taskbar minimize/restore with tray hide/show
+while a session is open, and check normal resize, maximize, and monitor DPI changes.
+For the matching startup wiring contract, run
+`pnpm --dir src/web-ui run test:run src/app/startup/startupPerformanceContract.test.ts`.
+For native sidebar material and appearance bootstrap, run
+`cargo test -p openbitfun-desktop --no-default-features --lib appearance::startup_appearance_tests`
+and `pnpm --dir src/web-ui run test:run src/infrastructure/appearance/adapters/ThemeTokenAppearanceAdapter.test.ts`.
+For Windows main-window material, native frame and eight-direction resizing, run
+`node scripts/test-windows-window-material.mjs` on Windows. It compiles the
+production window configuration with the locked Tauri runtime and local Tao/Wry
+adapters, then checks real hidden WebViews in isolated temporary storage. It
+covers the opaque fallback, available native material, frame insets, resize hit
+testing and window size changes; it does not measure Windows 10 drag frame rate
+or exercise remote scenarios. Use `--check --target x86_64-pc-windows-msvc` from
+another host for a compile-only check, adding `--xwin` when using cargo-xwin.
+Keep the native frame and shadow intact:
+expanding the client rectangle over the non-client frame removes the system's
+side, bottom and corner resize targets.
+For embedded browser preview encoding, target correlation and navigation outcomes, run
+`cargo test -p openbitfun-desktop --lib api::browser_api::tests`.
+For conversation-owned browser lifetime, build Desktop and Web UI, then run
+`node tests/e2e/scripts/run-browser-session-isolation.mjs`. Its isolated native
+fixture delays A's model response until B is selected, exercises background
+opening and concurrent reads through real Agent tools, and verifies native
+visibility and retained document state across session switches. On macOS it also
+checks navigation failure delivery to tools/UI and recovery by manual navigation. It scripts only
+model HTTP, not browser or session behavior; it does not establish remote coverage.
+After browser command registration changes, also run
+`cargo test -p openbitfun-desktop --lib remote_workspace_policy`.
+After changing updater command registration, also run
+`cargo test -p openbitfun-desktop --lib remote_workspace_policy`.
+
+If the change affects startup, WebDriver, browser/computer-use, or packaged behavior, also run:
+
+```bash
+cargo build -p openbitfun-desktop
+```
+
+To exercise packaged UI customization in an isolated native window without a
+development server, build Web UI assets, then use the focused Creation harness:
+
+```bash
+pnpm run build:web
+cargo build -p openbitfun-desktop --features devtools
+node tests/e2e/scripts/run-creation-runtime.mjs
+node tests/e2e/scripts/run-creation-runtime.mjs --suspended-paint  # occluded WebKit startup and reload
+```
+
+The harness copies a completed build into an independent frontend snapshot so
+concurrent builds cannot replace its lazy modules. It uses temporary product storage, a private WebView store, and
+`OPENBITFUN_E2E_PACKAGED_FRONTEND=1`. It checks state across document reloads;
+the private test store intentionally does not survive process exit.
+That debug-only switch takes effect only with the existing E2E storage guard;
+release builds always use the packaged protocol.
+
+For alternate dev-server ports and preview startup URL changes, run
+`node --test scripts/dev-startup.test.mjs` and
+`cargo test -p openbitfun-desktop --no-default-features --lib appearance::development_frontend_tests`.
+For launcher-only development storage mode changes, run
+`node --test scripts/dev-startup.test.mjs`; no native app launch is required.
+By default (or with `--shared-data`), both desktop development launchers leave
+storage selection to the app so existing settings, workspaces and sessions are
+visible. Only `--isolated-data` sets `OPENBITFUN_USER_ROOT` and `OPENBITFUN_HOME`
+before spawning children, defaulting to the checkout-local
+`.openbitfun/desktop-dev/{user,home}` directories. Keep existing isolated data in
+place; switching modes must not move, merge or delete it. The two flags are mutually exclusive. Preserve explicit
+overrides and the legacy E2E aliases in both modes. Development launchers set
+`OPENBITFUN_DESKTOP_HOST_CHANNEL=development`: its MiniApp lease, discovery and
+launch records are separate even when product storage is shared. Keep per-session
+writer and scheduler leases intact. See the MiniApp presentation guide for the
+native host-channel and launch-record compatibility checks.
+`OPENBITFUN_DEV_PORT` selects the HTTP port; `OPENBITFUN_DEV_HMR_PORT` defaults
+to the previous port. Desktop and Vite must use the same values. Development
+launchers reuse the locked Sherpa library/archive cache across Git worktrees,
+or download the archive through curl when absent; explicit SHERPA_ONNX overrides win.
+
+For the real macOS ComputerUse tool observation/input roundtrip, run
+`node scripts/test-macos-control-roundtrip.mjs`. This launches a disposable
+AppKit target and the `computer_use_native_roundtrip` test with `devtools`.
+The harness has its own main-thread CFRunLoop and exercises the production
+main-queue dispatcher; do not run this test through libtest or bypass that
+dispatcher. It requires local Accessibility and Screen Recording permission.
+To reuse the compiled harness, set `OPENBITFUN_TEST_BINARY` to its absolute path.
+
+For the additive saved-model quota request and legacy account-request round trip:
+`cargo test --locked -p openbitfun-desktop --lib quota_request_compatibility_tests`.
+The host resolves the saved model, rejects non-API authentication and custom auth,
+and rechecks its authorization binding before publishing the result. Model-scoped
+requests require the separately advertised `subscription_model_quota_v1` capability;
+legacy requests retain the exact account-slot path. These tests do not contact billing.
+
+For workspace HTML gateway authentication, chunking, cancellation, site-root
+entry URLs, document-route fallback, owner-error preservation, peer capability
+negotiation and encrypted loopback Relay transfer, run:
+
+```bash
+cargo test --locked -p openbitfun-desktop --lib html_preview
+```
+
+For encrypted peer resource-load timings, run the same command with
+`--lib html_preview_encrypted_peer_loading_benchmark -- --ignored --nocapture`.
+The isolated Relay fixture adds 40 ms per resource RPC and compares the previous
+serial reader with cold and warm HTTP gateway loads of the same HTML/assets.
+It reports three samples and verifies payload bytes; it does not time native
+rendering or use a physical remote host. Cache and prefetch limits belong to
+`services-integrations::remote_connect::html_preview::transfer`; the Desktop
+adapter owns HTTP authentication, explicit-refresh headers and peer RPC wiring.
+
+Use `node tests/e2e/scripts/run-html-preview.mjs` after building Desktop and Web UI
+to verify CSS, JavaScript modules, images and concurrent preview cookies in native
+browser child views. The fixture uses isolated storage; see `tests/e2e/AGENTS.md`.
+
+For the LaTeX workspace compiler, run:
+
+```bash
+cargo test --locked -p openbitfun-desktop --no-default-features --lib latex_api::tests
+```
+
+Use `-- --include-ignored` with `latexmk`, pdfLaTeX, and XeLaTeX on PATH to
+exercise a multi-file paper build, error diagnostics, and temporary output.
+The POSIX build test checks the remote command in a local shell. Verify live
+SSH, container, and peer routing separately.
+
+For additive on-demand context-estimate requests and legacy payload defaults:
+`cargo test --locked -p openbitfun-desktop --no-default-features --lib context_estimate_request_tests`.
+This verifies the Desktop boundary, not a live Peer or remote workspace.

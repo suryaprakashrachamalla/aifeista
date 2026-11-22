@@ -1,0 +1,24 @@
+//! MiniApp domain contracts and pure helpers.
+
+pub mod agent_bridge;
+pub mod ai_bridge;
+pub mod bridge_builder;
+pub mod builtin;
+pub mod chrome;
+pub mod compiler;
+pub mod customization;
+pub mod draft;
+pub mod exporter;
+pub mod host_routing;
+pub mod instances;
+pub mod lifecycle;
+pub mod market;
+pub mod permission_policy;
+pub mod ports;
+pub mod rate_limit;
+pub mod runtime;
+pub mod runtime_facade;
+pub mod storage;
+pub mod types;
+pub mod web_surface;
+pub mod worker;

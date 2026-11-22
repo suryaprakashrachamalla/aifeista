@@ -1,0 +1,33 @@
+[package]
+name = "openbitfun-agent-runtime-ipc"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+publish = false
+description = "Private pre-integration IPC seam for a shared OpenBitFun Agent Runtime"
+
+[lib]
+name = "openbitfun_agent_runtime_ipc"
+crate-type = ["rlib"]
+
+[dependencies]
+async-trait = { workspace = true }
+openbitfun-transport = { path = "../transport" }
+openbitfun-events = { path = "../../contracts/events" }
+openbitfun-product-domains = { path = "../../contracts/product-domains" }
+openbitfun-runtime-ports = { path = "../../contracts/runtime-ports", features = ["agent-api", "git-port"] }
+dunce = { workspace = true }
+fs2 = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["io-util", "macros", "net", "rt", "sync", "time"] }
+uuid = { workspace = true }
+tempfile = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+windows = { workspace = true, features = ["Win32_Storage_FileSystem"] }
+
+[lints]
+workspace = true

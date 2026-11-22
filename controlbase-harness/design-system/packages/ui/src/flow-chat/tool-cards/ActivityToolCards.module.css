@@ -1,0 +1,9 @@
+@layer openbitfun.components {
+  .summary {
+    display: block;
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--openbitfun-color-content-muted);
+    white-space: nowrap;
+  }
+}

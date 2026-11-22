@@ -1,0 +1,8 @@
+@use './AgentCapabilityGroups' as capability;
+
+@include capability.capability-group-layout('skill');
+
+.skill-group-picker__unavailable {
+  color: var(--openbitfun-color-content-muted);
+  font-size: var(--openbitfun-type-meta-font-size);
+}

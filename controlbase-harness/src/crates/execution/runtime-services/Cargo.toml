@@ -1,0 +1,31 @@
+[package]
+name = "openbitfun-runtime-services"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "Typed runtime service assembly for OpenBitFun runtimes"
+
+[lib]
+name = "openbitfun_runtime_services"
+crate-type = ["rlib"]
+
+[features]
+default = []
+test-support = []
+
+[dependencies]
+openbitfun-events = { path = "../../contracts/events" }
+openbitfun-runtime-ports = { path = "../../contracts/runtime-ports", features = ["git-port", "remote-exec-port", "remote-workspace-ports", "runtime-event-port", "terminal-port", "workspace-ports"] }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }
+
+[lints]
+workspace = true

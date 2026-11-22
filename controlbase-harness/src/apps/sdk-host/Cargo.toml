@@ -1,0 +1,52 @@
+[package]
+name = "openbitfun-sdk-host-app"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "Standalone local Agent SDK Host implementation candidate"
+autobins = false
+
+[[bin]]
+name = "openbitfun-sdk-host"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+openbitfun-agent-runtime = { path = "../../crates/execution/agent-runtime", features = ["agent-runtime"] }
+openbitfun-core = { path = "../../crates/assembly/core", features = [
+    "agent-runtime",
+    "document-read",
+    "subscription-auth",
+    "external-sources",
+    "tools-basic",
+    "tools-git",
+    "tools-mcp",
+    "tools-browser-web",
+    "tools-computer-use",
+    "tools-image-analysis",
+    "tools-image-generation",
+    "tools-office-documents",
+    "tools-agent-control",
+] }
+openbitfun-sdk-host = { path = "../../crates/interfaces/sdk-host" }
+openbitfun-services-core = { path = "../../crates/services/services-core", features = [
+    "process-runtime",
+    "tls-provider",
+] }
+openbitfun-transport = { path = "../../crates/adapters/transport" }
+futures-util = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["io-std", "io-util", "macros", "rt-multi-thread", "sync", "time"] }
+tokio-util = { workspace = true, features = ["codec"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+rustls = { workspace = true }
+tempfile = "3"
+tokio = { workspace = true, features = ["process"] }
+
+[lints]
+workspace = true

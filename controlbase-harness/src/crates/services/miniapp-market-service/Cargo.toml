@@ -1,0 +1,44 @@
+[package]
+name = "openbitfun-miniapp-market-service"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "OpenBitFun MiniApp marketplace service"
+
+[lib]
+name = "openbitfun_miniapp_market_service"
+
+[dependencies]
+anyhow = { workspace = true }
+axum = { workspace = true }
+base64 = { workspace = true }
+openbitfun-product-domains = { path = "../../contracts/product-domains", features = ["miniapp"] }
+openbitfun-services-core = { path = "../services-core", features = ["tls-provider"] }
+chrono = { workspace = true }
+hex = { workspace = true }
+hmac = { workspace = true }
+lettre = { workspace = true, features = ["builder", "smtp-transport", "tokio1-rustls", "ring", "webpki-roots"] }
+image = { workspace = true, features = ["jpeg", "png", "webp"] }
+rand = { workspace = true }
+reqwest = { workspace = true, features = ["form", "http2", "json", "rustls-no-provider"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+semver = { workspace = true }
+sha2 = { workspace = true }
+similar = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "sqlite"] }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs", "rt", "sync", "time"] }
+tower-http = { version = "0.6.11", features = ["fs", "set-header", "trace"] }
+tracing = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true }
+zip = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros"] }
+tower = { version = "0.5", features = ["util"] }
+
+[lints]
+workspace = true
