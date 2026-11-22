@@ -25,7 +25,7 @@ All external, paid, or API-key-dependent voice services (ElevenLabs TTS, Assembl
 - **Speech-to-Text (S2T)**: Uses Apple's native on-device dictation engine via `AppleSpeechTranscriptionProvider.swift` (`Speech.framework` + `AVAudioEngine`). Runs offline, free, and with zero latency.
 - **Text-to-Speech (T2S)**: Uses Apple's native `AVSpeechSynthesizer` via `AppleTTSClient.swift`.
   - **Siri Neural Voice Support**: Dynamically prioritizes Siri voices and Apple Premium/Enhanced voices over compact legacy voices.
-  - **Default Accent**: Pre-configured for Indian English Male (`Rishi` / `en-IN`), with automatic fallback to downloaded Siri voices or natural US English.
+  - **Default Accent**: Pre-configured for **Samantha** (the original natural voice of Siri on macOS / iOS), providing fluid, coherent sentence flow, with automatic dynamic upgrade to downloaded Siri neural voices.
   - **Sentence Flow & Prosody**: Includes text sanitization that strips Markdown asterisks, backticks, code blocks, and URLs so the synthesizer speaks in coherent, fluid sentences instead of robotic word-by-word reading.
   - **Pacing**: Conversational speech rate (`0.48`) with natural sentence-boundary delays (`preUtteranceDelay: 0.05`, `postUtteranceDelay: 0.1`).
 
