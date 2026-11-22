@@ -1,5 +1,0 @@
-- insert:
-    - id: feishu
-      name: '@deepseek-ai/dsh-feishu'
-      config:
-        binDir: !!js process.cwd() + '/feishu-bin'

@@ -1,4 +1,0 @@
-- textbox "/ Browse commands · @ Mention files or sessions"
-- textbox "Plan outline Goal · Constraints · Success criteria"
-- textbox "Review Changes Risks Tests"
-- textbox "Describe what you want to build, / commands, @ files or sessions"

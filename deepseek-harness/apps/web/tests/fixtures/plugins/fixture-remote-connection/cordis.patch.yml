@@ -1,3 +1,0 @@
-- insert:
-    - id: fixture-remote-connection
-      name: '@fixture/remote-connection'

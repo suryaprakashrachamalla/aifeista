@@ -1,6 +1,0 @@
-# Replays the ptc-turn program with the scoped REPL.
-- insert:
-    - id: ptc-runtime
-      name: '@deepseek-ai/dsh-ptc-runtime-node'
-      config:
-        executionMode: persistent-in-memory
