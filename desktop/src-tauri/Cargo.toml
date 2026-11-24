@@ -1,0 +1,29 @@
+[workspace]
+
+[package]
+name = "ai-carnival-desktop"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["macos-private-api"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.41", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+layer0-contracts = { path = "../../crates/layer0-contracts" }
+layer0-core = { path = "../../crates/layer0-core" }
+layer0-sandbox = { path = "../../crates/layer0-sandbox" }
+layer0-store = { path = "../../crates/layer0-store" }
+layer1-adapters = { path = "../../crates/layer1-adapters" }
+layer1-cordis-bus = { path = "../../crates/layer1-cordis-bus" }
+layer1-router = { path = "../../crates/layer1-router" }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+window-vibrancy = "0.8.1"

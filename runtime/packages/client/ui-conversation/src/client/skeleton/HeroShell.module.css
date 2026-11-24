@@ -1,0 +1,240 @@
+/* NEW SESSION hero (figma Input_Bottom 75:8208): fish + title, workspace chip
+   above the shared InputBar card. The input itself is InputBar — only stack
+   geometry and the chip live here. */
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
+  padding: 0 24px;
+}
+
+/* Cap matches the InputBar card. Glow may paint past the sides. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* figma 75:8208: 12 between title block / workspace / card. */
+  gap: 12px;
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width);
+  overflow: visible;
+}
+
+/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. The preview
+   badge is a product addition outside that source: a mono superscript pill
+   riding the title's top-right. */
+.headline {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  row-gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  font-size: 36px;
+  line-height: 42px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: #f5f2eb;
+}
+
+.fancyHeadline {
+  color: #f5f2eb;
+}
+
+.titleGroup {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 4px;
+  min-width: 0;
+}
+
+.previewBadge {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 2px 11px 1px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  corner-shape: round;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(125, 211, 252, 0.10));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 16px rgba(56, 189, 248, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #e0f2fe;
+  font-family: 'Baskerville', 'Hoefler Text', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+  animation: badge-breathe 4.5s ease-in-out infinite;
+}
+
+@keyframes badge-breathe {
+  0%, 100% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 14px rgba(56, 189, 248, 0.14);
+  }
+  50% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 22px rgba(253, 230, 138, 0.25);
+  }
+}
+
+/* Keep hover detection on a stationary box while the Circus Wheel spins. */
+.fishHitbox {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* The wheel stays grounded in primary ink with room around its outer gondolas. */
+.fish {
+  display: block;
+  overflow: visible;
+  transform-origin: 50% 50%;
+  color: #ede6d6;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease;
+}
+
+/* Hover marquee glow: soft carnival rim pulse while SMIL rotates the wheel. */
+@keyframes hero-wheel-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 16px rgba(253, 230, 138, 0.55));
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .fishHitbox:hover .fish {
+    transform: scale(1.06);
+  }
+}
+
+/* Workspace row sits 12px above the input card (figma y80 → y112). */
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Must beat `.body > :not(.glow)` specificity so the open Menu (and its
+   right-hand submenu) paints above the InputBar card. */
+.body > .workspaceRow {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  /* figma 75:8208 workspace row: px 8 above the card. */
+  padding-left: 8px;
+}
+
+/* Folder + label + chevron — transparent at rest; fill only on hover / open.
+   Overflow-driven degradation, no breakpoint: the label shrinks with an
+   ellipsis down to nothing, so folder and chevron always sit snug against
+   whatever text remains — full text, ellipsized text, or none. */
+.workspace {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: min(100%, 360px);
+  min-height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: var(--dsw-radius-sm);
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.workspace[aria-expanded='true'] {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+@media (hover: hover) {
+  .workspace:not(:disabled):hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+/* Locked form (bound guidance state): a static echo — no hover feedback, no
+   pointer affordance; label keeps full contrast. */
+.workspace:disabled {
+  cursor: default;
+}
+
+.folder {
+  flex: none;
+  color: var(--dsw-alias-label-primary);
+}
+
+.workspaceLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: none;
+  color: var(--dsw-alias-label-caption);
+}
+
+/* Dialog field: 44 tall on the modal's 332 content column, hairline
+   border, pad 14/7, 14/22 wt400 primary text, caption placeholder. Focus
+   keeps the resting border (design shows no focus ring). */
+.modalInput {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 7px 14px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-lg);
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.modalInput::placeholder {
+  color: var(--dsw-alias-label-caption);
+}
+
+.modalInput:disabled {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.modalAction {
+  min-width: 72px;
+}
+
+.modalError {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-state-error-primary);
+}

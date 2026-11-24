@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AI Carnival",
+  "version": "0.1.0",
+  "identifier": "com.aifeista.carnival",
+  "build": {
+    "frontendDist": "../web-shell"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "spotlight",
+        "title": "Search or Ask",
+        "url": "spotlight.html",
+        "width": 680,
+        "height": 446,
+        "center": true,
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "shadow": true,
+        "visible": false,
+        "skipTaskbar": true,
+        "resizable": false
+      },
+      {
+        "label": "clicky-overlay",
+        "title": "AI Carnival Clicky Overlay",
+        "url": "overlay.html",
+        "width": 1360,
+        "height": 880,
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "visible": false,
+        "shadow": false,
+        "skipTaskbar": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app"],
+    "icon": ["icons/icon.icns", "icons/icon.png"]
+  }
+}

@@ -1,0 +1,19 @@
+[package]
+name = "carnival-daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+layer0-contracts = { path = "../layer0-contracts" }
+layer0-core = { path = "../layer0-core" }
+layer0-sandbox = { path = "../layer0-sandbox" }
+layer0-store = { path = "../layer0-store" }
+layer0-watchdog = { path = "../layer0-watchdog" }
+layer1-adapters = { path = "../layer1-adapters" }
+layer1-cordis-bus = { path = "../layer1-cordis-bus" }
+layer1-router = { path = "../layer1-router" }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

@@ -1,0 +1,15 @@
+[package]
+name = "layer0-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+layer0-contracts = { path = "../layer0-contracts" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+walkdir = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://carnival.local/schemas/protocol-v1.json",
+  "title": "Carnival Protocol v1.0.0",
+  "type": "object",
+  "definitions": {
+    "HarnessId": {
+      "type": "string",
+      "enum": ["openbitfun", "deepseek_harness", "clicky"]
+    },
+    "LaneKind": {
+      "type": "string",
+      "enum": ["clicky_ambient", "builder_workspace", "optimization_deck"]
+    },
+    "CordisState": {
+      "type": "string",
+      "enum": ["stopped", "starting", "running", "degraded"]
+    },
+    "ModelTier": {
+      "type": "string",
+      "enum": ["local_triage", "deepseek_v4", "byok_cloud"]
+    },
+    "OptimizationFlags": {
+      "type": "object",
+      "required": ["prefix_cache_lock", "skill_tree_pruning", "ptc_batching", "local_triage"],
+      "properties": {
+        "prefix_cache_lock": { "type": "boolean" },
+        "skill_tree_pruning": { "type": "boolean" },
+        "ptc_batching": { "type": "boolean" },
+        "local_triage": { "type": "boolean" }
+      }
+    },
+    "CapabilityEnvelope": {
+      "type": "object",
+      "required": ["subject", "fs_read", "fs_write", "network_allow", "cua_apps", "allow_vision", "allow_audio"],
+      "properties": {
+        "subject": { "type": "string" },
+        "fs_read": { "type": "array", "items": { "type": "string" } },
+        "fs_write": { "type": "array", "items": { "type": "string" } },
+        "network_allow": { "type": "boolean" },
+        "cua_apps": { "type": "array", "items": { "type": "string" } },
+        "allow_vision": { "type": "boolean" },
+        "allow_audio": { "type": "boolean" }
+      }
+    },
+    "SpatialCommand": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "x", "y", "label"],
+          "properties": {
+            "type": { "const": "point" },
+            "x": { "type": "integer" },
+            "y": { "type": "integer" },
+            "label": { "type": "string" },
+            "screen": { "type": ["integer", "null"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "shape", "x", "y", "width", "height"],
+          "properties": {
+            "type": { "const": "draw" },
+            "shape": { "type": "string", "enum": ["rect", "arrow", "circle", "freehand"] },
+            "x": { "type": "integer" },
+            "y": { "type": "integer" },
+            "width": { "type": "integer" },
+            "height": { "type": "integer" },
+            "caption": { "type": ["string", "null"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "ax_token"],
+          "properties": {
+            "type": { "const": "highlight" },
+            "ax_token": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "const": "clear" }
+          }
+        }
+      ]
+    },
+    "ScreenContext": {
+      "type": "object",
+      "properties": {
+        "active_app": { "type": ["string", "null"] },
+        "window_title": { "type": ["string", "null"] },
+        "screenshot_ref": { "type": ["string", "null"] },
+        "ax_tree_digest": { "type": ["string", "null"] },
+        "cursor_x": { "type": ["integer", "null"] },
+        "cursor_y": { "type": ["integer", "null"] }
+      }
+    },
+    "TurnRequest": {
+      "type": "object",
+      "required": ["request_id", "session_id", "lane", "prompt"],
+      "properties": {
+        "request_id": { "type": "string" },
+        "session_id": { "type": "string" },
+        "lane": { "$ref": "#/definitions/LaneKind" },
+        "prompt": { "type": "string" },
+        "screen_context": { "$ref": "#/definitions/ScreenContext" },
+        "optimizations": { "$ref": "#/definitions/OptimizationFlags" }
+      }
+    },
+    "CuaActionRequest": {
+      "type": "object",
+      "required": ["action_id", "target_app", "action", "params"],
+      "properties": {
+        "action_id": { "type": "string" },
+        "target_app": { "type": "string" },
+        "action": { "type": "string", "enum": ["click", "double_click", "type_text", "key_combo", "scroll"] },
+        "params": { "type": "object" },
+        "background": { "type": "boolean" }
+      }
+    },
+    "HarnessEvent": {
+      "type": "object",
+      "required": ["seq", "session_id", "timestamp_ms", "kind"],
+      "properties": {
+        "seq": { "type": "integer" },
+        "session_id": { "type": "string" },
+        "timestamp_ms": { "type": "integer" },
+        "kind": {
+          "type": "string",
+          "enum": ["text_delta", "tts_chunk", "spatial_command", "cua_decision", "tool_status", "telemetry", "cordis_lifecycle", "turn_complete", "error"]
+        },
+        "payload": { "type": "object" }
+      }
+    },
+    "TelemetrySnapshot": {
+      "type": "object",
+      "required": [
+        "cordis_state",
+        "cordis_request_count",
+        "cordis_restart_count",
+        "prefix_cache_hits",
+        "prefix_cache_misses",
+        "prefix_cache_hit_rate",
+        "total_skills",
+        "last_loaded_skills",
+        "active_sessions",
+        "total_events_logged",
+        "optimizations"
+      ],
+      "properties": {
+        "cordis_state": { "$ref": "#/definitions/CordisState" },
+        "cordis_pid": { "type": ["integer", "null"] },
+        "cordis_request_count": { "type": "integer" },
+        "cordis_restart_count": { "type": "integer" },
+        "prefix_cache_hits": { "type": "integer" },
+        "prefix_cache_misses": { "type": "integer" },
+        "prefix_cache_hit_rate": { "type": "number" },
+        "total_skills": { "type": "integer" },
+        "last_loaded_skills": { "type": "integer" },
+        "active_sessions": { "type": "integer" },
+        "total_events_logged": { "type": "integer" },
+        "last_model_tier": { "type": ["string", "null"] },
+        "last_latency_ms": { "type": ["integer", "null"] },
+        "optimizations": { "$ref": "#/definitions/OptimizationFlags" }
+      }
+    },
+    "CordisRpcRequest": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "method"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "type": "string" },
+        "method": { "type": "string", "enum": ["ping", "discover_harnesses", "route_turn", "shutdown"] },
+        "params": { "type": "object" }
+      }
+    },
+    "CordisRpcResponse": {
+      "type": "object",
+      "required": ["jsonrpc", "id"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "type": "string" },
+        "result": { "type": "object" },
+        "error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "integer" },
+            "message": { "type": "string" },
+            "data": {}
+          }
+        }
+      }
+    },
+    "SnapshotRecord": {
+      "type": "object",
+      "required": ["id", "label", "graph_json", "created_at_ms", "is_good"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "graph_json": { "type": "string" },
+        "created_at_ms": { "type": "integer" },
+        "is_good": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+# Build artifacts
+target/
+dist/
+gen/
+node_modules/
+*.app
+*.app/
+
+# SQLite WAL runtime databases
+*.db
+*.db-wal
+*.db-shm
+
+# Local secrets and macOS metadata
+.env
+.env.*
+.dev.vars
+.DS_Store

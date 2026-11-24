@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Carnival</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: transparent;
+        color: #f5f2eb;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .boot {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .wheel {
+        width: 24px;
+        height: 24px;
+        color: #ede6d6;
+        animation: wheel-spin 16s linear infinite;
+      }
+      @keyframes wheel-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 550;
+        letter-spacing: -0.02em;
+        color: #f5f2eb;
+      }
+      .status {
+        font-size: 12.5px;
+        color: rgba(237, 230, 214, 0.54);
+      }
+      .error-box {
+        display: none;
+        max-width: 420px;
+        margin-top: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(18, 18, 22, 0.85);
+        font-size: 12px;
+        color: #f5f2eb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boot">
+      <div class="brand-row">
+        <svg class="wheel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="8.5" />
+          <circle cx="12" cy="12" r="2.8" />
+          <line x1="12" y1="3.5" x2="12" y2="20.5" />
+          <line x1="3.5" y1="12" x2="20.5" y2="12" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </svg>
+        <span class="title">Carnival</span>
+      </div>
+      <div id="boot-status" class="status">Starting local workspace…</div>
+      <div id="boot-error" class="error-box"></div>
+    </div>
+    <script>
+      window.setBootStatus = function (msg) {
+        const el = document.getElementById("boot-status");
+        if (el) el.textContent = msg;
+      };
+      window.setBootError = function (msg) {
+        const st = document.getElementById("boot-status");
+        const box = document.getElementById("boot-error");
+        if (st) st.textContent = "Workspace runtime unavailable";
+        if (box) {
+          box.style.display = "block";
+          box.textContent = msg;
+        }
+      };
+    </script>
+  </body>
+</html>

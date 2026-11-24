@@ -1,0 +1,12 @@
+[package]
+name = "layer1-router"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+layer0-contracts = { path = "../layer0-contracts" }
+layer0-store = { path = "../layer0-store" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }

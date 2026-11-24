@@ -1,0 +1,10 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Default capabilities for AI Carnival main window, Liquid Glass Spotlight, and Clicky overlay",
+  "windows": ["main", "spotlight", "clicky-overlay"],
+  "permissions": [
+    "core:default",
+    "core:window:default"
+  ]
+}

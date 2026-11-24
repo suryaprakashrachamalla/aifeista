@@ -1,0 +1,3686 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Agent Manager · Carnival</title>
+    <style>
+      :root {
+        --glass-rgb: 6, 6, 8;
+        --glass-alpha: 0.80;
+        --surface: rgba(255, 255, 255, 0.032);
+        --surface-hi: rgba(255, 255, 255, 0.068);
+        --surface-elev: rgba(14, 14, 18, 0.94);
+        --line: rgba(255, 255, 255, 0.08);
+        --line-strong: rgba(237, 230, 214, 0.22);
+        --ink: #f5f2eb;
+        --cream: #ede6d6;
+        --muted: rgba(237, 230, 214, 0.56);
+        --dim: rgba(237, 230, 214, 0.36);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(237, 230, 214, 0.16);
+        border-radius: 999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(237, 230, 214, 0.30);
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 13px;
+        -webkit-font-smoothing: antialiased;
+        background: transparent;
+      }
+
+      .app {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: rgba(var(--glass-rgb), calc(var(--glass-alpha) * 0.94));
+        color: var(--ink);
+      }
+
+      /* Flush single-row 48px hairline header */
+      .topbar {
+        height: 48px;
+        min-height: 48px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(var(--glass-rgb), 0.72);
+        position: relative;
+        z-index: 30;
+      }
+
+      .topbar-left,
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .page-title {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        color: var(--ink);
+      }
+
+      .count-pill {
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .count-pill.needs {
+        color: var(--ink);
+        border-color: var(--line-strong);
+        background: rgba(237, 230, 214, 0.11);
+      }
+
+      .vsep {
+        width: 1px;
+        height: 16px;
+        background: var(--line);
+        margin: 0 2px;
+      }
+
+      /* Smoked monochrome controls */
+      .btn {
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 7px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+      }
+
+      .btn:hover:not(:disabled) {
+        background: var(--surface-hi);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      .btn.primary {
+        background: var(--ink);
+        color: #09090b;
+        border-color: var(--ink);
+        font-weight: 600;
+      }
+
+      .btn.primary:hover:not(:disabled) {
+        background: #ffffff;
+        border-color: #ffffff;
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border-color: transparent;
+        color: var(--muted);
+      }
+
+      .btn.ghost:hover:not(:disabled) {
+        background: var(--surface);
+        color: var(--ink);
+      }
+
+      .btn.sm {
+        height: 24px;
+        padding: 0 8px;
+        font-size: 11px;
+        border-radius: 6px;
+      }
+
+      .seg {
+        height: 28px;
+        padding: 2px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.025);
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .seg-btn {
+        height: 22px;
+        padding: 0 9px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-family: var(--sans);
+        font-size: 11.5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 120ms ease, color 120ms ease;
+      }
+
+      .seg-btn.active {
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--ink);
+      }
+
+      /* Popovers / Dropdowns */
+      .menu-anchor {
+        position: relative;
+      }
+
+      .popover {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        min-width: 220px;
+        padding: 6px;
+        border-radius: 11px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--surface-elev);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+        z-index: 80;
+      }
+
+      .popover.right {
+        left: auto;
+        right: 0;
+      }
+
+      .popover.open {
+        display: flex;
+      }
+
+      .menu-label {
+        padding: 6px 8px 4px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+
+      .menu-item {
+        width: 100%;
+        padding: 7px 9px;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .menu-item:hover:not(:disabled) {
+        background: var(--surface-hi);
+      }
+
+      .menu-item:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      .menu-item.active {
+        background: rgba(237, 230, 214, 0.12);
+      }
+
+      .menu-meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .menu-sep {
+        height: 1px;
+        margin: 4px 6px;
+        background: var(--line);
+      }
+
+      /* Floating Shape Bar + Mods Strip (when toggled open) */
+      .subbar {
+        display: none;
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(10, 10, 14, 0.85);
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        z-index: 20;
+      }
+
+      .subbar.open {
+        display: flex;
+      }
+
+      .input,
+      .select,
+      .textarea {
+        border-radius: 7px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 12px;
+        outline: none;
+        transition: border-color 120ms ease, background 120ms ease;
+      }
+
+      .input,
+      .select {
+        height: 29px;
+        padding: 0 10px;
+      }
+
+      .textarea {
+        padding: 8px 10px;
+        resize: vertical;
+        min-height: 68px;
+      }
+
+      .input:focus,
+      .select:focus,
+      .textarea:focus {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* Main workspace stage */
+      .stage {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Minimalist Empty State */
+      .empty-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        text-align: center;
+      }
+
+      .empty-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        color: var(--cream);
+      }
+
+      .empty-title {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        margin: 0 0 6px;
+      }
+
+      .empty-sub {
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--muted);
+        max-width: 420px;
+        margin: 0 0 18px;
+      }
+
+      .empty-links {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .text-link {
+        border: none;
+        background: none;
+        padding: 0;
+        color: var(--muted);
+        font-family: var(--sans);
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .text-link:hover {
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      /* Shared agent status dots */
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.28);
+      }
+      .dot.working {
+        background: var(--ink);
+        box-shadow: 0 0 0 3px rgba(245, 242, 235, 0.14);
+      }
+      .dot.needs_you {
+        background: var(--cream);
+        box-shadow: 0 0 0 3px rgba(237, 230, 214, 0.25);
+        animation: pulse-cream 1.8s ease-in-out infinite;
+      }
+      .dot.done {
+        background: rgba(237, 230, 214, 0.45);
+      }
+      .dot.error {
+        background: #e57373;
+      }
+
+      @keyframes pulse-cream {
+        0%, 100% {
+          box-shadow: 0 0 0 2px rgba(237, 230, 214, 0.18);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(237, 230, 214, 0.34);
+        }
+      }
+
+      /* Agent pane / Dual View internals */
+      .pane {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+        background: rgba(8, 8, 11, 0.65);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .pane.needs-you {
+        border-color: var(--line-strong);
+      }
+
+      .pane-head {
+        height: 38px;
+        min-height: 38px;
+        padding: 0 11px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .pane-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .pane-name {
+        font-weight: 600;
+        font-size: 12.5px;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .tag {
+        height: 18px;
+        padding: 0 6px;
+        border-radius: 5px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--muted);
+        font-size: 10.5px;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .tag.cream {
+        color: var(--ink);
+        border-color: var(--line-strong);
+        background: rgba(237, 230, 214, 0.1);
+      }
+
+      .dual-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .turn {
+        padding: 9px 11px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.025);
+        font-size: 12px;
+        line-height: 1.48;
+      }
+
+      .turn.user {
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .turn.tool {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(0, 0, 0, 0.25);
+      }
+
+      .turn.approval {
+        border-color: var(--line-strong);
+        background: rgba(237, 230, 214, 0.07);
+      }
+
+      .turn-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .term-view {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(4, 4, 6, 0.85);
+        font-family: var(--mono);
+        font-size: 11.5px;
+        line-height: 1.48;
+        color: #e4e1d8;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .pane-foot {
+        padding: 8px 10px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .pane-foot .input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* Kanso Layout */
+      .kanso-shell {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+      }
+
+      .kanso-rail {
+        width: 212px;
+        min-width: 212px;
+        border-right: 1px solid var(--line);
+        padding: 10px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      .rail-group-title {
+        padding: 0 8px 4px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+
+      .rail-row {
+        width: 100%;
+        padding: 6px 8px;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-family: var(--sans);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .rail-row:hover {
+        background: var(--surface);
+        color: var(--ink);
+      }
+
+      .rail-row.active {
+        background: var(--surface-hi);
+        color: var(--ink);
+      }
+
+      .kanso-panes {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        overflow-x: auto;
+      }
+
+      .kanso-panes .pane {
+        min-width: 300px;
+        flex: 1 1 0;
+      }
+
+      .kanso-panes .pane.needs-you {
+        flex: 1.35 1 0;
+      }
+
+      /* Pixel HQ Layout */
+      .pixelhq-shell {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pixelhq-body {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 276px 1fr;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .pixelhq-left {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .pixelhq-canvas-box {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #0b0b10;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pixelhq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      .pixelhq-foot {
+        height: 28px;
+        padding: 0 12px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      /* Cockpit Layout */
+      .cockpit-shell {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      /* World of Codecraft + Middle-earth + Officetime split canvas layouts */
+      .world-shell {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .rpg-bar {
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(12, 11, 9, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--cream);
+      }
+
+      .world-grid {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 10px;
+      }
+
+      .world-main {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .world-main .pane {
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* Omarchy Layout */
+      .omarchy-shell {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 196px 1fr 270px;
+        gap: 4px;
+        padding: 6px;
+        background: rgba(4, 4, 6, 0.5);
+      }
+
+      .omarchy-shell .pane,
+      .omarchy-tile {
+        border-radius: 2px !important;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(9, 9, 12, 0.82);
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      /* Islands Layout */
+      .islands-shell {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .island-card {
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(12, 12, 16, 0.72);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      /* Brutal Metrics Layout */
+      .brutal-shell {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brutal-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brutal-kpi {
+        padding: 14px 16px;
+        border-right: 1px solid var(--line);
+      }
+      .brutal-kpi:last-child {
+        border-right: none;
+      }
+      .brutal-label {
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .brutal-val {
+        margin-top: 4px;
+        font-family: var(--mono);
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+      }
+
+      /* Modals & Drawers */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.62);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 120;
+      }
+
+      .modal-backdrop.open {
+        display: flex;
+      }
+
+      .modal {
+        width: 100%;
+        max-width: 520px;
+        max-height: 86vh;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(11, 11, 14, 0.96);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.78);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .modal.wide {
+        max-width: 860px;
+      }
+
+      .modal-head {
+        height: 48px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .modal-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .modal-body {
+        padding: 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .field label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .gallery-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin: 4px 0 8px;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .gallery-card {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.025);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .gallery-card.active {
+        border-color: var(--line-strong);
+        background: rgba(237, 230, 214, 0.06);
+      }
+
+      .gallery-card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .gallery-card-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .gallery-card-meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      .gallery-card-desc {
+        font-size: 11.5px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .gallery-card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        margin-top: auto;
+        padding-top: 4px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line-strong);
+        background: rgba(14, 14, 18, 0.96);
+        color: var(--ink);
+        font-size: 12px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(6px);
+        transition: opacity 160ms ease, transform 160ms ease;
+        z-index: 200;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .inline-err {
+        display: none;
+        padding: 9px 11px;
+        border-radius: 8px;
+        border: 1px solid rgba(229, 115, 115, 0.42);
+        background: rgba(229, 115, 115, 0.10);
+        color: #fca5a5;
+        font-size: 12px;
+        line-height: 1.4;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .inline-err.open {
+        display: flex;
+      }
+
+      @media (max-width: 1120px) {
+        .topbar {
+          padding: 0 10px;
+          gap: 6px;
+        }
+        .kanso-rail {
+          width: 180px;
+          min-width: 180px;
+        }
+        .pixelhq-body {
+          grid-template-columns: 196px 1fr;
+        }
+        .pixelhq-grid {
+          grid-template-columns: 1fr;
+        }
+        .pixelhq-grid .pane {
+          min-height: 215px;
+        }
+        .omarchy-shell {
+          grid-template-columns: 170px 1fr 210px;
+        }
+        .islands-shell,
+        .cockpit-shell,
+        .world-grid {
+          grid-template-columns: 190px 1fr;
+        }
+        .gallery-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <style id="studio-recipe-css"></style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Minimalist 48px hairline header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="page-title">Agents</span>
+          <span class="count-pill" id="active-pill">0 Active</span>
+          <span class="count-pill needs" id="needs-pill" style="display: none">0 Needs You</span>
+          <div class="vsep"></div>
+          <div class="menu-anchor">
+            <button type="button" class="btn" id="layout-trigger">
+              <span id="layout-trigger-label">Kanso</span>
+              <span style="opacity: 0.55; font-size: 10px">▾</span>
+            </button>
+            <div class="popover" id="layout-menu" style="min-width: 245px"></div>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="seg" role="group" aria-label="Default agent view mode">
+            <button type="button" class="seg-btn active" id="global-harness-btn">UI</button>
+            <button type="button" class="seg-btn" id="global-term-btn">Terminal</button>
+          </div>
+          <button type="button" class="btn" id="btn-gallery">Gallery</button>
+          <div class="menu-anchor">
+            <button type="button" class="btn" id="tools-trigger" aria-label="Workspace Tools">⋯</button>
+            <div class="popover right" id="tools-menu" style="min-width: 215px">
+              <div class="menu-label">Workspace Tools</div>
+              <button type="button" class="menu-item" id="tool-remote">
+                <span>Remote Handoff</span>
+                <span class="menu-meta">SSH / Tailscale</span>
+              </button>
+              <button type="button" class="menu-item" id="tool-mods">
+                <span>Mods</span>
+                <span class="menu-meta" id="tool-mods-count">0 active</span>
+              </button>
+              <button type="button" class="menu-item" id="tool-shape">
+                <span>Shape UI</span>
+                <span class="menu-meta">Recipe</span>
+              </button>
+              <div class="menu-sep"></div>
+              <button type="button" class="menu-item" id="tool-demo">
+                <span>Load Demo Crew</span>
+                <span class="menu-meta">3 agents</span>
+              </button>
+              <button type="button" class="menu-item" id="tool-rollback" disabled>
+                <span>Rollback Recipe</span>
+                <span class="menu-meta">Snapshot</span>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn primary" id="btn-spawn">+ New Agent</button>
+        </div>
+      </header>
+
+      <!-- Collapsible Shape UI bar -->
+      <div class="subbar" id="shape-bar">
+        <span style="font-size: 11.5px; color: var(--muted); font-weight: 500">Shape Layout</span>
+        <input
+          type="text"
+          class="input"
+          id="shape-input"
+          style="flex: 1; min-width: 220px"
+          placeholder="Ask Carnival to reshape (e.g. switch to pixel-hq, islands, compact obsidian, or add broadcast mod)…"
+        />
+        <button type="button" class="btn primary sm" id="shape-submit">Apply</button>
+        <button type="button" class="btn ghost sm" id="shape-close">Close</button>
+      </div>
+
+      <!-- Collapsible Mods bar -->
+      <div class="subbar" id="mods-bar"></div>
+
+      <!-- Active Workspace Stage -->
+      <main class="stage" id="stage"></main>
+    </div>
+
+    <!-- Spawn New Agent Modal -->
+    <div class="modal-backdrop" id="modal-spawn">
+      <div class="modal">
+        <div class="modal-head">
+          <span class="modal-title">New Agent</span>
+          <button type="button" class="btn ghost sm" data-close="modal-spawn">Esc</button>
+        </div>
+        <div class="modal-body">
+          <div class="grid-2">
+            <div class="field">
+              <label for="sp-engine">Engine</label>
+              <select class="select" id="sp-engine"></select>
+            </div>
+            <div class="field">
+              <label for="sp-name">Agent Name</label>
+              <input class="input" id="sp-name" placeholder="e.g. Staff Engineer" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="sp-cwd">Working Directory</label>
+              <input class="input" id="sp-cwd" placeholder="/Users/anikethchittiprolu/Documents/AI-FIESTA" />
+            </div>
+            <div class="field">
+              <label for="sp-view">Initial View</label>
+              <select class="select" id="sp-view">
+                <option value="harness">Harness UI</option>
+                <option value="terminal">Raw Terminal</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="sp-cmd">Custom Command (optional)</label>
+            <input class="input" id="sp-cmd" placeholder="Leave blank to launch selected engine or fallback PTY shell" />
+          </div>
+          <div class="field">
+            <label for="sp-prompt">Initial Task Prompt (optional)</label>
+            <textarea class="textarea" id="sp-prompt" placeholder="Describe the task this agent owns…"></textarea>
+          </div>
+          <div class="inline-err" id="sp-error">
+            <span id="sp-error-text"></span>
+            <button type="button" class="btn sm" id="sp-fallback-orch">Use Orchestrator</button>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <button type="button" class="btn" data-close="modal-spawn">Cancel</button>
+            <button type="button" class="btn primary" id="sp-submit">Spawn Agent</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Curated Gallery Modal -->
+    <div class="modal-backdrop" id="modal-gallery">
+      <div class="modal wide">
+        <div class="modal-head">
+          <span class="modal-title">Gallery · Community Layouts &amp; Mods</span>
+          <button type="button" class="btn ghost sm" data-close="modal-gallery">Esc</button>
+        </div>
+        <div class="modal-body" id="gallery-body"></div>
+      </div>
+    </div>
+
+    <!-- Remote Handoff Drawer / Modal -->
+    <div class="modal-backdrop" id="modal-remote">
+      <div class="modal wide">
+        <div class="modal-head">
+          <span class="modal-title">Remote Handoff · SSH &amp; Tailscale Mesh</span>
+          <button type="button" class="btn ghost sm" data-close="modal-remote">Esc</button>
+        </div>
+        <div class="modal-body">
+          <div class="grid-2">
+            <div class="field">
+              <label for="rh-peer">Target Machine</label>
+              <select class="select" id="rh-peer"></select>
+            </div>
+            <div class="field">
+              <label for="rh-engine">Remote Engine</label>
+              <select class="select" id="rh-engine">
+                <option value="claude">Claude Code</option>
+                <option value="codex">Codex CLI</option>
+                <option value="gemini">Gemini CLI</option>
+                <option value="opencode">OpenCode</option>
+                <option value="orchestrator">Carnival Orchestrator</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="rh-source">Context From Existing Agent (optional)</label>
+              <select class="select" id="rh-source"></select>
+            </div>
+            <div class="field" style="justify-content: flex-end">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding-bottom: 6px">
+                <input type="checkbox" id="rh-sync" checked />
+                <span>Sync workspace via rsync before dispatch</span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="rh-prompt">Handoff Task Brief</label>
+            <textarea class="textarea" id="rh-prompt" placeholder="Run heavy build/tests on remote machine and stream results back…"></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <button type="button" class="btn primary" id="rh-dispatch">Dispatch Handoff ↗</button>
+          </div>
+
+          <div class="menu-sep"></div>
+          <div id="remote-peers-body" style="display: flex; flex-direction: column; gap: 10px"></div>
+
+          <div class="menu-sep"></div>
+          <div class="gallery-section-title" style="margin: 0">Add SSH / Tailscale Machine</div>
+          <div style="display: grid; grid-template-columns: 1.1fr 0.8fr 1.2fr 0.8fr 1.1fr auto; gap: 8px">
+            <input class="input" id="rp-name" placeholder="Mac Mini M4" />
+            <select class="select" id="rp-transport">
+              <option value="ssh">SSH</option>
+              <option value="tailscale">Tailscale</option>
+              <option value="loopback">Loopback</option>
+            </select>
+            <input class="input" id="rp-host" placeholder="100.x.x.x or host" />
+            <input class="input" id="rp-user" placeholder="user" />
+            <input class="input" id="rp-dir" placeholder="~/work/repo" />
+            <button type="button" class="btn" id="rp-add">Add Peer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const BRIDGE =
+        window.location.origin && window.location.origin.startsWith("http")
+          ? window.location.origin
+          : "http://127.0.0.1:32123";
+
+      const TINT_MAP = {
+        obsidian: "6, 6, 8",
+        jet: "3, 3, 5",
+        "warm-smoke": "12, 10, 9",
+        crystal: "6, 6, 8",
+        midnight: "6, 6, 8",
+      };
+
+      const STATE = {
+        agents: [],
+        latestCanvasAgents: [],
+        details: {},
+        diffs: {},
+        presets: [],
+        studio: null,
+        remote: null,
+        selectedId: null,
+        globalViewMode: "harness",
+        modsOpen: false,
+        ctrlBActive: false,
+        pixelHqFrame: null,
+        worldFrame: null,
+        pixelHqHits: [],
+        officetimeHits: [],
+        middleEarthHits: [],
+        wocHits: [],
+        drafts: {},
+        lastStageSig: "",
+      };
+
+      function applyGlassTokens(opacity, tint) {
+        const op = typeof opacity === "number" ? Math.max(0.08, Math.min(0.96, opacity)) : 0.80;
+        const rgb = TINT_MAP[String(tint || "obsidian").toLowerCase()] || "6, 6, 8";
+        document.documentElement.style.setProperty("--glass-alpha", String(op));
+        document.documentElement.style.setProperty("--glass-rgb", rgb);
+      }
+
+      window.addEventListener("message", (ev) => {
+        const msg = ev && ev.data;
+        if (msg && msg.type === "carnival:glass") {
+          applyGlassTokens(msg.opacity, msg.tint);
+        }
+      });
+
+      function showToast(text) {
+        const el = document.getElementById("toast");
+        if (!el) return;
+        el.textContent = text;
+        el.classList.add("show");
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(() => el.classList.remove("show"), 2000);
+      }
+
+      function esc(str) {
+        return String(str == null ? "" : str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function ansiToHtml(raw) {
+        if (!raw) return '<span style="color:rgba(237,230,214,0.4)">Waiting for PTY output…</span>';
+        const palette = {
+          30: "#52525b",
+          31: "#f87171",
+          32: "#86efac",
+          33: "#ede6d6",
+          34: "#93c5fd",
+          35: "#d8b4fe",
+          36: "#cbd5e1",
+          37: "#f5f2eb",
+          90: "#71717a",
+        };
+        const cleaned = String(raw)
+          .replace(/\x1b?\]7501;[^\x07\x1b\r\n]*(?:\x07|\x1b\\)?\r?\n?/g, "")
+          .replace(/\n{3,}/g, "\n\n")
+          .trim();
+        const safe = esc(cleaned);
+        let openSpan = false;
+        let out = safe.replace(/\x1b\[([0-9;]*)m/g, (_, codes) => {
+          const parts = codes.split(";").map(Number);
+          if (parts.includes(0) || codes === "") {
+            const close = openSpan ? "</span>" : "";
+            openSpan = false;
+            return close;
+          }
+          for (const code of parts) {
+            if (palette[code]) {
+              const prefix = openSpan ? "</span>" : "";
+              openSpan = true;
+              return `${prefix}<span style="color:${palette[code]}">`;
+            }
+          }
+          return "";
+        });
+        if (openSpan) out += "</span>";
+        return out;
+      }
+
+      async function api(path, opts) {
+        const res = await fetch(BRIDGE + path, opts);
+        return res.json();
+      }
+
+      function stopCanvasLoops() {
+        if (STATE.pixelHqFrame) {
+          cancelAnimationFrame(STATE.pixelHqFrame);
+          STATE.pixelHqFrame = null;
+        }
+        if (STATE.worldFrame) {
+          cancelAnimationFrame(STATE.worldFrame);
+          STATE.worldFrame = null;
+        }
+      }
+
+      function statusWeight(st) {
+        if (st === "needs_you") return 0;
+        if (st === "working") return 1;
+        if (st === "idle") return 2;
+        if (st === "done") return 3;
+        return 4;
+      }
+
+      function sortAgents(list) {
+        return [...list].sort((a, b) => statusWeight(a.status) - statusWeight(b.status));
+      }
+
+      function statusLabel(st) {
+        if (st === "needs_you") return "needs you";
+        if (st === "working") return "typing";
+        if (st === "done") return "shipped";
+        if (st === "error") return "alert";
+        return "on a break";
+      }
+
+      function roleForAgent(a, idx) {
+        if (a.role && a.role.trim()) return a.role;
+        const titles = ["Staff Engineer", "Code Reviewer", "Platform Engineer", "Systems Architect", "Build Runner"];
+        return titles[idx % titles.length];
+      }
+
+      async function refreshAll() {
+        try {
+          const [agentsRes, studioRes, presetsRes, remoteRes, ovRes] = await Promise.all([
+            api("/agents"),
+            api("/studio/recipes"),
+            api("/agents/presets"),
+            api("/remote/peers"),
+            api("/overlay/state"),
+          ]);
+
+          STATE.agents = agentsRes.agents || [];
+          STATE.studio = studioRes;
+          STATE.presets = presetsRes.presets || [];
+          STATE.remote = remoteRes;
+
+          if (ovRes) applyGlassTokens(ovRes.glass_opacity, ovRes.glass_tint);
+
+          if (!STATE.selectedId || !STATE.agents.some((a) => a.id === STATE.selectedId)) {
+            STATE.selectedId = STATE.agents.length ? sortAgents(STATE.agents)[0].id : null;
+          }
+
+          await Promise.all(
+            STATE.agents.slice(0, 6).map(async (a) => {
+              const d = await api(`/agents/${encodeURIComponent(a.id)}`).catch(() => null);
+              if (d && d.agent) STATE.details[a.id] = d.agent;
+            })
+          );
+
+          const enabledMods = (STATE.studio && STATE.studio.enabled_mods) || [];
+          if (enabledMods.includes("mod-git-diff") && STATE.selectedId) {
+            const diffRes = await api(`/agents/${encodeURIComponent(STATE.selectedId)}/diff`).catch(() => null);
+            if (diffRes && diffRes.diff != null) STATE.diffs[STATE.selectedId] = diffRes.diff;
+          }
+
+          renderUI();
+        } catch (err) {
+          console.warn("refreshAll failed", err);
+        }
+      }
+
+      function renderHeader() {
+        const needsCount = STATE.agents.filter((a) => a.status === "needs_you").length;
+        document.getElementById("active-pill").textContent = `${STATE.agents.length} Active`;
+        const needsPill = document.getElementById("needs-pill");
+        if (needsCount > 0) {
+          needsPill.style.display = "inline-flex";
+          needsPill.textContent = `${needsCount} Needs You`;
+        } else {
+          needsPill.style.display = "none";
+        }
+
+        const studio = STATE.studio || { active_layout: "kanso", layouts: [], enabled_mods: [], has_rollback: false };
+        const layouts = studio.layouts || [];
+        const activeRecipe = layouts.find((l) => l.id === studio.active_layout);
+        document.getElementById("layout-trigger-label").textContent = activeRecipe ? activeRecipe.name : "Kanso";
+
+        const styleEl = document.getElementById("studio-recipe-css");
+        if (styleEl) styleEl.textContent = activeRecipe && activeRecipe.css ? activeRecipe.css : "";
+
+        const layoutMenu = document.getElementById("layout-menu");
+        const trending = layouts.filter((l) => l.trending);
+        const others = layouts.filter((l) => !l.trending);
+
+        const renderMenuRow = (l) => `
+          <button type="button" class="menu-item ${l.id === studio.active_layout ? "active" : ""}" data-layout="${esc(l.id)}">
+            <span>${esc(l.name)}</span>
+            <span class="menu-meta">${l.stars ? `★${l.stars}` : "Custom"}</span>
+          </button>`;
+
+        layoutMenu.innerHTML =
+          (trending.length ? `<div class="menu-label">Trending</div>` + trending.map(renderMenuRow).join("") : "") +
+          (others.length ? `<div class="menu-label">Community</div>` + others.map(renderMenuRow).join("") : "");
+
+        const modCount = (studio.enabled_mods || []).length;
+        document.getElementById("tool-mods-count").textContent = `${modCount} active`;
+        document.getElementById("tool-rollback").disabled = !studio.has_rollback;
+      }
+
+      function renderModsBar() {
+        const bar = document.getElementById("mods-bar");
+        if (!STATE.modsOpen) {
+          bar.classList.remove("open");
+          return;
+        }
+        bar.classList.add("open");
+        const studio = STATE.studio || { mods: [], enabled_mods: [] };
+        const enabled = new Set(studio.enabled_mods || []);
+        const mods = studio.mods || [];
+
+        let html = `<span style="font-size:11.5px;color:var(--muted);font-weight:500">Mods</span>`;
+        html += mods
+          .map(
+            (m) => `
+            <button type="button" class="btn sm ${enabled.has(m.id) ? "primary" : ""}" data-mod="${esc(m.id)}">
+              ${esc(m.name)}
+            </button>`
+          )
+          .join("");
+
+        if (enabled.has("mod-broadcast")) {
+          html += `
+            <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+              <input class="input" id="mod-broadcast-in" style="width:240px" placeholder="Broadcast prompt to all active agents…" />
+              <button type="button" class="btn sm primary" id="mod-broadcast-go">Broadcast</button>
+            </div>`;
+        }
+        bar.innerHTML = html;
+      }
+
+      function remoteLabel(a) {
+        if (!a || !a.remote_node) return "";
+        if (typeof a.remote_node === "string") return a.remote_node;
+        return a.remote_node.peer_name || a.remote_node.host || a.remote_node.transport || "Remote";
+      }
+
+      function handoffId(a) {
+        if (!a) return "";
+        return a.remote_handoff_id || (a.remote_node && a.remote_node.handoff_id) || "";
+      }
+
+      function renderDualViewHTML(d) {
+        const hid = handoffId(d);
+        const mode = d.view_mode || STATE.globalViewMode || "harness";
+        const bodyHTML =
+          mode === "terminal"
+            ? `<div class="term-view" id="term-${esc(d.id)}">${ansiToHtml(d.raw_log)}</div>`
+            : `<div class="dual-body">
+                ${(d.masked_turns || [])
+                  .map((turn) => {
+                    const cls =
+                      turn.role === "user"
+                        ? "user"
+                        : turn.role === "approval"
+                        ? "approval"
+                        : turn.role === "tool"
+                        ? "tool"
+                        : "assistant";
+                    const approveRow =
+                      turn.role === "approval" && d.status === "needs_you"
+                        ? `<div style="display:flex;gap:6px;margin-top:8px">
+                             <button type="button" class="btn sm primary" data-approve="${esc(d.id)}:1">Approve &amp; Continue</button>
+                             <button type="button" class="btn sm" data-approve="${esc(d.id)}:0">Deny</button>
+                           </div>`
+                        : "";
+                    return `
+                      <div class="turn ${cls}">
+                        <div class="turn-head">
+                          <span>${esc(turn.title)}</span>
+                          ${turn.tool_name ? `<span class="tag">${esc(turn.tool_name)}</span>` : ""}
+                        </div>
+                        <div style="white-space:pre-wrap;word-break:break-word">${esc(turn.content ?? turn.body ?? "")}</div>
+                        ${approveRow}
+                      </div>`;
+                  })
+                  .join("")}
+              </div>`;
+
+        return `
+          ${bodyHTML}
+          <div class="pane-foot">
+            <input class="input" data-prompt-input="${esc(d.id)}" placeholder="Send instruction to ${esc(d.name)}…" />
+            <button type="button" class="btn sm primary" data-send-prompt="${esc(d.id)}">Send</button>
+            ${
+              hid
+                ? `<button type="button" class="btn sm" data-receive="${esc(hid)}">Receive ↙</button>`
+                : `<button type="button" class="btn sm" data-handoff="${esc(d.id)}">Handoff ↗</button>`
+            }
+            <button type="button" class="btn sm ghost" data-stop="${esc(d.id)}">Stop</button>
+            <button type="button" class="btn sm ghost" data-remove="${esc(d.id)}" title="Remove Agent">×</button>
+          </div>`;
+      }
+
+      // Crisp 14x13 / 14x14 pixel-art character sprite catalog (outlines, shading, eyes, accessories)
+      const PIXEL_SPRITES = {
+        claude_pet: {
+          pal: {
+            K: "#181322",
+            C: "#e86c48",
+            L: "#f79c7e",
+            D: "#b44327",
+            W: "#fff5f0",
+            E: "#120d1a",
+            P: "#f472b6",
+          },
+          rows: [
+            "..KK......KK..",
+            ".KLLK....KLLK.",
+            ".KCCKKKKKKCCK.",
+            "KCLCCCCCCCCLCK",
+            "KCCWEKCCKEWCCK",
+            "KCCEEKCCKEECCK",
+            "KCPCCCCCCCCPCK",
+            "KCCCCCCCCCCCCK",
+            "KCDDDDDDDDDDCK",
+            ".KCKCCKKCCKCK.",
+            "..KK.KCCK.KK..",
+            ".....KKKK.....",
+          ],
+          altRow9: "KLLKCCKKCCKLLK",
+        },
+        codex_bot: {
+          pal: {
+            K: "#101222",
+            B: "#5a76f8",
+            L: "#98acff",
+            D: "#3448b5",
+            S: "#0b1022",
+            G: "#67e8f9",
+            Y: "#fde047",
+          },
+          rows: [
+            "......KK......",
+            ".....KYYK.....",
+            "......KK......",
+            "..KKKKKKKKKK..",
+            ".KLLLLLLLLLLK.",
+            ".KBSSSSSSSSBK.",
+            "KBSGGSSSSGGSBK",
+            "KBSGGSSSSGGSBK",
+            "KBSSSSGGSSSSBK",
+            ".KDDDDDDDDDDK.",
+            ".KBBBBBBBBBBK.",
+            ".KBKKBBBBKKBK.",
+            "..KK..KK..KK..",
+          ],
+          altRow11: "KLLKKBBBBKKLLK",
+        },
+        penguin_pet: {
+          pal: {
+            K: "#0e101c",
+            N: "#262d47",
+            H: "#49547d",
+            W: "#f8fafc",
+            E: "#0f111a",
+            O: "#f59e0b",
+            P: "#fb7185",
+          },
+          rows: [
+            "....KKKKKK....",
+            "...KHHHHHHK...",
+            "..KNNNNNNNNK..",
+            ".KNNWWWWWWNNK.",
+            ".KNWEWWWWWEWNK",
+            ".KNWPWOOWPWNKK",
+            ".KNNWWWWWWNNK.",
+            "KKNNWWWWWWNNKK",
+            "KNNNWWWWWWNNNK",
+            ".KNNWWWWWWNNK.",
+            "..KNNNNNNNNK..",
+            "..KOOK..KOOK..",
+            "..KKKK..KKKK..",
+          ],
+          altRow7: "KHHNWWWWWWNHHK",
+        },
+        calico_cat: {
+          pal: {
+            K: "#191320",
+            W: "#fff7ed",
+            O: "#fb923c",
+            B: "#7c3f1d",
+            H: "#6366f1",
+            C: "#a5b4fc",
+            E: "#140f1c",
+            P: "#fda4af",
+          },
+          rows: [
+            ".KK........KK.",
+            ".KOOKKKKKKBBK.",
+            ".KOOCCCCCCBBK.",
+            "KOWWWWWWWWWWBK",
+            "KHWWWWWWWWWWHK",
+            "KHHWEWWWWWEWHK",
+            "KHWPWWPPWWPWHK",
+            ".KWWWWWWWWWWK.",
+            ".KWWCCCCCCWWK.",
+            ".KWWWWWWWWWWK.",
+            "..KWWKKKKWWK..",
+            "..KKK....KKK..",
+          ],
+          altRow9: "KWWKWWWWWWKWWK",
+        },
+        dev_coral: {
+          pal: {
+            K: "#15131f",
+            R: "#4a2c1d",
+            F: "#fbd3b3",
+            E: "#15131f",
+            P: "#f472b6",
+            T: "#e86c48",
+            S: "#b44327",
+            H: "#94a3b8",
+          },
+          rows: [
+            "...KKKKKKKK...",
+            "..KRRRRRRRRK..",
+            ".KRRRRRRRRRRK.",
+            ".KRRFFFFFFRRK.",
+            ".KHFFFFFFFFHK.",
+            ".KHFEEFFEFHFK.",
+            ".KHFPFFFFPFHK.",
+            "..KFFFFFFFFK..",
+            "..KKTTTTTTKK..",
+            ".KTTTTTTTTTTK.",
+            ".KTTSSSSSSTTK.",
+            "..KKTTTTTTKK..",
+            "...KK....KK...",
+          ],
+          altRow9: "KFFTTTTTTTTFFK",
+        },
+        dev_indigo: {
+          pal: {
+            K: "#121322",
+            R: "#1f2937",
+            F: "#f3c6a5",
+            E: "#121322",
+            P: "#fda4af",
+            T: "#5a76f8",
+            S: "#3448b5",
+            H: "#67e8f9",
+          },
+          rows: [
+            "...KKKKKKKK...",
+            "..KRRRRRRRRK..",
+            ".KRRRRRRRRRRK.",
+            ".KRRFFFFFFRRK.",
+            ".KHFFFFFFFFHK.",
+            ".KHFEEFFEFHFK.",
+            ".KHFPFFFFPFHK.",
+            "..KFFFFFFFFK..",
+            "..KKTTTTTTKK..",
+            ".KTTTTTTTTTTK.",
+            ".KTTSSSSSSTTK.",
+            "..KKTTTTTTKK..",
+            "...KK....KK...",
+          ],
+          altRow9: "KFFTTTTTTTTFFK",
+        },
+        dev_emerald: {
+          pal: {
+            K: "#111917",
+            R: "#92400e",
+            F: "#fde2c8",
+            E: "#111917",
+            P: "#fb7185",
+            T: "#34d399",
+            S: "#059669",
+            H: "#cbd5e1",
+          },
+          rows: [
+            "...KKKKKKKK...",
+            "..KRRRRRRRRK..",
+            ".KRRRRRRRRRRK.",
+            ".KRRFFFFFFRRK.",
+            ".KHFFFFFFFFHK.",
+            ".KHFEEFFEFHFK.",
+            ".KHFPFFFFPFHK.",
+            "..KFFFFFFFFK..",
+            "..KKTTTTTTKK..",
+            ".KTTTTTTTTTTK.",
+            ".KTTSSSSSSTTK.",
+            "..KKTTTTTTKK..",
+            "...KK....KK...",
+          ],
+          altRow9: "KFFTTTTTTTTFFK",
+        },
+        dev_amber: {
+          pal: {
+            K: "#1a1510",
+            R: "#78350f",
+            F: "#f7cfb0",
+            E: "#1a1510",
+            P: "#fda4af",
+            T: "#fbbf24",
+            S: "#b45309",
+            H: "#e2e8f0",
+          },
+          rows: [
+            "...KKKKKKKK...",
+            "..KRRRRRRRRK..",
+            ".KRRRRRRRRRRK.",
+            ".KRRFFFFFFRRK.",
+            ".KHFFFFFFFFHK.",
+            ".KHFEEFFEFHFK.",
+            ".KHFPFFFFPFHK.",
+            "..KFFFFFFFFK..",
+            "..KKTTTTTTKK..",
+            ".KTTTTTTTTTTK.",
+            ".KTTSSSSSSTTK.",
+            "..KKTTTTTTKK..",
+            "...KK....KK...",
+          ],
+          altRow9: "KFFTTTTTTTTFFK",
+        },
+        rpg_mage: {
+          pal: {
+            K: "#131120",
+            M: "#6d28d9",
+            L: "#a78bfa",
+            G: "#fde047",
+            F: "#fde2c8",
+            E: "#131120",
+            W: "#93c5fd",
+            S: "#78350f",
+          },
+          rows: [
+            "......KK......",
+            ".....KMMK.....",
+            "....KMLLMK....",
+            "...KMMMMMMK...",
+            ".KKGGGGGGGGKK.",
+            "..KFFFFFFFFK..",
+            "..KFEFFFFEFK..",
+            "..KFFFFFFFFK..",
+            ".WKKMMMMMMKK..",
+            "WGGKMMMMMMK...",
+            ".SKMMMMMMMMK..",
+            ".SKMMSSSSMMK..",
+            ".SKKK....KKK..",
+          ],
+          altRow9: "WGGKMLLLLMK...",
+        },
+        rpg_paladin: {
+          pal: {
+            K: "#12141e",
+            A: "#cbd5e1",
+            H: "#f8fafc",
+            G: "#fbbf24",
+            F: "#fbd3b3",
+            E: "#12141e",
+            B: "#2563eb",
+          },
+          rows: [
+            ".....KKKK.....",
+            "....KGGGGK....",
+            "...KAAAAAAK...",
+            "..KAAHHHHAAK..",
+            "..KAAFFFFAAK..",
+            "..KAFEFFEFAA..",
+            "...KAAAAAAK...",
+            "..KKBBBBBBKK..",
+            ".KAAABBBBAAAK.",
+            ".KAAGBBBBGAAK.",
+            "..KKBBBBBBKK..",
+            "...KAA..AAK...",
+            "...KKK..KKK...",
+          ],
+          altRow9: "KHAAGBBBBGAAHK",
+        },
+        rpg_dwarf: {
+          pal: {
+            K: "#191210",
+            H: "#94a3b8",
+            W: "#f8fafc",
+            O: "#ea580c",
+            F: "#f7cfb0",
+            E: "#191210",
+            A: "#78350f",
+          },
+          rows: [
+            ".KK........KK.",
+            ".KWWKKKKKKWWK.",
+            "..KHHHHHHHHK..",
+            "..KHFFFFFFHK..",
+            "..KFEFFFFEFK..",
+            "..KFDOOOODFK..",
+            "..KOOOOOOOOOK.",
+            ".KKOOOOOOOOKK.",
+            ".KAAOOOOOOAAK.",
+            ".KAOOOOOOOOAK.",
+            "..KKAAAAAACK..",
+            "...KK....KK...",
+          ],
+          altRow8: "WKAAOOOOOOAAKW",
+        },
+        rpg_ranger: {
+          pal: {
+            K: "#101914",
+            G: "#15803d",
+            L: "#4ade80",
+            F: "#fde2c8",
+            E: "#101914",
+            W: "#78350f",
+          },
+          rows: [
+            "....KKKKKK....",
+            "...KGGGGGGK...",
+            "..KGLLLLLLGK..",
+            "..KGFFFFFFGK..",
+            "..KGFEEFFEEGK.",
+            "..KGFFFFFFGK..",
+            "...KKGGGGKK...",
+            ".WKKGGGGGGKK..",
+            "W.KGGGGGGGGK..",
+            "W.KGGWWWWGGK..",
+            ".W.KGGGGGGK...",
+            "...KKK..KKK...",
+          ],
+          altRow8: "W.KGLLLLLLGK..",
+        },
+        me_wizard: {
+          pal: {
+            K: "#141418",
+            G: "#64748b",
+            L: "#94a3b8",
+            W: "#f8fafc",
+            F: "#fbd3b3",
+            E: "#141418",
+            Y: "#fef08a",
+            S: "#78350f",
+          },
+          rows: [
+            "......KK......",
+            ".....KGGK.....",
+            "....KGLLGK....",
+            "...KGGGGGGK...",
+            ".KKLLLLLLLLKK.",
+            "..KFFFFFFFFK..",
+            "..KFEFFFFEFK..",
+            "..KWWWWWWWWK..",
+            ".YKKWWWWWWKK..",
+            "YYYKGGGGGGK...",
+            ".SKGGGGGGGGK..",
+            ".SKGGSSSSGGK..",
+            ".SKKK....KKK..",
+          ],
+          altRow9: "YYYKGGLLGGK...",
+        },
+        me_hobbit: {
+          pal: {
+            K: "#16130f",
+            H: "#7c3f1d",
+            F: "#fde2c8",
+            E: "#16130f",
+            G: "#166534",
+            Y: "#ca8a04",
+          },
+          rows: [
+            "....KKKKKK....",
+            "...KHHHHHHK...",
+            "..KHHHHHHHHK..",
+            "..KHFFFFFFHK..",
+            "..KHFEEFFEFK..",
+            "..KHFFFFFFHK..",
+            "...KKKKKKKK...",
+            "..KKGGGGGGKK..",
+            ".KGGYYYYYYGGK.",
+            ".KGGGGGGGGGGK.",
+            "..KKGGGGGGKK..",
+            "...KFF..FFK...",
+            "...KKK..KKK...",
+          ],
+          altRow9: ".KFFGGGGGGFFK.",
+        },
+        me_elf: {
+          pal: {
+            K: "#141812",
+            Y: "#fde047",
+            F: "#fff1e6",
+            E: "#141812",
+            G: "#15803d",
+            L: "#86efac",
+            B: "#78350f",
+          },
+          rows: [
+            "....KKKKKK....",
+            "...KYYYYYYK...",
+            "..KYFFFFFFYK..",
+            ".KKYFEFFEFYKK.",
+            "..KYFFFFFFYK..",
+            "...KKGGGGKK...",
+            ".BKKGGGGGGKK..",
+            "B.KGGLLLLGGK..",
+            "B.KGGGGGGGGK..",
+            ".B.KGGGGGGK...",
+            "...KGG..GGK...",
+            "...KKK..KKK...",
+          ],
+          altRow7: "B.KGGWWWWGGK..",
+        },
+        me_dwarf: {
+          pal: {
+            K: "#191210",
+            B: "#b45309",
+            O: "#ea580c",
+            F: "#f7cfb0",
+            E: "#191210",
+            A: "#94a3b8",
+          },
+          rows: [
+            "....KKKKKK....",
+            "...KBBBBBBK...",
+            "..KBBBBBBBBK..",
+            "..KBFFFFFFBK..",
+            "..KFEFFFFEFK..",
+            "..KBOOOOOOBK..",
+            "..KOOOOOOOOK..",
+            ".KKOOOOOOOOKK.",
+            ".KAAOOOOOOAAK.",
+            "..KOOOOOOOOOK.",
+            "...KBB..BBK...",
+            "...KKK..KKK...",
+          ],
+          altRow8: "AKAAOOOOOOAAKA",
+        },
+      };
+
+      function spriteKeyForAgent(layoutKey, agent, idx) {
+        const name = String((agent && agent.name) || "").toLowerCase();
+        const eng = String((agent && agent.engine) || "").toLowerCase();
+        if (layoutKey === "officetime") {
+          return ["dev_coral", "dev_indigo", "dev_emerald", "dev_amber"][idx % 4];
+        }
+        if (layoutKey === "world-of-codecraft") {
+          return ["rpg_mage", "rpg_paladin", "rpg_dwarf", "rpg_ranger"][idx % 4];
+        }
+        if (layoutKey === "middle-earth") {
+          return ["me_wizard", "me_hobbit", "me_elf", "me_dwarf"][idx % 4];
+        }
+        // Pixel HQ or general
+        if (name.includes("calico") || name.includes("cat") || idx === 3) return "calico_cat";
+        if (name.includes("codex") || eng.includes("codex")) return "codex_bot";
+        if (name.includes("orchestrator") || eng.includes("orchestrator") || name.includes("opencode")) return "penguin_pet";
+        if (name.includes("claude") || eng.includes("claude")) return "claude_pet";
+        return ["claude_pet", "codex_bot", "penguin_pet", "calico_cat"][idx % 4];
+      }
+
+      function drawPixelSprite(ctx, spriteKey, cx, topY, px, options = {}) {
+        const sp = PIXEL_SPRITES[spriteKey] || PIXEL_SPRITES.claude_pet;
+        const rows = sp.rows;
+        const cols = rows[0].length;
+        const startX = Math.round(cx - (cols * px) / 2);
+        const blink = !!options.blink;
+        const altFrame = !!options.alt;
+
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        rows.forEach((origRow, r) => {
+          let row = origRow;
+          if (altFrame && r === 9 && sp.altRow9) row = sp.altRow9;
+          else if (altFrame && r === 8 && sp.altRow8) row = sp.altRow8;
+          else if (altFrame && r === 7 && sp.altRow7) row = sp.altRow7;
+          else if (altFrame && r === 11 && sp.altRow11) row = sp.altRow11;
+
+          for (let c = 0; c < row.length; c++) {
+            const ch = row[c];
+            if (ch === ".") continue;
+            let color = sp.pal[ch];
+            if (blink && (ch === "E" || ch === "G")) {
+              color = sp.pal.F || sp.pal.C || sp.pal.W || sp.pal.S || "#2b2538";
+            }
+            if (!color) continue;
+            ctx.fillStyle = color;
+            ctx.fillRect(startX + c * px, Math.round(topY + r * px), px, px);
+          }
+        });
+        ctx.restore();
+      }
+
+      function renderSpriteAvatarSvg(spriteKey, size = 18) {
+        const sp = PIXEL_SPRITES[spriteKey] || PIXEL_SPRITES.claude_pet;
+        const w = sp.rows[0].length;
+        const h = sp.rows.length;
+        let rects = "";
+        for (let r = 0; r < h; r++) {
+          const row = sp.rows[r];
+          for (let c = 0; c < row.length; c++) {
+            const ch = row[c];
+            if (ch === ".") continue;
+            const fill = sp.pal[ch];
+            if (fill) {
+              rects += `<rect x="${c}" y="${r}" width="1" height="1" fill="${fill}"/>`;
+            }
+          }
+        }
+        return `<svg width="${size}" height="${size}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" style="flex-shrink:0;display:block">${rects}</svg>`;
+      }
+
+      function renderPaneCard(a, idx, options = {}) {
+        const d = STATE.details[a.id] || { ...a, masked_turns: [], raw_log: "" };
+        const mode = d.view_mode || STATE.globalViewMode || "harness";
+        const isPixel = !!options.pixelNameplate;
+        const layoutKey = options.layoutKey || (isPixel ? "pixel-hq" : "");
+        const jobTitle = roleForAgent(a, idx);
+        const rLabel = remoteLabel(a);
+        const showSprite = ["pixel-hq", "officetime", "world-of-codecraft", "middle-earth"].includes(layoutKey);
+        const avatarHtml = showSprite
+          ? renderSpriteAvatarSvg(spriteKeyForAgent(layoutKey, a, idx), 19)
+          : `<span class="dot ${esc(a.status)}"></span>`;
+        const headerLeft = isPixel
+          ? `${avatarHtml}
+             <span class="pane-name">${esc(a.name)}</span>
+             <span class="tag cream">${esc(jobTitle)}</span>
+             ${rLabel ? `<span class="tag">${esc(rLabel)}</span>` : ""}`
+          : `${avatarHtml}
+             <span class="pane-name">${esc(a.name)}</span>
+             <span class="tag">${esc(a.engine)}</span>
+             ${rLabel ? `<span class="tag cream">${esc(rLabel)}</span>` : ""}`;
+
+        return `
+          <section class="pane ${a.status === "needs_you" ? "needs-you" : ""}" data-select="${esc(a.id)}">
+            <div class="pane-head">
+              <div class="pane-title">${headerLeft}</div>
+              <div style="display:flex;align-items:center;gap:4px">
+                <span class="tag ${a.status === "needs_you" ? "cream" : ""}">${esc(statusLabel(a.status))}</span>
+                <button type="button" class="btn sm ghost" data-view="${esc(a.id)}:${mode === "terminal" ? "harness" : "terminal"}">
+                  ${mode === "terminal" ? "UI" : "Term"}
+                </button>
+              </div>
+            </div>
+            ${renderDualViewHTML(d)}
+          </section>`;
+      }
+
+      function renderEmptyState() {
+        return `
+          <div class="empty-wrap">
+            <div class="empty-mark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                <circle cx="12" cy="12" r="8.5" />
+                <circle cx="12" cy="12" r="2.2" />
+                <path d="M12 3.5v6.3M12 14.2v6.3M3.5 12h6.3M14.2 12h6.3M6 6l4.4 4.4M13.6 13.6L18 18M18 6l-4.4 4.4M10.4 13.6L6 18" />
+              </svg>
+            </div>
+            <h2 class="empty-title">No active agents</h2>
+            <p class="empty-sub">
+              Spawn Claude Code, Codex, Gemini, OpenCode, or an Orchestrator worker locally, or hand off compute over SSH and Tailscale.
+            </p>
+            <button type="button" class="btn primary" id="empty-spawn">+ New Agent</button>
+            <div class="empty-links">
+              <button type="button" class="text-link" id="empty-remote">Remote Handoff</button>
+              <span>·</span>
+              <button type="button" class="text-link" id="empty-gallery">Browse Gallery</button>
+              <span>·</span>
+              <button type="button" class="text-link" id="empty-demo">Load Demo</button>
+            </div>
+          </div>`;
+      }
+
+      function renderSidebarSpaces(agents, layoutKey) {
+        const spaces = Array.from(new Set(["Main Studio", ...agents.map((a) => (a.cwd || "").split("/").pop() || "workspace")]));
+        const useSprites = ["pixel-hq", "officetime", "world-of-codecraft", "middle-earth"].includes(layoutKey);
+        return `
+          <div>
+            <div class="rail-group-title">Spaces</div>
+            ${spaces
+              .map(
+                (s, i) => `
+              <div class="rail-row ${i === 0 ? "active" : ""}">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s)}</span>
+              </div>`
+              )
+              .join("")}
+          </div>
+          <div>
+            <div class="rail-group-title">Agents</div>
+            ${agents
+              .map(
+                (a, idx) => `
+              <button type="button" class="rail-row ${a.id === STATE.selectedId ? "active" : ""}" data-select="${esc(a.id)}">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0">
+                  ${
+                    useSprites
+                      ? renderSpriteAvatarSvg(spriteKeyForAgent(layoutKey, a, idx), 15)
+                      : `<span class="dot ${esc(a.status)}"></span>`
+                  }
+                  <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span>
+                </span>
+                <span style="font-size:10.5px;color:var(--dim)">${esc(statusLabel(a.status))}</span>
+              </button>`
+              )
+              .join("")}
+          </div>`;
+      }
+
+      function startPixelHqCanvas(agents) {
+        const canvas = document.getElementById("pixel-hq-canvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * dpr;
+        canvas.height = canvas.clientHeight * dpr;
+        ctx.scale(dpr, dpr);
+        ctx.imageSmoothingEnabled = false;
+
+        const draw = (tMs) => {
+          if (!document.body.contains(canvas)) return;
+          const liveAgents = STATE.latestCanvasAgents || agents;
+          const w = canvas.clientWidth;
+          const h = canvas.clientHeight;
+          const t = tMs / 1000;
+          const wallH = 66;
+
+          // Back wall & tiled night office floor
+          ctx.fillStyle = "#0e101d";
+          ctx.fillRect(0, 0, w, wallH);
+          ctx.fillStyle = "#16192c";
+          ctx.fillRect(0, wallH, w, h - wallH);
+          ctx.fillStyle = "rgba(255,255,255,0.03)";
+          for (let fy = wallH + 14; fy < h; fy += 14) {
+            ctx.fillRect(0, fy, w, 1);
+          }
+
+          // Twin paned skyline windows (left & right)
+          const winW = Math.floor((w - 58) / 2);
+          [12, w - 12 - winW].forEach((wx, wIdx) => {
+            ctx.fillStyle = "#090c1c";
+            ctx.fillRect(wx, 10, winW, 44);
+            // Stars
+            ctx.fillStyle = "rgba(255, 250, 220, 0.7)";
+            ctx.fillRect(wx + 8, 16, 2, 2);
+            ctx.fillRect(wx + winW - 22, 18, 2, 2);
+            ctx.fillRect(wx + 28, 24, 1, 1);
+            if (wIdx === 0) {
+              // Crescent moon
+              ctx.fillStyle = "#fde68a";
+              ctx.fillRect(wx + 12, 15, 6, 6);
+              ctx.fillStyle = "#090c1c";
+              ctx.fillRect(wx + 15, 16, 4, 4);
+            }
+            // Skyline buildings with warm lit windows
+            const bHeights = wIdx === 0 ? [24, 30, 18, 26] : [20, 32, 22, 26];
+            bHeights.forEach((bh, bi) => {
+              const bx = wx + 4 + bi * Math.floor((winW - 8) / 4);
+              const bw = Math.floor((winW - 12) / 4);
+              ctx.fillStyle = "#1a2038";
+              ctx.fillRect(bx, 54 - bh, bw, bh);
+              ctx.fillStyle = bi % 2 === 0 ? "#fbbf24" : "#93c5fd";
+              ctx.fillRect(bx + 3, 54 - bh + 4, 2, 2);
+              ctx.fillRect(bx + 8, 54 - bh + 9, 2, 2);
+            });
+            // Window mullions
+            ctx.fillStyle = "#262b44";
+            ctx.fillRect(wx + Math.floor(winW / 2), 10, 2, 44);
+            ctx.fillRect(wx, 31, winW, 2);
+            ctx.strokeStyle = "#2d3350";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(wx, 10, winW, 44);
+          });
+
+          // Pixel clock between windows
+          const cxClock = Math.round(w / 2);
+          ctx.fillStyle = "#2a304d";
+          ctx.fillRect(cxClock - 9, 14, 18, 18);
+          ctx.fillStyle = "#f5f2eb";
+          ctx.fillRect(cxClock - 7, 16, 14, 14);
+          ctx.fillStyle = "#14121d";
+          ctx.fillRect(cxClock - 1, 19, 2, 5);
+          ctx.fillRect(cxClock - 1, 22, 5, 2);
+
+          // Potted office plant (far left)
+          ctx.fillStyle = "#b45309";
+          ctx.fillRect(7, wallH - 12, 10, 12);
+          ctx.fillStyle = "#16a34a";
+          ctx.fillRect(4, wallH - 22, 16, 10);
+          ctx.fillStyle = "#4ade80";
+          ctx.fillRect(6, wallH - 24, 5, 6);
+          ctx.fillRect(12, wallH - 25, 5, 7);
+
+          // Blinking LED server rack (far right)
+          ctx.fillStyle = "#1c2033";
+          ctx.fillRect(w - 22, wallH - 36, 15, 36);
+          ctx.strokeStyle = "#313757";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(w - 22, wallH - 36, 15, 36);
+          for (let led = 0; led < 4; led++) {
+            const on = Math.floor(t * 3 + led) % 2 === 0;
+            ctx.fillStyle = on ? (led % 2 === 0 ? "#4ade80" : "#fbbf24") : "#334155";
+            ctx.fillRect(w - 19, wallH - 31 + led * 8, 3, 3);
+            ctx.fillRect(w - 13, wallH - 31 + led * 8, 3, 2);
+          }
+
+          // Cubicle stations (2x2 layout with full 14px sprites at px=2)
+          STATE.pixelHqHits = [];
+          const list = liveAgents.length
+            ? liveAgents.slice(0, 4)
+            : [
+                { id: "empty-0", name: "Claude Code", engine: "claude", status: "idle" },
+                { id: "empty-1", name: "Codex CLI", engine: "codex", status: "idle" },
+              ];
+          const colW = Math.floor((w - 24) / 2);
+          list.forEach((a, idx) => {
+            const col = idx % 2;
+            const row = Math.floor(idx / 2);
+            const cx = Math.round(12 + col * colW + colW / 2);
+            const dy = wallH + 14 + row * 82;
+            if (a.id && !String(a.id).startsWith("empty-")) {
+              STATE.pixelHqHits.push({ id: a.id, x: cx, y: dy + 24 });
+            }
+
+            // Highlight selected cubicle pad
+            if (a.id === STATE.selectedId) {
+              ctx.fillStyle = "rgba(237, 230, 214, 0.08)";
+              ctx.fillRect(cx - 50, dy - 6, 100, 74);
+              ctx.strokeStyle = "rgba(237, 230, 214, 0.35)";
+              ctx.lineWidth = 1;
+              ctx.strokeRect(cx - 50, dy - 6, 100, 74);
+            }
+
+            // Chair backrest
+            ctx.fillStyle = "#2b2f4a";
+            ctx.fillRect(cx - 16, dy + 4, 32, 22);
+            ctx.fillStyle = "#191c2e";
+            ctx.fillRect(cx - 18, dy + 14, 36, 12);
+
+            // Animated pixel mascot behind desk
+            const blink = Math.floor(t * 2 + idx * 1.7) % 11 === 0;
+            const alt = a.status === "working" && Math.floor(t * 6 + idx) % 2 === 0;
+            const bobY = a.status === "working" ? (alt ? -1 : 0) : a.status === "needs_you" ? Math.round(Math.sin(t * 5) * 1.5) : 0;
+            const spriteKey = spriteKeyForAgent("pixel-hq", a, idx);
+            drawPixelSprite(ctx, spriteKey, cx, dy + bobY, 2, { blink, alt });
+
+            // Workstation desk + keyboard + glowing MacBook + mug
+            ctx.fillStyle = "#2b2f48";
+            ctx.fillRect(cx - 42, dy + 23, 84, 7);
+            ctx.fillStyle = "#1b1e30";
+            ctx.fillRect(cx - 42, dy + 30, 84, 14);
+            ctx.fillStyle = "#3b4266";
+            ctx.fillRect(cx - 42, dy + 23, 84, 2);
+
+            // Laptop back/glow
+            ctx.fillStyle = "#121526";
+            ctx.fillRect(cx - 14, dy + 16, 28, 16);
+            ctx.fillStyle = a.status === "needs_you" ? "#f472b6" : a.status === "working" ? "#93c5fd" : "#64748b";
+            ctx.fillRect(cx - 12, dy + 18, 24, 12);
+            // Tiny Apple/Octocat glow dot on laptop lid
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillRect(cx - 2, dy + 22, 4, 4);
+
+            // Coffee mug on right corner of desk
+            ctx.fillStyle = "#f5f2eb";
+            ctx.fillRect(cx + 24, dy + 18, 7, 7);
+            ctx.fillStyle = "#78350f";
+            ctx.fillRect(cx + 25, dy + 18, 5, 2);
+            if (a.status === "idle" || a.status === "done") {
+              ctx.fillStyle = "rgba(245,242,235,0.45)";
+              ctx.fillRect(cx + 27, dy + 13 - (Math.floor(t * 3 + idx) % 3), 2, 3);
+            }
+
+            // Status / Alert floating badge
+            if (a.status === "needs_you") {
+              ctx.fillStyle = "#ec4899";
+              ctx.fillRect(cx + 20, dy - 4, 13, 14);
+              ctx.fillStyle = "#ffffff";
+              ctx.font = "bold 10px monospace";
+              ctx.fillText("!", cx + 24, dy + 7);
+            } else if (a.status === "working") {
+              ctx.fillStyle = "#67e8f9";
+              ctx.fillRect(cx + 22, dy + ((Math.floor(t * 5 + idx) % 2) * 2), 3, 3);
+              ctx.fillRect(cx + 27, dy - 2 + ((Math.floor(t * 5 + 1) % 2) * 2), 2, 2);
+            }
+
+            // Clean nameplate pill underneath desk
+            const lbl = String(a.name || "Agent").slice(0, 14);
+            ctx.fillStyle = a.status === "needs_you" ? "rgba(236, 72, 153, 0.28)" : "rgba(15, 18, 32, 0.9)";
+            ctx.fillRect(cx - 42, dy + 47, 84, 15);
+            ctx.strokeStyle = a.status === "needs_you" ? "rgba(244, 114, 182, 0.7)" : "rgba(255,255,255,0.12)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cx - 42, dy + 47, 84, 15);
+            ctx.fillStyle = "#f5f2eb";
+            ctx.font = "600 9.5px -apple-system, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(lbl, cx, dy + 58);
+            ctx.textAlign = "left";
+          });
+
+          STATE.pixelHqFrame = requestAnimationFrame(draw);
+        };
+        STATE.pixelHqFrame = requestAnimationFrame(draw);
+      }
+
+      function startWorldCanvas(kind, agents) {
+        const canvasId =
+          kind === "world-of-codecraft"
+            ? "woc-canvas"
+            : kind === "middle-earth"
+            ? "me-canvas"
+            : "officetime-canvas";
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * dpr;
+        canvas.height = canvas.clientHeight * dpr;
+        ctx.scale(dpr, dpr);
+        ctx.imageSmoothingEnabled = false;
+
+        const draw = (tMs) => {
+          if (!document.body.contains(canvas)) return;
+          const agents = STATE.latestCanvasAgents || [];
+          const w = canvas.clientWidth;
+          const h = canvas.clientHeight;
+          const t = tMs / 1000;
+          ctx.clearRect(0, 0, w, h);
+
+          if (kind === "world-of-codecraft") {
+            // Layered emerald meadow with grass dither & wildflowers
+            ctx.fillStyle = "#16291a";
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = "#1c3621";
+            for (let gx = 12; gx < w; gx += 46) {
+              for (let gy = 14; gy < h; gy += 38) {
+                ctx.fillRect(gx + ((gy % 3) * 4), gy, 8, 4);
+              }
+            }
+            // Wildflowers
+            [0.12, 0.34, 0.78, 0.91].forEach((fx, fi) => {
+              ctx.fillStyle = fi % 2 === 0 ? "#fde047" : "#f472b6";
+              ctx.fillRect(w * fx, h * (0.18 + (fi % 2) * 0.62), 3, 3);
+            });
+
+            // Shaded cobblestone village crossroads
+            ctx.fillStyle = "#2b251d";
+            ctx.fillRect(w * 0.08, h * 0.45, w * 0.84, 32);
+            ctx.fillRect(w * 0.46, h * 0.12, 34, h * 0.78);
+            ctx.fillStyle = "#484034";
+            for (let rx = Math.round(w * 0.09); rx < w * 0.9; rx += 14) {
+              ctx.fillRect(rx, h * 0.48, 9, 8);
+              ctx.fillRect(rx + 4, h * 0.52, 8, 7);
+            }
+
+            // Pine tree clusters
+            [
+              [w * 0.07, h * 0.16],
+              [w * 0.88, h * 0.16],
+              [w * 0.09, h * 0.74],
+            ].forEach(([tx, ty]) => {
+              ctx.fillStyle = "#5c3a21";
+              ctx.fillRect(tx + 6, ty + 20, 6, 10);
+              ctx.fillStyle = "#14532d";
+              ctx.fillRect(tx, ty + 10, 18, 12);
+              ctx.fillStyle = "#166534";
+              ctx.fillRect(tx + 3, ty + 3, 12, 10);
+              ctx.fillStyle = "#22c55e";
+              ctx.fillRect(tx + 6, ty - 2, 6, 6);
+            });
+
+            // Detailed RPG buildings
+            const cottages = [
+              { x: w * 0.17, y: h * 0.14, label: "Ironhold Forge", roof: "#7c3b28", trim: "#fb923c" },
+              { x: w * 0.56, y: h * 0.12, label: "Valbrume Keep", roof: "#274772", trim: "#60a5fa" },
+              { x: w * 0.66, y: h * 0.62, label: "Elderwood Hall", roof: "#785823", trim: "#facc15" },
+            ];
+            cottages.forEach((c, ci) => {
+              ctx.fillStyle = "#d6cbb5";
+              ctx.fillRect(c.x, c.y + 18, 72, 36);
+              ctx.fillStyle = "#a89c84";
+              ctx.fillRect(c.x, c.y + 46, 72, 8);
+              ctx.fillStyle = c.roof;
+              ctx.fillRect(c.x - 5, c.y, 82, 20);
+              ctx.fillStyle = c.trim;
+              ctx.fillRect(c.x - 5, c.y, 82, 3);
+              // Door + warm lit windows
+              ctx.fillStyle = "#452815";
+              ctx.fillRect(c.x + 29, c.y + 34, 14, 20);
+              ctx.fillStyle = "#fef08a";
+              ctx.fillRect(c.x + 9, c.y + 27, 11, 10);
+              ctx.fillRect(c.x + 52, c.y + 27, 11, 10);
+              // Chimney smoke / Keep banner
+              if (ci === 0) {
+                const sm = Math.floor(t * 2.5) % 6;
+                ctx.fillStyle = "rgba(245,242,235,0.35)";
+                ctx.fillRect(c.x + 56, c.y - 8 - sm, 5, 5);
+              }
+              ctx.fillStyle = "rgba(245,242,235,0.88)";
+              ctx.font = "600 10px -apple-system, sans-serif";
+              ctx.fillText(c.label, c.x, c.y - 5);
+            });
+
+            // Central flickering campfire in plaza
+            const cfx = Math.round(w * 0.48);
+            const cfy = Math.round(h * 0.51);
+            ctx.fillStyle = "#5c3a21";
+            ctx.fillRect(cfx - 8, cfy + 4, 16, 4);
+            ctx.fillStyle = "#f97316";
+            ctx.fillRect(cfx - 5, cfy - 4 - (Math.floor(t * 8) % 3), 10, 9);
+            ctx.fillStyle = "#fde047";
+            ctx.fillRect(cfx - 3, cfy - 2 - (Math.floor(t * 6) % 2), 6, 6);
+
+            // Animated 14x13 RPG heroes
+            STATE.wocHits = [];
+            agents.forEach((a, idx) => {
+              const bx = w * 0.22 + idx * (w * 0.17) + (a.status === "working" ? Math.sin(t * 1.4 + idx) * 16 : 0);
+              const by = h * 0.52 + Math.cos(t * 1.1 + idx) * 5;
+              STATE.wocHits.push({ id: a.id, x: bx, y: by });
+
+              // Ground shadow
+              ctx.fillStyle = "rgba(0,0,0,0.4)";
+              ctx.fillRect(Math.round(bx - 11), Math.round(by + 11), 22, 5);
+              if (a.id === STATE.selectedId) {
+                ctx.strokeStyle = "#ede6d6";
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(bx, by + 2, 20, 0, Math.PI * 2);
+                ctx.stroke();
+              }
+
+              const blink = Math.floor(t * 2 + idx) % 10 === 0;
+              const alt = a.status === "working" && Math.floor(t * 5 + idx) % 2 === 0;
+              drawPixelSprite(ctx, spriteKeyForAgent("world-of-codecraft", a, idx), bx, by - 16, 2, { blink, alt });
+
+              if (a.status === "needs_you") {
+                ctx.fillStyle = "#fbbf24";
+                ctx.fillRect(Math.round(bx - 5), Math.round(by - 32), 10, 12);
+                ctx.fillStyle = "#18120a";
+                ctx.font = "bold 10px monospace";
+                ctx.fillText("!", Math.round(bx - 2), Math.round(by - 22));
+              }
+
+              ctx.fillStyle = "#f5f2eb";
+              ctx.font = "600 10px -apple-system, sans-serif";
+              ctx.fillText(String(a.name || "").slice(0, 18), bx + 18, by + 2);
+            });
+          } else if (kind === "middle-earth") {
+            const bg = ctx.createLinearGradient(0, 0, w, 0);
+            bg.addColorStop(0, "#152618");
+            bg.addColorStop(0.5, "#191c26");
+            bg.addColorStop(1, "#261313");
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, w, h);
+
+            // Shire hill + Hobbit-hole on left (chimney seated onto hillside)
+            ctx.fillStyle = "#1c3820";
+            ctx.beginPath();
+            ctx.arc(w * 0.14, h * 0.95, 95, Math.PI, 0);
+            ctx.fill();
+            ctx.fillStyle = "#78350f";
+            ctx.fillRect(w * 0.13 - 2, h * 0.95 - 102, 7, 16);
+            ctx.fillStyle = "#15803d";
+            ctx.beginPath();
+            ctx.arc(w * 0.14, h * 0.72, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#fde047";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Misty Mountains & Rivendell spire
+            ctx.fillStyle = "#334155";
+            ctx.beginPath();
+            ctx.moveTo(w * 0.36, h * 0.72);
+            ctx.lineTo(w * 0.46, h * 0.20);
+            ctx.lineTo(w * 0.56, h * 0.72);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#f1f5f9";
+            ctx.beginPath();
+            ctx.moveTo(w * 0.43, h * 0.36);
+            ctx.lineTo(w * 0.46, h * 0.20);
+            ctx.lineTo(w * 0.49, h * 0.36);
+            ctx.closePath();
+            ctx.fill();
+
+            // Mount Doom + glowing lava crater & rising embers
+            ctx.fillStyle = "#3b1818";
+            ctx.beginPath();
+            ctx.moveTo(w * 0.74, h * 0.78);
+            ctx.lineTo(w * 0.84, h * 0.22);
+            ctx.lineTo(w * 0.89, h * 0.22);
+            ctx.lineTo(w * 0.96, h * 0.78);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#f97316";
+            ctx.fillRect(w * 0.845, h * 0.22, w * 0.04, 6);
+            ctx.fillStyle = "#fde047";
+            ctx.fillRect(w * 0.855, h * 0.19 - (Math.floor(t * 5) % 8), 4, 4);
+
+            // Fellowship path
+            ctx.strokeStyle = "rgba(237,230,214,0.28)";
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(w * 0.08, h * 0.65);
+            ctx.quadraticCurveTo(w * 0.48, h * 0.3, w * 0.9, h * 0.58);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = "rgba(237,230,214,0.75)";
+            ctx.font = "600 10.5px -apple-system, sans-serif";
+            ctx.fillText("The Shire", w * 0.06, h * 0.9);
+            ctx.fillText("Rivendell", w * 0.43, h * 0.14);
+            ctx.fillText("Mount Doom", w * 0.81, h * 0.9);
+
+            STATE.middleEarthHits = [];
+            agents.forEach((a, idx) => {
+              const baseP = a.status === "done" ? 0.12 : a.status === "needs_you" ? 0.78 : a.status === "working" ? 0.42 : 0.24;
+              const p = Math.min(0.88, Math.max(0.06, baseP + (idx * 0.055)));
+              const bx = w * (0.08 + p * 0.78) + Math.sin(t + idx) * (a.status === "working" ? 8 : 0);
+              const by = h * 0.34 + (idx % 3) * 34;
+              STATE.middleEarthHits.push({ id: a.id, x: bx, y: by });
+
+              ctx.fillStyle = "rgba(0,0,0,0.38)";
+              ctx.fillRect(Math.round(bx - 10), Math.round(by + 11), 20, 4);
+              const blink = Math.floor(t * 2 + idx) % 10 === 0;
+              const alt = a.status === "working" && Math.floor(t * 5 + idx) % 2 === 0;
+              drawPixelSprite(ctx, spriteKeyForAgent("middle-earth", a, idx), bx, by - 15, 2, { blink, alt });
+
+              if (a.status === "needs_you") {
+                ctx.fillStyle = "#f97316";
+                ctx.fillRect(Math.round(bx - 4), Math.round(by - 30), 9, 11);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 9px monospace";
+                ctx.fillText("!", Math.round(bx - 1), Math.round(by - 21));
+              }
+
+              ctx.fillStyle = "#f5f2eb";
+              ctx.font = "600 10px -apple-system, sans-serif";
+              ctx.fillText(String(a.name || "").slice(0, 18), bx + 16, by + 2);
+            });
+          } else {
+            // Officetime detailed pixel office floorplan
+            ctx.fillStyle = "#11131a";
+            ctx.fillRect(0, 0, w, h);
+            // Architectural wood/slate floor grid
+            ctx.strokeStyle = "rgba(255,255,255,0.045)";
+            for (let gx = 0; gx < w; gx += 32) {
+              ctx.beginPath();
+              ctx.moveTo(gx, 0);
+              ctx.lineTo(gx, h);
+              ctx.stroke();
+            }
+            for (let gy = 0; gy < h; gy += 24) {
+              ctx.beginPath();
+              ctx.moveTo(0, gy);
+              ctx.lineTo(w, gy);
+              ctx.stroke();
+            }
+
+            // Glass-walled War Room on right
+            const wrX = Math.round(w * 0.63);
+            const wrY = 18;
+            const wrW = Math.round(w * 0.34);
+            const wrH = h - 36;
+            ctx.fillStyle = "rgba(30, 34, 48, 0.55)";
+            ctx.fillRect(wrX, wrY, wrW, wrH);
+            ctx.strokeStyle = "rgba(237, 230, 214, 0.16)";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(wrX, wrY, wrW, wrH);
+            ctx.fillStyle = "rgba(237,230,214,0.55)";
+            ctx.font = "600 10px -apple-system, sans-serif";
+            ctx.fillText("WAR ROOM", wrX + 10, wrY + 15);
+
+            // Sticky-note whiteboard on top wall of War Room
+            ctx.fillStyle = "#e2e8f0";
+            ctx.fillRect(wrX + wrW - 74, wrY + 8, 62, 14);
+            ctx.fillStyle = "#fde047";
+            ctx.fillRect(wrX + wrW - 68, wrY + 11, 8, 8);
+            ctx.fillStyle = "#f472b6";
+            ctx.fillRect(wrX + wrW - 56, wrY + 11, 8, 8);
+            ctx.fillStyle = "#4ade80";
+            ctx.fillRect(wrX + wrW - 44, wrY + 11, 8, 8);
+
+            // Walnut conference table + 6 chairs inside War Room
+            const tblX = wrX + 34;
+            const tblY = wrY + 46;
+            const tblW = wrW - 68;
+            const tblH = wrH - 80;
+            [0, 1, 2].forEach((ci) => {
+              const cyPos = tblY + 12 + ci * Math.max(22, (tblH - 24) / 2);
+              ctx.fillStyle = "#2d3348";
+              ctx.fillRect(tblX - 12, cyPos, 9, 14);
+              ctx.fillRect(tblX + tblW + 3, cyPos, 9, 14);
+            });
+            ctx.fillStyle = "#3f2e21";
+            ctx.fillRect(tblX, tblY, tblW, tblH);
+            ctx.strokeStyle = "#6b4f3a";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(tblX, tblY, tblW, tblH);
+
+            // Corner plants & espresso machine
+            ctx.fillStyle = "#92400e";
+            ctx.fillRect(10, h - 26, 12, 12);
+            ctx.fillStyle = "#16a34a";
+            ctx.fillRect(7, h - 38, 18, 12);
+            ctx.fillStyle = "#475569";
+            ctx.fillRect(wrX - 32, 18, 20, 24);
+            ctx.fillStyle = "#f5f2eb";
+            ctx.fillRect(wrX - 28, 24, 12, 7);
+
+            // Individual oak developer desks + pixel engineers
+            STATE.officetimeHits = [];
+            const list = agents.length ? agents.slice(0, 6) : [{ id: "empty", name: "Empty Desk", status: "idle" }];
+            const zoneW = wrX - 36;
+            const colStep = Math.max(150, Math.floor(zoneW / 2));
+            list.forEach((a, idx) => {
+              const col = idx % 2;
+              const row = Math.floor(idx / 2);
+              const cx = 92 + col * colStep;
+              const dy = 38 + row * 92;
+              if (a.id !== "empty") STATE.officetimeHits.push({ id: a.id, x: cx, y: dy + 10 });
+
+              // Selected desk highlight
+              if (a.id === STATE.selectedId) {
+                ctx.fillStyle = "rgba(237, 230, 214, 0.08)";
+                ctx.fillRect(cx - 64, dy - 24, 128, 84);
+                ctx.strokeStyle = "rgba(237, 230, 214, 0.42)";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(cx - 64, dy - 24, 128, 84);
+              }
+
+              // Oak workstation desk + dual monitors + keyboard + mug
+              ctx.fillStyle = "#4a3728";
+              ctx.fillRect(cx - 56, dy + 16, 112, 24);
+              ctx.fillStyle = "#694e39";
+              ctx.fillRect(cx - 56, dy + 16, 112, 3);
+
+              // Monitor glow & bezels
+              const screenCol = a.status === "needs_you" ? "#fbbf24" : a.status === "working" ? "#67e8f9" : "#475569";
+              ctx.fillStyle = "#0b0d14";
+              ctx.fillRect(cx - 34, dy + 18, 28, 12);
+              ctx.fillRect(cx + 6, dy + 18, 28, 12);
+              ctx.fillStyle = screenCol;
+              ctx.fillRect(cx - 32, dy + 20, 24, 8);
+              ctx.fillRect(cx + 8, dy + 20, 24, 8);
+
+              // Keyboard + coffee mug
+              ctx.fillStyle = "#1e293b";
+              ctx.fillRect(cx - 14, dy + 32, 28, 5);
+              ctx.fillStyle = "#f5f2eb";
+              ctx.fillRect(cx + 41, dy + 22, 7, 7);
+
+              // Chair + Animated 14x13 Developer Sprite behind desk
+              ctx.fillStyle = "#262b3d";
+              ctx.fillRect(cx - 14, dy - 2, 28, 18);
+              const blink = Math.floor(t * 2 + idx) % 9 === 0;
+              const alt = a.status === "working" && Math.floor(t * 5 + idx) % 2 === 0;
+              const bob = a.status === "working" ? (alt ? -1 : 0) : 0;
+              drawPixelSprite(ctx, spriteKeyForAgent("officetime", a, idx), cx, dy - 14 + bob, 2, { blink, alt });
+
+              if (a.status === "needs_you") {
+                ctx.fillStyle = "#fbbf24";
+                ctx.fillRect(cx + 18, dy - 20, 11, 13);
+                ctx.fillStyle = "#18120a";
+                ctx.font = "bold 10px monospace";
+                ctx.fillText("!", cx + 22, dy - 10);
+              }
+
+              // Desk nameplate pill
+              const lbl = String(a.name || "").slice(0, 17);
+              ctx.fillStyle = "rgba(11, 13, 20, 0.92)";
+              ctx.fillRect(cx - 56, dy + 42, 112, 15);
+              ctx.strokeStyle = a.id === STATE.selectedId ? "#ede6d6" : "rgba(255,255,255,0.12)";
+              ctx.lineWidth = 1;
+              ctx.strokeRect(cx - 56, dy + 42, 112, 15);
+              ctx.fillStyle = "#f5f2eb";
+              ctx.font = "600 9.5px -apple-system, sans-serif";
+              ctx.textAlign = "center";
+              ctx.fillText(lbl, cx, dy + 53);
+              ctx.textAlign = "left";
+            });
+          }
+
+          STATE.worldFrame = requestAnimationFrame(draw);
+        };
+        STATE.worldFrame = requestAnimationFrame(draw);
+      }
+
+      function renderStage() {
+        stopCanvasLoops();
+        const stage = document.getElementById("stage");
+        const studio = STATE.studio || { active_layout: "kanso", layouts: [], enabled_mods: [] };
+        const activeRecipe = (studio.layouts || []).find((l) => l.id === studio.active_layout);
+        const layoutKey =
+          (activeRecipe && activeRecipe.base_layout) || studio.active_layout || "kanso";
+        const agents = sortAgents(STATE.agents);
+        const sel = agents.find((a) => a.id === STATE.selectedId) || agents[0];
+        const selDetail = sel ? STATE.details[sel.id] || { ...sel, masked_turns: [], raw_log: "" } : null;
+
+        if (agents.length === 0 && !["pixel-hq", "world-of-codecraft", "middle-earth", "officetime", "brutal-metrics"].includes(layoutKey)) {
+          stage.innerHTML = renderEmptyState();
+          return;
+        }
+
+        if (layoutKey === "pixel-hq") {
+          const workingCount = agents.filter((a) => a.status === "working").length;
+          const needsCount = agents.filter((a) => a.status === "needs_you").length;
+          const breakCount = agents.length - workingCount - needsCount;
+          stage.innerHTML = `
+            <div class="pixelhq-shell">
+              <div class="pixelhq-body">
+                <aside class="pixelhq-left">
+                  <div class="pixelhq-canvas-box">
+                    <div class="pane-head" style="height:32px;min-height:32px">
+                      <span style="font-size:11px;font-weight:600;color:var(--cream)">Pixel HQ</span>
+                      <span class="tag">${agents.length} desks</span>
+                    </div>
+                    <canvas id="pixel-hq-canvas" style="width:100%;height:244px;display:block;cursor:pointer"></canvas>
+                  </div>
+                  <div class="pane" style="flex:1;padding:10px 8px">
+                    ${renderSidebarSpaces(agents, "pixel-hq")}
+                  </div>
+                </aside>
+                <div class="pixelhq-grid">
+                  ${
+                    agents.length
+                      ? agents.map((a, idx) => renderPaneCard(a, idx, { pixelNameplate: true })).join("")
+                      : renderEmptyState()
+                  }
+                </div>
+              </div>
+              <footer class="pixelhq-foot">
+                <span>Pixel HQ · Local Computer</span>
+                <span>${workingCount} typing · ${needsCount} needs you · ${breakCount} on break</span>
+              </footer>
+            </div>`;
+          startPixelHqCanvas(agents);
+          return;
+        }
+
+        if (layoutKey === "cockpit") {
+          const secondary = agents.find((a) => a.id !== (sel && sel.id));
+          stage.innerHTML = `
+            <div class="cockpit-shell">
+              <aside class="pane" style="padding:10px 8px">${renderSidebarSpaces(agents)}</aside>
+              <div style="display:grid;grid-template-columns:${secondary ? "1.35fr 1fr" : "1fr"};gap:10px;min-height:0">
+                ${sel ? renderPaneCard(sel, 0) : renderEmptyState()}
+                ${secondary ? renderPaneCard(secondary, 1) : ""}
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (layoutKey === "world-of-codecraft" || layoutKey === "middle-earth" || layoutKey === "officetime") {
+          const canvasId =
+            layoutKey === "world-of-codecraft"
+              ? "woc-canvas"
+              : layoutKey === "middle-earth"
+              ? "me-canvas"
+              : "officetime-canvas";
+          const barTitle =
+            layoutKey === "world-of-codecraft"
+              ? "World of Codecraft · Valbrume"
+              : layoutKey === "middle-earth"
+              ? "Middle-earth · Fellowship"
+              : "Officetime · Floorplan";
+          stage.innerHTML = `
+            <div class="world-shell">
+              <div class="rpg-bar">
+                <span style="font-weight:600">${barTitle}</span>
+                <span style="color:var(--muted)">${agents.length} Active · ${agents.filter((a) => a.status === "needs_you").length} Needs You</span>
+              </div>
+              <div class="world-grid">
+                <aside class="pane" style="padding:10px 8px">${renderSidebarSpaces(agents, layoutKey)}</aside>
+                <div class="world-main">
+                  <div class="pane" style="height:236px;min-height:236px">
+                    <canvas id="${canvasId}" style="width:100%;height:100%;display:block;cursor:pointer"></canvas>
+                  </div>
+                  <div style="flex:1;min-height:0;display:flex">
+                    ${sel ? renderPaneCard(sel, 0, { layoutKey }) : `<div class="pane" style="flex:1">${renderEmptyState()}</div>`}
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          startWorldCanvas(layoutKey, agents);
+          return;
+        }
+
+        if (layoutKey === "omarchy") {
+          const diffText = sel && STATE.diffs[sel.id] ? STATE.diffs[sel.id] : "No uncommitted diff loaded. Enable Git Diff mod or select an active repo.";
+          const panes = agents.slice(0, 2);
+          stage.innerHTML = `
+            <div class="omarchy-shell">
+              <aside class="omarchy-tile" style="padding:10px 8px">${renderSidebarSpaces(agents)}</aside>
+              <div style="display:grid;grid-template-columns:repeat(${Math.max(1, panes.length)},minmax(0,1fr));gap:4px;min-height:0">
+                ${panes.length ? panes.map((a, idx) => renderPaneCard(a, idx)).join("") : `<div class="omarchy-tile">${renderEmptyState()}</div>`}
+              </div>
+              <aside class="omarchy-tile">
+                <div class="pane-head">
+                  <span style="font-size:11.5px;font-weight:600">Files &amp; Changes</span>
+                  <span class="tag">${sel ? esc(sel.name) : "workspace"}</span>
+                </div>
+                <pre style="margin:0;padding:10px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.45;color:var(--muted);white-space:pre-wrap">${esc(diffText)}</pre>
+              </aside>
+            </div>`;
+          return;
+        }
+
+        if (layoutKey === "islands") {
+          stage.innerHTML = `
+            <div class="islands-shell">
+              <aside class="island-card" style="padding:12px 10px">${renderSidebarSpaces(agents)}</aside>
+              <div style="display:grid;grid-template-columns:repeat(${agents.length > 1 ? 2 : 1},minmax(0,1fr));gap:12px;min-height:0">
+                ${
+                  agents.length
+                    ? agents.slice(0, 4).map((a, idx) => `<div class="island-card">${renderPaneCard(a, idx)}</div>`).join("")
+                    : `<div class="island-card">${renderEmptyState()}</div>`
+                }
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (layoutKey === "brutal-metrics") {
+          const needs = agents.filter((a) => a.status === "needs_you").length;
+          const working = agents.filter((a) => a.status === "working").length;
+          const peers = (STATE.remote && STATE.remote.peers && STATE.remote.peers.length) || 0;
+          stage.innerHTML = `
+            <div class="brutal-shell">
+              <div class="brutal-kpis">
+                <div class="brutal-kpi"><div class="brutal-label">Active Agents</div><div class="brutal-val">${agents.length}</div></div>
+                <div class="brutal-kpi"><div class="brutal-label">Needs You</div><div class="brutal-val">${needs}</div></div>
+                <div class="brutal-kpi"><div class="brutal-label">Working</div><div class="brutal-val">${working}</div></div>
+                <div class="brutal-kpi"><div class="brutal-label">Mesh Peers</div><div class="brutal-val">${peers}</div></div>
+              </div>
+              <div style="flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr;gap:10px;padding:10px">
+                <aside class="pane" style="padding:10px 8px">${renderSidebarSpaces(agents)}</aside>
+                ${sel ? renderPaneCard(sel, 0) : `<div class="pane">${renderEmptyState()}</div>`}
+              </div>
+            </div>`;
+          return;
+        }
+
+        // Default: Kanso (minimal sidebar + side-by-side panes, needs_you first)
+        stage.innerHTML = `
+          <div class="kanso-shell">
+            <aside class="kanso-rail">${renderSidebarSpaces(agents)}</aside>
+            <div class="kanso-panes">
+              ${agents.map((a, idx) => renderPaneCard(a, idx)).join("")}
+            </div>
+          </div>`;
+      }
+
+      function renderGallery() {
+        const body = document.getElementById("gallery-body");
+        const studio = STATE.studio || { layouts: [], mods: [], active_layout: "kanso", enabled_mods: [] };
+        const layouts = studio.layouts || [];
+        const trending = layouts.filter((l) => l.trending);
+        const community = layouts.filter((l) => !l.trending);
+        const mods = studio.mods || [];
+        const enabled = new Set(studio.enabled_mods || []);
+
+        const renderLayoutCard = (l) => {
+          const isActive = l.id === studio.active_layout;
+          const promptText = `Read ~/.config/ai-carnival/AGENTS.md, then activate or customize the Carnival layout: ${l.source_url || l.id}`;
+          return `
+            <div class="gallery-card ${isActive ? "active" : ""}">
+              <div class="gallery-card-head">
+                <div>
+                  <div class="gallery-card-name">${esc(l.name)}</div>
+                  <div class="gallery-card-meta">${esc(l.author || "community")} ${l.stars ? `· ★ ${l.stars}` : ""}</div>
+                </div>
+                <button type="button" class="btn sm ${isActive ? "primary" : ""}" data-layout="${esc(l.id)}">
+                  ${isActive ? "Active ✓" : "Activate"}
+                </button>
+              </div>
+              <div class="gallery-card-desc">${esc(l.description)}</div>
+              <div class="gallery-card-actions">
+                <button type="button" class="btn sm" data-copy-prompt="${esc(promptText)}">Copy Prompt</button>
+                ${
+                  l.source_url
+                    ? `<a class="btn sm ghost" href="${esc(l.source_url)}" target="_blank" rel="noreferrer" style="text-decoration:none">GitHub ↗</a>`
+                    : ""
+                }
+              </div>
+            </div>`;
+        };
+
+        body.innerHTML = `
+          <div>
+            <div class="gallery-section-title">Trending · Highest Starred</div>
+            <div class="gallery-grid">${trending.map(renderLayoutCard).join("")}</div>
+          </div>
+          <div>
+            <div class="gallery-section-title">Community Layouts</div>
+            <div class="gallery-grid">${community.map(renderLayoutCard).join("")}</div>
+          </div>
+          <div>
+            <div class="gallery-section-title">Composable Mods</div>
+            <div class="gallery-grid">
+              ${mods
+                .map((m) => {
+                  const on = enabled.has(m.id);
+                  return `
+                    <div class="gallery-card ${on ? "active" : ""}">
+                      <div class="gallery-card-head">
+                        <div>
+                          <div class="gallery-card-name">${esc(m.name)}</div>
+                          <div class="gallery-card-meta">Mod · ${esc(m.author || "carnival")}</div>
+                        </div>
+                        <button type="button" class="btn sm ${on ? "primary" : ""}" data-mod="${esc(m.id)}">
+                          ${on ? "Enabled ✓" : "Enable"}
+                        </button>
+                      </div>
+                      <div class="gallery-card-desc">${esc(m.description)}</div>
+                    </div>`;
+                })
+                .join("")}
+            </div>
+          </div>`;
+      }
+
+      function renderRemoteModal(preselectAgentId) {
+        const remote = STATE.remote || { peers: [], discovered: [], handoffs: [], local_host: "localhost" };
+        const peerSel = document.getElementById("rh-peer");
+        peerSel.innerHTML = (remote.peers || [])
+          .map((p) => `<option value="${esc(p.id)}">${esc(p.name)} (${esc(p.transport)} · ${esc(p.host)})</option>`)
+          .join("");
+
+        const srcSel = document.getElementById("rh-source");
+        srcSel.innerHTML =
+          `<option value="">Fresh task (no prior agent context)</option>` +
+          STATE.agents
+            .map((a) => `<option value="${esc(a.id)}">${esc(a.name)} (${esc(a.engine)})</option>`)
+            .join("");
+        if (preselectAgentId) srcSel.value = preselectAgentId;
+
+        const body = document.getElementById("remote-peers-body");
+        const peersHtml = (remote.peers || [])
+          .map(
+            (p) => `
+          <div class="turn" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">${esc(p.name)} <span class="tag">${esc(p.transport)}</span></div>
+              <div style="font-size:11px;color:var(--muted)">${esc(p.user ? `${p.user}@${p.host}` : p.host)} · ${esc(p.status)} · ${esc(p.remote_dir || "~")}</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button type="button" class="btn sm" data-probe-peer="${esc(p.id)}">Probe</button>
+              <button type="button" class="btn sm ghost" data-del-peer="${esc(p.id)}">Remove</button>
+            </div>
+          </div>`
+          )
+          .join("");
+
+        const discHtml = (remote.discovered || []).length
+          ? `<div class="gallery-section-title" style="margin:4px 0 0">Discovered on SSH / Tailscale</div>` +
+            remote.discovered
+              .map(
+                (d, idx) => `
+              <div class="turn" style="display:flex;align-items:center;justify-content:space-between">
+                <span>${esc(d.name)} <span class="tag">${esc(d.transport)}</span> <span style="color:var(--muted)">${esc(d.host)}</span></span>
+                <button type="button" class="btn sm" data-add-disc="${idx}">Add Peer</button>
+              </div>`
+              )
+              .join("")
+          : "";
+
+        const handoffsHtml = (remote.handoffs || []).length
+          ? `<div class="gallery-section-title" style="margin:4px 0 0">Active &amp; Recent Handoffs</div>` +
+            remote.handoffs
+              .map(
+                (h) => {
+                  const hid = h.handoff_id || h.id || "";
+                  const stateTxt = h.sync_state || h.status || "dispatched";
+                  const filesNote = (h.received_files && h.received_files.length)
+                    ? ` · Files: ${h.received_files.join(", ")}`
+                    : "";
+                  return `
+              <div class="turn" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <div>
+                  <div style="font-weight:600">${esc(h.agent_id)} → ${esc(h.peer_name)}</div>
+                  <div style="font-size:11px;color:var(--muted)">${esc(stateTxt)} · ${esc(h.task_prompt || "")}${esc(filesNote)}</div>
+                </div>
+                <button type="button" class="btn sm primary" data-receive="${esc(hid)}">Receive Back ↙</button>
+              </div>`;
+                }
+              )
+              .join("")
+          : "";
+
+        body.innerHTML = peersHtml + discHtml + handoffsHtml;
+      }
+
+      function computeStageSignature() {
+        const studio = STATE.studio || {};
+        const layout = studio.active_layout || "kanso";
+        const mods = (studio.enabled_mods || []).join(",");
+        const diffLen = STATE.selectedId && STATE.diffs[STATE.selectedId] ? STATE.diffs[STATE.selectedId].length : 0;
+        const peers = (STATE.remote && STATE.remote.peers && STATE.remote.peers.length) || 0;
+        const agentSig = sortAgents(STATE.agents)
+          .map((a) => {
+            const d = STATE.details[a.id];
+            const turns = d && Array.isArray(d.masked_turns) ? d.masked_turns.length : 0;
+            const logLen = d && d.raw_log ? d.raw_log.length : 0;
+            return `${a.id}:${a.status}:${a.view_mode}:${a.name}:${remoteLabel(a)}:${handoffId(a)}:${turns}:${logLen}`;
+          })
+          .join("|");
+        return `${layout}#${mods}#${STATE.selectedId || ""}#${STATE.globalViewMode}#${diffLen}#${peers}#${agentSig}`;
+      }
+
+      function renderUI(forceStage) {
+        renderHeader();
+        renderModsBar();
+        STATE.latestCanvasAgents = sortAgents(STATE.agents);
+        const sig = computeStageSignature();
+        if (forceStage || sig !== STATE.lastStageSig) {
+          STATE.lastStageSig = sig;
+          // Preserve focused prompt input cursor & scroll positions across stage redraws
+          let focusedId = null;
+          let selStart = null;
+          let selEnd = null;
+          const activeEl = document.activeElement;
+          if (activeEl && activeEl.hasAttribute("data-prompt-input")) {
+            focusedId = activeEl.getAttribute("data-prompt-input");
+            selStart = activeEl.selectionStart;
+            selEnd = activeEl.selectionEnd;
+          }
+          const scrollMap = {};
+          document.querySelectorAll(".pane[data-select]").forEach((paneEl) => {
+            const aid = paneEl.getAttribute("data-select");
+            const scroller = paneEl.querySelector(".dual-body, .term-view");
+            if (aid && scroller) {
+              const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 16;
+              scrollMap[aid] = { top: scroller.scrollTop, atBottom };
+            }
+          });
+
+          renderStage();
+
+          // Restore drafts, scroll offsets, and prompt focus
+          document.querySelectorAll("[data-prompt-input]").forEach((inp) => {
+            const aid = inp.getAttribute("data-prompt-input");
+            if (aid && typeof STATE.drafts[aid] === "string") {
+              inp.value = STATE.drafts[aid];
+            }
+          });
+          document.querySelectorAll(".pane[data-select]").forEach((paneEl) => {
+            const aid = paneEl.getAttribute("data-select");
+            const scroller = paneEl.querySelector(".dual-body, .term-view");
+            const saved = aid && scrollMap[aid];
+            if (scroller && saved) {
+              scroller.scrollTop = saved.atBottom ? scroller.scrollHeight : saved.top;
+            }
+          });
+          if (focusedId) {
+            const nextInp = document.querySelector(`[data-prompt-input="${CSS.escape(focusedId)}"]`);
+            if (nextInp) {
+              nextInp.focus();
+              if (selStart != null && selEnd != null) {
+                try {
+                  nextInp.setSelectionRange(selStart, selEnd);
+                } catch {}
+              }
+            }
+          }
+        }
+        if (document.getElementById("modal-gallery").classList.contains("open")) {
+          renderGallery();
+        }
+        if (document.getElementById("modal-remote").classList.contains("open")) {
+          renderRemoteModal();
+        }
+      }
+
+      function closeMenus() {
+        document.getElementById("layout-menu").classList.remove("open");
+        document.getElementById("tools-menu").classList.remove("open");
+      }
+
+      function openSpawnModal() {
+        const sel = document.getElementById("sp-engine");
+        sel.innerHTML = (STATE.presets || [])
+          .map((p) => `<option value="${esc(p.id)}">${esc(p.label)} ${p.installed ? "(Installed)" : "(Custom / Fallback PTY)"}</option>`)
+          .join("");
+        document.getElementById("modal-spawn").classList.add("open");
+      }
+
+      function openRemoteModal(agentId) {
+        renderRemoteModal(agentId || "");
+        document.getElementById("modal-remote").classList.add("open");
+      }
+
+      // Header bindings
+      document.getElementById("layout-trigger").onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById("tools-menu").classList.remove("open");
+        document.getElementById("layout-menu").classList.toggle("open");
+      };
+
+      document.getElementById("tools-trigger").onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById("layout-menu").classList.remove("open");
+        document.getElementById("tools-menu").classList.toggle("open");
+      };
+
+      document.getElementById("btn-gallery").onclick = () => {
+        closeMenus();
+        renderGallery();
+        document.getElementById("modal-gallery").classList.add("open");
+      };
+
+      document.getElementById("btn-spawn").onclick = () => {
+        closeMenus();
+        openSpawnModal();
+      };
+
+      document.getElementById("tool-remote").onclick = () => {
+        closeMenus();
+        openRemoteModal("");
+      };
+
+      document.getElementById("tool-mods").onclick = () => {
+        closeMenus();
+        STATE.modsOpen = !STATE.modsOpen;
+        renderModsBar();
+      };
+
+      document.getElementById("tool-shape").onclick = () => {
+        closeMenus();
+        document.getElementById("shape-bar").classList.toggle("open");
+        document.getElementById("shape-input").focus();
+      };
+
+      document.getElementById("shape-close").onclick = () => {
+        document.getElementById("shape-bar").classList.remove("open");
+      };
+
+      document.getElementById("shape-submit").onclick = async () => {
+        const prompt = document.getElementById("shape-input").value.trim();
+        if (!prompt) return;
+        const res = await api("/studio/shape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+        if (res && res.ok) {
+          showToast("Layout recipe shaped");
+          await refreshAll();
+        } else {
+          showToast((res && res.error) || "Shape failed");
+        }
+      };
+
+      document.getElementById("tool-demo").onclick = async () => {
+        closeMenus();
+        await api("/agents/demo-crew", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+        showToast("Demo Crew loaded");
+        await refreshAll();
+      };
+
+      document.getElementById("tool-rollback").onclick = async () => {
+        closeMenus();
+        const res = await api("/studio/rollback", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+        if (res && res.ok) showToast("Rolled back to previous recipe");
+        await refreshAll();
+      };
+
+      document.getElementById("global-harness-btn").onclick = async () => {
+        STATE.globalViewMode = "harness";
+        document.getElementById("global-harness-btn").classList.add("active");
+        document.getElementById("global-term-btn").classList.remove("active");
+        await Promise.all(
+          STATE.agents.map((a) =>
+            api(`/agents/${encodeURIComponent(a.id)}/view-mode`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ view_mode: "harness" }),
+            })
+          )
+        );
+        await refreshAll();
+      };
+
+      document.getElementById("global-term-btn").onclick = async () => {
+        STATE.globalViewMode = "terminal";
+        document.getElementById("global-term-btn").classList.add("active");
+        document.getElementById("global-harness-btn").classList.remove("active");
+        await Promise.all(
+          STATE.agents.map((a) =>
+            api(`/agents/${encodeURIComponent(a.id)}/view-mode`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ view_mode: "terminal" }),
+            })
+          )
+        );
+        await refreshAll();
+      };
+
+      document.getElementById("sp-fallback-orch").onclick = () => {
+        document.getElementById("sp-engine").value = "carnival-orchestrator";
+        document.getElementById("sp-error").classList.remove("open");
+      };
+
+      document.getElementById("sp-submit").onclick = async () => {
+        const errBox = document.getElementById("sp-error");
+        errBox.classList.remove("open");
+        const body = {
+          engine: document.getElementById("sp-engine").value,
+          name: document.getElementById("sp-name").value,
+          cwd: document.getElementById("sp-cwd").value || null,
+          view_mode: document.getElementById("sp-view").value,
+          custom_command: document.getElementById("sp-cmd").value || null,
+          prompt: document.getElementById("sp-prompt").value || null,
+        };
+        const res = await api("/agents", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (res && res.ok && res.agent) {
+          STATE.selectedId = res.agent.id;
+          document.getElementById("modal-spawn").classList.remove("open");
+          await refreshAll();
+        } else {
+          document.getElementById("sp-error-text").textContent = (res && res.error) || "Failed to spawn agent";
+          errBox.classList.add("open");
+        }
+      };
+
+      document.getElementById("rh-dispatch").onclick = async () => {
+        const body = {
+          peer_id: document.getElementById("rh-peer").value,
+          engine: document.getElementById("rh-engine").value,
+          source_agent_id: document.getElementById("rh-source").value || null,
+          task_prompt: document.getElementById("rh-prompt").value || null,
+          sync_workspace: document.getElementById("rh-sync").checked,
+        };
+        const res = await api("/remote/handoff", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (res && res.ok && res.handoff) {
+          STATE.selectedId = res.handoff.agent_id;
+          showToast("Handoff dispatched");
+          await refreshAll();
+        } else {
+          showToast((res && res.error) || "Handoff failed");
+        }
+      };
+
+      document.getElementById("rp-add").onclick = async () => {
+        const res = await api("/remote/peers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: document.getElementById("rp-name").value,
+            transport: document.getElementById("rp-transport").value,
+            host: document.getElementById("rp-host").value,
+            user: document.getElementById("rp-user").value,
+            remote_dir: document.getElementById("rp-dir").value,
+          }),
+        });
+        if (res && res.ok && res.peer) {
+          await api(`/remote/peers/${encodeURIComponent(res.peer.id)}/probe`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}",
+          });
+          showToast("Remote peer added");
+          await refreshAll();
+        }
+      };
+
+      // Global delegated click handling
+      document.addEventListener("click", async (e) => {
+        if (!e.target.closest(".menu-anchor")) closeMenus();
+
+        const closeBtn = e.target.closest("[data-close]");
+        if (closeBtn) {
+          document.getElementById(closeBtn.getAttribute("data-close")).classList.remove("open");
+          return;
+        }
+        if (e.target.classList.contains("modal-backdrop")) {
+          e.target.classList.remove("open");
+          return;
+        }
+
+        if (e.target.id === "empty-spawn") return openSpawnModal();
+        if (e.target.id === "empty-remote") return openRemoteModal("");
+        if (e.target.id === "empty-gallery") {
+          renderGallery();
+          document.getElementById("modal-gallery").classList.add("open");
+          return;
+        }
+        if (e.target.id === "empty-demo") {
+          await api("/agents/demo-crew", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+          await refreshAll();
+          return;
+        }
+
+        const layoutBtn = e.target.closest("[data-layout]");
+        if (layoutBtn) {
+          const lid = layoutBtn.getAttribute("data-layout");
+          closeMenus();
+          await api("/studio/active", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ active_layout: lid }),
+          });
+          await refreshAll();
+          return;
+        }
+
+        const modBtn = e.target.closest("[data-mod]");
+        if (modBtn) {
+          const mid = modBtn.getAttribute("data-mod");
+          const cur = new Set((STATE.studio && STATE.studio.enabled_mods) || []);
+          if (cur.has(mid)) cur.delete(mid);
+          else cur.add(mid);
+          await api("/studio/active", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ enabled_mods: Array.from(cur) }),
+          });
+          await refreshAll();
+          return;
+        }
+
+        const copyBtn = e.target.closest("[data-copy-prompt]");
+        if (copyBtn) {
+          const text = copyBtn.getAttribute("data-copy-prompt");
+          navigator.clipboard && navigator.clipboard.writeText(text).catch(() => {});
+          showToast("Copied agent prompt to clipboard");
+          return;
+        }
+
+        const appBtn = e.target.closest("[data-approve]");
+        if (appBtn) {
+          const [id, flag] = appBtn.getAttribute("data-approve").split(":");
+          await api(`/agents/${encodeURIComponent(id)}/approve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ allow: flag === "1" }),
+          });
+          await refreshAll();
+          return;
+        }
+
+        const viewBtn = e.target.closest("[data-view]");
+        if (viewBtn) {
+          const [id, vm] = viewBtn.getAttribute("data-view").split(":");
+          await api(`/agents/${encodeURIComponent(id)}/view-mode`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ view_mode: vm }),
+          });
+          await refreshAll();
+          return;
+        }
+
+        const sendBtn = e.target.closest("[data-send-prompt]");
+        if (sendBtn) {
+          const id = sendBtn.getAttribute("data-send-prompt");
+          const inp = document.querySelector(`[data-prompt-input="${CSS.escape(id)}"]`);
+          if (inp && inp.value.trim()) {
+            const text = inp.value.trim();
+            inp.value = "";
+            delete STATE.drafts[id];
+            await api(`/agents/${encodeURIComponent(id)}/input`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text, newline: true }),
+            });
+            await refreshAll();
+          }
+          return;
+        }
+
+        const stopBtn = e.target.closest("[data-stop]");
+        if (stopBtn) {
+          const id = stopBtn.getAttribute("data-stop");
+          await api(`/agents/${encodeURIComponent(id)}/stop`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}",
+          });
+          await refreshAll();
+          return;
+        }
+
+        const rmBtn = e.target.closest("[data-remove]");
+        if (rmBtn) {
+          const id = rmBtn.getAttribute("data-remove");
+          delete STATE.drafts[id];
+          delete STATE.details[id];
+          await api(`/agents/${encodeURIComponent(id)}`, { method: "DELETE" });
+          showToast("Agent removed");
+          await refreshAll();
+          return;
+        }
+
+        const handoffBtn = e.target.closest("[data-handoff]");
+        if (handoffBtn) {
+          openRemoteModal(handoffBtn.getAttribute("data-handoff"));
+          return;
+        }
+
+        const recvBtn = e.target.closest("[data-receive]");
+        if (recvBtn) {
+          const hid = recvBtn.getAttribute("data-receive");
+          if (!hid) {
+            showToast("Missing handoff ID");
+            return;
+          }
+          const res = await api(`/remote/handoff/${encodeURIComponent(hid)}/receive`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ apply_locally: false }),
+          });
+          if (res && res.ok) showToast("Synced handoff changes");
+          else showToast((res && res.error) || "Handoff receive failed");
+          await refreshAll();
+          return;
+        }
+
+        const probeBtn = e.target.closest("[data-probe-peer]");
+        if (probeBtn) {
+          const pid = probeBtn.getAttribute("data-probe-peer");
+          const res = await api(`/remote/peers/${encodeURIComponent(pid)}/probe`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+          if (res && res.peer) {
+            showToast(`Peer ${res.peer.name}: ${res.peer.status}`);
+          } else {
+            showToast((res && res.error) || "Peer probe failed");
+          }
+          await refreshAll();
+          return;
+        }
+
+        const delPeerBtn = e.target.closest("[data-del-peer]");
+        if (delPeerBtn) {
+          const pid = delPeerBtn.getAttribute("data-del-peer");
+          await api(`/remote/peers/${encodeURIComponent(pid)}`, { method: "DELETE" });
+          await refreshAll();
+          return;
+        }
+
+        const addDisc = e.target.closest("[data-add-disc]");
+        if (addDisc) {
+          const d = (STATE.remote && STATE.remote.discovered || [])[Number(addDisc.getAttribute("data-add-disc"))];
+          if (d) {
+            await api("/remote/peers", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: d.name, transport: d.transport, host: d.host, user: d.user, port: d.port }),
+            });
+            await refreshAll();
+          }
+          return;
+        }
+
+        if (e.target.id === "mod-broadcast-go") {
+          const inp = document.getElementById("mod-broadcast-in");
+          if (inp && inp.value.trim()) {
+            await api("/agents/broadcast", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ids: [], prompt: inp.value.trim() }),
+            });
+            inp.value = "";
+            showToast("Broadcast delivered");
+            await refreshAll();
+          }
+          return;
+        }
+
+        if (e.target.id === "pixel-hq-canvas" || e.target.id === "officetime-canvas" || e.target.id === "woc-canvas" || e.target.id === "me-canvas") {
+          const rect = e.target.getBoundingClientRect();
+          const cx = e.clientX - rect.left;
+          const cy = e.clientY - rect.top;
+          const list =
+            e.target.id === "pixel-hq-canvas"
+              ? STATE.pixelHqHits
+              : e.target.id === "officetime-canvas"
+              ? STATE.officetimeHits
+              : e.target.id === "woc-canvas"
+              ? STATE.wocHits
+              : STATE.middleEarthHits;
+          const hit = list.find((h) => Math.hypot(h.x - cx, h.y - cy) < 38);
+          if (hit) {
+            STATE.selectedId = hit.id;
+            renderUI(true);
+          }
+          return;
+        }
+
+        const selEl = e.target.closest("[data-select]");
+        if (selEl) {
+          const id = selEl.getAttribute("data-select");
+          if (id && id !== STATE.selectedId) {
+            STATE.selectedId = id;
+            renderUI(true);
+          }
+        }
+      });
+
+      // Persist unsent per-agent prompt drafts across live polling updates
+      document.addEventListener("input", (e) => {
+        const inp = e.target && e.target.closest ? e.target.closest("[data-prompt-input]") : null;
+        if (inp) {
+          const aid = inp.getAttribute("data-prompt-input");
+          if (aid) STATE.drafts[aid] = inp.value;
+        }
+      });
+
+      // Global shortcuts (Cmd+K / Cmd+Shift+A), Enter composer & Ctrl+B chords
+      document.addEventListener("keydown", async (e) => {
+        if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          fetch(BRIDGE + "/window/spotlight", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "toggle" }),
+          }).catch(() => {});
+          return;
+        }
+        if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "a") {
+          e.preventDefault();
+          try {
+            window.parent.postMessage({ type: "carnival:toggle-agent-manager" }, "*");
+          } catch {}
+          return;
+        }
+        if (e.key === "Escape") {
+          closeMenus();
+          document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
+          return;
+        }
+        if (e.key === "Enter" && !e.shiftKey) {
+          const inp = e.target.closest("[data-prompt-input]");
+          if (inp && inp.value.trim()) {
+            e.preventDefault();
+            const id = inp.getAttribute("data-prompt-input");
+            const text = inp.value.trim();
+            inp.value = "";
+            delete STATE.drafts[id];
+            await api(`/agents/${encodeURIComponent(id)}/input`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text, newline: true }),
+            });
+            await refreshAll();
+            return;
+          }
+          if (e.target && e.target.id === "shape-input") {
+            e.preventDefault();
+            document.getElementById("shape-submit").click();
+            return;
+          }
+        }
+        if (e.ctrlKey && e.key.toLowerCase() === "b") {
+          e.preventDefault();
+          STATE.ctrlBActive = true;
+          return;
+        }
+        if (STATE.ctrlBActive) {
+          STATE.ctrlBActive = false;
+          const k = e.key.toLowerCase();
+          if (k === "l" && STATE.studio) {
+            const layouts = STATE.studio.layouts || [];
+            if (layouts.length) {
+              const cur = layouts.findIndex((x) => x.id === STATE.studio.active_layout);
+              const next = layouts[(cur + 1) % layouts.length];
+              await api("/studio/active", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ active_layout: next.id }),
+              });
+              await refreshAll();
+            }
+          } else if (k === "v" && STATE.selectedId) {
+            const d = STATE.details[STATE.selectedId];
+            const next = d && d.view_mode === "terminal" ? "harness" : "terminal";
+            await api(`/agents/${encodeURIComponent(STATE.selectedId)}/view-mode`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ view_mode: next }),
+            });
+            await refreshAll();
+          } else if (k === "n") {
+            openSpawnModal();
+          }
+        }
+      });
+
+      // Live SSE stream + fallback disk hot-reload poll
+      try {
+        const es = new EventSource(BRIDGE + "/agents/events");
+        es.onmessage = () => refreshAll();
+      } catch {}
+      refreshAll();
+      setInterval(refreshAll, 2400);
+    </script>
+  </body>
+</html>

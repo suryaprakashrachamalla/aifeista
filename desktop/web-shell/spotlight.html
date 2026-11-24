@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search — Carnival</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --glass-alpha: 0.80;
+        --glass-rgb: 8, 8, 10;
+        --glass-blur: 32px;
+        --glass-sat: 165%;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(237, 230, 214, 0.18);
+        border-radius: 999px;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      /* Single unified macOS Jet Black Smoked Glass sheet */
+      .apple-liquid-sheet {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        border-radius: 26px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 10px;
+        background: linear-gradient(
+          155deg,
+          rgba(255, 255, 255, 0.05) 0%,
+          rgba(var(--glass-rgb), var(--glass-alpha)) 45%,
+          rgba(4, 4, 6, calc(var(--glass-alpha) + 0.08)) 100%
+        );
+        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+        box-shadow:
+          0 28px 68px rgba(0, 0, 0, 0.56),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.11),
+          inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        overflow: hidden;
+        animation: glass-pop 180ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      @keyframes glass-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.98) translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* Neutral subtle top bevel sheen */
+      .apple-liquid-sheet::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        padding: 1px;
+        background: linear-gradient(
+          145deg,
+          rgba(245, 242, 235, 0.24) 0%,
+          rgba(255, 255, 255, 0.04) 45%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
+
+      .apple-liquid-sheet > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Search input capsule */
+      .search-capsule {
+        height: 52px;
+        border-radius: 16px;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.11);
+        transition: box-shadow 160ms ease, background 160ms ease;
+      }
+      .search-capsule:focus-within {
+        background: rgba(255, 255, 255, 0.07);
+        box-shadow: inset 0 0 0 1px rgba(237, 230, 214, 0.34);
+      }
+
+      .wheel-lens {
+        width: 20px;
+        height: 20px;
+        color: #ede6d6;
+        flex-shrink: 0;
+        animation: lens-turn 28s linear infinite;
+      }
+      @keyframes lens-turn {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #f5f2eb;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        font-size: 16.5px;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+      .search-input::placeholder {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        color: rgba(245, 242, 235, 0.42);
+        font-weight: 400;
+      }
+
+      .mic-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(245, 242, 235, 0.78);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+      }
+      .mic-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #f5f2eb;
+      }
+      .mic-btn.listening {
+        border-color: rgba(237, 230, 214, 0.60);
+        color: #ede6d6;
+        background: rgba(237, 230, 214, 0.16);
+      }
+
+      /* Harness-native category rows */
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .row {
+        height: 54px;
+        padding: 0 13px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        color: #f5f2eb;
+        border: 1px solid transparent;
+        transition: background 140ms ease, border-color 140ms ease;
+      }
+      .row:hover,
+      .row.active {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+      .row-left {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+      }
+      .row-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #f5f2eb;
+      }
+      .row-sub {
+        font-size: 11.5px;
+        color: rgba(245, 242, 235, 0.48);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .row-icon {
+        width: 18px;
+        height: 18px;
+        color: rgba(237, 230, 214, 0.78);
+        flex-shrink: 0;
+      }
+      .shortcut {
+        font-size: 11.5px;
+        color: rgba(245, 242, 235, 0.48);
+        font-weight: 500;
+        padding: 2px 7px;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+      }
+
+      /* Live results tray */
+      .results {
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        max-height: 92px;
+        overflow-y: auto;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #f5f2eb;
+        display: none;
+        user-select: text;
+      }
+      .results.show {
+        display: block;
+      }
+      .res-item {
+        padding: 3px 6px;
+        border-radius: 7px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+      .res-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .res-item strong {
+        color: #ede6d6;
+        font-weight: 600;
+      }
+
+      /* Calm minimal keyboard hint bar */
+      .hint-bar {
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 6px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 11px;
+        color: rgba(245, 242, 235, 0.44);
+      }
+      .hint-keys {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .cordis-note {
+        font-size: 11px;
+        color: rgba(245, 242, 235, 0.48);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="apple-liquid-sheet" id="sheet" data-tauri-drag-region>
+      <div class="search-capsule" data-tauri-drag-region>
+        <svg class="wheel-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="8.5" />
+          <circle cx="12" cy="12" r="3.2" />
+          <line x1="12" y1="3.5" x2="12" y2="20.5" />
+          <line x1="3.5" y1="12" x2="20.5" y2="12" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </svg>
+        <input
+          id="query"
+          class="search-input"
+          type="text"
+          placeholder="Search Carnival…"
+          autofocus
+        />
+        <button id="mic" class="mic-btn" title="Voice Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3" />
+            <path d="M5 10a7 7 0 0 0 14 0" />
+            <line x1="12" y1="17" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+        </button>
+      </div>
+
+      <div>
+        <div class="rows">
+          <div class="row active" data-mode="stages">
+            <div class="row-left">
+              <svg class="row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="10.5" r="7.5" />
+                <path d="M12 10.5L7 21M12 10.5L17 21M5 21h14" />
+                <circle cx="12" cy="10.5" r="1.4" fill="currentColor" />
+              </svg>
+              <div>
+                <div class="row-title">Stages &amp; Acts</div>
+                <div class="row-sub">Jump to Studios &amp; recent Acts</div>
+              </div>
+            </div>
+            <span class="shortcut">⌘1</span>
+          </div>
+
+          <div class="row" data-mode="flashgrep">
+            <div class="row-left">
+              <svg class="row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="20" y1="20" x2="16" y2="16" />
+                <polyline points="11 7.5 9.5 11 12.5 11 11 14.5" />
+              </svg>
+              <div>
+                <div class="row-title">FlashGrep Index</div>
+                <div class="row-sub">Sub-millisecond code &amp; workspace search</div>
+              </div>
+            </div>
+            <span class="shortcut">⌘2</span>
+          </div>
+
+          <div class="row" data-mode="orchestrator">
+            <div class="row-left">
+              <svg class="row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 14.8 9.2 22 12 14.8 14.8 12 22 9.2 14.8 2 12 9.2 9.2 12 2" />
+              </svg>
+              <div>
+                <div class="row-title">Orchestrator &amp; Clicky</div>
+                <div class="row-sub">Dispatch via SkillTree, Cordis &amp; spatial pointer</div>
+              </div>
+            </div>
+            <span class="shortcut">⌘3</span>
+          </div>
+
+          <div class="row" data-mode="vault">
+            <div class="row-left">
+              <svg class="row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+              </svg>
+              <div>
+                <div class="row-title">Vault &amp; Memory</div>
+                <div class="row-sub">Inspect SQLite WAL glass-box memory &amp; replays</div>
+              </div>
+            </div>
+            <span class="shortcut">⌘4</span>
+          </div>
+        </div>
+
+        <div id="results" class="results"></div>
+      </div>
+
+      <div class="hint-bar">
+        <div class="hint-keys">
+          <span>↑↓ Navigate</span>
+          <span>↵ Open</span>
+          <span>Esc Close</span>
+        </div>
+        <span id="cordis-label" class="cordis-note">Ready</span>
+      </div>
+    </div>
+
+    <script>
+      const BRIDGE = "http://127.0.0.1:32123";
+      const TINT_RGB = {
+        obsidian: "8, 8, 10",
+        jet: "2, 2, 4",
+        "warm-smoke": "16, 14, 12",
+      };
+      const queryEl = document.getElementById("query");
+      const resultsEl = document.getElementById("results");
+      const micEl = document.getElementById("mic");
+      const rows = Array.from(document.querySelectorAll(".row"));
+      const modeOrder = ["stages", "flashgrep", "orchestrator", "vault"];
+      let activeMode = "stages";
+      const cordisLabel = document.getElementById("cordis-label");
+
+      function escapeHtml(s) {
+        return String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function applyGlassVisual(opacity, tint) {
+        const op = Math.min(0.96, Math.max(0.08, Number(opacity) || 0.80));
+        const rgb = TINT_RGB[tint] || TINT_RGB.obsidian;
+        document.documentElement.style.setProperty("--glass-alpha", op.toFixed(2));
+        document.documentElement.style.setProperty("--glass-rgb", rgb);
+      }
+
+      function setMode(mode) {
+        activeMode = mode;
+        rows.forEach((r) => r.classList.toggle("active", r.dataset.mode === mode));
+      }
+
+      function showResults(html) {
+        resultsEl.innerHTML = html;
+        resultsEl.classList.add("show");
+      }
+
+      function clearResults() {
+        resultsEl.innerHTML = "";
+        resultsEl.classList.remove("show");
+      }
+
+      async function syncGlassAndStatus() {
+        try {
+          const [telRes, ovRes] = await Promise.all([
+            fetch(BRIDGE + "/telemetry"),
+            fetch(BRIDGE + "/overlay/state"),
+          ]);
+          const tel = await telRes.json();
+          const ov = await ovRes.json();
+          if (ov && typeof ov.glass_opacity === "number") {
+            applyGlassVisual(ov.glass_opacity, ov.glass_tint || "obsidian");
+          }
+          const running = tel && tel.cordis_state === "running";
+          cordisLabel.textContent = running ? `Cordis PID ${tel.cordis_pid ?? ""}` : "Ready";
+        } catch {}
+      }
+
+      resultsEl.addEventListener("click", (e) => {
+        const item = e.target.closest("[data-copy]");
+        if (item) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(item.getAttribute("data-copy") || "").catch(() => {});
+          }
+          cordisLabel.textContent = "Copied path to clipboard";
+          setTimeout(syncGlassAndStatus, 1600);
+        }
+      });
+
+      async function runCurrentMode() {
+        const q = queryEl.value.trim();
+        if (activeMode === "stages") {
+          await fetch(BRIDGE + "/window/main", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "focus" }),
+          }).catch(() => {});
+          await fetch(BRIDGE + "/window/spotlight", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "hide" }),
+          }).catch(() => {});
+        } else if (activeMode === "flashgrep") {
+          if (!q) {
+            showResults('<div class="res-item">Type a filename, symbol, or keyword above to search via FlashGrep.</div>');
+            return;
+          }
+          const res = await fetch(`${BRIDGE}/search?q=${encodeURIComponent(q)}&max=6`).then((r) => r.json());
+          const matches = res.matches || [];
+          if (!matches.length) {
+            showResults('<div class="res-item">No FlashGrep matches found.</div>');
+          } else {
+            showResults(
+              matches
+                .map((m) => {
+                  const lineNo = m.line_no ?? m.line ?? 1;
+                  const ref = `${m.path}:${lineNo}`;
+                  return `<div class="res-item" title="Click to copy path" data-copy="${escapeHtml(ref)}"><strong>${escapeHtml(ref)}</strong> — ${escapeHtml(m.snippet)}</div>`;
+                })
+                .join("")
+            );
+          }
+        } else if (activeMode === "orchestrator") {
+          const prompt = q || "Inspect workspace status";
+          showResults('<div class="res-item">Routing via Orchestrator…</div>');
+          const res = await fetch(BRIDGE + "/turn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              request_id: "spot-" + Date.now(),
+              session_id: "spotlight-orchestrator",
+              lane: "clicky_ambient",
+              prompt,
+            }),
+          }).then((r) => r.json());
+          showResults(
+            `<div class="res-item"><strong>${escapeHtml(res.domain_router)}</strong> (${escapeHtml(res.latency_ms)}ms): ${escapeHtml(res.text)}</div>`
+          );
+          syncGlassAndStatus();
+        } else if (activeMode === "vault") {
+          const [memRes, sessRes] = await Promise.all([
+            fetch(BRIDGE + "/memory").then((r) => r.json()),
+            fetch(BRIDGE + "/sessions").then((r) => r.json()),
+          ]);
+          const memItems = (memRes.entries || []).slice(0, 4).map(
+            (m) => `<div class="res-item"><strong>Memory · ${escapeHtml(m.key)}</strong>: ${escapeHtml(m.value_json)}</div>`
+          );
+          const sessItems = (sessRes.sessions || []).slice(0, 4).map(
+            (s) => `<div class="res-item"><strong>Act · ${escapeHtml(s.id)}</strong> (${escapeHtml(s.title)})</div>`
+          );
+          const combined = [...memItems, ...sessItems];
+          showResults(combined.length ? combined.join("") : '<div class="res-item">Vault is empty — run an Act or Clicky prompt to record events.</div>');
+        }
+      }
+
+      rows.forEach((row) => {
+        row.addEventListener("click", () => {
+          setMode(row.dataset.mode);
+          runCurrentMode();
+        });
+      });
+
+      queryEl.addEventListener("input", () => {
+        if (activeMode === "flashgrep" && queryEl.value.trim().length >= 2) {
+          runCurrentMode();
+        } else if (!queryEl.value.trim()) {
+          clearResults();
+        }
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" || ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "k")) {
+          e.preventDefault();
+          fetch(BRIDGE + "/window/spotlight", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "hide" }),
+          }).catch(() => {});
+        } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          const idx = modeOrder.indexOf(activeMode);
+          const nextIdx = e.key === "ArrowDown"
+            ? (idx + 1) % modeOrder.length
+            : (idx - 1 + modeOrder.length) % modeOrder.length;
+          setMode(modeOrder[nextIdx]);
+        } else if (e.key === "Enter") {
+          if (activeMode === "stages" && queryEl.value.trim()) {
+            setMode("orchestrator");
+          }
+          runCurrentMode();
+        } else if (e.metaKey && ["1", "2", "3", "4"].includes(e.key)) {
+          e.preventDefault();
+          setMode(modeOrder[Number(e.key) - 1]);
+          runCurrentMode();
+        }
+      });
+
+      micEl.addEventListener("click", () => {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) {
+          setMode("orchestrator");
+          queryEl.focus();
+          return;
+        }
+        const rec = new SR();
+        rec.lang = "en-US";
+        micEl.classList.add("listening");
+        rec.onresult = (ev) => {
+          const txt = ev.results?.[0]?.[0]?.transcript || "";
+          queryEl.value = txt;
+          setMode("orchestrator");
+          runCurrentMode();
+        };
+        rec.onend = () => micEl.classList.remove("listening");
+        rec.onerror = () => micEl.classList.remove("listening");
+        rec.start();
+      });
+
+      window.addEventListener("focus", () => {
+        queryEl.focus();
+        queryEl.select();
+        syncGlassAndStatus();
+      });
+
+      syncGlassAndStatus();
+      setInterval(syncGlassAndStatus, 2000);
+    </script>
+  </body>
+</html>
