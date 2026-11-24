@@ -41,7 +41,7 @@ fn parse_args() -> CliArgs {
                 db_path = Some(PathBuf::from(&args[i + 1]));
                 i += 2;
             }
-            "--clicky-port" if i + 1 < args.len() => {
+            "--companion-port" | "--clicky-port" if i + 1 < args.len() => {
                 clicky_port = args[i + 1].parse().unwrap_or(8787);
                 i += 2;
             }
