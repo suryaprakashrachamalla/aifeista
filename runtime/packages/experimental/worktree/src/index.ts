@@ -4,19 +4,19 @@
  * removed checkout.
  */
 
-import { Context, Service, type Volatile } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-fs'
-import type { SandboxExecutionPolicy } from '@deepseek-ai/dsh-sandbox'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import type {} from '@deepseek-ai/dsh-settings'
-import { appendPluginRecord } from '@deepseek-ai/dsh-session'
-import type { Session, SessionId } from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-working-directory'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import { Context, Service, type Volatile } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type { Agent } from '@carnival/dsh-agent'
+import type {} from '@carnival/dsh-fs'
+import type { SandboxExecutionPolicy } from '@carnival/dsh-sandbox'
+import type {} from '@carnival/dsh-sandbox-policy'
+import type {} from '@carnival/dsh-settings'
+import { appendPluginRecord } from '@carnival/dsh-session'
+import type { Session, SessionId } from '@carnival/dsh-session'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import type {} from '@carnival/dsh-working-directory'
+import { HarnessError } from '@carnival/dsh-error'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
 import { within, WorktreeReclamation } from './archive.ts'
 import { WorktreeError } from './error.ts'
 import { PREPARE_DIRECTORY } from './directory.ts'
@@ -80,7 +80,7 @@ const REMOTE_REFS = 'refs/remotes/'
 /** Runs one confined Git command; output with an exit code outside `allowedExitCodes` throws. */
 type GitRun = (directory: string, args: string[], allowedExitCodes?: number[], env?: NodeJS.ProcessEnv) => ReturnType<typeof runCommand>
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     worktrees: WorktreeService
   }

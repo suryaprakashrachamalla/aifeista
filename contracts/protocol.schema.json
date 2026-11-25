@@ -6,11 +6,11 @@
   "definitions": {
     "HarnessId": {
       "type": "string",
-      "enum": ["openbitfun", "deepseek_harness", "clicky"]
+      "enum": ["carnival_core", "carnival_runtime", "companion"]
     },
     "LaneKind": {
       "type": "string",
-      "enum": ["clicky_ambient", "builder_workspace", "optimization_deck"]
+      "enum": ["companion_ambient", "builder_workspace", "optimization_deck"]
     },
     "CordisState": {
       "type": "string",
@@ -18,7 +18,7 @@
     },
     "ModelTier": {
       "type": "string",
-      "enum": ["local_triage", "deepseek_v4", "byok_cloud"]
+      "enum": ["local_triage", "primary_cloud", "byok_cloud"]
     },
     "OptimizationFlags": {
       "type": "object",

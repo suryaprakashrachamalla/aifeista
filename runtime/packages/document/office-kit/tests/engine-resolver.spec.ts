@@ -4,9 +4,9 @@ import { resolveKitModule } from '../src/locate.ts'
 import { expect, it } from 'vitest'
 
 it('matches the consumer Kit installation for native and WASM engine manifests', () => {
-  const kitEntry = import.meta.resolve('@deepseek-ai/libreoffice-kit')
+  const kitEntry = import.meta.resolve('@carnival/libreoffice-kit')
   const fromKit = createRequire(kitEntry)
-  const kit = resolveKitModule(() => import.meta.resolve('@deepseek-ai/libreoffice-kit'))
+  const kit = resolveKitModule(() => import.meta.resolve('@carnival/libreoffice-kit'))
   if (kit.kind !== 'available') throw new Error('Expected the provider Kit installation')
   expect(kit.entry).toBe(kitEntry)
   const { resolveEnginePackage } = kit
@@ -16,7 +16,7 @@ it('matches the consumer Kit installation for native and WASM engine manifests',
       throw error
     }
   }
-  for (const name of ['@deepseek-ai/libreoffice-kit-wasm', `@deepseek-ai/libreoffice-kit-${process.platform}-${process.arch}`]) {
+  for (const name of ['@carnival/libreoffice-kit-wasm', `@carnival/libreoffice-kit-${process.platform}-${process.arch}`]) {
     const expected = outcome(name => fromKit.resolve(`${name}/package.json`), name)
     expect(outcome(resolveEnginePackage, name)).toBe(expected)
   }

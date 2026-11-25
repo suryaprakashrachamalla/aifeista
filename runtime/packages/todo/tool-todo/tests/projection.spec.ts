@@ -7,20 +7,20 @@
  * removes it (HMR safety). The carrier and framework are exercised unmodified.
  */
 
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import type { TodoItem } from '@deepseek-ai/dsh-tool-todo'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import UserQuestionService from '@deepseek-ai/dsh-user-questions'
-import * as ToolTodo from '@deepseek-ai/dsh-tool-todo'
+import { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import { createUserMessage } from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import type { TodoItem } from '@carnival/dsh-tool-todo'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import UserQuestionService from '@carnival/dsh-user-questions'
+import * as ToolTodo from '@carnival/dsh-tool-todo'
 
 interface Bench {
   ctx: Context

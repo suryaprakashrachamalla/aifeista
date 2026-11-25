@@ -12,11 +12,11 @@
 
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
-import { defineDomain } from '@deepseek-ai/dsh-storage-domain'
+import { defineDomain } from '@carnival/dsh-storage-domain'
 import type {
   ChangeRequestBrief, ChangeRequestBriefListener, ChangeRequestKnownState, ChangeRequestRef,
-} from '@deepseek-ai/dsh-experimental-forge/types'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+} from '@carnival/dsh-experimental-forge/types'
+import type { SessionId } from '@carnival/dsh-session/types'
 import type { ForgeChangeRequestListState, ForgeChangeRequestStatesFrame } from './types.ts'
 
 const stateSchema: z.ZodType<ForgeChangeRequestListState> = z.object({

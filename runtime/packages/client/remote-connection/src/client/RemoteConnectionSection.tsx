@@ -1,7 +1,7 @@
 /** Access address, QR login, and pairing approvals for browser sign-in. */
 import { QRCodeSVG } from 'qrcode.react'
-import { Button, IconWarningOutlineMedium, StateDot } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
+import { Button, IconWarningOutlineMedium, StateDot } from '@carnival/dsh-client-ui-primitives'
+import type { PropsLocale } from '@carnival/dsh-client-ui-slots'
 import type { RemoteConnectionContentProps } from './slots.ts'
 import { PairingRequests } from './PairingRequests.tsx'
 import css from './RemoteConnectionSection.module.css'

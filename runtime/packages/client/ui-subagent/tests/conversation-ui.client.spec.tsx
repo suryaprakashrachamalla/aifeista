@@ -1,15 +1,15 @@
 // @vitest-environment jsdom
-import { contextMenuHook } from '@deepseek-ai/dsh-client-test-runtime'
+import { contextMenuHook } from '@carnival/dsh-client-test-runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { useState } from 'react'
-import { allowAllAccess, bindSnapshotSelector, makeTranslate, RemoteError, sessionSnapshot } from '@deepseek-ai/dsh-client-test-runtime'
+import { allowAllAccess, bindSnapshotSelector, makeTranslate, RemoteError, sessionSnapshot } from '@carnival/dsh-client-test-runtime'
 import type {
   SessionListState, SessionSummary, SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SubagentAddress, SubagentCatalogEntry } from '@deepseek-ai/dsh-subagent/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { SessionStatusSnapshot } from '@deepseek-ai/dsh-client-ui-session-status/client'
+} from '@carnival/dsh-api-session-controller/client'
+import type { SubagentAddress, SubagentCatalogEntry } from '@carnival/dsh-subagent/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { SessionStatusSnapshot } from '@carnival/dsh-client-ui-session-status/client'
 import { SubagentHeaderLineage, type SubagentHeaderLineageProps } from '../src/client/SubagentHeaderLineage.tsx'
 import {
   SubagentsProgress, SubagentsRunningIndicator, SubagentsSection,
@@ -18,7 +18,7 @@ import {
 import { SubagentReadOnlyComposer } from '../src/client/SubagentReadOnlyComposer.tsx'
 import { createSubagentsSectionStore } from '../src/client/subagents-store.ts'
 import { en, zh } from '../src/client/locales.ts'
-import type { PanelDetailsProps, PanelFoldProps } from '@deepseek-ai/dsh-client-ui-session-panel/client'
+import type { PanelDetailsProps, PanelFoldProps } from '@carnival/dsh-client-ui-session-panel/client'
 
 afterEach(() => {
   cleanup()

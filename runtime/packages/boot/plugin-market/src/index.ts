@@ -1,21 +1,21 @@
 /** Host reader of configured plugin market indexes for the Discover page and the `plugin_market` tool. */
 
 import { isAbsolute, join, resolve } from 'node:path'
-import type { Context, Volatile } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import type { Context, Volatile } from '@carnival/cordis'
+import z from '@carnival/schemastery'
 import semver from 'semver'
-import { evaluatePluginCompatibility, getDshRuntimeVersion } from '@deepseek-ai/dsh-app-boot'
-import { marketInstallTarget, type MarketIndex, type MarketPlugin, type MarketVersion } from '@deepseek-ai/dsh-plugin-market-index'
-import { parseGitMarketIndexSource } from '@deepseek-ai/dsh-plugin-market-index/source'
-import type { BundleInfo } from '@deepseek-ai/dsh-plugin-manager/types'
+import { evaluatePluginCompatibility, getDshRuntimeVersion } from '@carnival/dsh-app-boot'
+import { marketInstallTarget, type MarketIndex, type MarketPlugin, type MarketVersion } from '@carnival/dsh-plugin-market-index'
+import { parseGitMarketIndexSource } from '@carnival/dsh-plugin-market-index/source'
+import type { BundleInfo } from '@carnival/dsh-plugin-manager/types'
 // Also declares the `pluginManager` service this one reads bundles from.
-import { pinnedGitOrigin } from '@deepseek-ai/dsh-plugin-manager'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { pinnedGitOrigin } from '@carnival/dsh-plugin-manager'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import { Remote, RemoteError, TypertRemoteService } from '@carnival/dsh-typert-protocol'
 import {
   DetailFailure, detailImageResponse, languageChain, NPM_FILE_SOURCES, npmFileSourceOrder, npmFiles,
-} from '@deepseek-ai/dsh-plugin-detail'
-import type { NpmFileSource } from '@deepseek-ai/dsh-plugin-detail/types'
+} from '@carnival/dsh-plugin-detail'
+import type { NpmFileSource } from '@carnival/dsh-plugin-detail/types'
 import { DetailReader, repositoryOf, type DetailLocation, type RepositoryLocation } from './detail.ts'
 import { repositoryFiles, type RepositoryFileOptions } from './detail-files.ts'
 import { normalizeIndexUrl } from './index-url.ts'
@@ -23,9 +23,9 @@ import { RepositoryCache } from './repository-cache.ts'
 import { parseIndexInWorker } from './parse-thread.ts'
 import { MarketSearch } from './search.ts'
 // Type-only: `settings.update`, the Loader's `loader/volatile-update` event, and the `connection` Fetch routes.
-import type {} from '@deepseek-ai/dsh-settings'
-import type {} from '@deepseek-ai/cordis-plugin-loader'
-import type {} from '@deepseek-ai/dsh-client-connection'
+import type {} from '@carnival/dsh-settings'
+import type {} from '@carnival/cordis-plugin-loader'
+import type {} from '@carnival/dsh-client-connection'
 import type {
   MarketCompatibility, MarketIndexSummary, MarketInstallation, MarketListingEntry, MarketListingVersion, MarketQuery, MarketSearchResult,
   PluginDetail,
@@ -34,7 +34,7 @@ import type {
 export type * from './types.ts'
 export { PluginMarketError, type PluginMarketErrorCode } from './error.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Configured plugin market index sources and their validated listings. */
     pluginMarket: PluginMarket

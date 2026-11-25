@@ -1,21 +1,21 @@
 /** CUA tool and prompt ownership follows live Agent presets and provider disposal. */
 import { resolve } from 'node:path'
-import { Context, FiberState } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import AgentPresets from '@deepseek-ai/dsh-agent-preset-registry'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import ComputerUseRegistry from '@deepseek-ai/dsh-computer-use'
-import NodeRuntime from '@deepseek-ai/dsh-ptc-runtime-node'
-import Subprocess from '@deepseek-ai/dsh-subprocess'
-import Sandbox from '@deepseek-ai/dsh-sandbox-local'
-import SandboxPolicy from '@deepseek-ai/dsh-sandbox-policy'
-import { scopeTarget } from '@deepseek-ai/dsh-scope'
-import WorkingDirectory from '@deepseek-ai/dsh-working-directory'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { Agent } from '@deepseek-ai/dsh-agent'
+import { Context, FiberState } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import AgentPresets from '@carnival/dsh-agent-preset-registry'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import ComputerUseRegistry from '@carnival/dsh-computer-use'
+import NodeRuntime from '@carnival/dsh-ptc-runtime-node'
+import Subprocess from '@carnival/dsh-subprocess'
+import Sandbox from '@carnival/dsh-sandbox-local'
+import SandboxPolicy from '@carnival/dsh-sandbox-policy'
+import { scopeTarget } from '@carnival/dsh-scope'
+import WorkingDirectory from '@carnival/dsh-working-directory'
+import type { SessionId } from '@carnival/dsh-session'
+import type { Agent } from '@carnival/dsh-agent'
 import { expect, it, onTestFinished, vi } from 'vitest'
 import { CuaConfig, installCua } from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const programPrompt = 'Fixture CUA program guidance\n\nAX read defaults: maxElements=2000, maxDepth=25.\n\nMaximum click holdMs: 5000 ms.'
 
@@ -538,6 +538,6 @@ it.each([
   expect(prompt).not.toContain('Raw tools use { method, params }')
 })
 
-function admittedMessages(assembly: import('@deepseek-ai/dsh-system-prompt').PromptAssembly) {
+function admittedMessages(assembly: import('@carnival/dsh-system-prompt').PromptAssembly) {
   return assembly.systemUpdates(false).map(update => update.message)
 }

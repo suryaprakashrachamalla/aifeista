@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { SessionFormatEventCollector, type SessionFormatEvent, type SessionFormatJsonObject } from '@deepseek-ai/dsh-session-format'
-import { createSessionFormatCatalogWithChildren, sessionFormatCatalog } from '@deepseek-ai/dsh-session-format-catalog'
-import { Session, type SessionId, SessionLogOffset, type SessionEvent, type SessionHeader } from '@deepseek-ai/dsh-session'
-import { imageOffloadProjection } from '@deepseek-ai/dsh-compaction-image-offload/projection'
+import { SessionFormatEventCollector, type SessionFormatEvent, type SessionFormatJsonObject } from '@carnival/dsh-session-format'
+import { createSessionFormatCatalogWithChildren, sessionFormatCatalog } from '@carnival/dsh-session-format-catalog'
+import { Session, type SessionId, SessionLogOffset, type SessionEvent, type SessionHeader } from '@carnival/dsh-session'
+import { imageOffloadProjection } from '@carnival/dsh-compaction-image-offload/projection'
 import { createSessionFormatV3ToV4 } from '../src/index.ts'
 import { remapV3References } from '../src/references.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const header = { type: 'session', version: 3, id: 'restart', createdAt: 1, isSeeded: false, delegationDepth: 0 }
 const nativeHeader: SessionHeader = { version: 4, id: brandString<SessionId>(header.id), createdAt: 1, isSeeded: false, delegationDepth: 0 }

@@ -19,8 +19,8 @@ import {
   type WorkspacePackageManifest,
 } from './verify-package-dependencies.ts'
 
-const TARGET_PACKAGE = '@deepseek-ai/dsh'
-const CORDIS = '@deepseek-ai/cordis'
+const TARGET_PACKAGE = '@carnival/dsh'
+const CORDIS = '@carnival/cordis'
 
 interface Options {
   readonly candidates?: readonly string[]

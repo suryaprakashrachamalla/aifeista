@@ -31,7 +31,7 @@ function discoverHarnesses(root) {
     repo_root: root,
     harnesses: [
       {
-        id: "openbitfun",
+        id: "carnival_core",
         present: fs.existsSync(path.join(coreDir, "Cargo.toml")),
         path: coreDir,
         name: "carnival-core",
@@ -39,7 +39,7 @@ function discoverHarnesses(root) {
         capabilities: ["tauri_desktop", "rust_runtime", "workspace_index", "sandbox", "watchdog"],
       },
       {
-        id: "deepseek_harness",
+        id: "carnival_runtime",
         present: fs.existsSync(path.join(runtimeDir, "package.json")),
         path: runtimeDir,
         name: runtimeMeta.name,
@@ -47,7 +47,7 @@ function discoverHarnesses(root) {
         capabilities: ["cordis_microkernel", "ptc_runtime", "sandbox_policy", "sdk_jsonrpc"],
       },
       {
-        id: "clicky",
+        id: "companion",
         present: fs.existsSync(path.join(companionDir, "leanring-buddy")),
         path: companionDir,
         name: "carnival-companion",
@@ -68,7 +68,7 @@ function handleRouteTurn(params = {}) {
   let text;
 
   if (
-    lane === "clicky_ambient" ||
+    lane === "companion_ambient" ||
     lower.includes("where") ||
     lower.includes("point") ||
     lower.includes("button") ||

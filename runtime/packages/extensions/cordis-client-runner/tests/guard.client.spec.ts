@@ -7,8 +7,8 @@
  * dynamic package from reaching a foreign context. Registrations ride the
  * CALLING fiber, so disposing it must remove them (HMR safety).
  */
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
 import { describe, expect, it, vi } from 'vitest'
 import type { FC } from 'react'
 import type {
@@ -16,8 +16,8 @@ import type {
   CordisDynamicPluginId,
   CordisDynamicPluginRunId,
   DynamicCordisPackage,
-} from '@deepseek-ai/dsh-api-remotes/client'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
+} from '@carnival/dsh-api-remotes/client'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
 import { dynamicCordisContext } from '../src/client/guard.ts'
 import type { DynamicCordisSlotLedgerRow } from '../src/client/guard.ts'
 

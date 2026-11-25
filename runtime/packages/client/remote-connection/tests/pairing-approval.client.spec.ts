@@ -1,7 +1,7 @@
 /** Decision outcomes stay ordered and stop publishing when owner access ends. */
 import { expect, it, vi } from 'vitest'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { PairingDecisionResult, PairingRequestId } from '../src/types.ts'
 import { PairingApproval } from '../src/client/pairing-approval.ts'
 

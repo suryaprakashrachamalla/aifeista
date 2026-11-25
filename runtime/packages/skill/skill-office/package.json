@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-skill-office",
+  "name": "@carnival/dsh-skill-office",
   "description": "Bundled Word, PowerPoint, and Excel workflows and Office operation guidance",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/skill/skill-office"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,20 +27,20 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-ptc": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tool-executor-ptc": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/schemastery": "workspace:~",
     "yaml": "^2.4.2"
   }
 }

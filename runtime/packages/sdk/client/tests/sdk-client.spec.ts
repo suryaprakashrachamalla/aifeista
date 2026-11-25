@@ -10,8 +10,8 @@ import { tmpdir } from 'node:os'
 import { isAbsolute, join, relative, resolve as resolvePath } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId } from '@carnival/dsh-llm'
 import {
   DeepSeekHarness,
   HarnessClient,

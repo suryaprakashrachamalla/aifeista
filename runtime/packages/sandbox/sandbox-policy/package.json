@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-sandbox-policy",
+  "name": "@carnival/dsh-sandbox-policy",
   "description": "Per-call sandbox policy resolver and current model context: deployment fallbacks plus each session's mode and workspace root, shared by every enforcing capability family",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/sandbox/sandbox-policy"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,28 +27,28 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-sandbox": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-sandbox": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:*",
-    "@deepseek-ai/dsh-fs-local": "workspace:*",
-    "@deepseek-ai/dsh-sandbox": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-user-approval": "workspace:*",
-    "@deepseek-ai/dsh-working-directory": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-agent-loop-testkit": "workspace:*",
+    "@carnival/dsh-fs-local": "workspace:*",
+    "@carnival/dsh-sandbox": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-user-approval": "workspace:*",
+    "@carnival/dsh-working-directory": "workspace:*"
   }
 }

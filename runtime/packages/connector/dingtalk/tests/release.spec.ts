@@ -10,7 +10,7 @@ import { chmod, mkdir, mkdtemp, readdir, readFile, readlink, rm, symlink, writeF
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { strToU8, zipSync, type Zippable } from 'fflate'
 import { create } from 'tar'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-session-stats",
+  "name": "@carnival/dsh-session-stats",
   "description": "Whole-log conversation counts and wall times projection (sessionStats) for the DeepSeek Harness",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/session/session-stats"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -41,21 +36,21 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "dependencies": {
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   }
 }

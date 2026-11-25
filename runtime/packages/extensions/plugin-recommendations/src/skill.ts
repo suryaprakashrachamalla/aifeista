@@ -1,9 +1,9 @@
 /** On-demand official-plugin catalog for explicit product-use needs. */
 import { readFile } from 'node:fs/promises'
-import { bundleCatalogEntry } from '@deepseek-ai/dsh-plugin-manager/catalog'
-import type { Context } from '@deepseek-ai/cordis'
-import { BUNDLED_SKILL_RANK, type SkillCandidate } from '@deepseek-ai/dsh-skill'
-import type { BundleInfo } from '@deepseek-ai/dsh-plugin-manager/types'
+import { bundleCatalogEntry } from '@carnival/dsh-plugin-manager/catalog'
+import type { Context } from '@carnival/cordis'
+import { BUNDLED_SKILL_RANK, type SkillCandidate } from '@carnival/dsh-skill'
+import type { BundleInfo } from '@carnival/dsh-plugin-manager/types'
 
 /** Shipped optional plugins only; no arbitrary install target is accepted.
  * @param bundle - a profile bundle as the plugin manager reports it.

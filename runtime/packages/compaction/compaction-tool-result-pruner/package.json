@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+  "name": "@carnival/dsh-compaction-tool-result-pruner",
   "description": "Replay-safe model-free head/middle/tail pruning for tool-result surface nodes",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/compaction/compaction-tool-result-pruner"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,26 +27,26 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-compaction": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-token-meter": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-compaction": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-token-meter": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/schemastery": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-compaction": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-token-meter": "workspace:*",
-    "@deepseek-ai/dsh-compaction-image-offload": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-compaction": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-token-meter": "workspace:*",
+    "@carnival/dsh-compaction-image-offload": "workspace:*"
   }
 }

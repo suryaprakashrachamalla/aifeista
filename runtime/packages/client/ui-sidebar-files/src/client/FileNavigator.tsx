@@ -7,19 +7,19 @@
  * follows `PUSH_FROM`, `FILL_BELOW`, and `FULLSCREEN_QUERY`; the package
  * README describes its behavior, search included.
  */
-import { selectSessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
+import { selectSessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, KeyboardEvent, ReactNode } from 'react'
 import clsx from 'clsx'
-import type { RemoteFailure } from '@deepseek-ai/dsh-api-remotes/client'
-import type { UseSidebarRightTabInfo } from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
+import type { RemoteFailure } from '@carnival/dsh-api-remotes/client'
+import type { UseSidebarRightTabInfo } from '@carnival/dsh-client-ui-sidebar-right/client'
 import type { TreeEntry } from './FileTree.tsx'
-import type { FactoryComponentPropsOf, TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
+import type { FactoryComponentPropsOf, TranslateNS } from '@carnival/dsh-client-ui-slots'
 import {
   Button, IconCloseOutlineRegular, IconEyeOffOutlineRegular, IconEyeOutlineRegular, IconInfoOutlineRegular, IconSearchOutlineRegular,
   StateDot, Tooltip,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import { fileAddressFor } from '@deepseek-ai/dsh-util-workspace-path'
+} from '@carnival/dsh-client-ui-primitives'
+import { fileAddressFor } from '@carnival/dsh-util-workspace-path'
 import type { FilesInjected } from './face.ts'
 import type { SidebarFilesKey } from './locales.ts'
 import { SearchSettings } from './SearchSettings.tsx'
@@ -40,7 +40,7 @@ export interface FileNavigatorInput {
   readonly onOpen: (address: string) => void
 }
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface SlotFactoryMap {
     /**
      * One pane's workspace tree with its width and show/hide state. The host renders it as a direct child of

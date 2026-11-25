@@ -1,7 +1,7 @@
 /**
  * Shared filesystem path helpers for DeepSeek Harness user data.
  *
- * @module @deepseek-ai/dsh-home-paths
+ * @module @carnival/dsh-home-paths
  */
 
 import { opendir, realpath } from 'node:fs/promises'
@@ -203,7 +203,7 @@ export interface DshPathLocation {
 /**
  * Join path segments onto one category directory of the Harness home without
  * creating it. An owner passes its own directory name, normally its package
- * name without the `@deepseek-ai/dsh-` prefix, as the first segment.
+ * name without the `@carnival/dsh-` prefix, as the first segment.
  * @param location - category under the resolved home, or a category with an explicit home override.
  * @param segments - path segments appended to the category directory; an empty list returns the directory itself.
  * @returns the normalized absolute path.

@@ -2,7 +2,7 @@
 import { EventEmitter } from 'node:events'
 import { PassThrough } from 'node:stream'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { observeRuntime } from '../src/process-events.ts'
 
 function setup() {

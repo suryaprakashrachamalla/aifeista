@@ -7,8 +7,8 @@ use layer0_sandbox::PrivacyGuard;
 use layer0_store::EventStore;
 use layer0_watchdog::{HotSwapOutcome, SeamFactory, Watchdog};
 use layer1_adapters::{
-    spawn_bridge_servers, AgentManager, AppState, OpenBitFunAdapter, OverlayState,
-    RemoteHandoffManager, StudioRecipes,
+    spawn_bridge_servers, AgentManager, AppState, OverlayState, RemoteHandoffManager,
+    StudioRecipes, WorkspaceCoreAdapter,
 };
 use layer1_cordis_bus::{CordisBus, CordisConfig};
 use layer1_router::OptimizationMiddleware;
@@ -17,7 +17,7 @@ use serde_json::json;
 struct CliArgs {
     workspace: PathBuf,
     db_path: PathBuf,
-    clicky_port: u16,
+    companion_port: u16,
     bridge_port: u16,
     self_check: bool,
 }
@@ -26,7 +26,7 @@ fn parse_args() -> CliArgs {
     let args: Vec<String> = std::env::args().collect();
     let mut workspace = PathBuf::from(".");
     let mut db_path: Option<PathBuf> = None;
-    let mut clicky_port: u16 = 8787;
+    let mut companion_port: u16 = 8787;
     let mut bridge_port: u16 = 32123;
     let mut self_check = false;
 
@@ -41,8 +41,8 @@ fn parse_args() -> CliArgs {
                 db_path = Some(PathBuf::from(&args[i + 1]));
                 i += 2;
             }
-            "--companion-port" | "--clicky-port" if i + 1 < args.len() => {
-                clicky_port = args[i + 1].parse().unwrap_or(8787);
+            "--companion-port" if i + 1 < args.len() => {
+                companion_port = args[i + 1].parse().unwrap_or(8787);
                 i += 2;
             }
             "--bridge-port" if i + 1 < args.len() => {
@@ -65,7 +65,7 @@ fn parse_args() -> CliArgs {
     CliArgs {
         workspace,
         db_path,
-        clicky_port,
+        companion_port,
         bridge_port,
         self_check,
     }
@@ -78,25 +78,25 @@ async fn run_self_check(repo_root: &Path) -> Result<(), String> {
     let watchdog = Watchdog::new(registry.clone(), store.clone(), guard);
 
     let index = WorkspaceIndex::new(default_workspace_roots(repo_root));
-    let obf = OpenBitFunAdapter::new(repo_root, index);
-    let obf_factory: SeamFactory = {
-        let adapter = obf.clone();
+    let core = WorkspaceCoreAdapter::new(repo_root, index);
+    let core_factory: SeamFactory = {
+        let adapter = core.clone();
         Arc::new(move || Arc::new(adapter.clone()))
     };
 
     let outcome = watchdog
         .hot_swap_seam(
-            &[PathBuf::from("crates/layer1-adapters/src/openbitfun.rs")],
+            &[PathBuf::from("crates/layer1-adapters/src/workspace_core.rs")],
             &CapabilityEnvelope::restricted(
-                "adapter.openbitfun",
+                "adapter.workspace_core",
                 vec![repo_root.join("crates/layer0-core").display().to_string()],
             ),
             None,
-            obf_factory,
+            core_factory,
             |reg| {
                 let list = reg.list().map_err(|e| e.to_string())?;
                 if list.is_empty() {
-                    return Err("expected openbitfun seam mounted".into());
+                    return Err("expected workspace_core seam mounted".into());
                 }
                 Ok(())
             },
@@ -119,9 +119,9 @@ async fn run_self_check(repo_root: &Path) -> Result<(), String> {
     cordis.shutdown().await.map_err(|e| e.to_string())?;
 
     println!(
-        "AI Carnival self-check PASSED: sqlite_wal={}, indexed_files={}, discovered_harnesses={count}",
+        "Carnival self-check PASSED: sqlite_wal={}, indexed_files={}, discovered_modules={count}",
         store.journal_mode().unwrap_or_default(),
-        obf.index.file_count(),
+        core.index.file_count(),
     );
     Ok(())
 }
@@ -148,16 +148,16 @@ async fn main() {
     let registry = SeamRegistry::new(cli.workspace.display().to_string());
     let store = EventStore::open(&cli.db_path).expect("failed to open SQLite WAL store");
     let index = WorkspaceIndex::new(default_workspace_roots(&cli.workspace));
-    let openbitfun = OpenBitFunAdapter::new(&cli.workspace, index);
+    let workspace_core = WorkspaceCoreAdapter::new(&cli.workspace, index);
     registry
-        .mount(Arc::new(openbitfun.clone()))
-        .expect("failed to mount OpenBitFun adapter");
+        .mount(Arc::new(workspace_core.clone()))
+        .expect("failed to mount workspace_core adapter");
 
     let cordis = CordisBus::new(CordisConfig::default_for_repo(&cli.workspace));
     let optimizer = OptimizationMiddleware::default();
     let privacy_guard = PrivacyGuard::new();
     let cua_envelope = CapabilityEnvelope {
-        subject: "clicky-cua".into(),
+        subject: "carnival-cua".into(),
         fs_read: vec![cli.workspace.display().to_string()],
         fs_write: vec![cli.workspace.join("crates").display().to_string()],
         network_allow: false,
@@ -171,30 +171,30 @@ async fn main() {
         store,
         cordis: cordis.clone(),
         optimizer,
-        openbitfun: openbitfun.clone(),
+        workspace_core: workspace_core.clone(),
         privacy_guard,
         cua_envelope,
         overlay_state: Arc::new(RwLock::new(OverlayState::default())),
         window_tx: None,
-        agent_manager: AgentManager::new(&cli.workspace, Some(openbitfun)),
+        agent_manager: AgentManager::new(&cli.workspace, Some(workspace_core)),
         studio_recipes: StudioRecipes::default_location(),
         remote_handoff: RemoteHandoffManager::default_location(&cli.workspace),
     };
 
-    let bound = spawn_bridge_servers(state, cli.clicky_port, cli.bridge_port)
+    let bound = spawn_bridge_servers(state, cli.companion_port, cli.bridge_port)
         .await
         .expect("failed to bind bridge servers");
 
     tracing::info!(
-        clicky_endpoint = %bound.clicky_addr,
+        companion_endpoint = %bound.companion_addr,
         bridge_endpoint = %bound.bridge_addr,
         "Carnival daemon ready (Companion :8787 + Bridge/Telemetry :32123)"
     );
 
     let _ = tokio::signal::ctrl_c().await;
-    tracing::info!("shutting down AI Carnival daemon...");
+    tracing::info!("shutting down Carnival daemon...");
     let _ = cordis.shutdown().await;
-    let _ = registry.unmount("adapter.openbitfun");
-    bound.clicky_handle.abort();
+    let _ = registry.unmount("adapter.workspace_core");
+    bound.companion_handle.abort();
     bound.bridge_handle.abort();
 }

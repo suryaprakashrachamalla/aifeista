@@ -198,20 +198,20 @@ const chatImportRemoteBuild = fileURLToPath(new URL('./packages/experimental/dee
 const hmrRemoteBuild = fileURLToPath(new URL('./packages/client/hmr/lib/typert.remote-client.js', import.meta.url))
 const generatedRemoteAliases = {
   ...existsSync(hmrRemoteBuild) ? {} : {
-    '@deepseek-ai/dsh-client-hmr/remote': fileURLToPath(new URL('./packages/client/hmr/tests/generated-remote-stub.ts', import.meta.url)),
+    '@carnival/dsh-client-hmr/remote': fileURLToPath(new URL('./packages/client/hmr/tests/generated-remote-stub.ts', import.meta.url)),
   },
   ...existsSync(liveshareRemoteBuild) ? {} : {
-    '@deepseek-ai/dsh-experimental-liveshare/remote': fileURLToPath(new URL('./packages/experimental/liveshare/tests/generated-remote-stub.ts', import.meta.url)),
+    '@carnival/dsh-experimental-liveshare/remote': fileURLToPath(new URL('./packages/experimental/liveshare/tests/generated-remote-stub.ts', import.meta.url)),
   },
   ...existsSync(chatImportRemoteBuild) ? {} : {
-    '@deepseek-ai/dsh-deepseek-chat-import/remote': fileURLToPath(new URL('./packages/experimental/deepseek-chat-import/tests/generated-remote-stub.ts', import.meta.url)),
+    '@carnival/dsh-deepseek-chat-import/remote': fileURLToPath(new URL('./packages/experimental/deepseek-chat-import/tests/generated-remote-stub.ts', import.meta.url)),
   },
 }
 const testingAliases = { ...claudeCodeTestingAliases, ...generatedRemoteAliases }
 const testPlugins = () => [
   pathsPlugin(),
   standardDecoratorPlugin(),
-  sourceRemotePlugin(import.meta.dirname, '@deepseek-ai/dsh-client-remote-connection'),
+  sourceRemotePlugin(import.meta.dirname, '@carnival/dsh-client-remote-connection'),
 ]
 
 export default defineConfig({

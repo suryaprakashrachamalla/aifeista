@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-config-editor",
+  "name": "@carnival/dsh-config-editor",
   "description": "Persist plugin configuration through profile patches and Loader reconciliation",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/boot/config-editor"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,25 +27,25 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-hmr": "workspace:*",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/dsh-app-boot": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-hmr": "workspace:*",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/dsh-app-boot": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-atomic-write": "workspace:*",
+    "@carnival/dsh-atomic-write": "workspace:*",
     "yaml": "^2.8.1"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-hmr": "workspace:*",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/dsh-app-boot": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-hmr": "workspace:*",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/dsh-app-boot": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-hmr": {
+    "@carnival/dsh-hmr": {
       "optional": true
     }
   }

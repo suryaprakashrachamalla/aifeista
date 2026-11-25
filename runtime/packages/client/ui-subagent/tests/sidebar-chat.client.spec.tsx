@@ -2,16 +2,16 @@
 import type { ReactNode } from 'react'
 import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import type {
   ISessions, SessionListState, SessionReference, SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { ResourceProvider } from '@deepseek-ai/dsh-client-resources/client'
-import { sessionSnapshot } from '@deepseek-ai/dsh-client-test-runtime'
-import type { ConversationViewsProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { SidebarRightTabDefinition } from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
+} from '@carnival/dsh-api-session-controller/client'
+import type { ResourceProvider } from '@carnival/dsh-client-resources/client'
+import { sessionSnapshot } from '@carnival/dsh-client-test-runtime'
+import type { ConversationViewsProps } from '@carnival/dsh-client-ui-conversation/client'
+import type { SidebarRightTabDefinition } from '@carnival/dsh-client-ui-sidebar-right/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { SubagentAddress } from '@carnival/dsh-subagent/client'
 import {
   ConversationSlotPanel, FixedChatConversationView, parseSubagentChatAddress,
   registerSidebarChat, sessionChatAddress, subagentChatAddress, SUBAGENT_CHAT_ID, type SidebarChatTabProps,

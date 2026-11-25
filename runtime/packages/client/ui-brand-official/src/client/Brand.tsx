@@ -1,5 +1,5 @@
-import { BrandWordmark, FishLogo } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { SidebarBrandMarkOwnerProps } from '@deepseek-ai/dsh-client-ui-sidebar/client'
+import { BrandWordmark, FishLogo } from '@carnival/dsh-client-ui-primitives'
+import type { SidebarBrandMarkOwnerProps } from '@carnival/dsh-client-ui-sidebar/client'
 
 /**
  * Render the AI Carnival Circus Ferris Wheel mark with the size requested by its host surface.

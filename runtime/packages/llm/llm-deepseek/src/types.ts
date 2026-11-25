@@ -2,10 +2,10 @@
 import type {
   ImageAttachmentAccess, LlmError, LlmModelInfo, ModelModality, ResolvedRetryPolicy,
   SystemPromptUpdate, ToolUpdate,
-} from '@deepseek-ai/dsh-llm'
-import type { AttachmentStore, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import type { AnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import type { DeepSeekLlmApiExtensionRequest, PreparedDeepSeekLlmApiExtensions } from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
+} from '@carnival/dsh-llm'
+import type { AttachmentStore, ImageAttachmentRef } from '@carnival/dsh-attachment'
+import type { AnonymousUserId } from '@carnival/dsh-anonymous-user-id'
+import type { DeepSeekLlmApiExtensionRequest, PreparedDeepSeekLlmApiExtensions } from '@carnival/dsh-deepseek-llm-api-extensions'
 import type { DeepSeekFileStore, DeepSeekFilePolicy } from './file-store.ts'
 
 /** One optional model entry advertised by the direct-fetch adapter. */

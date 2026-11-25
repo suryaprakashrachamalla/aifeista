@@ -2,10 +2,10 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import type { DomainFacility } from '@deepseek-ai/dsh-storage-domain'
-import { JsonStorageBackend } from '@deepseek-ai/dsh-storage-json'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { Context } from '@carnival/cordis'
+import type { DomainFacility } from '@carnival/dsh-storage-domain'
+import { JsonStorageBackend } from '@carnival/dsh-storage-json'
+import type { SessionId } from '@carnival/dsh-session'
 import { afterEach, beforeEach, expect, it, vi, type MockInstance } from 'vitest'
 import ScheduleService from '../src/index.ts'
 import { scheduleDomain, type ScheduleTask } from '../src/storage.ts'
@@ -13,7 +13,7 @@ import { createAfterScheduleRecord } from '../src/domain.ts'
 import type { ScheduleId } from '../src/types.ts'
 import { ScheduleRuntime } from '../src/runtime.ts'
 import { agentFor, boundTask, harness, taskTable, storedUnit } from './harness.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const roots: string[] = []
 const contexts: Context[] = []

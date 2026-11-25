@@ -1,6 +1,6 @@
-import { Context } from '@deepseek-ai/cordis'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt, { renderContextSections } from '@deepseek-ai/dsh-system-prompt'
+import { Context } from '@carnival/cordis'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt, { renderContextSections } from '@carnival/dsh-system-prompt'
 import { describe, expect, it, onTestFinished } from 'vitest'
 import { cliPathContextText, registerCliPathContext, type CliPathContext } from '../src/context.ts'
 

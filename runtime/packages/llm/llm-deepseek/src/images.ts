@@ -1,9 +1,9 @@
 /** Deterministic Messages image preparation for Files references and bounded inline fallback. */
 
-import type { AttachmentStore, ImageAttachmentRef, RequestImageAttachment } from '@deepseek-ai/dsh-attachment'
-import { contentHasImage, LlmError, offloadedImageText, projectOffloadedImages } from '@deepseek-ai/dsh-llm'
-import { requestImageBudgetFailure, uniqueRequestImageRefs } from '@deepseek-ai/dsh-llm/message'
-import type { ContentBlock, ImageAttachmentAccessResolver, RequestMessage } from '@deepseek-ai/dsh-llm'
+import type { AttachmentStore, ImageAttachmentRef, RequestImageAttachment } from '@carnival/dsh-attachment'
+import { contentHasImage, LlmError, offloadedImageText, projectOffloadedImages } from '@carnival/dsh-llm'
+import { requestImageBudgetFailure, uniqueRequestImageRefs } from '@carnival/dsh-llm/message'
+import type { ContentBlock, ImageAttachmentAccessResolver, RequestMessage } from '@carnival/dsh-llm'
 import type { DeepSeekConnectionOptions as Connection } from './types.ts'
 import { resolveRequestImageTarget } from './request-pricing.ts'
 import type { DeepSeekFileId } from './file-id.ts'

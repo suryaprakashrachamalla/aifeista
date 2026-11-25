@@ -4,19 +4,19 @@
  * cap, the stability-window budget reset, and disposal stopping reconnection.
  * Isolated file so vi.mock of the MCP SDK doesn't pollute other test suites.
  */
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { describe, expect, it, vi, beforeEach, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { ProtocolError, SdkError, SdkErrorCode, type Transport } from '@modelcontextprotocol/client'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import McpResources from '@deepseek-ai/dsh-mcp-resources'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import McpResources from '@carnival/dsh-mcp-resources'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
 import { TestCredentials } from './credential-fixture.ts'
-import type { Config } from '@deepseek-ai/dsh-mcp-client'
+import type { Config } from '@carnival/dsh-mcp-client'
 
 // ---- Mock MCP SDK ----
 
@@ -87,11 +87,11 @@ vi.mock('@modelcontextprotocol/client/stdio', () => ({
 
 // vi.mock is hoisted above static imports, so the modules under test see the
 // mocked SDK even through a static import.
-import { Config as ConfigSchema, apply } from '@deepseek-ai/dsh-mcp-client/src/index.ts'
-import { connectionStatusIn as connectionStatusOf } from '@deepseek-ai/dsh-mcp-client/src/status.ts'
-import { RECONNECT_DEFAULTS, resolveReconnectPolicy, startConnection } from '@deepseek-ai/dsh-mcp-client/src/connection.ts'
-import { McpStatusCell } from '@deepseek-ai/dsh-mcp-client/src/status.ts'
-import { McpGeneration } from '@deepseek-ai/dsh-mcp-client/src/generation.ts'
+import { Config as ConfigSchema, apply } from '@carnival/dsh-mcp-client/src/index.ts'
+import { connectionStatusIn as connectionStatusOf } from '@carnival/dsh-mcp-client/src/status.ts'
+import { RECONNECT_DEFAULTS, resolveReconnectPolicy, startConnection } from '@carnival/dsh-mcp-client/src/connection.ts'
+import { McpStatusCell } from '@carnival/dsh-mcp-client/src/status.ts'
+import { McpGeneration } from '@carnival/dsh-mcp-client/src/generation.ts'
 
 // ---- Helpers ----
 

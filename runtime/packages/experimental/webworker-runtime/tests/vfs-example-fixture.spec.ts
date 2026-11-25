@@ -1,15 +1,15 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { SESSION_FORMAT_VERSION, Session, type SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import { scheduleDomain } from '@deepseek-ai/dsh-schedule'
-import { createSessionFormatCatalogWithChildren } from '@deepseek-ai/dsh-session-format-catalog'
+import { SESSION_FORMAT_VERSION, Session, type SessionId, type SessionEvent } from '@carnival/dsh-session'
+import { scheduleDomain } from '@carnival/dsh-schedule'
+import { createSessionFormatCatalogWithChildren } from '@carnival/dsh-session-format-catalog'
 import {
   generationLogFilename,
   scanLog,
-} from '@deepseek-ai/dsh-session-persistence-jsonl/src/format.ts'
-import { foldSubagentDescriptor } from '@deepseek-ai/dsh-subagent'
-import { projectionCacheDomainSpec } from '@deepseek-ai/dsh-session-projection-cache'
+} from '@carnival/dsh-session-persistence-jsonl/src/format.ts'
+import { foldSubagentDescriptor } from '@carnival/dsh-subagent'
+import { projectionCacheDomainSpec } from '@carnival/dsh-session-projection-cache'
 import {
   buildVfsExampleFiles,
   VFS_EXAMPLE_OLDEST_MESSAGE,
@@ -22,7 +22,7 @@ import {
   VFS_EXAMPLE_TAIL_MESSAGE,
   VFS_EXAMPLE_TITLE,
 } from './vfs-example-fixture.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 function filesUnder(root: string): string[] {
   const files: string[] = []

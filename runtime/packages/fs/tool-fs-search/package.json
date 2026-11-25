@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-tool-fs-search",
+  "name": "@carnival/dsh-tool-fs-search",
   "description": "Model-facing filesystem discovery tools (glob, grep) backed by the packaged ripgrep binary (@vscode/ripgrep)",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/fs/tool-fs-search"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,40 +27,40 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~",
-    "@deepseek-ai/dsh-util-ripgrep": "workspace:*"
+    "@carnival/schemastery": "workspace:~",
+    "@carnival/dsh-util-ripgrep": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-output-retention": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-spill": "workspace:*",
-    "@deepseek-ai/dsh-subprocess": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-timeout": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-working-directory": "workspace:*"
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-output-retention": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-spill": "workspace:*",
+    "@carnival/dsh-subprocess": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-timeout": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-working-directory": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-subprocess": "workspace:*",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-output-retention": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-spill": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-timeout": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-working-directory": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-subprocess": "workspace:*",
+    "@carnival/dsh-subprocess-local": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-output-retention": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-spill": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-timeout": "workspace:*",
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-working-directory": "workspace:*",
+    "@carnival/dsh-agent-loop-testkit": "workspace:*",
     "@vscode/ripgrep": "^1.18.0",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/dsh-session-projection": "workspace:*"
   }
 }

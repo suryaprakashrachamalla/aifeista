@@ -6,20 +6,20 @@
  * the cause each cancelled turn records.
  * @module dsh-agent-loop/tests/cancel
  */
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { type ToolCallId, createUserMessage, expandAssistantStream } from '@deepseek-ai/dsh-llm'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { brandString } from '@carnival/dsh-brand'
+import { type ToolCallId, createUserMessage, expandAssistantStream } from '@carnival/dsh-llm'
 
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore, { Session, type SessionId, SessionLogOffset, TurnEndReason } from '@deepseek-ai/dsh-session'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED_BEFORE_DISPATCH } from '@deepseek-ai/dsh-tools'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import AgentRegistry, { type Agent, type AgentCancelCause } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import LlmRuntime from '@carnival/dsh-llm'
+import SessionStore, { Session, type SessionId, SessionLogOffset, TurnEndReason } from '@carnival/dsh-session'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED_BEFORE_DISPATCH } from '@carnival/dsh-tools'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
+import AgentRegistry, { type Agent, type AgentCancelCause } from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { MockAdapter, textResponse, toolCallResponse } from './mock-adapter.ts'
 
 function driverDone(agent: Agent): Promise<void> {

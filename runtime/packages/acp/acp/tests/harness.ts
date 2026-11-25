@@ -1,6 +1,6 @@
 /** In-memory ACP transport fixture over the real agent factory and loop. */
 
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { createHash } from 'node:crypto'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -18,15 +18,15 @@ import {
   type SessionNotification,
   type Stream,
 } from '@agentclientprotocol/sdk'
-import AttachmentStore, { AttachmentError } from '@deepseek-ai/dsh-attachment'
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ImageAttachmentLimits, ImageAttachmentRef, SaveImageAttachment, StoredImageAttachment } from '@deepseek-ai/dsh-attachment'
-import { type GenerateOptions, LlmAdapter, type ReasoningEffortId, type LlmResolvedModelInfo, type StreamChunk } from '@deepseek-ai/dsh-llm'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
+import AttachmentStore, { AttachmentError } from '@carnival/dsh-attachment'
+import type { AttachmentId } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
+import type { ImageAttachmentLimits, ImageAttachmentRef, SaveImageAttachment, StoredImageAttachment } from '@carnival/dsh-attachment'
+import { type GenerateOptions, LlmAdapter, type ReasoningEffortId, type LlmResolvedModelInfo, type StreamChunk } from '@carnival/dsh-llm'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import TokenMeter from '@carnival/dsh-token-meter'
 import * as AcpPlugin from '../src/index.ts'
 import type { AcpConfig } from '../src/index.ts'
 

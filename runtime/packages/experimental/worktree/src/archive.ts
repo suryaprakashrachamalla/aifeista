@@ -4,17 +4,17 @@
  * archive-admission families, so it holds for every Session the Workspace archives.
  */
 import { sep } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import type { SessionHeader, SessionId } from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle, SessionProjectionMap } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-session-projection-cache'
-import type {} from '@deepseek-ai/dsh-session-query'
-import type {} from '@deepseek-ai/dsh-working-directory'
-import type {} from '@deepseek-ai/dsh-workspace'
+import type { Context } from '@carnival/cordis'
+import type { SessionHeader, SessionId } from '@carnival/dsh-session'
+import type { ProjectionHandle, SessionProjectionMap } from '@carnival/dsh-session-projection'
+import type {} from '@carnival/dsh-session-projection-cache'
+import type {} from '@carnival/dsh-session-query'
+import type {} from '@carnival/dsh-working-directory'
+import type {} from '@carnival/dsh-workspace'
 import type { WorktreeProjectionState } from './projection.ts'
 import type { CreatedWorktree, WorktreeCleanup, WorktreeCreation } from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Events {
     /**
      * A cleanup attempt changed state. Fires once at admission with

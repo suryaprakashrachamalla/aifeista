@@ -1,20 +1,20 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent, ModelSelection } from '@deepseek-ai/dsh-agent'
-import { createScope, type Scope } from '@deepseek-ai/dsh-scope'
+import { Context } from '@carnival/cordis'
+import type { Agent, ModelSelection } from '@carnival/dsh-agent'
+import { createScope, type Scope } from '@carnival/dsh-scope'
 import TurndownService from 'turndown'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ResolvedToolSet, type ToolExecutionInput, type ToolExecutionResult } from '@deepseek-ai/dsh-tools'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import WebRuntime from '@deepseek-ai/dsh-web'
-import type { WebFetchProvider, WebSearchProvider, WebSearchResult } from '@deepseek-ai/dsh-web'
-import * as ToolWeb from '@deepseek-ai/dsh-tool-web'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
+import SystemPrompt, { renderPrompt } from '@carnival/dsh-system-prompt'
+import ToolRuntime, { type ResolvedToolSet, type ToolExecutionInput, type ToolExecutionResult } from '@carnival/dsh-tools'
+import type { SessionId } from '@carnival/dsh-session'
+import WebRuntime from '@carnival/dsh-web'
+import type { WebFetchProvider, WebSearchProvider, WebSearchResult } from '@carnival/dsh-web'
+import * as ToolWeb from '@carnival/dsh-tool-web'
 import {
   formatSearchOutput,
   formatFetchOutput,
@@ -29,9 +29,9 @@ import {
   fetchMetaFromResult,
   WEB_SEARCH_MAX_QUERIES,
   WEB_SEARCH_MAX_RESULTS,
-} from '@deepseek-ai/dsh-tool-web'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import type { ToolResult } from '@deepseek-ai/dsh-tools'
+} from '@carnival/dsh-tool-web'
+import type { ContentBlock } from '@carnival/dsh-llm'
+import type { ToolResult } from '@carnival/dsh-tools'
 import { parseSearchArgs } from '../src/search.ts'
 
 const testToolSignal = new AbortController().signal

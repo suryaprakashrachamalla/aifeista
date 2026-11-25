@@ -1,11 +1,11 @@
-import { Context } from '@deepseek-ai/cordis'
-import { createMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore, { type SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
+import { Context } from '@carnival/cordis'
+import { createMessage } from '@carnival/dsh-llm'
+import SessionStore, { type SessionId, SessionSeq } from '@carnival/dsh-session'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { HistoryController } from '../src/history/controller.ts'
 import { WebController } from '../src/web/controller.ts'
 import { installSessionReadTestServices } from './test-remote.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const roots: Context[] = []
 const aborters: AbortController[] = []

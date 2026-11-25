@@ -2,31 +2,31 @@
  * JSON-RPC methods and notifications for out-of-process harness SDKs.
  * The surrounding context owns plugins, persistence, and configured adapters.
  *
- * @module @deepseek-ai/dsh-sdk-jsonrpc-server/server
+ * @module @carnival/dsh-sdk-jsonrpc-server/server
  */
 
-import type {} from '@deepseek-ai/dsh-fs'
-import { FiberState, type Context, type Fiber } from '@deepseek-ai/cordis'
+import type {} from '@carnival/dsh-fs'
+import { FiberState, type Context, type Fiber } from '@carnival/cordis'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { resolve } from 'node:path'
 import { QueryActivity } from './query-activity.ts'
 import { SdkUserQuestionBridge } from './user-questions.ts'
 import { queryCommand } from './query-input.ts'
 import { queryCommandImages, queryContent } from './query-content.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { Agent, AgentHandle } from '@deepseek-ai/dsh-agent'
-import { admitEncodedImages, type EncodedImageAttachment, type ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import { createUserMessage, type ReasoningEffortId, type ContentBlock, type LlmRuntime } from '@deepseek-ai/dsh-llm'
-import type { SessionId, SessionLogOffset } from '@deepseek-ai/dsh-session'
-import { canonicalClientTimeZone } from '@deepseek-ai/dsh-util-time'
-import type {} from '@deepseek-ai/dsh-working-directory'
-import type {} from '@deepseek-ai/dsh-user-approval'
-import type {} from '@deepseek-ai/dsh-permission-presets'
+import { brandString } from '@carnival/dsh-brand'
+import type { Agent, AgentHandle } from '@carnival/dsh-agent'
+import { admitEncodedImages, type EncodedImageAttachment, type ImageAttachmentRef } from '@carnival/dsh-attachment'
+import { createUserMessage, type ReasoningEffortId, type ContentBlock, type LlmRuntime } from '@carnival/dsh-llm'
+import type { SessionId, SessionLogOffset } from '@carnival/dsh-session'
+import { canonicalClientTimeZone } from '@carnival/dsh-util-time'
+import type {} from '@carnival/dsh-working-directory'
+import type {} from '@carnival/dsh-user-approval'
+import type {} from '@carnival/dsh-permission-presets'
 
-import type {} from '@deepseek-ai/dsh-schedule'
-import type { SubagentRunEndInfo } from '@deepseek-ai/dsh-subagent'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import * as LlmDeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
+import type {} from '@carnival/dsh-schedule'
+import type { SubagentRunEndInfo } from '@carnival/dsh-subagent'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import * as LlmDeepSeek from '@carnival/dsh-llm-deepseek-api-key'
 import type {
   ApprovalRequestParams,
   CommandExecution,
@@ -46,9 +46,9 @@ import type {
   SdkEncodedImageBlock,
   SubagentFinishedNotification,
   SubagentStartedNotification,
-} from '@deepseek-ai/dsh-sdk-protocol'
+} from '@carnival/dsh-sdk-protocol'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     /** SDK prompt with its canonical user time zone, when one was reported or sampled. */
     'sdk-user': { kind: 'user'; clientTimeZone?: string }
@@ -697,7 +697,7 @@ export class HarnessSdkJsonRpcServer {
     // No preset composition: this server's compositions keep the model-facing
     // rows in the host plane, so this agent reads them from the global layer. A
     // deployment that configures a roster has to join one here first
-    // (@deepseek-ai/dsh-agent-preset-registry README, "Composing a child agent").
+    // (@carnival/dsh-agent-preset-registry README, "Composing a child agent").
     const agentOptions = {
       provider: this.provider,
       model: this.model,

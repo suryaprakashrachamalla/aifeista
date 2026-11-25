@@ -1,10 +1,10 @@
 /** Anonymous pairing routes admitted by the WebServer's source policy. */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-connection'
-import type { ConnectionTrustRequest } from '@deepseek-ai/dsh-client-connection'
-import { normalizeBindAddress } from '@deepseek-ai/dsh-host-webserver'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-connection'
+import type { ConnectionTrustRequest } from '@carnival/dsh-client-connection'
+import { normalizeBindAddress } from '@carnival/dsh-host-webserver'
 import { z } from 'zod'
 import type { PairingRequestId } from './pairing-types.ts'
 import type { PairingRequests } from './pairing-requests.ts'

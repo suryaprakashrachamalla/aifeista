@@ -2,11 +2,11 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { expect, it } from 'vitest'
-import type {} from '@deepseek-ai/dsh-skill'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-agent-preset-registry'
+import type {} from '@carnival/dsh-skill'
+import type { SessionId } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-agent-preset-registry'
 import { launchWebScaffold, type WebScaffold } from './scaffold.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 async function writeSkill(root: string, name: string): Promise<void> {
   const bundle = join(root, name)

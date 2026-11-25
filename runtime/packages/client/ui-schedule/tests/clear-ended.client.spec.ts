@@ -1,8 +1,8 @@
 /** The management page's bulk removal: one request, one readback, one settled outcome. */
 import { describe, expect, it, vi } from 'vitest'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
-import type { RemoteResult } from '@deepseek-ai/dsh-api-remotes/client'
-import type { ScheduleDeleteInactiveResult } from '@deepseek-ai/dsh-schedule/client'
+import { RemoteError } from '@carnival/dsh-client-test-runtime'
+import type { RemoteResult } from '@carnival/dsh-api-remotes/client'
+import type { ScheduleDeleteInactiveResult } from '@carnival/dsh-schedule/client'
 import { createClearEnded } from '../src/client/clear-ended.ts'
 
 const failure: RemoteResult<ScheduleDeleteInactiveResult> = {

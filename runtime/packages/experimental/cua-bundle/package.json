@@ -1,15 +1,10 @@
 {
-  "name": "@deepseek-ai/dsh-cua-bundle",
+  "name": "@carnival/dsh-cua-bundle",
   "description": "Optional Computer Use for macOS and Windows",
   "version": "0.2.3-alpha.2",
   "icon": "./icon.svg",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/cua-bundle"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -46,19 +41,19 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-computer-use": "workspace:*",
-    "@deepseek-ai/dsh-cua": "workspace:*"
+    "@carnival/dsh-computer-use": "workspace:*",
+    "@carnival/dsh-cua": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~"
   },
   "optionalDependencies": {
-    "@deepseek-ai/dsh-cua-macos": "workspace:*",
-    "@deepseek-ai/dsh-cua-windows": "workspace:*"
+    "@carnival/dsh-cua-macos": "workspace:*",
+    "@carnival/dsh-cua-windows": "workspace:*"
   }
 }

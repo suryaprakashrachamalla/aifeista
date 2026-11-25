@@ -1,11 +1,11 @@
 /** Browser controls for the provider's application decisions and native permission work. */
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-config-editor'
-import type {} from '@deepseek-ai/dsh-ptc-runtime'
-import { resolvePersistentExecution } from '@deepseek-ai/dsh-ptc-runtime-node/configuration'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-config-editor'
+import type {} from '@carnival/dsh-ptc-runtime'
+import { resolvePersistentExecution } from '@carnival/dsh-ptc-runtime-node/configuration'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
 import { ApplicationAccess, type AccessOptions } from './application-access.ts'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
+import type { JsonValue } from '@carnival/dsh-util-values'
 import { z } from 'zod'
 import { ApplicationIcon } from './protocol.ts'
 import { NativeClient, type NativeClientConfig, type NativeChannelFactory } from './native-client.ts'
@@ -30,7 +30,7 @@ const systemPermissions = z.discriminatedUnion('platform', [z.object({
   elevated: z.boolean(), helper: permissionProcess,
 })])
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Native permission controls and executor-owned application consent. */
     cuaAccess: CuaAccess

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-api-job-controller",
+  "name": "@carnival/dsh-api-job-controller",
   "description": "Job Remote observation stream and the reference-counted client job-output service",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/api/job-controller"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -41,11 +36,11 @@
   "dsh": {
     "client": {
       "external": [
-        "@deepseek-ai/dsh-api-gateway/client"
+        "@carnival/dsh-api-gateway/client"
       ],
       "inject": [
-        "@deepseek-ai/dsh-api-gateway",
-        "@deepseek-ai/dsh-client-connection"
+        "@carnival/dsh-api-gateway",
+        "@carnival/dsh-client-connection"
       ],
       "platform": "web"
     }
@@ -71,23 +66,23 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-store": "workspace:*",
-    "@deepseek-ai/dsh-jobs": "workspace:*",
-    "@deepseek-ai/dsh-jobs-local": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-typert-registry": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-store": "workspace:*",
+    "@carnival/dsh-jobs": "workspace:*",
+    "@carnival/dsh-jobs-local": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-typert-registry": "workspace:*"
   }
 }

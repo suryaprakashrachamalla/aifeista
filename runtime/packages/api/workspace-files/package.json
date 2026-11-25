@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-api-workspace-files",
+  "name": "@carnival/dsh-api-workspace-files",
   "description": "Workspace file service and Client resource provider: bounded reads, directory listing, and live metadata over the workspaceFiles Remote namespace",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/api/workspace-files"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -41,8 +36,8 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-gateway",
-        "@deepseek-ai/dsh-client-resources"
+        "@carnival/dsh-api-gateway",
+        "@carnival/dsh-client-resources"
       ],
       "platform": "web"
     }
@@ -53,33 +48,33 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-deque": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-deque": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6",
-    "@deepseek-ai/dsh-util-ripgrep": "workspace:*"
+    "@carnival/dsh-util-ripgrep": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-resources": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:*",
-    "@deepseek-ai/dsh-fs": "workspace:*",
-    "@deepseek-ai/dsh-remote-mock": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-persistence": "workspace:*",
-    "@deepseek-ai/dsh-session-projection-cache": "workspace:*",
-    "@deepseek-ai/dsh-subprocess": "workspace:*",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:*",
-    "@deepseek-ai/dsh-util-workspace-path": "workspace:*",
-    "@deepseek-ai/dsh-working-directory": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-resources": "workspace:*",
+    "@carnival/dsh-client-ui-slots": "workspace:*",
+    "@carnival/dsh-fs": "workspace:*",
+    "@carnival/dsh-remote-mock": "workspace:*",
+    "@carnival/dsh-sandbox-policy": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-persistence": "workspace:*",
+    "@carnival/dsh-session-projection-cache": "workspace:*",
+    "@carnival/dsh-subprocess": "workspace:*",
+    "@carnival/dsh-subprocess-local": "workspace:*",
+    "@carnival/dsh-util-workspace-path": "workspace:*",
+    "@carnival/dsh-working-directory": "workspace:*"
   },
   "files": [
     "locale/*.json",

@@ -2,7 +2,7 @@
  * When polls run: which change requests one fetch reads together, how an unknown mergeability and an announced change
  * are paced, and when a refresh reads.
  */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { changeRequestKey } from '../src/index.ts'
 import type { ChangeRequestKey, ChangeRequestRef, ChangeRequestUpdate } from '../src/types.ts'

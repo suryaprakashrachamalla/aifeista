@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-session-snapshot",
+  "name": "@carnival/dsh-session-snapshot",
   "description": "Session-log snapshot core with an ACP protocol adapter, expected-output normalization, and fixture invariants",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/test-support/session-snapshot"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -31,36 +26,36 @@
   "license": "MIT",
   "dependencies": {
     "@agentclientprotocol/sdk": "1.4.0",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/dsh-llm-replay": "workspace:*",
-    "@deepseek-ai/dsh-loader-smoke": "workspace:*",
-    "@deepseek-ai/dsh-session-format": "workspace:*",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/dsh-llm-replay": "workspace:*",
+    "@carnival/dsh-loader-smoke": "workspace:*",
+    "@carnival/dsh-session-format": "workspace:*",
     "js-yaml": "^4.3.2",
     "vitest": "^4.1.11"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-http-proxy": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-http-proxy": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop": "workspace:*",
-    "@deepseek-ai/dsh-agent-preset-registry": "workspace:*",
-    "@deepseek-ai/dsh-compaction": "workspace:*",
-    "@deepseek-ai/dsh-fs": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-persona": "workspace:*",
-    "@deepseek-ai/dsh-sandbox": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-subagent": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-user-questions": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-agent-loop": "workspace:*",
+    "@carnival/dsh-agent-preset-registry": "workspace:*",
+    "@carnival/dsh-compaction": "workspace:*",
+    "@carnival/dsh-fs": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-persona": "workspace:*",
+    "@carnival/dsh-sandbox": "workspace:*",
+    "@carnival/dsh-sandbox-policy": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-subagent": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-user-questions": "workspace:*",
     "@types/js-yaml": "^4.0.9",
-    "@deepseek-ai/dsh-http-proxy": "workspace:*"
+    "@carnival/dsh-http-proxy": "workspace:*"
   }
 }

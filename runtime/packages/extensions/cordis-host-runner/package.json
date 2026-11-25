@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-cordis-host-runner",
+  "name": "@carnival/dsh-cordis-host-runner",
   "description": "Dynamic package definition registry, host-half sandbox lifecycle, and invoke handler table for model-mounted dual-half packages",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/extensions/cordis-host-runner"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -50,35 +45,35 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-error": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-timer": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-timer": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-error": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*"
   }
 }

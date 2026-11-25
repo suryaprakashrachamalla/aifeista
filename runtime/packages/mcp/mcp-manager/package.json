@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-manager",
+  "name": "@carnival/dsh-mcp-manager",
   "description": "MCP server manager: a settings-driven fleet of mcp-client instances with runtime status, restart, and probe",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/mcp/mcp-manager"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -50,35 +45,35 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-mcp-client": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-credentials": "workspace:*"
+    "@carnival/dsh-mcp-client": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-credentials": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-timeout": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-timeout": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "devDependencies": {
     "@modelcontextprotocol/client": "2.2.0",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-mcp-client": "workspace:*",
-    "@deepseek-ai/dsh-settings": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-app-boot": "workspace:*",
-    "@deepseek-ai/dsh-config-editor": "workspace:*",
-    "@deepseek-ai/dsh-hmr": "workspace:*",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/cordis-plugin-timer": "workspace:~",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-mcp-client": "workspace:*",
+    "@carnival/dsh-settings": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-app-boot": "workspace:*",
+    "@carnival/dsh-config-editor": "workspace:*",
+    "@carnival/dsh-hmr": "workspace:*",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/cordis-plugin-timer": "workspace:~",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*"
   }
 }

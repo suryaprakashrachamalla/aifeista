@@ -2,13 +2,13 @@
  * Publish connection-owned MCP resources, literal server instructions, and an
  * on-demand server's tool catalog.
  *
- * @module @deepseek-ai/dsh-mcp-client
+ * @module @carnival/dsh-mcp-client
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { McpResourceProvider } from '@deepseek-ai/dsh-mcp-resources'
-import type { ScopeKey } from '@deepseek-ai/dsh-scope'
-import type {} from '@deepseek-ai/dsh-system-prompt'
+import type { Context } from '@carnival/cordis'
+import type { McpResourceProvider } from '@carnival/dsh-mcp-resources'
+import type { ScopeKey } from '@carnival/dsh-scope'
+import type {} from '@carnival/dsh-system-prompt'
 
 /** Connection-owned values used by the resource and prompt consumers. */
 export interface ServerContext {

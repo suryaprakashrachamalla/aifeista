@@ -12,14 +12,14 @@
  * }, signal)
  * ```
  *
- * @module @deepseek-ai/dsh-deepseek-auth
+ * @module @carnival/dsh-deepseek-auth
  */
-import { Context, Service } from '@deepseek-ai/cordis'
-import { credentialRef, credentialRefConfigured, normalizeApiKey, resolveCredentialRef } from '@deepseek-ai/dsh-credentials'
-import type { ApiKeyRejection } from '@deepseek-ai/dsh-credentials'
-import type {} from '@deepseek-ai/dsh-deepseek-account'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
+import { Context, Service } from '@carnival/cordis'
+import { credentialRef, credentialRefConfigured, normalizeApiKey, resolveCredentialRef } from '@carnival/dsh-credentials'
+import type { ApiKeyRejection } from '@carnival/dsh-credentials'
+import type {} from '@carnival/dsh-deepseek-account'
+import { HarnessError } from '@carnival/dsh-error'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
 import type {
   DeepSeekAuthCandidate, DeepSeekAuthConnection, DeepSeekAuthKind, DeepSeekAuthRequest, DeepSeekAuthUnresolved,
   DeepSeekAuthorization,
@@ -27,7 +27,7 @@ import type {
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context { deepseekAuth: DeepSeekAuth }
 }
 

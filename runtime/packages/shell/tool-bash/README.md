@@ -3,7 +3,7 @@ description: "The model-facing bash tool for users and maintainers choosing, con
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-bash
+# @carnival/dsh-tool-bash
 
 English | [中文](README.zh.md)
 
@@ -34,13 +34,13 @@ Load this plugin in any composition where the agent should run bash commands: it
 The common path is an executor provider, the environment registry, and this tool; add the job runtime when the agent may run commands in the background.
 
 ```yaml
-- name: '@deepseek-ai/dsh-bash-local'
-- name: '@deepseek-ai/dsh-shell-env'
-- name: '@deepseek-ai/dsh-tool-bash'
+- name: '@carnival/dsh-bash-local'
+- name: '@carnival/dsh-shell-env'
+- name: '@carnival/dsh-tool-bash'
 
 # Optional: background jobs
-- name: '@deepseek-ai/dsh-jobs-local'
-- name: '@deepseek-ai/dsh-tool-jobs'
+- name: '@carnival/dsh-jobs-local'
+- name: '@carnival/dsh-tool-jobs'
 ```
 
 The config fields govern the background surface.
@@ -71,7 +71,7 @@ When the mounted executor confines commands (for example `dsh-bash-sandbox`), a 
 
 ### What can go wrong
 
-A composition with no executor provider never activates the tool. Background calls without the job runtime fail with `background jobs unavailable: load @deepseek-ai/dsh-jobs and @deepseek-ai/dsh-tool-jobs`, and `sandbox_permissions` or `justification` without a sandboxing executor fails with `invalid arguments: sandbox_permissions and justification are not available in this composition (no sandboxing executor to escalate)`. `enableRunInBackground: false` removes the parameter and rejects a forced background call at execution time.
+A composition with no executor provider never activates the tool. Background calls without the job runtime fail with `background jobs unavailable: load @carnival/dsh-jobs and @carnival/dsh-tool-jobs`, and `sandbox_permissions` or `justification` without a sandboxing executor fails with `invalid arguments: sandbox_permissions and justification are not available in this composition (no sandboxing executor to escalate)`. `enableRunInBackground: false` removes the parameter and rejects a forced background call at execution time.
 
 -----
 
@@ -196,7 +196,7 @@ Append-only; newly visible content follows the reusable request prefix and does 
 
 #### What the model sees
 
-Validation and policy failures are normalized as `Error: <message>`. This package's stable messages are `invalid arguments: invalid command: expected a non-empty string`, `invalid arguments: invalid description: expected a non-empty string`, `invalid arguments: invalid timeoutMs: expected a positive number, got <value>`, the escalation pairing failures, `invalid arguments: run_in_background is disabled for this deployment (enableRunInBackground: false)`, `background jobs unavailable: load @deepseek-ai/dsh-jobs and @deepseek-ai/dsh-tool-jobs`, `invalid arguments: sandbox_permissions and justification are not available in this composition (no sandboxing executor to escalate)`, the approval availability/rejection/cancellation variants, and `tool call aborted`. Each failure also records `error.name` and `error.code` on `tool/result`: argument violations, including `sandbox_permissions`, `justification`, or `run_in_background` when the schema does not advertise them, are `ToolArgsError` (`INVALID_ARGS`, message prefix `invalid arguments: `), escalation failures are `SandboxEscalationError` (`SANDBOX_ESCALATION_INVALID_ARGUMENT`, `_UNAVAILABLE`, `_REJECTED`, `_CANCELLED`), a missing job runtime is `ToolContextUnavailableError` (`TOOL_CONTEXT_UNAVAILABLE`), and cancellation is `AbortError` (`ABORTED`). A launch or preparation failure keeps the class and code it was thrown with, such as `SandboxUnavailableError` or `SandboxPreparationError`, whether the call waited on a job or not; a platform spawn error, recognized by its errno `code`, becomes `SubprocessError` (`SUBPROCESS_SPAWN_NOT_FOUND` for `ENOENT`, otherwise `SUBPROCESS_SPAWN_FAILED`), even when it settles after the call was cancelled.
+Validation and policy failures are normalized as `Error: <message>`. This package's stable messages are `invalid arguments: invalid command: expected a non-empty string`, `invalid arguments: invalid description: expected a non-empty string`, `invalid arguments: invalid timeoutMs: expected a positive number, got <value>`, the escalation pairing failures, `invalid arguments: run_in_background is disabled for this deployment (enableRunInBackground: false)`, `background jobs unavailable: load @carnival/dsh-jobs and @carnival/dsh-tool-jobs`, `invalid arguments: sandbox_permissions and justification are not available in this composition (no sandboxing executor to escalate)`, the approval availability/rejection/cancellation variants, and `tool call aborted`. Each failure also records `error.name` and `error.code` on `tool/result`: argument violations, including `sandbox_permissions`, `justification`, or `run_in_background` when the schema does not advertise them, are `ToolArgsError` (`INVALID_ARGS`, message prefix `invalid arguments: `), escalation failures are `SandboxEscalationError` (`SANDBOX_ESCALATION_INVALID_ARGUMENT`, `_UNAVAILABLE`, `_REJECTED`, `_CANCELLED`), a missing job runtime is `ToolContextUnavailableError` (`TOOL_CONTEXT_UNAVAILABLE`), and cancellation is `AbortError` (`ABORTED`). A launch or preparation failure keeps the class and code it was thrown with, such as `SandboxUnavailableError` or `SandboxPreparationError`, whether the call waited on a job or not; a platform spawn error, recognized by its errno `code`, becomes `SubprocessError` (`SUBPROCESS_SPAWN_NOT_FOUND` for `ENOENT`, otherwise `SUBPROCESS_SPAWN_FAILED`), even when it settles after the call was cancelled.
 
 #### Token effect
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import { createUserMessage } from '@carnival/dsh-llm'
 import SessionStore, {
   appendPluginRecord,
   buildForkSeed,
@@ -9,10 +9,10 @@ import SessionStore, {
   type SessionId,
   SessionLogOffset,
   SessionSeq,
-} from '@deepseek-ai/dsh-session'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-session'
+import type { SessionEvent } from '@carnival/dsh-session'
 import type { PluginRequestFixture } from './plugin-records.type-test.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 /** One user turn opening, so a record lands between model-visible events. */
 function openTurn(session: Session): void {

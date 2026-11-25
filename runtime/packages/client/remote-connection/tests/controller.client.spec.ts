@@ -1,7 +1,7 @@
 /** Invitation state transitions and teardown under delayed Remote responses. */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { RemoteConnectionStatus, RemoteLoginId, RemoteLoginTicket, RemoteLoginState } from '../src/types.ts'
 import { RemoteConnectionController, type RemoteConnectionApi } from '../src/client/remote-connection-controller.ts'
 

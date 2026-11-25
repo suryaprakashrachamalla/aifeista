@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-resources",
+  "name": "@carnival/dsh-mcp-resources",
   "description": "Scoped MCP resource discovery and reading through shared model tools",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/mcp/mcp-resources"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,31 +27,31 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-ptc-runtime": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-ptc": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-ptc-runtime": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tool-executor-ptc": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-util-values": "workspace:*"
+    "@carnival/dsh-util-values": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-system-prompt": {
+    "@carnival/dsh-system-prompt": {
       "optional": true
     }
   }

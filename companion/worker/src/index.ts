@@ -1,5 +1,5 @@
 /**
- * Clicky Proxy Worker
+ * Carnival Companion Proxy Worker
  *
  * Proxies requests to LLM APIs (Groq, OpenRouter, NVIDIA Nemotron, Anthropic)
  * so the app never ships with raw API keys.
@@ -147,8 +147,8 @@ async function handleChat(request: Request, env: Env): Promise<Response> {
       endpoint = "https://openrouter.ai/api/v1/chat/completions";
       apiKey = env.OPENROUTER_API_KEY || "";
       defaultModel = env.OPENROUTER_MODEL || "meta-llama/llama-3.2-11b-vision-instruct";
-      extraHeaders["HTTP-Referer"] = "https://heyclicky.com";
-      extraHeaders["X-Title"] = "Clicky";
+      extraHeaders["HTTP-Referer"] = "https://carnival.local";
+      extraHeaders["X-Title"] = "Carnival Companion";
       break;
 
     case "nvidia":

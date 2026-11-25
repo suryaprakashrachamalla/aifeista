@@ -1,32 +1,32 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { spawnSync } from 'node:child_process'
-import { unsupportedModel, provideWorkingDirectoryFixture, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { unsupportedModel, provideWorkingDirectoryFixture, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
 import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises'
 import { release, tmpdir, version } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it, onTestFailed, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import TerminalSessionService from '@deepseek-ai/dsh-terminal'
-import type { TerminalWaitReason } from '@deepseek-ai/dsh-terminal'
-import * as TerminalBash from '@deepseek-ai/dsh-terminal-bash'
-import SandboxProvider from '@deepseek-ai/dsh-sandbox'
-import type { ConfinedArgv, SandboxPolicy } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import LocalSubprocessService from '@deepseek-ai/dsh-subprocess-local'
-import { resolvePwshPath } from '@deepseek-ai/dsh-pwsh-local/src/resolve.ts'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRegistry from '@deepseek-ai/dsh-tools'
-import * as ToolPwshPersistent from '@deepseek-ai/dsh-tool-pwsh-persistent'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@carnival/dsh-session'
+import AgentRegistry from '@carnival/dsh-agent'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import type { Agent } from '@carnival/dsh-agent'
+import TerminalSessionService from '@carnival/dsh-terminal'
+import type { TerminalWaitReason } from '@carnival/dsh-terminal'
+import * as TerminalBash from '@carnival/dsh-terminal-bash'
+import SandboxProvider from '@carnival/dsh-sandbox'
+import type { ConfinedArgv, SandboxPolicy } from '@carnival/dsh-sandbox'
+import SandboxPolicyService from '@carnival/dsh-sandbox-policy'
+import LocalSubprocessService from '@carnival/dsh-subprocess-local'
+import { resolvePwshPath } from '@carnival/dsh-pwsh-local/src/resolve.ts'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRegistry from '@carnival/dsh-tools'
+import * as ToolPwshPersistent from '@carnival/dsh-tool-pwsh-persistent'
 import { ReadinessTimeline, TIMELINE_HEADER } from './readiness-timeline.ts'
 
 const pwshPath = resolvePwshPath()
@@ -111,19 +111,19 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
     root = await realpath(await mkdtemp(join(tmpdir(), 'dsh-persistent-pwsh-loader-')))
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
-      "- name: '@deepseek-ai/dsh-agent'",
-      "- name: '@deepseek-ai/dsh-system-prompt'",
-      "- name: '@deepseek-ai/dsh-tools'",
-      "- name: '@deepseek-ai/dsh-tool-executor-native'",
-      "- name: '@deepseek-ai/dsh-terminal'",
-      "- name: '@deepseek-ai/dsh-test-sandbox'",
-      "- name: '@deepseek-ai/dsh-session-projection'",
-      "- name: '@deepseek-ai/dsh-sandbox-policy'",
+      "- name: '@carnival/dsh-agent'",
+      "- name: '@carnival/dsh-system-prompt'",
+      "- name: '@carnival/dsh-tools'",
+      "- name: '@carnival/dsh-tool-executor-native'",
+      "- name: '@carnival/dsh-terminal'",
+      "- name: '@carnival/dsh-test-sandbox'",
+      "- name: '@carnival/dsh-session-projection'",
+      "- name: '@carnival/dsh-sandbox-policy'",
       '  config:',
       '    mode: danger-full-access',
       `    workspaceRoot: ${JSON.stringify(root)}`,
-      "- name: '@deepseek-ai/dsh-subprocess-local'",
-      "- name: '@deepseek-ai/dsh-terminal-bash'",
+      "- name: '@carnival/dsh-subprocess-local'",
+      "- name: '@carnival/dsh-terminal-bash'",
       '  config:',
       '    shellDialect: pwsh',
       '    pollIntervalMs: 10',
@@ -146,7 +146,7 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
       // would not).
       '    timeoutMs: 300000',
       '    disposeGraceMs: 500',
-      "- name: '@deepseek-ai/dsh-tool-pwsh-persistent'",
+      "- name: '@carnival/dsh-tool-pwsh-persistent'",
       '  config:',
       '    timeoutMs: 300000',
       '',
@@ -159,17 +159,17 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
     await context.plugin(Loader)
     context.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-agent', AgentRegistry],
-      ['@deepseek-ai/dsh-system-prompt', SystemPrompt],
-      ['@deepseek-ai/dsh-tools', ToolRegistry],
-      ['@deepseek-ai/dsh-tool-executor-native', NativeToolExecutor],
-      ['@deepseek-ai/dsh-terminal', TerminalSessionService],
-      ['@deepseek-ai/dsh-test-sandbox', PassthroughSandbox],
-      ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-      ['@deepseek-ai/dsh-sandbox-policy', SandboxPolicyService],
-      ['@deepseek-ai/dsh-subprocess-local', LocalSubprocessService],
-      ['@deepseek-ai/dsh-terminal-bash', TerminalBash],
-      ['@deepseek-ai/dsh-tool-pwsh-persistent', ToolPwshPersistent],
+      ['@carnival/dsh-agent', AgentRegistry],
+      ['@carnival/dsh-system-prompt', SystemPrompt],
+      ['@carnival/dsh-tools', ToolRegistry],
+      ['@carnival/dsh-tool-executor-native', NativeToolExecutor],
+      ['@carnival/dsh-terminal', TerminalSessionService],
+      ['@carnival/dsh-test-sandbox', PassthroughSandbox],
+      ['@carnival/dsh-session-projection', SessionProjectionRegistry],
+      ['@carnival/dsh-sandbox-policy', SandboxPolicyService],
+      ['@carnival/dsh-subprocess-local', LocalSubprocessService],
+      ['@carnival/dsh-terminal-bash', TerminalBash],
+      ['@carnival/dsh-tool-pwsh-persistent', ToolPwshPersistent],
     ])
     context.loader.internal = {
       version: 'v2',

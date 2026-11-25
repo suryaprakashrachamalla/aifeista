@@ -1,6 +1,6 @@
 /** Agent access to Session terminals: control checks, typed failures and the agent's terminal handle. */
-import type { SandboxExecutionPolicy } from '@deepseek-ai/dsh-sandbox'
-import type { SubprocessTerminalForeground, SubprocessTerminalSignal } from '@deepseek-ai/dsh-subprocess'
+import type { SandboxExecutionPolicy } from '@carnival/dsh-sandbox'
+import type { SubprocessTerminalForeground, SubprocessTerminalSignal } from '@carnival/dsh-subprocess'
 import type { BrowserTerminal } from './terminal.ts'
 import type { TerminalScreenMark, TerminalScreenPage, TerminalScreenRequest, WebTerminalId, WebTerminalInfo } from './types.ts'
 

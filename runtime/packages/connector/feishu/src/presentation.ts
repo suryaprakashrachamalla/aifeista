@@ -1,17 +1,17 @@
 /** The Feishu account section the Plugins page shows for each Host view. */
-import type { CliAccountText } from '@deepseek-ai/dsh-cli-account/types'
+import type { CliAccountText } from '@carnival/dsh-cli-account/types'
 import type {
   ConnectorAccountButton, ConnectorAccountCopy, ConnectorAccountDisplay, ConnectorAccountFailure, ConnectorAccountNote,
   ConnectorAccountOperation,
-} from '@deepseek-ai/dsh-client-ui-connector-account/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-client-ui-connector-account/types'
+import { assertNever } from '@carnival/dsh-util-values'
 import type { FeishuTextKey } from './locales.ts'
 import type { FeishuAppId, FeishuOperationKind, FeishuState } from './types.ts'
 
 type Text = CliAccountText<FeishuTextKey>
 
 /** The npm package whose bundle page carries the account section. */
-export const FEISHU_PACKAGE = '@deepseek-ai/dsh-feishu'
+export const FEISHU_PACKAGE = '@carnival/dsh-feishu'
 
 /* jscpd:ignore-start -- CLI app plugins declare page operations, copy, and commands alike, each with its own text. */
 /**

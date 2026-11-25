@@ -3,7 +3,7 @@ description: "Add the Feishu plugin to a profile: the official lark-cli with its
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-feishu
+# @carnival/dsh-feishu
 
 English | [中文](README.zh.md)
 
@@ -30,8 +30,8 @@ The Feishu plugin lets conversations use Feishu through the official `lark-cli`.
 Install the plugin from the Web sidebar's **Plugins** page or with the CLI:
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-feishu
-dsh plugin --profile web remove @deepseek-ai/dsh-feishu
+dsh plugin --profile web add @carnival/dsh-feishu
+dsh plugin --profile web remove @carnival/dsh-feishu
 ```
 
 pnpm blocks the `@larksuite/cli` install script, which downloads and verifies the official native binary; approve it through the Plugins page's **Allow these scripts and retry** or the other paths that [Plugin Manager](../../boot/plugin-manager/README.md) documents. Until the executable exists, the `feishu` row fails to load with an error that names the missing path.

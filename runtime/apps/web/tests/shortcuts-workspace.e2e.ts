@@ -4,15 +4,15 @@ import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
+import { createLaunchEnvironmentSnapshot } from '@carnival/dsh-launch-environment'
+import { createUserMessage } from '@carnival/dsh-llm'
 import {
   captureStableAria, compareOrRefreshGolden, launchWebScaffold, readPersistedEvents,
   seedSession, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace } from './support.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const root = fileURLToPath(new URL('./expected/shortcuts-workspace', import.meta.url))
 const seed = fileURLToPath(new URL('../../../snapshots/web/seeded-history/session.v3.jsonl', import.meta.url))

@@ -6,14 +6,14 @@
  * saved grants, and sign-out; once a grant exists, the server's
  * `mcp__tencent-docs__*` tools are listed in the system prompt and each agent
  * loads the ones it needs.
- * @module @deepseek-ai/dsh-tencent-docs
+ * @module @carnival/dsh-tencent-docs
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-mcp-account'
-import type {} from '@deepseek-ai/dsh-mcp-manager'
-import type {} from '@deepseek-ai/dsh-system-prompt'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-mcp-account'
+import type {} from '@carnival/dsh-mcp-manager'
+import type {} from '@carnival/dsh-system-prompt'
 import { COPY } from './locales.ts'
 
 export const name = 'tencent-docs'
@@ -62,7 +62,7 @@ export function apply(ctx: Context, config: Config): void {
     text: GUIDANCE,
   })
   ctx.inject(['mcpAccounts'], (scope) => {
-    scope.effect(() => scope.mcpAccounts.register({ server: SERVER_NAME, packageName: '@deepseek-ai/dsh-tencent-docs', copy: COPY }), 'tencent-docs: Plugins page account')
+    scope.effect(() => scope.mcpAccounts.register({ server: SERVER_NAME, packageName: '@carnival/dsh-tencent-docs', copy: COPY }), 'tencent-docs: Plugins page account')
   })
 }
 /* jscpd:ignore-end */

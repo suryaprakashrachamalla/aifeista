@@ -11,14 +11,14 @@ import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { fileURLToPath } from 'node:url'
 import { crc32, deflateSync } from 'node:zlib'
-import { Context } from '@deepseek-ai/cordis'
-import { LocalAttachmentStore } from '@deepseek-ai/dsh-attachment-local'
-import type { ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { MessageId, ToolCallId } from '@deepseek-ai/dsh-llm'
-import { AssistantStreamAccumulator } from '@deepseek-ai/dsh-llm/assistant-stream'
-import SessionStore, { type SessionId, type Session } from '@deepseek-ai/dsh-session'
-import SessionQueryEngine from '@deepseek-ai/dsh-session-query'
+import { Context } from '@carnival/cordis'
+import { LocalAttachmentStore } from '@carnival/dsh-attachment-local'
+import type { ImageAttachmentRef } from '@carnival/dsh-attachment'
+import { brandString } from '@carnival/dsh-brand'
+import type { MessageId, ToolCallId } from '@carnival/dsh-llm'
+import { AssistantStreamAccumulator } from '@carnival/dsh-llm/assistant-stream'
+import SessionStore, { type SessionId, type Session } from '@carnival/dsh-session'
+import SessionQueryEngine from '@carnival/dsh-session-query'
 import { ApiSessionAgentController } from '../src/agent.ts'
 import { SessionCommandController } from '../src/commands.ts'
 import type { SessionAttachmentValue } from '../src/types.ts'
@@ -300,7 +300,7 @@ async function measure(workload: keyof typeof WORKLOADS) {
 }
 
 for (const specifier of [
-  '@deepseek-ai/cordis', '@deepseek-ai/dsh-attachment-local', '@deepseek-ai/dsh-session', '@deepseek-ai/dsh-session-query',
+  '@carnival/cordis', '@carnival/dsh-attachment-local', '@carnival/dsh-session', '@carnival/dsh-session-query',
 ]) {
   assert.match(import.meta.resolve(specifier), /\/lib\/.*\.js$/, `${specifier} must resolve to built JavaScript`)
 }

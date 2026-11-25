@@ -1,21 +1,21 @@
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { CompactionId } from '@deepseek-ai/dsh-compaction/types'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import type { CompactionId } from '@carnival/dsh-compaction/types'
 import {
   CompactionEngine,
   compactCheckpointSource,
   isCompactCheckpointSource,
-} from '@deepseek-ai/dsh-compaction'
-import type { CompactionResult, CompactionTrigger } from '@deepseek-ai/dsh-compaction'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionSeq } from '@deepseek-ai/dsh-session'
-import type { CompactionAgentContext } from '@deepseek-ai/dsh-compaction'
-import type { ManualCompactAgentContext } from '@deepseek-ai/dsh-compaction'
+} from '@carnival/dsh-compaction'
+import type { CompactionResult, CompactionTrigger } from '@carnival/dsh-compaction'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import type { SessionSeq } from '@carnival/dsh-session'
+import type { CompactionAgentContext } from '@carnival/dsh-compaction'
+import type { ManualCompactAgentContext } from '@carnival/dsh-compaction'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'other': { kind: 'other' } & ContextFormed
   }

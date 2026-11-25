@@ -3,7 +3,7 @@ description: "在 Web 侧栏中显示 Agent 的持久终端，人可以旁观并
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-terminal-panel
+# @carnival/dsh-terminal-panel
 
 [English](README.md) | 中文
 
@@ -33,9 +33,9 @@ kind: "package-reference"
   isolate:
     terminals: true
   config:
-    - name: '@deepseek-ai/dsh-terminal'
-    - name: '@deepseek-ai/dsh-terminal-panel'
-    - name: '@deepseek-ai/dsh-tool-terminal'
+    - name: '@carnival/dsh-terminal'
+    - name: '@carnival/dsh-terminal-panel'
+    - name: '@carnival/dsh-tool-terminal'
 ```
 
 ### Agent 终端

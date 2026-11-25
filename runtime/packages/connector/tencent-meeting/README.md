@@ -3,7 +3,7 @@ description: "Add the Tencent Meeting plugin to a profile: the official tmeet wi
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-tencent-meeting
+# @carnival/dsh-tencent-meeting
 
 English | [中文](README.zh.md)
 
@@ -30,8 +30,8 @@ The Tencent Meeting plugin lets conversations use Tencent Meeting through the of
 Install the plugin from the Web sidebar's **Plugins** page or with the CLI:
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-tencent-meeting
-dsh plugin --profile web remove @deepseek-ai/dsh-tencent-meeting
+dsh plugin --profile web add @carnival/dsh-tencent-meeting
+dsh plugin --profile web remove @carnival/dsh-tencent-meeting
 ```
 
 `@tencentcloud/tmeet` declares an install script, so the first installation stops with `@tencentcloud/tmeet` among the pending build scripts. On the Plugins page, select **Allow these scripts and retry**; with the CLI, set `allowBuilds` for it to `true` in the profile's `pnpm-workspace.yaml` and run the command again. The script makes the packaged executable executable and runs `tmeet auth logout`, which signs out tmeet on this computer, including the user's own terminal. The approval stays in the profile, so each later installation of a new `@tencentcloud/tmeet` version runs the script and signs out again; sign in again on the plugin page afterwards. When the package has no executable for the computer's platform, or the executable is missing, the plugin fails to load with an error that names the platform or path.

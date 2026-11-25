@@ -4,27 +4,27 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { scheduler } from 'node:timers/promises'
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { agentPresetProjectionDefinition } from '@deepseek-ai/dsh-agent-preset-registry'
-import RemoteAccessService from '@deepseek-ai/dsh-api-remote-access'
-import type SessionController from '@deepseek-ai/dsh-api-session-controller'
-import { currentSessionMessageProjections } from '@deepseek-ai/dsh-session-format-catalog/message-projections'
-import { Session, SessionLogOffset } from '@deepseek-ai/dsh-session'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import SessionProjectionCache, { checkpointRecord, projectionCacheDomainSpec } from '@deepseek-ai/dsh-session-projection-cache'
-import type { CheckpointRecord } from '@deepseek-ai/dsh-session-projection-cache'
-import SqliteSessionQueryEngine from '@deepseek-ai/dsh-session-query-sqlite'
-import * as SessionStatsPlugin from '@deepseek-ai/dsh-session-stats'
-import SessionTitleService from '@deepseek-ai/dsh-session-title'
-import * as SessionTurnOutlinePlugin from '@deepseek-ai/dsh-session-turn-outline'
-import Storage from '@deepseek-ai/dsh-storage'
-import * as StorageDomain from '@deepseek-ai/dsh-storage-domain'
-import type { KvTable } from '@deepseek-ai/dsh-storage-domain'
-import * as StorageJson from '@deepseek-ai/dsh-storage-json'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { agentPresetProjectionDefinition } from '@carnival/dsh-agent-preset-registry'
+import RemoteAccessService from '@carnival/dsh-api-remote-access'
+import type SessionController from '@carnival/dsh-api-session-controller'
+import { currentSessionMessageProjections } from '@carnival/dsh-session-format-catalog/message-projections'
+import { Session, SessionLogOffset } from '@carnival/dsh-session'
+import type { SessionId } from '@carnival/dsh-session'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import SessionProjectionCache, { checkpointRecord, projectionCacheDomainSpec } from '@carnival/dsh-session-projection-cache'
+import type { CheckpointRecord } from '@carnival/dsh-session-projection-cache'
+import SqliteSessionQueryEngine from '@carnival/dsh-session-query-sqlite'
+import * as SessionStatsPlugin from '@carnival/dsh-session-stats'
+import SessionTitleService from '@carnival/dsh-session-title'
+import * as SessionTurnOutlinePlugin from '@carnival/dsh-session-turn-outline'
+import Storage from '@carnival/dsh-storage'
+import * as StorageDomain from '@carnival/dsh-storage-domain'
+import type { KvTable } from '@carnival/dsh-storage-domain'
+import * as StorageJson from '@carnival/dsh-storage-json'
+import TokenMeter from '@carnival/dsh-token-meter'
 import { assertBuiltBenchmarkRuntime } from '../support/built-worker.ts'
 import { serializeRecord } from '../../packages/storage/storage-json/src/format.ts'
 import { ANCHOR_COUNT } from './corpus-shape.ts'
@@ -360,10 +360,10 @@ async function measureFork(root: string, ranks: readonly number[]): Promise<Fork
 }
 
 assertBuiltBenchmarkRuntime(import.meta.url, Object.fromEntries([
-  '@deepseek-ai/dsh-api-session-controller',
-  '@deepseek-ai/dsh-session-persistence-jsonl',
-  '@deepseek-ai/dsh-session-query-sqlite',
-  '@deepseek-ai/dsh-session-projection-cache',
+  '@carnival/dsh-api-session-controller',
+  '@carnival/dsh-session-persistence-jsonl',
+  '@carnival/dsh-session-query-sqlite',
+  '@carnival/dsh-session-projection-cache',
 ].map(name => [name, import.meta.resolve(name)])))
 
 const USAGE = 'usage: session-corpus.worker.js <root> <anchors anchors...|seed name count|list count|search|fork ranks...>'

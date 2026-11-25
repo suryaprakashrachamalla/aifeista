@@ -190,15 +190,15 @@ impl StudioRecipes {
             }
         }
 
-        // Curated Carnival community & studio layouts, ordered by Trending stars
+        // Curated Carnival studio layouts, ordered by Trending stars
         let curated_layouts: [(&str, &str, &str, u32, bool, &str, &str); 9] = [
             (
                 "pixel-hq",
                 "Pixel HQ",
-                "bnhan2710",
+                "carnival",
                 60,
                 true,
-                "https://github.com/bnhan2710/pixel-hq/tree/main",
+                "",
                 "Your coding agents as a small engineering company: dark office pixel pets at desks with MacBooks, job-title nameplates, and split live panes.",
             ),
             (
@@ -213,16 +213,16 @@ impl StudioRecipes {
             (
                 "world-of-codecraft",
                 "World of Codecraft",
-                "kevinpardo",
+                "carnival",
                 28,
                 true,
-                "https://github.com/kevinpardo/world-of-codecraft/tree/main",
+                "",
                 "High-fantasy isometric pixel village above a live agent terminal — spaces are heraldic districts and every agent is a roaming hero.",
             ),
             (
                 "kanso",
                 "Kanso",
-                "jlopezlira",
+                "carnival",
                 27,
                 true,
                 "",
@@ -231,16 +231,16 @@ impl StudioRecipes {
             (
                 "omarchy",
                 "Omarchy",
-                "shafiqimtiaz",
+                "carnival",
                 19,
                 false,
                 "",
-                "Tiling flat-tile workspace inspired by Omarchy: crisp bordered panes, left spaces sidebar, live quota header, and right Git Changes inspector.",
+                "Tiling flat-tile workspace: crisp bordered panes, left spaces sidebar, live quota header, and right Git Changes inspector.",
             ),
             (
                 "islands",
                 "Islands",
-                "CodeyPacker",
+                "carnival",
                 14,
                 false,
                 "",
@@ -249,16 +249,16 @@ impl StudioRecipes {
             (
                 "brutal-metrics",
                 "Brutal Metrics",
-                "coldtatooine",
+                "carnival",
                 10,
                 false,
-                "https://github.com/coldtatooine/brutal-metrics/tree/main",
+                "",
                 "Brutalist telemetry rail showing live tokens, cache hits, and context % beside each agent; turns warm rust-cream when an agent needs input.",
             ),
             (
                 "middle-earth",
                 "Middle-earth",
-                "joaovitorwoliveira",
+                "carnival",
                 7,
                 false,
                 "",
@@ -267,10 +267,10 @@ impl StudioRecipes {
             (
                 "officetime",
                 "Officetime",
-                "Skaanning",
+                "carnival",
                 4,
                 false,
-                "https://github.com/Skaanning/officetime/tree/master",
+                "",
                 "Top-down pixel office floorplan: busy coworkers type at desks, blocked agents raise a hand, finished agents celebrate; click any coworker to inspect.",
             ),
         ];

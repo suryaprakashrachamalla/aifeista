@@ -3,12 +3,12 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, expect, it } from 'vitest'
-import { createDesktopCos } from '@deepseek-ai/dsh-desktop-publisher/desktop-cos.ts'
-import { desktopPublishCos } from '@deepseek-ai/dsh-desktop-publisher/desktop-publish-cos.ts'
+import { createDesktopCos } from '@carnival/dsh-desktop-publisher/desktop-cos.ts'
+import { desktopPublishCos } from '@carnival/dsh-desktop-publisher/desktop-publish-cos.ts'
 import { answer, cosError, startCosLoopback } from './cos-loopback.ts'
-import { prepareWebsiteInstaller, uploadWebsiteInstaller } from '@deepseek-ai/dsh-desktop-publisher/desktop-website-installer.ts'
-import type { DesktopRetainedManifest } from '@deepseek-ai/dsh-desktop-publisher/desktop-release-store.ts'
-import type { DesktopPublishRoute } from '@deepseek-ai/dsh-desktop-publisher/desktop-publish-route.ts'
+import { prepareWebsiteInstaller, uploadWebsiteInstaller } from '@carnival/dsh-desktop-publisher/desktop-website-installer.ts'
+import type { DesktopRetainedManifest } from '@carnival/dsh-desktop-publisher/desktop-release-store.ts'
+import type { DesktopPublishRoute } from '@carnival/dsh-desktop-publisher/desktop-publish-route.ts'
 
 const roots: string[] = []
 afterEach(async () => { await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))) })

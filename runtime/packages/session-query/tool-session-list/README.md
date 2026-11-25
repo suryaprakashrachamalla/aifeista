@@ -3,7 +3,7 @@ description: "List Workspace and Session metadata through optional read-only too
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-session-list
+# @carnival/dsh-tool-session-list
 
 English | [中文](README.zh.md)
 
@@ -36,9 +36,9 @@ The plugin requires `tools`, `sessions`, `sessionQuery`, `workspaceRegistry`, an
 ```yaml
 - insert:
     - id: workspace-registry
-      name: '@deepseek-ai/dsh-workspace'
+      name: '@carnival/dsh-workspace'
     - id: tool-session-list
-      name: '@deepseek-ai/dsh-tool-session-list'
+      name: '@carnival/dsh-tool-session-list'
 ```
 
 When the composition already mounts `workspaceRegistry`, add only the tool row. Workspace initialization follows the [registry's existing history bootstrap](../../workspace/workspace/README.md); listing calls do not create or attach sessions or change registry records.

@@ -1,6 +1,6 @@
 /** The WeCom section offers each state's next step, the guide download rows, and failure guidance, in every shipped language. */
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
-import type { ConnectorAccountDisplay, ConnectorOperationId } from '@deepseek-ai/dsh-client-ui-connector-account/types'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
+import type { ConnectorAccountDisplay, ConnectorOperationId } from '@carnival/dsh-client-ui-connector-account/types'
 import { rm } from 'node:fs/promises'
 import { afterAll, beforeAll, expect, it } from 'vitest'
 import * as Wecom from '../src/index.ts'

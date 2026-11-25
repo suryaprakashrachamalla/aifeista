@@ -1,6 +1,6 @@
 /** Machine-routable Session working-directory failures. @module */
 
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 
 /**
  * Every {@link WorkingDirectoryError} code:

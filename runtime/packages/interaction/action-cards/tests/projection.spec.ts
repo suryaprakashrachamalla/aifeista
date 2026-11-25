@@ -1,14 +1,14 @@
 import { expect, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createAssistantMessage, createUserMessage, type ContentBlock } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import { createAssistantMessage, createUserMessage, type ContentBlock } from '@carnival/dsh-llm'
 import {
   appendPluginRecord, Session, SESSION_FORMAT_VERSION, type SessionId, SessionLogOffset, SessionSeq, type SessionEvent, type SessionHeader,
-} from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-session'
 import { actionCardProjection, type ActionCardState } from '../src/projection.ts'
 import type { ActionCardDecision, ActionCardId } from '../src/types.ts'
 import { ACTION, fixture, proposal } from './fixture.ts'
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@carnival/dsh-session/types' {
   interface PluginRecordMap {
     /** The record that held decisions before the `action-cards/decision` event. */
     'plugin:action-cards/decision': ActionCardDecision

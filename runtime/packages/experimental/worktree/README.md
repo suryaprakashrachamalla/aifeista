@@ -3,7 +3,7 @@ description: "Create, enter, and leave retained Git worktrees under the calling 
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-worktree
+# @carnival/dsh-experimental-worktree
 
 English | [中文](README.zh.md)
 
@@ -28,8 +28,8 @@ Create an isolated checkout from a local commit and continue the same Session in
 Mount the service alongside `workingDirectory`, `fs`, `subprocess`, `sandbox`, `sandboxPolicy`, and `sessionProjections` providers. Archive cleanup additionally needs `workspaceRegistry` and `sessionQuery`, and uses `sessionProjectionCache` when it is mounted; without the first two the service only creates and restores. Add the tool package when models need the operation.
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-worktree'
-- name: '@deepseek-ai/dsh-experimental-tool-worktree'
+- name: '@carnival/dsh-experimental-worktree'
+- name: '@carnival/dsh-experimental-tool-worktree'
 ```
 
 `ctx.worktrees.create(agent, { name?, from?, fetch? }, signal?, onPhase?)` creates a new branch and checkout, then enters the canonical checkout directory through `ctx.workingDirectory.set`. `from` resolves to a local commit before creation and defaults to `HEAD`. With `fetch: true`, `from` must be the full name of a remote-tracking branch, `refs/remotes/<remote>/<branch>`, of a configured remote, the longest remote name winning when names nest; creation first runs `git fetch --no-tags --no-recurse-submodules --no-write-fetch-head --no-auto-maintenance <remote> +refs/heads/<branch>:<from>`, so only that branch is fetched, then resolves the fetched commit. The fetch runs under the Session's sandbox policy and the command deadline, without prompts, and a failed fetch creates nothing; staged, unstaged, untracked, and ignored source files are not copied. `baseCommit` reports the resolved commit object name; repository-local replacement refs still apply to the checked-out content. Checkout disables configured Git clean, smudge, and process filters without changing repository configuration. An existing branch or checkout path is an error. The returned record contains `path`, `branch`, `baseCommit`, and `repositoryRoot`. An optional fourth argument, `onPhase`, receives `fetch` first when the request asks to fetch, `prepare` before validation, directory allocation, and branch creation, and `checkout` before the files are written and the checkout is entered; it must not throw.

@@ -10,7 +10,7 @@
  */
 
 import { Client } from '@modelcontextprotocol/client'
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import type { McpProbeFailure, McpProbeResult, McpProbeStage, McpProbeSuccess } from './types.ts'
 import { McpTemplateBinding } from './credentials.ts'
 import { McpGeneration } from './generation.ts'

@@ -3,7 +3,7 @@
 import type {
   ChangeRequestCheck, ChangeRequestIssue, ChangeRequestRef, ChangeRequestReviewer, ChangeRequestSnapshot, ChecksRollup,
   CheckState, ForgeCheckId, ForgeFailure, MergeMethod, ReviewDecision, ReviewVerdict,
-} from '@deepseek-ai/dsh-experimental-forge'
+} from '@carnival/dsh-experimental-forge'
 import { z } from 'zod'
 import { avatarUrlOf, parseIssueUrl } from './urls.ts'
 

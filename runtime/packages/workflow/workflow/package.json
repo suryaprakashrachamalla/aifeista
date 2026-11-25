@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-workflow",
+  "name": "@carnival/dsh-workflow",
   "description": "Workflow capability seam: ctx.workflowEngine service, run vocabulary, and workflow/* events",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/workflow/workflow"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -35,16 +30,16 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   }
 }

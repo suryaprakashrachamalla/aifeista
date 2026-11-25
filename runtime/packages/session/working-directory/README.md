@@ -3,7 +3,7 @@ description: "Change one Session’s working directory while existing processes 
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-working-directory
+# @carnival/dsh-working-directory
 
 English | [中文](README.zh.md)
 
@@ -28,12 +28,12 @@ Change one Session’s working directory while existing processes retain theirs.
 Mount alongside `fs`, `sessionProjections`, and `systemPrompt`. `defaultDirectory` selects an absolute fallback for Sessions without an original directory; omission uses the launch directory. See the [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-working-directory).
 
 ```yaml
-- name: '@deepseek-ai/dsh-working-directory'
+- name: '@carnival/dsh-working-directory'
 ```
 
 -----
 
-Client programs that read the `workingDirectory` projection import its type declarations from `@deepseek-ai/dsh-working-directory/types`, which loads no runtime code.
+Client programs that read the `workingDirectory` projection import its type declarations from `@carnival/dsh-working-directory/types`, which loads no runtime code.
 
 Directory validation and publication delegate through `working-directory/access`, so the owner of a directory being removed can hold `ensure` and `set` into that directory until its operation settles. A listener waits only for an operation on the requested or current path, honours the request's `signal` while waiting, and otherwise calls `next()` at once; a rejection fails that access and leaves the recorded directory unchanged, with no fallback. Existing subprocesses keep their own directories.
 

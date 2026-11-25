@@ -3,9 +3,9 @@
  * The desktop answer is read once per page; a failed read renders no control. Association answers
  * are recorded per association class so menus can show them without waiting for the Host.
  */
-import { createSnapshotStore, type ObservableSnapshot, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { RemoteResult } from '@deepseek-ai/dsh-api-remotes/client'
-import type { SessionOpenWorkspacePathRequest, SessionWorkspacePathApplication } from '@deepseek-ai/dsh-api-session-controller/types'
+import { createSnapshotStore, type ObservableSnapshot, type SnapshotStore } from '@carnival/dsh-client-store'
+import type { RemoteResult } from '@carnival/dsh-api-remotes/client'
+import type { SessionOpenWorkspacePathRequest, SessionWorkspacePathApplication } from '@carnival/dsh-api-session-controller/types'
 import type { OpenInAppOutcome, OpenInAppPathFailure } from './outcome.ts'
 
 type Applications = readonly SessionWorkspacePathApplication[]

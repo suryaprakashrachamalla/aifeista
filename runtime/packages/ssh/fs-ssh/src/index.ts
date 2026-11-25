@@ -1,13 +1,13 @@
 /** Filesystem provider preserving remote identities and helper-owned atomic mutations. */
 import { posix } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { FS_ERROR_CODES, FileSystem, FsError } from '@deepseek-ai/dsh-fs'
-import type { FsDeleteOutcome, FsMoveOutcome, FsDirEntry, FsEditOutcome, FsEditRequest, FsErrorCode, FsInfo, FsPathInfo, FsTarget, FsVersion, FsWriteIntent, FsWriteOutcome } from '@deepseek-ai/dsh-fs'
-import type { SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import type {} from '@deepseek-ai/dsh-ssh'
-import { RemoteOperationError } from '@deepseek-ai/dsh-ssh/protocol'
-import { deleteResultSchema, moveResultSchema, editResultSchema, entriesSchema, infoSchema, pathInfoSchema, targetSchema, textStreamIdSchema, writeResultSchema } from '@deepseek-ai/dsh-ssh/schemas'
+import { FS_ERROR_CODES, FileSystem, FsError } from '@carnival/dsh-fs'
+import type { FsDeleteOutcome, FsMoveOutcome, FsDirEntry, FsEditOutcome, FsEditRequest, FsErrorCode, FsInfo, FsPathInfo, FsTarget, FsVersion, FsWriteIntent, FsWriteOutcome } from '@carnival/dsh-fs'
+import type { SandboxExecutionPolicy, SandboxMode } from '@carnival/dsh-sandbox'
+import type {} from '@carnival/dsh-sandbox-policy'
+import type {} from '@carnival/dsh-ssh'
+import { RemoteOperationError } from '@carnival/dsh-ssh/protocol'
+import { deleteResultSchema, moveResultSchema, editResultSchema, entriesSchema, infoSchema, pathInfoSchema, targetSchema, textStreamIdSchema, writeResultSchema } from '@carnival/dsh-ssh/schemas'
 import { z } from 'zod'
 
 const errorCodes = new Set<string>(FS_ERROR_CODES)

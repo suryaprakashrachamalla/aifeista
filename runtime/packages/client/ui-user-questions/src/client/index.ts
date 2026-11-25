@@ -10,21 +10,21 @@
  * `plan-review` intent as the plan decision card and every other request as
  * the generic question flow. Both use the same carrier and composer seat.
  */
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { InboxWireState } from '@deepseek-ai/dsh-agent/types'
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
-import type { ComposerChainProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type { PendingInteractionPublisher } from '@deepseek-ai/dsh-client-ui-session/client'
-import type { TypertClientEventListener } from '@deepseek-ai/dsh-typert-protocol'
-import type { AskUserQuestionItem, PendingUserQuestion, UserQuestionProjectionView } from '@deepseek-ai/dsh-user-questions/types'
+import type { Context as ClientContext } from '@carnival/cordis'
+import type { InboxWireState } from '@carnival/dsh-agent/types'
+import type {} from '@carnival/dsh-api-remotes/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-client-ui-chat/client'
+import type { ComposerChainProps } from '@carnival/dsh-client-ui-conversation/client'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
+import type { PendingInteractionPublisher } from '@carnival/dsh-client-ui-session/client'
+import type { TypertClientEventListener } from '@carnival/dsh-typert-protocol'
+import type { AskUserQuestionItem, PendingUserQuestion, UserQuestionProjectionView } from '@carnival/dsh-user-questions/types'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { UserQuestionPanels, UserQuestionRecord } from '@deepseek-ai/dsh-client-ui-tool/client'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type {} from '@carnival/dsh-client-locale/client'
+import type { UserQuestionPanels, UserQuestionRecord } from '@carnival/dsh-client-ui-tool/client'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
 import { createWaterfallRequest, PendingQuestion, type QuestionRpcChannel } from './contract/slots.ts'
 import { createQuestionDraftStore } from './draft-store.ts'
 import { QuestionComposer } from './QuestionComposer.tsx'
@@ -37,7 +37,7 @@ export type {
 } from './contract/slots.ts'
 export type { QuestionKey } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** The question composer's copy. */
     question: QuestionKey

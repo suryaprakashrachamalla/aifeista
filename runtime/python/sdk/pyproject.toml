@@ -5,21 +5,18 @@ build-backend = "hatchling.build"
 [project]
 name = "deepseek-harness-sdk"
 version = "0.0.0.dev0"
-description = "Python SDK for DeepSeek Harness"
+description = "Python SDK for Carnival"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "DeepSeek" }]
+authors = [{ name = "Carnival" }]
 dependencies = [
   "pydantic>=2.12,<3",
   "deepseek-harness-runtime-bin==0.0.0.dev0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/deepseek-ai/deepseek-harness"
-Documentation = "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/python-sdk.md"
-Issues = "https://github.com/deepseek-ai/deepseek-harness/issues"
-Source = "https://github.com/deepseek-ai/deepseek-harness"
+Homepage = "https://carnival.local"
 
 [dependency-groups]
 test = ["pytest>=8.0", "Pillow==12.3.0"]

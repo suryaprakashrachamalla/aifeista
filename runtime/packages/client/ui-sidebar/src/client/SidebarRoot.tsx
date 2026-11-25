@@ -14,8 +14,8 @@ import {
   FishLogo, IconAppsAddOutlineRegular, IconNewChatOutlineMedium,
   IconPanelLeftOutlineRegular, IconPinFillRegular, focusWithoutRing, Menu, ShortcutKeys, Toast,
   Tooltip, writeClipboard,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsRenderFactories, PropsRenderSlots, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@carnival/dsh-client-ui-primitives'
+import type { InjectFace, PropsRenderFactories, PropsRenderSlots, PropsRuntime } from '@carnival/dsh-client-ui-slots'
 import type {
   SidebarPanelActionsOwnerProps, SidebarPanelMetadata, SidebarRootComponentProps, SidebarRootInjected, SidebarSectionHookContext,
   SidebarSectionOwnerProps,

@@ -1,8 +1,8 @@
 /** On-demand page planning with an English plugin catalog for duplicate checks. */
 import { readFile } from 'node:fs/promises'
-import { bundleCatalogEntry } from '@deepseek-ai/dsh-plugin-manager/catalog'
-import type { Context } from '@deepseek-ai/cordis'
-import { BUNDLED_SKILL_RANK, type SkillCandidate } from '@deepseek-ai/dsh-skill'
+import { bundleCatalogEntry } from '@carnival/dsh-plugin-manager/catalog'
+import type { Context } from '@carnival/cordis'
+import { BUNDLED_SKILL_RANK, type SkillCandidate } from '@carnival/dsh-skill'
 
 /** Register the page planning skill behind the card switch, without a system-prompt section.
  * @param ctx - Owning plugin context with skill, plugin and card registries.

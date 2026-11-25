@@ -1,33 +1,33 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { mkdtempSync, rmSync } from 'node:fs'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { ShellExecutor } from '@deepseek-ai/dsh-shell'
-import type { ShellExecRequest, ShellExecSpec, ShellExecution, ShellProcess, ShellRunResult } from '@deepseek-ai/dsh-shell'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@deepseek-ai/dsh-tools'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import * as ToolJobs from '@deepseek-ai/dsh-tool-jobs'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
-import type { ApprovalOutcome } from '@deepseek-ai/dsh-user-approval'
-import { LocalBashExecutor } from '@deepseek-ai/dsh-bash-local'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import { escalationHintMarker, sandboxDenialMarker } from '@deepseek-ai/dsh-sandbox'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import * as ToolBash from '@deepseek-ai/dsh-tool-bash'
-import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
+import { Context } from '@carnival/cordis'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import { ShellExecutor } from '@carnival/dsh-shell'
+import type { ShellExecRequest, ShellExecSpec, ShellExecution, ShellProcess, ShellRunResult } from '@carnival/dsh-shell'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@carnival/dsh-tools'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import type { SessionId } from '@carnival/dsh-session'
+import LocalJobRegistry from '@carnival/dsh-jobs-local'
+import * as ToolJobs from '@carnival/dsh-tool-jobs'
+import ApprovalService from '@carnival/dsh-user-approval'
+import type { ApprovalOutcome } from '@carnival/dsh-user-approval'
+import { LocalBashExecutor } from '@carnival/dsh-bash-local'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import SandboxPolicyService from '@carnival/dsh-sandbox-policy'
+import { escalationHintMarker, sandboxDenialMarker } from '@carnival/dsh-sandbox'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import * as ToolBash from '@carnival/dsh-tool-bash'
+import * as BashEnvPlugin from '@carnival/dsh-shell-env'
 import { processOutcome } from '../src/background.ts'
 import { renderJobRead, renderResult } from '../src/render.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 /** Use the newest id returned by the real registry, including settled jobs. */
 function currentId(ctx: Context, owner?: Agent): string {
@@ -648,7 +648,7 @@ describe('background execution through the job runtime', () => {
       isError: true,
       error: { info: { name: 'ToolContextUnavailableError', code: 'TOOL_CONTEXT_UNAVAILABLE' } },
     })
-    expect(text(result)).toContain('background jobs unavailable: load @deepseek-ai/dsh-jobs and @deepseek-ai/dsh-tool-jobs')
+    expect(text(result)).toContain('background jobs unavailable: load @carnival/dsh-jobs and @carnival/dsh-tool-jobs')
   })
 
   it('a pre-aborted call is skipped before the process starts', async () => {

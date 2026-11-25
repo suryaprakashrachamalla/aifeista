@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment'
+import { brandString } from '@carnival/dsh-brand'
+import type { AttachmentId } from '@carnival/dsh-attachment'
 import {
   type ContentBlock,
   type ToolCallId,
@@ -13,8 +13,8 @@ import {
   createUserMessage,
   freezeMessage,
   type MessageId,
-} from '@deepseek-ai/dsh-llm'
-import { extractTextContent } from '@deepseek-ai/dsh-llm/message'
+} from '@carnival/dsh-llm'
+import { extractTextContent } from '@carnival/dsh-llm/message'
 
 describe('extractTextContent', () => {
   it('preserves whitespace and empty text blocks while omitting non-text blocks', () => {
@@ -86,7 +86,7 @@ describe('message construction', () => {
   })
 
   it('preserves system-prompt attribution on immutable system messages', () => {
-    const expectedSource: import('@deepseek-ai/dsh-llm').SystemPromptMessageSource = { kind: 'system-prompt' }
+    const expectedSource: import('@carnival/dsh-llm').SystemPromptMessageSource = { kind: 'system-prompt' }
     const message = createSystemMessage('rule')
     expectTypeOf(message.source).toEqualTypeOf(expectedSource)
     expect(message.role).toBe('system')

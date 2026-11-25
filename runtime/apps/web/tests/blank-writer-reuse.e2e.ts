@@ -2,11 +2,11 @@
 
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionHandle } from '@deepseek-ai/dsh-session-persistence'
+import type { SessionId } from '@carnival/dsh-session'
+import type { SessionHandle } from '@carnival/dsh-session-persistence'
 import { launchWebScaffold, watchConsole, type WebScaffold } from './scaffold.ts'
 import { newEnglishPage } from './support.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const HELD = brandString<SessionId>('blank-held')
 const FREE = brandString<SessionId>('blank-free')

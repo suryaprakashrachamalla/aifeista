@@ -1,6 +1,6 @@
 /** The brief read of the GitHub provider: its query, its mapping, and its queries per `briefBatchSize`. */
-import { changeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
-import type { ChangeRequestBrief, ChangeRequestRef, ForgeFailure } from '@deepseek-ai/dsh-experimental-forge'
+import { changeRequestKey } from '@carnival/dsh-experimental-forge'
+import type { ChangeRequestBrief, ChangeRequestRef, ForgeFailure } from '@carnival/dsh-experimental-forge'
 import { describe, expect, it } from 'vitest'
 import { GhOutputLimitError, GhTimeoutError, GhUnavailableError } from '../src/gh.ts'
 import type { GhOutput, GhRunner } from '../src/gh.ts'

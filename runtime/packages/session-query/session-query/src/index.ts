@@ -1,11 +1,11 @@
 /**
  * Service Definition for combined session-history reads, traces, filters, and full-text search.
  *
- * @module @deepseek-ai/dsh-session-query
+ * @module @carnival/dsh-session-query
  */
 
-import { currentSessionMessageProjections } from '@deepseek-ai/dsh-session-format-catalog/message-projections'
-import { Context, Service } from '@deepseek-ai/cordis'
+import { currentSessionMessageProjections } from '@carnival/dsh-session-format-catalog/message-projections'
+import { Context, Service } from '@carnival/cordis'
 import {
   type Session,
   SessionSeq,
@@ -13,10 +13,10 @@ import {
   validateSessionLog,
   type SessionId,
   type SessionSeq as SessionSeqType,
-} from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import { foldSessionTitle } from '@deepseek-ai/dsh-session-title'
-import type { SessionTitleSnapshot } from '@deepseek-ai/dsh-session-title'
+} from '@carnival/dsh-session'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import { foldSessionTitle } from '@carnival/dsh-session-title'
+import type { SessionTitleSnapshot } from '@carnival/dsh-session-title'
 import type {
   SessionEventResultFilter,
   SessionEventSearchPage,
@@ -86,7 +86,7 @@ export {
 export { assertSessionHeadersCompatible } from './sources.ts'
 export type { SessionObservation, SessionObservationOptions } from './observation.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     sessionQuery: SessionQueryEngine
   }

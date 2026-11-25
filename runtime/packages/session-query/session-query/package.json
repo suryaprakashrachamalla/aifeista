@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-session-query",
+  "name": "@carnival/dsh-session-query",
   "description": "Combined session query service contract with concrete reads, traces, and filters",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/session-query/session-query"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -35,36 +30,36 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-title": "workspace:*",
-    "@deepseek-ai/dsh-tool-todo": "workspace:*",
-    "@deepseek-ai/dsh-session-persistence": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-session-projection-cache": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-title": "workspace:*",
+    "@carnival/dsh-tool-todo": "workspace:*",
+    "@carnival/dsh-session-persistence": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-session-projection-cache": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-session-persistence": {
+    "@carnival/dsh-session-persistence": {
       "optional": true
     },
-    "@deepseek-ai/dsh-session-projection-cache": {
+    "@carnival/dsh-session-projection-cache": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-title": "workspace:*",
-    "@deepseek-ai/dsh-tool-todo": "workspace:*",
-    "@deepseek-ai/dsh-session-persistence": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-session-projection-cache": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-title": "workspace:*",
+    "@carnival/dsh-tool-todo": "workspace:*",
+    "@carnival/dsh-session-persistence": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-session-projection-cache": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-session-format-catalog": "workspace:*",
+    "@carnival/dsh-session-format-catalog": "workspace:*",
     "zod": "4.6.6"
   }
 }

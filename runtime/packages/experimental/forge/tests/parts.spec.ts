@@ -2,7 +2,7 @@
  * Fetches of a provider that names a batch size: which change requests one call reads, when a call starts and
  * settles, and what a call that fails or outlives its deadline affects.
  */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { changeRequestKey } from '../src/index.ts'
 import type { ChangeRequestBriefUpdate, ChangeRequestKey, ChangeRequestRef, ChangeRequestUpdate, ForgeRepository } from '../src/types.ts'

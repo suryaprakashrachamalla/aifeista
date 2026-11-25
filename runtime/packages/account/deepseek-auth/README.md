@@ -3,7 +3,7 @@ description: "DeepSeek request authentication for plugins that call a DeepSeek A
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-deepseek-auth
+# @carnival/dsh-deepseek-auth
 
 English | [中文](README.zh.md)
 
@@ -34,8 +34,8 @@ Use it for every request a Host plugin sends to a DeepSeek deployment. Mount it 
 ### Authorizing a request
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-deepseek-auth'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-deepseek-auth'
 
 declare const ctx: Context
 declare const route: string | undefined // provider route of the conversation's latest model request
@@ -80,9 +80,9 @@ An authorization carries the `kind`, the `endpoint`, and the request `headers`. 
 A model route plugin connects the provider route it registers and its settings from within `ctx.effect()`:
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import type {} from '@deepseek-ai/dsh-deepseek-auth'
+import type { Context } from '@carnival/cordis'
+import { credentialRef } from '@carnival/dsh-credentials'
+import type {} from '@carnival/dsh-deepseek-auth'
 
 declare const ctx: Context
 declare const settings: () => { baseURL: string; apiKeyEnv: string }

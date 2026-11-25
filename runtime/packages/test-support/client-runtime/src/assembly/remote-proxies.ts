@@ -10,23 +10,23 @@
  * throw (`gateway/internal`, or `gateway/cancelled` once the caller's signal
  * aborted), so product code that never awaits a rejection sees none; stream
  * items and failures pass through as the stream yields them.
- * @module @deepseek-ai/dsh-client-test-runtime/src/assembly/remote-proxies
+ * @module @carnival/dsh-client-test-runtime/src/assembly/remote-proxies
  */
-import type { Context } from '@deepseek-ai/cordis'
-import { cancelledFailure, carrierFailure } from '@deepseek-ai/dsh-api-gateway/client'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
-import type { RemoteMock } from '@deepseek-ai/dsh-remote-mock'
+import type { Context } from '@carnival/cordis'
+import { cancelledFailure, carrierFailure } from '@carnival/dsh-api-gateway/client'
+import type { ConnectionHandle } from '@carnival/dsh-client-connection/client'
+import type { RemoteMock } from '@carnival/dsh-remote-mock'
 import type { ClientPluginModule } from './roster.ts'
 
 /** The assembly row the proxies stand in for; its generated clients exist only in built `lib/`. */
-export const REMOTES_PACKAGE = '@deepseek-ai/dsh-api-remotes'
+export const REMOTES_PACKAGE = '@carnival/dsh-api-remotes'
 
 const PREFIX = 'remote.'
 
 /** Namespaces a roster package mounts through its own generated Remote client; a proxy would collide with that mount. */
 const SELF_MOUNTED_NAMESPACES: Readonly<Record<string, string>> = {
-  pluginEvents: '@deepseek-ai/dsh-client-hmr',
-  remoteConnection: '@deepseek-ai/dsh-client-remote-connection',
+  pluginEvents: '@carnival/dsh-client-hmr',
+  remoteConnection: '@carnival/dsh-client-remote-connection',
 }
 
 /**

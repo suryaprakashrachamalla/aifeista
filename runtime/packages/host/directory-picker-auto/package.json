@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-host-directory-picker-auto",
+  "name": "@carnival/dsh-host-directory-picker-auto",
   "description": "Adaptive chooser of the directory-picker seam: resolves the host situation at boot and mounts the native or browse backend for the DeepSeek Harness web GUI host",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/host/directory-picker-auto"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,28 +27,28 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-directory-picker-browse": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-directory-picker-native": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker-browse": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker-native": "workspace:*",
-    "@deepseek-ai/dsh-host-webserver": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-ui-directory-picker-browse": "workspace:*",
+    "@carnival/dsh-client-ui-directory-picker-native": "workspace:*",
+    "@carnival/dsh-host-directory-picker-browse": "workspace:*",
+    "@carnival/dsh-host-directory-picker-native": "workspace:*",
+    "@carnival/dsh-host-webserver": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-directory-picker-browse": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-directory-picker-native": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker-browse": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker-native": "workspace:*",
-    "@deepseek-ai/dsh-host-webserver": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-ui-directory-picker-browse": "workspace:*",
+    "@carnival/dsh-client-ui-directory-picker-native": "workspace:*",
+    "@carnival/dsh-host-directory-picker": "workspace:*",
+    "@carnival/dsh-host-directory-picker-browse": "workspace:*",
+    "@carnival/dsh-host-directory-picker-native": "workspace:*",
+    "@carnival/dsh-host-webserver": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-launch-environment": "workspace:*"
+    "@carnival/dsh-launch-environment": "workspace:*"
   }
 }

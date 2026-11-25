@@ -3,7 +3,7 @@ description: "Official sidebar branding and the default click-triggered pixel wh
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-brand-official
+# @carnival/dsh-client-ui-brand-official
 
 English | [中文](README.zh.md)
 

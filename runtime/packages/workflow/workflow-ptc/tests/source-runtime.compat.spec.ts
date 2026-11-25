@@ -1,11 +1,11 @@
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 /** The Node compatibility matrix runs this complete source-entry smoke. */
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
-import type { SandboxMode } from '@deepseek-ai/dsh-sandbox'
+import { Context } from '@carnival/cordis'
+import SubagentRuntime from '@carnival/dsh-subagent'
+import type { SandboxMode } from '@carnival/dsh-sandbox'
 import PtcWorkflowEngine from '../src/index.ts'
 import { fakeParent, mountPtcRuntime } from './setup.ts'
 

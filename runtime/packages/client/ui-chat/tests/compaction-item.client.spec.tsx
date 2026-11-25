@@ -8,8 +8,8 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render } from '@testing-library/react'
-import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import { makeTranslate } from '@carnival/dsh-client-test-runtime'
+import { zh as commonZh } from '@carnival/dsh-client-locale/src/locales/zh.ts'
 import type { ChatNodeViewProps } from '../src/client/contract/slots.ts'
 import type { CompactionSummaryNode } from '../src/client/contract/snapshot.ts'
 import { CompactionItem } from '../src/client/chat/CompactionItem.tsx'

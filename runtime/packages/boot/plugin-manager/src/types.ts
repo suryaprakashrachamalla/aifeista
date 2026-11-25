@@ -1,13 +1,13 @@
 /** Public plugin management records shared with clients. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { PluginLocalizedMeta } from '@deepseek-ai/dsh-package-manifest'
-import type { PluginInventoryEntry } from '@deepseek-ai/dsh-host-plugin-inventory/types'
-export type { PluginEntryId } from '@deepseek-ai/dsh-host-plugin-inventory/types'
-import type { PluginEntryId } from '@deepseek-ai/dsh-host-plugin-inventory/types'
-import type {} from '@deepseek-ai/dsh-typert-protocol'
-import type { DetailFailureReason } from '@deepseek-ai/dsh-plugin-detail/types'
+import type { Branded } from '@carnival/dsh-brand'
+import type { PluginLocalizedMeta } from '@carnival/dsh-package-manifest'
+import type { PluginInventoryEntry } from '@carnival/dsh-host-plugin-inventory/types'
+export type { PluginEntryId } from '@carnival/dsh-host-plugin-inventory/types'
+import type { PluginEntryId } from '@carnival/dsh-host-plugin-inventory/types'
+import type {} from '@carnival/dsh-typert-protocol'
+import type { DetailFailureReason } from '@carnival/dsh-plugin-detail/types'
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     /** The profile lists no such bundle, or its directory cannot be resolved. */
     'plugin-manager/unknown-bundle': { readonly name: string }
@@ -437,7 +437,7 @@ export type PluginOperation = {
   | { readonly phase: 'unknown' }
 )
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Events {
     /**
      * One manager invocation started or ended; subscribers run independently without delaying management.

@@ -1,17 +1,17 @@
-import { setSandboxMode } from '@deepseek-ai/dsh-sandbox-policy'
+import { setSandboxMode } from '@carnival/dsh-sandbox-policy'
 /** Actual request admission follows directory and permission changes made after assembly. */
 import { mkdtemp, mkdir, realpath, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import SandboxPolicy from '@deepseek-ai/dsh-sandbox-policy'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
+import { Context } from '@carnival/cordis'
+import { createUserMessage } from '@carnival/dsh-llm'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import SandboxPolicy from '@carnival/dsh-sandbox-policy'
+import ApprovalService from '@carnival/dsh-user-approval'
 import { describe, expect, it, vi } from 'vitest'
 import { MockAdapter, textResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 describe.each(['pre-step', 'prepareCall'] as const)('%s context changes', (phase) => {
   it.each([false, true])('admits current directory and permissions with optional context=%s', async (optional) => {

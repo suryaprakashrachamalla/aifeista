@@ -4,18 +4,18 @@
  * catalog subscription. Saved drafts enter the model before the first lookup
  * returns; Session-scope disposal releases the shell and its resources.
  */
-import type {} from '@deepseek-ai/dsh-client-product-analytics/client'
-import type { PlanProjection } from '@deepseek-ai/dsh-plan-mode/types'
-import type { GoalProjection } from '@deepseek-ai/dsh-goal/types'
-import type { Context } from '@deepseek-ai/cordis'
+import type {} from '@carnival/dsh-client-product-analytics/client'
+import type { PlanProjection } from '@carnival/dsh-plan-mode/types'
+import type { GoalProjection } from '@carnival/dsh-goal/types'
+import type { Context } from '@carnival/cordis'
 import type {
   ISessions, SessionBinding, SessionFace, SessionReference, SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SessionId, SessionSeq } from '@deepseek-ai/dsh-session/types'
-import type { TranslateNS } from '@deepseek-ai/dsh-client-locale/client'
-import type { InboxState } from '@deepseek-ai/dsh-agent/types'
-import type { ModelSelectionProjection } from '@deepseek-ai/dsh-agent/types'
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+} from '@carnival/dsh-api-session-controller/client'
+import type { SessionId, SessionSeq } from '@carnival/dsh-session/types'
+import type { TranslateNS } from '@carnival/dsh-client-locale/client'
+import type { InboxState } from '@carnival/dsh-agent/types'
+import type { ModelSelectionProjection } from '@carnival/dsh-agent/types'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
 import type {
   DraftAttachmentId, DraftAttachmentSerializationResult, DraftInitializationOptions, DraftInitializationResult, InputState,
   InputTriggerController, SessionInputResolver, SessionInput, SubmitOutcome,
@@ -54,7 +54,7 @@ interface ConversationAttachmentFace {
   releaseDraftAttachment(id: DraftAttachmentId): void
 }
 
-declare module '@deepseek-ai/dsh-api-session-controller/client' {
+declare module '@carnival/dsh-api-session-controller/client' {
   interface SessionReferenceSourceMap {
     /** A Session whose composer draft holds attachments, kept without its event connection. */
     draft: unknown

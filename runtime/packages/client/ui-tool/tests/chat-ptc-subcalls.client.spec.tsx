@@ -1,24 +1,24 @@
 // @vitest-environment jsdom
-import { syncedConfig } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply as applyMenus, inject as injectMenus } from '@deepseek-ai/dsh-client-ui-context-menu/client'
+import { syncedConfig } from '@carnival/dsh-client-test-runtime'
+import { apply as applyMenus, inject as injectMenus } from '@carnival/dsh-client-ui-context-menu/client'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent } from '@testing-library/react'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
 import type {
   ChatSnapshot, StartedToolCall, ToolCallBlock, ToolResultNode,
-} from '@deepseek-ai/dsh-client-ui-chat/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { SlotTestRuntime, stubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import type { PropsRenderSlots } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@carnival/dsh-client-ui-chat/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import { SlotTestRuntime, stubConfigForm } from '@carnival/dsh-client-test-runtime'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import type { PropsRenderSlots } from '@carnival/dsh-client-ui-slots'
 import {
   ConversationEventRegistry, ConversationViewRegistry, EMPTY_CONVERSATION_SNAPSHOT, type ConvViewOwnerProps,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { ConversationInteractionRegistry } from '@deepseek-ai/dsh-client-ui-conversation/src/client/conversation/interaction-registry.ts'
-import { en as conversationEn, NS as CONVERSATION_NS, zh as conversationZh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { apply as applyChat, inject as injectChat } from '@deepseek-ai/dsh-client-ui-chat/client'
-import { PartialArguments } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-client-ui-conversation/client'
+import { ConversationInteractionRegistry } from '@carnival/dsh-client-ui-conversation/src/client/conversation/interaction-registry.ts'
+import { en as conversationEn, NS as CONVERSATION_NS, zh as conversationZh } from '@carnival/dsh-client-ui-conversation/src/client/locales.ts'
+import { apply as applyChat, inject as injectChat } from '@carnival/dsh-client-ui-chat/client'
+import { PartialArguments } from '@carnival/dsh-util-values'
 import { apply as applyTool, inject as injectTool } from '../src/client/apply.ts'
 import { toolChatSnapshot } from './tool-fixtures.client.ts'
 
@@ -105,7 +105,7 @@ const ROOT_CHILDREN = {
  */
 async function bench(snapshot: ChatSnapshot) {
   const runtime = await SlotTestRuntime.create()
-  runtime.ctx.provide('fileDrag', { actions: { prepare: async () => ({ start: () => true, release: () => {} }), reportFailure: () => {} }, read: () => undefined } satisfies import('@deepseek-ai/cordis').Context['fileDrag'])
+  runtime.ctx.provide('fileDrag', { actions: { prepare: async () => ({ start: () => true, release: () => {} }), reportFailure: () => {} }, read: () => undefined } satisfies import('@carnival/cordis').Context['fileDrag'])
   runtimes.push(runtime)
   const ctx = runtime.ctx
   const chat = createSnapshotStore(snapshot)

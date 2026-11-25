@@ -1,10 +1,10 @@
 /** Persistent Remote browser credentials, independent of Token authentication and runtime Peers. */
 
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
-import { credentialKey } from '@deepseek-ai/dsh-credentials'
-import type { CredentialProvider, CredentialRecord } from '@deepseek-ai/dsh-credentials'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import type { ConnectionTrustRequest } from '@deepseek-ai/dsh-client-connection'
+import { credentialKey } from '@carnival/dsh-credentials'
+import type { CredentialProvider, CredentialRecord } from '@carnival/dsh-credentials'
+import { HarnessError } from '@carnival/dsh-error'
+import type { ConnectionTrustRequest } from '@carnival/dsh-client-connection'
 import { decodeBase64Url as decode, encodeBase64Url as encode } from './base64.ts'
 
 const RECORD_KEY = credentialKey('client-remote-connection', 'browser-session')

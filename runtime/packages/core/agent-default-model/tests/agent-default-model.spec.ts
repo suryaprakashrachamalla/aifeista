@@ -1,8 +1,8 @@
 /** Default model references remain live without a settings service. */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId } from '@carnival/dsh-llm'
 import DefaultModel from '../src/index.ts'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 

@@ -1,8 +1,8 @@
 /** AI Carnival brand plugin: registers the sidebar Circus Wheel identity and blank-home Circus Wheel animation layer. */
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { Context as ClientContext } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
+import type {} from '@carnival/dsh-client-ui-sidebar/client'
+import type {} from '@carnival/dsh-client-ui-conversation/client'
 import { PixelWhale } from './home-whale/PixelWhale.tsx'
 import { OfficialBrandMark, OfficialBrandName } from './Brand.tsx'
 

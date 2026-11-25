@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-session-telemetry-otel",
+  "name": "@carnival/dsh-session-telemetry-otel",
   "description": "Feedback-authorized Session logs over byte-bounded OpenTelemetry HTTP requests",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/session/session-telemetry-otel"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -33,36 +28,36 @@
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api-logs": "0.222.0",
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/schemastery": "workspace:~"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-command-feedback": "workspace:*",
-    "@deepseek-ai/dsh-message-feedback": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-telemetry": "workspace:*",
-    "@deepseek-ai/dsh-anonymous-user-id": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-otel": "workspace:*"
+    "@carnival/dsh-command-feedback": "workspace:*",
+    "@carnival/dsh-message-feedback": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-telemetry": "workspace:*",
+    "@carnival/dsh-anonymous-user-id": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-otel": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis-plugin-logger-console": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-app-boot": "workspace:*",
-    "@deepseek-ai/dsh-bash-local": "workspace:*",
-    "@deepseek-ai/dsh-command-feedback": "workspace:*",
-    "@deepseek-ai/dsh-message-feedback": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-loader-smoke": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-checkpoint-policy": "workspace:*",
-    "@deepseek-ai/dsh-session-persistence-jsonl": "workspace:*",
-    "@deepseek-ai/dsh-session-telemetry": "workspace:*",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:*",
-    "@deepseek-ai/dsh-anonymous-user-id": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-http-proxy": "workspace:*",
-    "@deepseek-ai/dsh-otel": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis-plugin-logger-console": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-app-boot": "workspace:*",
+    "@carnival/dsh-bash-local": "workspace:*",
+    "@carnival/dsh-command-feedback": "workspace:*",
+    "@carnival/dsh-message-feedback": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-loader-smoke": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-checkpoint-policy": "workspace:*",
+    "@carnival/dsh-session-persistence-jsonl": "workspace:*",
+    "@carnival/dsh-session-telemetry": "workspace:*",
+    "@carnival/dsh-subprocess-local": "workspace:*",
+    "@carnival/dsh-anonymous-user-id": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-http-proxy": "workspace:*",
+    "@carnival/dsh-otel": "workspace:*"
   }
 }

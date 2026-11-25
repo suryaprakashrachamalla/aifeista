@@ -1,14 +1,14 @@
 /** Host registry for model-visible, read-only Cordis capability queries. */
 
-import { Service } from '@deepseek-ai/cordis'
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import type {} from '@deepseek-ai/dsh-api-gateway'
-import { snapshotJsonValue, type JsonValue } from '@deepseek-ai/dsh-util-values'
-import { assertSupportedJsonSchema, validateJsonSchemaValue } from '@deepseek-ai/dsh-tools'
-import type { JsonSchemaNode } from '@deepseek-ai/dsh-tools'
+import { Service } from '@carnival/cordis'
+import type { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import type { SessionId } from '@carnival/dsh-session'
+import { HarnessError } from '@carnival/dsh-error'
+import type {} from '@carnival/dsh-api-gateway'
+import { snapshotJsonValue, type JsonValue } from '@carnival/dsh-util-values'
+import { assertSupportedJsonSchema, validateJsonSchemaValue } from '@carnival/dsh-tools'
+import type { JsonSchemaNode } from '@carnival/dsh-tools'
 import type {
   CordisInspectMethodManifest, CordisInspectPlatform, CordisInspectProviderManifest,
   CordisInspectProviderView, CordisInspectQueryRequest, CordisInspectQueryResolution,
@@ -74,7 +74,7 @@ interface PendingClientQuery {
   settle(resolution: CordisInspectQueryResolution): void
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Host registry for Cordis inspect providers and Client manifest/query routing. */
     cordisInspect: CordisInspectRegistryService

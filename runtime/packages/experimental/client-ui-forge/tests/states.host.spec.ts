@@ -1,12 +1,12 @@
 /** The Host's last known state of every change request that a listed Session binds. */
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { changeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
-import type { ChangeRequestBriefListener, ChangeRequestRef, ChangeRequestSnapshot } from '@deepseek-ai/dsh-experimental-forge/types'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { changeRequestKey } from '@carnival/dsh-experimental-forge'
+import type { ChangeRequestBriefListener, ChangeRequestRef, ChangeRequestSnapshot } from '@carnival/dsh-experimental-forge/types'
+import type { SessionId } from '@carnival/dsh-session/types'
 import { ChangeRequestStates, storedKey, type ChangeRequestStateSources, type ListedSession, type StoredStates } from '../src/states.ts'
 import type { ForgeChangeRequestListState, ForgeChangeRequestStatesFrame } from '../src/types.ts'
 import { demo, pullUrl, snapshot as openSnapshot } from './harness.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const S1 = brandString<SessionId>('s1')
 const S2 = brandString<SessionId>('s2')

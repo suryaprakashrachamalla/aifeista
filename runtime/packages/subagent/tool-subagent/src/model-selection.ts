@@ -1,12 +1,12 @@
 /** Child LLM route selection for the subagent tool. */
 
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId } from '@deepseek-ai/dsh-llm/types'
-import type { LlmRuntime } from '@deepseek-ai/dsh-llm'
-import type { AgentOptions } from '@deepseek-ai/dsh-agent'
-import { SubagentError } from '@deepseek-ai/dsh-subagent'
-import { ToolArgsError, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import z from '@deepseek-ai/schemastery'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId } from '@carnival/dsh-llm/types'
+import type { LlmRuntime } from '@carnival/dsh-llm'
+import type { AgentOptions } from '@carnival/dsh-agent'
+import { SubagentError } from '@carnival/dsh-subagent'
+import { ToolArgsError, ToolContextUnavailableError } from '@carnival/dsh-tools'
+import z from '@carnival/schemastery'
 
 /** One exact child LLM route authorized by a user setting. */
 export interface AllowedModelRoute {

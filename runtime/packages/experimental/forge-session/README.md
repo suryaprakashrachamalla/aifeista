@@ -3,7 +3,7 @@ description: "Bind change requests to the Session that created, pushed, or track
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-forge-session
+# @carnival/dsh-experimental-forge-session
 
 English | [中文](README.zh.md)
 
@@ -28,10 +28,10 @@ List the change requests a Session is working on without a separate registry. A 
 Mount the service with the forge registry, a provider, and the Session projection registry.
 
 ```yaml
-- name: '@deepseek-ai/dsh-session-projection'
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-experimental-forge-github'
-- name: '@deepseek-ai/dsh-experimental-forge-session'
+- name: '@carnival/dsh-session-projection'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-experimental-forge-github'
+- name: '@carnival/dsh-experimental-forge-session'
 ```
 
 A provider registers the commands of its CLI with `ctx.forgeSession.registerCommands(rule)`, an effect on the calling fiber that returns its disposer; while forge-session runs, [forge-github](../forge-github/README.md) registers `gh` and [forge-gitlab](../forge-gitlab/README.md) registers `glab`. A rule names its executable, its creation subcommands, its reference subcommands and its raw API request subcommands, each group with the options it accepts, a regular expression for the change request page path, the JSON members that hold a reference command's own URL, and a `select` function that maps one parsed reference or API request command to a URL or to a read-only lookup command. Registration throws for a malformed rule and for a rule whose id or executable a live registration has. A rule classifies the same input the same way every time, and its registrant raises `version` whenever the rule classifies any command or output differently.

@@ -1,7 +1,7 @@
 /** Reading and releasing the credential of each kind, and choosing the first kind that has one. */
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import { DeepSeekAuthError } from '@deepseek-ai/dsh-deepseek-auth'
+import { credentialRef } from '@carnival/dsh-credentials'
+import { DeepSeekAuthError } from '@carnival/dsh-deepseek-auth'
 import { accountStub } from '../../deepseek-account/tests/account-stub.ts'
 import { candidate, disposeMounted, mount, request } from './harness.ts'
 

@@ -3,15 +3,15 @@ import { mountWorkingDirectoryFixture } from './working-directory-fixture.ts'
 /** External execution ownership, result delivery, and process cleanup. */
 
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import SubagentRuntime from '../src/index.ts'
 import { TestSessionQuery } from './test-session-query.ts'
 import type { SubagentStartRequest, SubagentCapabilities, SubagentResult, SubagentRun } from '../src/types.ts'
 import { externalTestParent } from './external-activation-helpers.ts'
 import { subagentManager } from './manager-internals.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const capabilities: SubagentCapabilities = {
   agentOptions: false, agentPreset: false, outputSchema: false, depthLimit: false,

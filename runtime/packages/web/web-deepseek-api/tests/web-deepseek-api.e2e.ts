@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DeepSeekFetchApiProvider, DeepSeekSearchApiProvider } from '@deepseek-ai/dsh-web-deepseek-api'
+import { DeepSeekFetchApiProvider, DeepSeekSearchApiProvider } from '@carnival/dsh-web-deepseek-api'
 import { customGuidance } from './guidance.ts'
 import { keyCandidate } from './sources.ts'
 

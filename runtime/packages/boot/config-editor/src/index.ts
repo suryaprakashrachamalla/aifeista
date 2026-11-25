@@ -2,15 +2,15 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { isDeepStrictEqual } from 'node:util'
-import { Context, FiberState, Service } from '@deepseek-ai/cordis'
-import { parseEntryYaml, type PatchOptions } from '@deepseek-ai/cordis-plugin-include'
-import type { Entry, EntryOptions } from '@deepseek-ai/cordis-plugin-loader'
-import type {} from '@deepseek-ai/dsh-hmr'
-import { composeEntries, loadProfileDirectory, readProfilePatches, reconcileProfilePatches } from '@deepseek-ai/dsh-app-boot'
-import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
+import { Context, FiberState, Service } from '@carnival/cordis'
+import { parseEntryYaml, type PatchOptions } from '@carnival/cordis-plugin-include'
+import type { Entry, EntryOptions } from '@carnival/cordis-plugin-loader'
+import type {} from '@carnival/dsh-hmr'
+import { composeEntries, loadProfileDirectory, readProfilePatches, reconcileProfilePatches } from '@carnival/dsh-app-boot'
+import { withFileLock, writeFileAtomic } from '@carnival/dsh-atomic-write'
 import { isMap, isSeq, parseDocument, Scalar, visit } from 'yaml'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Persistent edits to the active profile's plugin configuration. */
     configEditor: ConfigEditor

@@ -3,7 +3,7 @@ description: "The one-shot Claude Code subagent provider for users and maintaine
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-subagent-claude-code
+# @carnival/dsh-subagent-claude-code
 
 English | [中文](README.zh.md)
 
@@ -63,9 +63,9 @@ The bundle inserts `tool-subagent-claude-code` as a Host row, so `subagent_claud
 ```yaml
 - insert:
     - id: subagent-claude-code
-      name: '@deepseek-ai/dsh-subagent-claude-code'
+      name: '@carnival/dsh-subagent-claude-code'
     - id: tool-subagent-claude-code
-      name: '@deepseek-ai/dsh-tool-subagent'
+      name: '@carnival/dsh-tool-subagent'
       config:
         provider: claude-code
         toolName: subagent_claude_code

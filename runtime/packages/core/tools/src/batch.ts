@@ -14,11 +14,11 @@
 import { ToolBatchExecutionError } from './executor.ts'
 import { TOOL_ABORTED_BEFORE_DISPATCH } from './contracts.ts'
 import type { ToolBatchInput, ToolBatchResult, ToolCallResult } from './executor.ts'
-import { createToolResultMessage, type ToolCallBlock } from '@deepseek-ai/dsh-llm'
-import type { SessionSeq, UserMessage } from '@deepseek-ai/dsh-session'
+import { createToolResultMessage, type ToolCallBlock } from '@carnival/dsh-llm'
+import type { SessionSeq, UserMessage } from '@carnival/dsh-session'
 import type { ToolExecutionInput, ToolExecutionMode, ToolExecutionResult, ToolRunContext } from './contracts.ts'
 import type { ScheduledToolDispatch, ToolExecutionPipeline } from './pipeline.ts'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import { assertNever } from '@carnival/dsh-util-values'
 
 /** One tool call after argument parsing, ready to schedule. */
 interface PlannedCall {

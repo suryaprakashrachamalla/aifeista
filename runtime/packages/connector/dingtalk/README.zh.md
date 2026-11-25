@@ -3,7 +3,7 @@ description: "把钉钉插件加入 profile：官方 dws 及其技能，以及�
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-dingtalk
+# @carnival/dsh-dingtalk
 
 [English](README.md) | 中文
 
@@ -30,8 +30,8 @@ kind: "package-bundle"
 在 Web 侧边栏的**插件**页面安装，或使用 CLI：
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-dingtalk
-dsh plugin --profile web remove @deepseek-ai/dsh-dingtalk
+dsh plugin --profile web add @carnival/dsh-dingtalk
+dsh plugin --profile web remove @carnival/dsh-dingtalk
 ```
 
 本包没有需要批准的安装脚本。`dingtalk` 行加载时，会下载 dws release 1.0.64 的两个资产：当前平台的归档（16 到 20 MB）和 `dws-skills.zip`（3.3 MB）。每个资产都先从 GitHub Releases 下载，GitHub 失败或在 `releaseTimeoutMs` 内没有送达时改用官方 Gitee 镜像；该行校验大小和 SHA-256 后，保存在它的缓存目录中：由 `dsh` 启动的 profile 中是 `$DSH_HOME/cache/dingtalk/<profile>/`，其他情况是 `$DSH_HOME/cache/dingtalk/`。它的 release 第一次在 profile 的目录中就位时（加载时已在位，或下载完成后），该行删除一次其中的其他 release，因此插件更新换了固定的 release 之后只留下一份；release 没有变化时不会重新下载。下载完成之前，运行时上下文不给出 `dws` 的路径，技能目录中也没有 `dingtalk` skill。当前平台没有对应的归档时，该行加载失败并给出平台；如需使用其他 `dws`，请设置 `binDir`。同时设置 `binDir` 和 `skillsDir` 时，该行不下载任何内容。

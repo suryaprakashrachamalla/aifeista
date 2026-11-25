@@ -1,22 +1,22 @@
-import AgentRegistry from '@deepseek-ai/dsh-agent'
+import AgentRegistry from '@carnival/dsh-agent'
 /**
  * Consumer API tests over a fake provider and the real policy collaborator: schemas,
  * validation, formatting, typed errors, intent dispatch, and observation-driven authorization.
  */
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import * as PtcToolExecutor from '@deepseek-ai/dsh-tool-executor-ptc'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import * as PtcToolExecutor from '@carnival/dsh-tool-executor-ptc'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { PtcRuntime } from '@deepseek-ai/dsh-ptc-runtime'
-import { createScope, type Scope } from '@deepseek-ai/dsh-scope'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ToolResult } from '@deepseek-ai/dsh-tools'
-import { FileSystem, FsError, type FsTargetKey, type FsVersion } from '@deepseek-ai/dsh-fs'
+import { Context } from '@carnival/cordis'
+import { PtcRuntime } from '@carnival/dsh-ptc-runtime'
+import { createScope, type Scope } from '@carnival/dsh-scope'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import SystemPrompt, { renderPrompt } from '@carnival/dsh-system-prompt'
+import ToolRuntime, { type ToolResult } from '@carnival/dsh-tools'
+import { FileSystem, FsError, type FsTargetKey, type FsVersion } from '@carnival/dsh-fs'
 import type {
   FsDirEntry,
   FsEditOutcome,
@@ -26,19 +26,19 @@ import type {
   FsTarget,
   FsWriteIntent,
   FsWriteOutcome,
-} from '@deepseek-ai/dsh-fs'
-import * as FsPolicy from '@deepseek-ai/dsh-fs-observation-policy'
-import * as ToolFs from '@deepseek-ai/dsh-tool-fs'
+} from '@carnival/dsh-fs'
+import * as FsPolicy from '@carnival/dsh-fs-observation-policy'
+import * as ToolFs from '@carnival/dsh-tool-fs'
 import { STREAM_MIN_SIZE } from '../src/read.ts'
 import { formatReadOutput } from '../src/read-render.ts'
 import type { FileReadOutcome } from '../src/read-render.ts'
 import { sessionResolveOptions } from '../src/session-cwd.ts'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
-import type { SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import { type SessionId, SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import ApprovalService from '@carnival/dsh-user-approval'
+import type { SandboxExecutionPolicy, SandboxMode } from '@carnival/dsh-sandbox'
+import SandboxPolicyService from '@carnival/dsh-sandbox-policy'
+import { type SessionId, SessionLogOffset, SessionSeq } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { brandString } from '@carnival/dsh-brand'
 
 const testToolSignal = new AbortController().signal
 
@@ -1233,7 +1233,7 @@ function withPersona(...sections: string[]): string {
 
 /** Schema assembly only: these cases never execute user code. */
 class GuidancePtcRuntime extends PtcRuntime {
-  resolve(request: import('@deepseek-ai/dsh-ptc-runtime').PtcRunRequest): import('@deepseek-ai/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
+  resolve(request: import('@carnival/dsh-ptc-runtime').PtcRunRequest): import('@carnival/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
 
   readonly language = 'typescript'
   readonly isolation = 'fake'

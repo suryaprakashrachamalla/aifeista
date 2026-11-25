@@ -1,7 +1,7 @@
-import { Context } from '@deepseek-ai/cordis'
-import type { SessionId, SessionHeader } from '@deepseek-ai/dsh-session'
-import { SessionFormatUnsupportedError, SessionPersistenceCorruptionError } from '@deepseek-ai/dsh-session-persistence'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@carnival/cordis'
+import type { SessionId, SessionHeader } from '@carnival/dsh-session'
+import { SessionFormatUnsupportedError, SessionPersistenceCorruptionError } from '@carnival/dsh-session-persistence'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path'
 import { generationLogPath } from '../src/format.ts'
 import { prepareCatalogFacts } from '../src/catalog-migration.ts'
 import { compressZstdFrame } from '../src/zstd.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const roots: string[] = []
 const contexts: Context[] = []

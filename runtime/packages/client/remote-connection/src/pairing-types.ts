@@ -1,6 +1,6 @@
 /** Public pairing-request data; display codes never authenticate an applicant. */
 
-import type { Branded } from '@deepseek-ai/dsh-brand'
+import type { Branded } from '@carnival/dsh-brand'
 
 /** Opaque identity of one process-local pairing request. */
 export type PairingRequestId = Branded<'PairingRequestId'>

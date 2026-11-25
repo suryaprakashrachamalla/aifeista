@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 import { LspConnection } from '../src/connection.ts'
-import type { ConnectionWriter } from '@deepseek-ai/dsh-lsp-stdio/src/connection.ts'
-import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
-import { spawnSubprocess } from '@deepseek-ai/dsh-subprocess-local/src/spawn.ts'
+import type { ConnectionWriter } from '@carnival/dsh-lsp-stdio/src/connection.ts'
+import { scrubbedParentEnv } from '@carnival/dsh-subprocess'
+import { spawnSubprocess } from '@carnival/dsh-subprocess-local/src/spawn.ts'
 
 const fixtureServer = fileURLToPath(new URL('./fixture-server.ts', import.meta.url))
 

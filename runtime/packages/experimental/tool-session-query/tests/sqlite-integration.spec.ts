@@ -1,25 +1,25 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage, type ToolCallId } from '@deepseek-ai/dsh-llm'
+import AgentRegistry, { type Agent } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage, type ToolCallId } from '@carnival/dsh-llm'
 import SessionStore, {
   SESSION_FORMAT_VERSION,
   type SessionId,
   SessionSeq,
   type Session,
-} from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import SqliteSessionQueryEngine from '@deepseek-ai/dsh-session-query-sqlite'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import * as ToolSessionQuery from '@deepseek-ai/dsh-tool-session-query'
+} from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import SqliteSessionQueryEngine from '@carnival/dsh-session-query-sqlite'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import * as ToolSessionQuery from '@carnival/dsh-tool-session-query'
 
 const temporaryDirectories: string[] = []
 const contexts: Context[] = []

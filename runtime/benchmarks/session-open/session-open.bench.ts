@@ -4,10 +4,10 @@ import { copyFile, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promise
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
 import {
   runBuiltBenchmarkWorker,
   type BuiltBenchmarkWorkerRun,

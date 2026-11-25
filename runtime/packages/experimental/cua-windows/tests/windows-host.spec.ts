@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import type { SubprocessHandle, SubprocessSpawnSpec } from '@deepseek-ai/dsh-subprocess'
+import type { SubprocessHandle, SubprocessSpawnSpec } from '@carnival/dsh-subprocess'
 import { prepareWsl, retainWslHelper, windowsHost } from '../src/windows-host.ts'
 
 it('distinguishes Windows Node, WSL Linux Node, and ordinary Linux', () => {

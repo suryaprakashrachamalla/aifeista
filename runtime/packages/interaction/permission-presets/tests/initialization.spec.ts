@@ -1,12 +1,12 @@
 /** Permission admission must finish before Agent creation completes. */
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import PermissionPresetService, { AUTO_PRESET } from '@deepseek-ai/dsh-permission-presets'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import PermissionPresetService, { AUTO_PRESET } from '@carnival/dsh-permission-presets'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import ApprovalService from '@carnival/dsh-user-approval'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 async function setup() {
   const ctx = new Context()

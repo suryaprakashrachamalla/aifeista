@@ -183,11 +183,11 @@
       if (parent.closest("input, textarea, code, pre, [contenteditable]")) continue;
       const v = node.nodeValue;
       if (!v) continue;
-      if (v.includes("DeepSeek Harness") || v.includes("DSH Local Build") || v.includes("AI Carnival")) {
+      if (v.includes("Carnival") === false && (v.includes("DSH Local Build") || v.includes("DSH"))) {
         node.nodeValue = v
-          .replace(/DeepSeek Harness/g, "Carnival")
-          .replace(/DSH Local Build/g, "Carnival")
-          .replace(/AI Carnival/g, "Carnival");
+          .replace(/DSH Local Build/g, "Carnival");
+      } else if (v.includes("AI Carnival")) {
+        node.nodeValue = v.replace(/AI Carnival/g, "Carnival");
       }
     }
   }

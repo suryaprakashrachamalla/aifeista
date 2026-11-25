@@ -1,10 +1,10 @@
 /** WebApp collects provider entry URLs and owns browser handoff. */
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import * as AppBoot from '@deepseek-ai/dsh-app-boot'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import * as AppBoot from '@carnival/dsh-app-boot'
 import { afterEach, expect, it, onTestFinished, vi } from 'vitest'
-import { createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
-import type { WebServer } from '@deepseek-ai/dsh-host-webserver'
+import { createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY } from '@carnival/dsh-launch-environment'
+import type { WebServer } from '@carnival/dsh-host-webserver'
 import { apply, type Config, internals } from '../src/index.ts'
 
 const originalOpen = internals.openBrowser

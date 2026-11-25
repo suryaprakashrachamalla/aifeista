@@ -1,16 +1,16 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
-import { setSandboxMode } from '@deepseek-ai/dsh-sandbox-policy'
+import { setSandboxMode } from '@carnival/dsh-sandbox-policy'
 import { realpathSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, rm } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { Context } from '@deepseek-ai/cordis'
-import { SandboxUnavailableError } from '@deepseek-ai/dsh-sandbox'
+import type { SessionId } from '@carnival/dsh-session'
+import { Context } from '@carnival/cordis'
+import { SandboxUnavailableError } from '@carnival/dsh-sandbox'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { mountRuntime } from './setup.ts'
 import type { Config } from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 /** Both retained REPL evaluators: Node's REPL and the scoped REPL. */
 const repls = [

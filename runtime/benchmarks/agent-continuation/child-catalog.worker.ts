@@ -1,15 +1,15 @@
 /** Cold parent-catalog observations beside fork children with tool-heavy inherited histories. */
 
 import { performance } from 'node:perf_hooks'
-import { Context } from '@deepseek-ai/cordis'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import SessionStore, { SESSION_FORMAT_VERSION, type SessionId, SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SessionQueryEngine from '@deepseek-ai/dsh-session-query'
-import SubagentRuntime, { SUBAGENT_DESCRIPTOR_VERSION } from '@deepseek-ai/dsh-subagent'
+import { Context } from '@carnival/cordis'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
+import { brandString } from '@carnival/dsh-brand'
+import SessionStore, { SESSION_FORMAT_VERSION, type SessionId, SessionLogOffset, SessionSeq } from '@carnival/dsh-session'
+import type { SessionEvent } from '@carnival/dsh-session'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SessionQueryEngine from '@carnival/dsh-session-query'
+import SubagentRuntime, { SUBAGENT_DESCRIPTOR_VERSION } from '@carnival/dsh-subagent'
 import { assertBuiltBenchmarkRuntime } from '../support/built-worker.ts'
 import { PARENT_ID, syntheticHistory, TIME_ZERO, WORKLOAD } from './workload.ts'
 
@@ -107,8 +107,8 @@ async function run(root: string, mode: string): Promise<CatalogReport | { seeded
 }
 
 assertBuiltBenchmarkRuntime(import.meta.url, Object.fromEntries([
-  '@deepseek-ai/dsh-subagent', '@deepseek-ai/dsh-session-query',
-  '@deepseek-ai/dsh-session-persistence-jsonl',
+  '@carnival/dsh-subagent', '@carnival/dsh-session-query',
+  '@carnival/dsh-session-persistence-jsonl',
 ].map(name => [name, import.meta.resolve(name)])))
 const [root, mode] = process.argv.slice(2)
 if (root === undefined || (mode !== 'seed' && mode !== 'catalog')) {

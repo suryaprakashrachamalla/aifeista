@@ -1,25 +1,25 @@
 // @vitest-environment jsdom
 /** Generated Remote methods and settings registrations leave with the plugin fiber. */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { createElement, Fragment, useState } from 'react'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { createSlotRenderer, StaticRemoteAccess } from '@deepseek-ai/dsh-client-test-runtime'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import { resolveSlotLabel, type PropsRenderSlots, type StandardSourceBinding } from '@deepseek-ai/dsh-client-ui-slots'
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
-import { apply as gatewayApply, inject as gatewayInject } from '@deepseek-ai/dsh-api-gateway/client'
-import { apply as resourcesApply, inject as resourcesInject } from '@deepseek-ai/dsh-client-resources/client'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import { createSlotRenderer, StaticRemoteAccess } from '@carnival/dsh-client-test-runtime'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
+import { resolveSlotLabel, type PropsRenderSlots, type StandardSourceBinding } from '@carnival/dsh-client-ui-slots'
+import TypertRegistry from '@carnival/dsh-typert-registry'
+import { apply as gatewayApply, inject as gatewayInject } from '@carnival/dsh-api-gateway/client'
+import { apply as resourcesApply, inject as resourcesInject } from '@carnival/dsh-client-resources/client'
 import type { PairingRequestId } from '../src/types.ts'
 import type { PairingInjected } from '../src/client/PairingRequests.tsx'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
-import type { RemoteConnectionContentProps, RemoteConnectionExtensionProps } from '@deepseek-ai/dsh-client-remote-connection/client'
+import type { ConnectionHandle } from '@carnival/dsh-client-connection/client'
+import type { RemoteConnectionContentProps, RemoteConnectionExtensionProps } from '@carnival/dsh-client-remote-connection/client'
 import { en, zh } from '../src/client/locales.ts'
 import { apply, inject } from '../src/client/index.ts'
 
-vi.mock('@deepseek-ai/dsh-client-remote-connection/remote', async () => import('./remote-fixture.ts'))
+vi.mock('@carnival/dsh-client-remote-connection/remote', async () => import('./remote-fixture.ts'))
 
 afterEach(cleanup)
 

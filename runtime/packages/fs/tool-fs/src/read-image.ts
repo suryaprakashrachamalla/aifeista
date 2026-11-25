@@ -8,21 +8,21 @@
  * image-reading tool is useful only when the exact calling route can inspect
  * its result, so unknown capability refuses instead of relying on an adapter
  * failure after filesystem and attachment work.
- * @module @deepseek-ai/dsh-tool-fs/src/read-image
+ * @module @carnival/dsh-tool-fs/src/read-image
  */
 
 import { basename, extname } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import { AttachmentError, type AttachmentId } from '@deepseek-ai/dsh-attachment'
-import type { AttachmentStore, ImageAttachmentRef, ImageMediaType } from '@deepseek-ai/dsh-attachment'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import type { GenericCallView, ToolExecution } from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-fs'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import type { Context } from '@carnival/cordis'
+import { AttachmentError, type AttachmentId } from '@carnival/dsh-attachment'
+import type { AttachmentStore, ImageAttachmentRef, ImageMediaType } from '@carnival/dsh-attachment'
+import type { ContentBlock } from '@carnival/dsh-llm'
+import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@carnival/dsh-tools'
+import type { GenericCallView, ToolExecution } from '@carnival/dsh-tools'
+import type {} from '@carnival/dsh-fs'
+import { assertNever } from '@carnival/dsh-util-values'
 import { ImageInputError } from './image-error.ts'
 import { resolveRegularReadTarget } from './read-target.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 /** Extensions `read_image` accepts; magic-byte validation at the attachment service stays authoritative. */
 const IMAGE_EXTENSIONS: Readonly<Record<string, ImageMediaType>> = {

@@ -1,20 +1,20 @@
 /**
  * Persistent shell PTY backend over the subprocess terminal primitive, shared
  * sandbox policy, bounded output, and provider-owned session cleanup.
- * @module @deepseek-ai/dsh-terminal-bash
+ * @module @carnival/dsh-terminal-bash
  */
 
-import type {} from '@deepseek-ai/dsh-working-directory'
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import { TerminalBackendCleanupError, TerminalError } from '@deepseek-ai/dsh-terminal'
-import type { TerminalBackend, TerminalBackendSpawnSpec, TerminalSendOperation } from '@deepseek-ai/dsh-terminal'
-import { SubprocessError } from '@deepseek-ai/dsh-subprocess'
-import type { SubprocessTerminalHandle, SubprocessTerminalSpawnSpec } from '@deepseek-ai/dsh-subprocess'
-import type { SandboxExecutionPolicy } from '@deepseek-ai/dsh-sandbox'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import { ENCODING_PREAMBLE } from '@deepseek-ai/dsh-pwsh-local'
+import type {} from '@carnival/dsh-working-directory'
+import { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import type { Session, SessionEvent } from '@carnival/dsh-session'
+import { TerminalBackendCleanupError, TerminalError } from '@carnival/dsh-terminal'
+import type { TerminalBackend, TerminalBackendSpawnSpec, TerminalSendOperation } from '@carnival/dsh-terminal'
+import { SubprocessError } from '@carnival/dsh-subprocess'
+import type { SubprocessTerminalHandle, SubprocessTerminalSpawnSpec } from '@carnival/dsh-subprocess'
+import type { SandboxExecutionPolicy } from '@carnival/dsh-sandbox'
+import type {} from '@carnival/dsh-sandbox-policy'
+import { ENCODING_PREAMBLE } from '@carnival/dsh-pwsh-local'
 import { type Config, type ResolvedConfig, resolveConfig, type ShellDialect, validateConfig } from './config.ts'
 import { LocalPtySession } from './session.ts'
 import { CONTROLLED_PROMPT } from './sanitize.ts'

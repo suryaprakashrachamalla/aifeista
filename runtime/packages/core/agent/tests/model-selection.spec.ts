@@ -1,16 +1,16 @@
 import { describe, expect, it, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import {
   agentEvents,
   installModelSelection,
   type Agent,
   type AgentOptions,
   type ModelSelection,
-} from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage, type ReasoningEffortId, type UserMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore, { Session, type SessionId, type EpochHeader } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+} from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage, type ReasoningEffortId, type UserMessage } from '@carnival/dsh-llm'
+import SessionStore, { Session, type SessionId, type EpochHeader } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { AgentModel, modelSelectionProjectionDefinition } from '../src/model-selection.ts'
 
 const INITIAL = { provider: 'alpha', model: 'a0' }

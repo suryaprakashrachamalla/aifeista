@@ -1,11 +1,11 @@
 /** Render detection uses recorded tool names, not JSON spelling or quoted skill instructions. */
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment'
-import { createToolResultMessage, createUserMessage, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { ImageBlock } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
+import type { AttachmentId } from '@carnival/dsh-attachment'
+import { createToolResultMessage, createUserMessage, type ToolCallId } from '@carnival/dsh-llm'
+import type { ImageBlock } from '@carnival/dsh-llm'
+import { Session, type SessionId } from '@carnival/dsh-session'
 import { expect, it } from 'vitest'
 import { expectNoRenderContext, officeCalls, officeImages } from './fixtures/real-office.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 it('collects displayed images from native results, inspect output and PTC additional context', () => {
   const session = Session.create(brandString<SessionId>('displayed-images'))

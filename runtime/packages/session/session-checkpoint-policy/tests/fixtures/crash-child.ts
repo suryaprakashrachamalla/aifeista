@@ -1,11 +1,11 @@
 import { writeFile } from 'node:fs/promises'
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { createUserMessage, type ToolCallId, type GenerateOptions, LlmAdapter, type StreamChunk  } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { createUserMessage, type ToolCallId, type GenerateOptions, LlmAdapter, type StreamChunk  } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionId } from '@carnival/dsh-session'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
 import * as checkpointPolicy from '../../src/index.ts'
 
 function waitForCrash(): Promise<never> {

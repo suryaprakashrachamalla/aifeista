@@ -1,8 +1,8 @@
 /** Preset roster, the new-task default and the read-only composition viewer for the settings section. */
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { AgentPresetRow } from '@deepseek-ai/dsh-agent-preset-registry/types'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-api-remotes/client'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
+import type { AgentPresetRow } from '@carnival/dsh-agent-preset-registry/types'
 import { AGENT_PRESET_SETTINGS_NS, requiresCodingTools, writeDefaultPreset } from './settings-store.ts'
 
 /** The read-only composition viewer over one preset. */

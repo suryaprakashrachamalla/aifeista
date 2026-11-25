@@ -1,4 +1,4 @@
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import type {
   AgentContext,
   ISessions,
@@ -7,12 +7,12 @@ import type {
   SessionReference,
   SessionRetainInfo,
   SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { MutableSessionEventSource } from '@deepseek-ai/dsh-api-session-controller/client'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { StaticRemoteAccess } from '@deepseek-ai/dsh-client-test-runtime'
-import type { HostObservable, RootStandardSourceContribution } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+} from '@carnival/dsh-api-session-controller/client'
+import { MutableSessionEventSource } from '@carnival/dsh-api-session-controller/client'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import { StaticRemoteAccess } from '@carnival/dsh-client-test-runtime'
+import type { HostObservable, RootStandardSourceContribution } from '@carnival/dsh-client-ui-slots'
+import type { SessionId } from '@carnival/dsh-session/types'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   apply,

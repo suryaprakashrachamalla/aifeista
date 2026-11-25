@@ -2,11 +2,11 @@
 /** Plugins that render `useSessionStatus` follow the status table's plugin lifecycle in the real Loader and renderer. */
 import { act } from '@testing-library/react'
 import { expect, onTestFinished, vi } from 'vitest'
-import { createClientTest, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
+import { createClientTest, webApp } from '@carnival/dsh-client-test-runtime/src/assembly/index.ts'
 
-const STATUS = '@deepseek-ai/dsh-client-ui-session-status'
-const WORKSPACE = '@deepseek-ai/dsh-client-ui-workspace'
-const CONVERSATION = '@deepseek-ai/dsh-client-ui-conversation'
+const STATUS = '@carnival/dsh-client-ui-session-status'
+const WORKSPACE = '@carnival/dsh-client-ui-workspace'
+const CONVERSATION = '@carnival/dsh-client-ui-conversation'
 
 const it = createClientTest({ roster: webApp.closure([WORKSPACE, CONVERSATION]) }, { mount: true })
 

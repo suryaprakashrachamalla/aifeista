@@ -1,11 +1,11 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import TerminalSessionService, { TerminalBackendCleanupError, TerminalError, type TerminalSessionId } from '@deepseek-ai/dsh-terminal'
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { Context } from '@carnival/cordis'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import TerminalSessionService, { TerminalBackendCleanupError, TerminalError, type TerminalSessionId } from '@carnival/dsh-terminal'
+import { HarnessError } from '@carnival/dsh-error'
 import type {
   TerminalBackend,
   TerminalBackendSession,
@@ -15,9 +15,9 @@ import type {
   TerminalSessionId as TerminalSessionIdType,
   TerminalSessionStatus,
   TerminalSignal,
-} from '@deepseek-ai/dsh-terminal'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-terminal'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
+import { brandString } from '@carnival/dsh-brand'
 
 const agentScopeDisposers = new WeakMap<Agent, () => Promise<void>>()
 const ptyServiceDisposers = new WeakMap<Context, () => Promise<void>>()

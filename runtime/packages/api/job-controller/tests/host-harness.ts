@@ -1,12 +1,12 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { JobAppendOptions, JobHandle, JobOutcome } from '@deepseek-ai/dsh-jobs'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
+import type { Agent } from '@carnival/dsh-agent'
+import type { JobAppendOptions, JobHandle, JobOutcome } from '@carnival/dsh-jobs'
+import LocalJobRegistry from '@carnival/dsh-jobs-local'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
 
 /** A registry with a tiny ring so eviction is cheap to reach. */
 export async function harness(): Promise<Context> {

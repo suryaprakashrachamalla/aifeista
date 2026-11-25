@@ -2,7 +2,7 @@
 import { expect, it } from 'vitest'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { ActionResult, NativeScreenshotResult } from '@deepseek-ai/dsh-cua/protocol'
+import { ActionResult, NativeScreenshotResult } from '@carnival/dsh-cua/protocol'
 import { Config } from '../src/index.ts'
 
 it('keeps the C# admission schema current with the Windows generator', () => {

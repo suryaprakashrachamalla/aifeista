@@ -10,10 +10,10 @@ import clsx from 'clsx'
 import {
   Button, IconCheckOutlineRegular, IconChevronDownOutlineRegular, IconEllipsisOutlineRegular, IconRightUpOutlineRegular, MarkdownText,
   Menu, Tag, Tooltip, type MarkdownLabels,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { ForgeReviewComment, ForgeReviewThread, ForgeReviewWrite, ForgeThreadId } from '@deepseek-ai/dsh-experimental-forge/types'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+} from '@carnival/dsh-client-ui-primitives'
+import type { PropsLocale } from '@carnival/dsh-client-ui-slots'
+import type { ForgeReviewComment, ForgeReviewThread, ForgeReviewWrite, ForgeThreadId } from '@carnival/dsh-experimental-forge/types'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import { formatAgo } from './format.ts'
 import { anchorRange, hunkExcerpt, type ThreadPlace } from './review-threads.ts'
 import { SplitAction } from './ReviewComposer.tsx'

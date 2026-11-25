@@ -1,22 +1,22 @@
 import { access } from 'node:fs/promises'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { AgentCancelCause } from '@deepseek-ai/dsh-agent'
-import { CREATED_RECORD } from '@deepseek-ai/dsh-experimental-worktree'
-import type {} from '@deepseek-ai/dsh-experimental-forge-session'
-import SessionStore, { appendPluginRecord, type SessionId } from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-working-directory'
+import { Context } from '@carnival/cordis'
+import type { AgentCancelCause } from '@carnival/dsh-agent'
+import { CREATED_RECORD } from '@carnival/dsh-experimental-worktree'
+import type {} from '@carnival/dsh-experimental-forge-session'
+import SessionStore, { appendPluginRecord, type SessionId } from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import type {} from '@carnival/dsh-working-directory'
 import type { ForgeSessionWorktree, ForgeWorktreeCreation, ForgeWorktreeState } from '../src/index.ts'
 import { CreationFailure, forgeWorktreeProjection, WORKTREE_RECORD, WorktreeCreations } from '../src/worktree.ts'
 import {
   branches, commitAt, git, hold, notice, plainSession, prompt, proposeStep, rejectionOf, repository, runtime, scratch, startStep, startTurn,
 } from './harness.ts'
 import type { Runtime } from './harness.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const cleanups: (() => Promise<void>)[] = []
 

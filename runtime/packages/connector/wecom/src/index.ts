@@ -3,13 +3,13 @@
  * CLI's absolute path and shows the authorization on the Plugins page, and registers the `wecom` entry skill with
  * `ctx.upstreamSkills`, which downloads the upstream guides it indexes. The CLI's authorization is shared with the
  * user's own terminal.
- * @module @deepseek-ai/dsh-wecom
+ * @module @carnival/dsh-wecom
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-cli-account'
-import type {} from '@deepseek-ai/dsh-upstream-skills'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-cli-account'
+import type {} from '@carnival/dsh-upstream-skills'
 import { performWith } from './account.ts'
 import { PROGRAM, resolveCliExecutable } from './directory.ts'
 import { dictionaries, type WecomTextKey } from './locales.ts'

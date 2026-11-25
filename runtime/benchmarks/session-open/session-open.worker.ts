@@ -1,22 +1,22 @@
 /** Isolated worker for cold Session phase, first-history, and Agent-resume benchmarks. */
 
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import { performance } from 'node:perf_hooks'
 import { scheduler } from 'node:timers/promises'
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { agentPresetProjectionDefinition } from '@deepseek-ai/dsh-agent-preset-registry'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { agentPresetProjectionDefinition } from '@carnival/dsh-agent-preset-registry'
 import SessionStore, {
   interruptedTurnClosers,
   type SessionId,
   SessionLogOffset,
   SessionPreparation,
-} from '@deepseek-ai/dsh-session'
-import AgentRegistry, { type AgentHandle } from '@deepseek-ai/dsh-agent'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SessionQueryEngine from '@deepseek-ai/dsh-session-query'
+} from '@carnival/dsh-session'
+import AgentRegistry, { type AgentHandle } from '@carnival/dsh-agent'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SessionQueryEngine from '@carnival/dsh-session-query'
 import type {
   SessionEventSearchPage,
   SessionEventSearchRequest,
@@ -24,11 +24,11 @@ import type {
   SessionSearchHit,
   SessionSearchPage,
   SessionSearchRequest,
-} from '@deepseek-ai/dsh-session-query'
-import * as SessionStatsPlugin from '@deepseek-ai/dsh-session-stats'
-import SessionTitleService from '@deepseek-ai/dsh-session-title'
-import * as SessionTurnOutlinePlugin from '@deepseek-ai/dsh-session-turn-outline'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
+} from '@carnival/dsh-session-query'
+import * as SessionStatsPlugin from '@carnival/dsh-session-stats'
+import SessionTitleService from '@carnival/dsh-session-title'
+import * as SessionTurnOutlinePlugin from '@carnival/dsh-session-turn-outline'
+import TokenMeter from '@carnival/dsh-token-meter'
 // These Host-only adapters have no public Node export and are compiled into the benchmark worker.
 import { HistoryController } from '../../packages/api/session-controller/src/history/controller.ts'
 import { WebController } from '../../packages/api/session-controller/src/web/controller.ts'
@@ -291,7 +291,7 @@ class SessionBenchmarkHost {
 }
 
 assertBuiltBenchmarkRuntime(import.meta.url, {
-  '@deepseek-ai/dsh-session-persistence-jsonl': import.meta.resolve('@deepseek-ai/dsh-session-persistence-jsonl'),
+  '@carnival/dsh-session-persistence-jsonl': import.meta.resolve('@carnival/dsh-session-persistence-jsonl'),
 })
 
 const [root, scenarioValue] = process.argv.slice(2)

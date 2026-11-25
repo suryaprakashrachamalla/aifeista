@@ -1,8 +1,8 @@
 import { expect, it, vi } from 'vitest'
-import { agentEvents, type Agent, type PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ActionCardId } from '@deepseek-ai/dsh-action-cards'
+import { agentEvents, type Agent, type PreStepDecision } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ActionCardId } from '@carnival/dsh-action-cards'
 import { fixture, cardId, proposal, recordCard } from './fixture.ts'
 import * as CreationRecommendations from '../src/index.ts'
 

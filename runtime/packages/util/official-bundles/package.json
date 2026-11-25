@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-official-bundles",
+  "name": "@carnival/dsh-official-bundles",
   "description": "Installation-owned lists of official dsh bundles (shipped profile templates, optional, on-demand, and retired bundles) and the plugin manager's protected and presented packages",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/util/official-bundles"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,12 +25,12 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-package-manifest": "workspace:*"
+    "@carnival/dsh-package-manifest": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   }
 }

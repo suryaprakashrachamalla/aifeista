@@ -1,8 +1,8 @@
 /** General settings row for the switch that offers action cards. */
 import { useState } from 'react'
-import { Button, IconInfoOutlineRegular, Switch, Tooltip } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { ConfigFormSnapshot } from '@deepseek-ai/dsh-client-ui-settings/client'
-import type { HostObservable, InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import { Button, IconInfoOutlineRegular, Switch, Tooltip } from '@carnival/dsh-client-ui-primitives'
+import type { ConfigFormSnapshot } from '@carnival/dsh-client-ui-settings/client'
+import type { HostObservable, InjectFace, PropsLocale, PropsRuntime } from '@carnival/dsh-client-ui-slots'
 import css from './SettingsRow.module.css'
 
 /** The Host `action-cards` field this row edits. */

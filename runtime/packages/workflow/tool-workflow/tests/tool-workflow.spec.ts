@@ -1,32 +1,32 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { createInboxStub, unsupportedModel, provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { createInboxStub, unsupportedModel, provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@deepseek-ai/dsh-tools'
-import type { ToolExecutionResult, ToolExecutionToken } from '@deepseek-ai/dsh-tools'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { WorkflowRunId } from '@deepseek-ai/dsh-workflow/types'
-import { WorkflowEngine } from '@deepseek-ai/dsh-workflow'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@carnival/dsh-tools'
+import type { ToolExecutionResult, ToolExecutionToken } from '@carnival/dsh-tools'
+import type { Agent } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import type { WorkflowRunId } from '@carnival/dsh-workflow/types'
+import { WorkflowEngine } from '@carnival/dsh-workflow'
 import type {
   WorkflowAgentEndInfo, WorkflowAgentInfo, WorkflowResult, WorkflowRun,
   WorkflowStartRequest,
-} from '@deepseek-ai/dsh-workflow'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import type { JobId } from '@deepseek-ai/dsh-jobs'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import * as ToolTasks from '@deepseek-ai/dsh-tool-jobs'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
-import PtcWorkflowEngine from '@deepseek-ai/dsh-workflow-ptc'
+} from '@carnival/dsh-workflow'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
+import type { JobId } from '@carnival/dsh-jobs'
+import AgentRegistry from '@carnival/dsh-agent'
+import LocalJobRegistry from '@carnival/dsh-jobs-local'
+import * as ToolTasks from '@carnival/dsh-tool-jobs'
+import SubagentRuntime from '@carnival/dsh-subagent'
+import PtcWorkflowEngine from '@carnival/dsh-workflow-ptc'
 import { mountWorkflowRuntime } from '../../workflow-ptc/tests/setup.ts'
 import * as toolWorkflow from '../src/index.ts'
 import type {} from '../src/types.ts'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 
 const testToolSignal = new AbortController().signal
 
@@ -631,7 +631,7 @@ describe('dsh-tool-workflow', () => {
       const result = await execute(ctx, { script: SCRIPT, meta: META, run_in_background: true }, { agent: parent })
       expect(result.isError).toBe(true)
       expect((result.content[0] as { text: string }).text)
-        .toContain('background jobs unavailable: load @deepseek-ai/dsh-jobs and @deepseek-ai/dsh-tool-jobs')
+        .toContain('background jobs unavailable: load @carnival/dsh-jobs and @carnival/dsh-tool-jobs')
       expect(result.error?.info).toEqual({ name: 'ToolContextUnavailableError', code: 'TOOL_CONTEXT_UNAVAILABLE' })
     })
 

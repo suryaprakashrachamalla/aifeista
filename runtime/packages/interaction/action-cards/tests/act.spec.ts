@@ -1,7 +1,7 @@
 import { expect, it, onTestFinished, vi } from 'vitest'
 import { z } from 'zod'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { Agent } from '@deepseek-ai/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import type { Agent } from '@carnival/dsh-agent'
 import type { ActionCardId, ActionCardProposalOf, ActionCardResult } from '../src/index.ts'
 import { ACTION, fixture, proposal, type TestDetails } from './fixture.ts'
 

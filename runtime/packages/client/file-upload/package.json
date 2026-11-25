@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-file-upload",
+  "name": "@carnival/dsh-client-file-upload",
   "description": "Agent-scoped browser file upload, streaming intake, and staged receipt service",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/file-upload"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -41,7 +36,7 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-remotes"
+        "@carnival/dsh-api-remotes"
       ],
       "platform": "web",
       "immediately": true
@@ -69,20 +64,20 @@
   ],
   "dependencies": {
     "zod": "4.6.6",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*"
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-commands": "workspace:*",
-    "@deepseek-ai/dsh-util-crypto": "workspace:*",
-    "@deepseek-ai/dsh-api-remotes": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-attachment": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-commands": "workspace:*",
+    "@carnival/dsh-util-crypto": "workspace:*",
+    "@carnival/dsh-api-remotes": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-attachment": "workspace:*"
   }
 }

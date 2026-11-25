@@ -19,8 +19,8 @@ vi.mock('../scripts/desktop-package-environment.mjs', () => ({ loadDesktopPackag
   DOWNLOAD_TEST_COS_SECRET_KEY: 'fixture-key', DSH_DESKTOP_WINDOWS_TOKEN_PIN: 'fixture-pin-not-for-sdk',
 }) }))
 
-vi.mock('@deepseek-ai/dsh-desktop-publisher/desktop-cos.ts', async (original) => {
-  const actual = await original<typeof import('@deepseek-ai/dsh-desktop-publisher/desktop-cos.ts')>()
+vi.mock('@carnival/dsh-desktop-publisher/desktop-cos.ts', async (original) => {
+  const actual = await original<typeof import('@carnival/dsh-desktop-publisher/desktop-cos.ts')>()
   return { ...actual, createDesktopCos: (credentials: Parameters<typeof actual.createDesktopCos>[0]) => {
     const cos = actual.createDesktopCos(credentials)
     state.redirect?.(cos)

@@ -1,12 +1,12 @@
 /** Session export command and Host-owned ZIP download and Markdown copy routes. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { CommandDefinitionId } from '@deepseek-ai/dsh-commands/types'
-import Schema from '@deepseek-ai/schemastery'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type {} from '@deepseek-ai/dsh-attachment'
-import type { CommandResult } from '@deepseek-ai/dsh-commands'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { Context } from '@carnival/cordis'
+import type { CommandDefinitionId } from '@carnival/dsh-commands/types'
+import Schema from '@carnival/schemastery'
+import { brandString } from '@carnival/dsh-brand'
+import type {} from '@carnival/dsh-attachment'
+import type { CommandResult } from '@carnival/dsh-commands'
+import type { SessionId } from '@carnival/dsh-session/types'
 import {
   DEFAULT_SESSION_LOG_COMPRESSION_LEVEL,
   flushLiveSessionLog,
@@ -79,7 +79,7 @@ const REQUESTED: CommandResult = {
  */
 export function apply(ctx: Context, config: Config = {}): void {
   ctx.effect(() => ctx.commands.register({
-    definitionId: brandString<CommandDefinitionId>('@deepseek-ai/dsh-session-log-export'),
+    definitionId: brandString<CommandDefinitionId>('@carnival/dsh-session-log-export'),
     name: 'export',
     description: 'Download this Session log as a ZIP archive',
     handler: invocation => Promise.resolve(invocation.rawInput.trim() === ''

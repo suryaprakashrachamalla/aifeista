@@ -1,18 +1,18 @@
 /** Session-owned MCP browser processes and provider catalog activation. @module */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import Schema from '@deepseek-ai/schemastery'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { BrowserUseProviderName } from '@deepseek-ai/dsh-browser-use/types'
-import * as McpClient from '@deepseek-ai/dsh-mcp-client'
-import { createScope } from '@deepseek-ai/dsh-scope'
-import type { Scope } from '@deepseek-ai/dsh-scope'
+import type { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import Schema from '@carnival/schemastery'
+import { brandString } from '@carnival/dsh-brand'
+import type { BrowserUseProviderName } from '@carnival/dsh-browser-use/types'
+import * as McpClient from '@carnival/dsh-mcp-client'
+import { createScope } from '@carnival/dsh-scope'
+import type { Scope } from '@carnival/dsh-scope'
 import { BrowserSessionError, SessionResources } from './index.ts'
-import type {} from '@deepseek-ai/dsh-browser-use'
-import { ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import type {} from '@deepseek-ai/dsh-working-directory'
+import type {} from '@carnival/dsh-browser-use'
+import { ToolContextUnavailableError } from '@carnival/dsh-tools'
+import type {} from '@carnival/dsh-system-prompt'
+import type {} from '@carnival/dsh-working-directory'
 
 /** Browser launch settings shared by the MCP integrations. */
 export interface BrowserMcpLaunchConfig {

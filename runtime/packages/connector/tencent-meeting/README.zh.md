@@ -3,7 +3,7 @@ description: "把腾讯会议插件加入 profile：官方 tmeet 及其技能，
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-tencent-meeting
+# @carnival/dsh-tencent-meeting
 
 [English](README.md) | 中文
 
@@ -30,8 +30,8 @@ kind: "package-bundle"
 在 Web 侧栏的 **插件** 页面安装，或使用 CLI：
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-tencent-meeting
-dsh plugin --profile web remove @deepseek-ai/dsh-tencent-meeting
+dsh plugin --profile web add @carnival/dsh-tencent-meeting
+dsh plugin --profile web remove @carnival/dsh-tencent-meeting
 ```
 
 `@tencentcloud/tmeet` 声明了安装脚本，因此第一次安装会停下来，待处理的构建脚本中列出 `@tencentcloud/tmeet`。在插件页面选择 **允许这些脚本并重试**；使用 CLI 时，在 profile 的 `pnpm-workspace.yaml` 中把它的 `allowBuilds` 设为 `true`，然后重新运行命令。该脚本会把包里的可执行文件设为可执行，并运行 `tmeet auth logout`，这会退出这台电脑上 tmeet 的登录，包括用户自己的终端。这项允许会保留在 profile 中，因此之后每次安装新版本的 `@tencentcloud/tmeet` 都会运行该脚本并再次退出登录；之后在插件页面重新登录即可。包里没有当前平台的可执行文件，或可执行文件缺失时，插件加载会失败，错误信息会给出平台或路径。

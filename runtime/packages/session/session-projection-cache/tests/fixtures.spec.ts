@@ -18,32 +18,32 @@ import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/pr
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { z } from 'zod'
-import SessionStore, { SESSION_FORMAT_VERSION, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionHeader } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
-import Storage from '@deepseek-ai/dsh-storage'
+import SessionStore, { SESSION_FORMAT_VERSION, type SessionId } from '@carnival/dsh-session'
+import type { SessionHeader } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import type { ProjectionDefinition } from '@carnival/dsh-session-projection'
+import Storage from '@carnival/dsh-storage'
 import {
   apply as storageJsonApply, Config as storageJsonConfig, inject as storageJsonInject, name as storageJsonName,
-} from '@deepseek-ai/dsh-storage-json'
+} from '@carnival/dsh-storage-json'
 import {
   apply as storageDomainApply, Config as storageDomainConfig, inject as storageDomainInject, name as storageDomainName,
-} from '@deepseek-ai/dsh-storage-domain'
+} from '@carnival/dsh-storage-domain'
 import SessionProjectionCache from '../src/index.ts'
 import { checkpointRow, projectionCacheDomainSpec } from '../src/spec.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 // Declarations must match the shipped title unit's exactly (the repo-wide
 // compile face sees both).
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@carnival/dsh-session-projection/types' {
   interface SessionProjectionMap {
     title: string | null
   }
 }
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@carnival/dsh-session/types' {
   interface SessionEventMap {
     'fixtures-test/set-title': { title: string }
   }

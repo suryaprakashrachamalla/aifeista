@@ -3,17 +3,17 @@
  * the derived LLM message history. Persistence is a plugin concern (subscribe
  * to `session/event`, drain on `session/flush`).
  *
- * @module @deepseek-ai/dsh-session
+ * @module @carnival/dsh-session
  */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { assertNever, deepFreeze, snapshotJsonValue } from '@deepseek-ai/dsh-util-values'
-import { scopeOf, scopeTarget } from '@deepseek-ai/dsh-scope'
-import type { Scoped } from '@deepseek-ai/dsh-scope'
-import type { Message } from '@deepseek-ai/dsh-llm'
+import { Context, Service } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import { assertNever, deepFreeze, snapshotJsonValue } from '@carnival/dsh-util-values'
+import { scopeOf, scopeTarget } from '@carnival/dsh-scope'
+import type { Scoped } from '@carnival/dsh-scope'
+import type { Message } from '@carnival/dsh-llm'
 import { SessionLogOffset, SessionSeq } from './types.ts'
-import type { TypertLookup } from '@deepseek-ai/dsh-typert-protocol'
+import type { TypertLookup } from '@carnival/dsh-typert-protocol'
 import type { CreateSessionOptions, EpochHeader, PluginRecord, PluginRecordMap, PluginRecordType, PrepareSessionOptions, RequestContext, SessionEvent, SessionEventInput, SessionEventMap, SessionEventType, SessionHeader, SessionId, SessionSeedEventState, SurfaceIntent, SurfaceEventType } from './types.ts'
 import { SurfaceManager, validateSessionEventData, validateSurfaceMetadata } from './surface.ts'
 import type { SessionSurface, SessionMessageProjection } from './surface.ts'
@@ -21,7 +21,7 @@ import { foldRequestHeader } from './request-header.ts'
 import { ToolHistoryProjection } from './tool-history.ts'
 import { assertMessageEventShape, checkSessionLog, needsInheritedSeedMarker } from './validation.ts'
 import type { SessionSeedMode } from './validation.ts'
-import type { ToolHistory } from '@deepseek-ai/dsh-llm'
+import type { ToolHistory } from '@carnival/dsh-llm'
 
 import { buildForkSeed } from './fork.ts'
 import { SessionForkError } from './fork-error.ts'
@@ -33,7 +33,7 @@ export type { SessionForkErrorCode } from './fork-error.ts'
 export * from './types.ts'
 export { SessionPreparation } from './preparation.ts'
 export type { SessionPreparationOptions } from './preparation.ts'
-export type { AssistantMessage, DeveloperMessage, SystemMessage, ToolResultMessage, UserMessage } from '@deepseek-ai/dsh-llm'
+export type { AssistantMessage, DeveloperMessage, SystemMessage, ToolResultMessage, UserMessage } from '@carnival/dsh-llm'
 export { interruptedTurnClosers, ToolCallRecovery, TOOL_NOT_STARTED, TOOL_OUTCOME_UNKNOWN } from './repair.ts'
 export type { SystemSurfaceNode, SessionSurface, SurfaceFoldReplacement, SurfaceFoldResult, SessionMessageProjection, SessionMessageProjectionContext } from './surface.ts'
 export { deriveEventMessage, foldSurface, isAppendSurfaceEvent, isReplacementSurfaceEvent, isSurfaceEvent, isSurfaceEligibleType } from './surface.ts'
@@ -41,7 +41,7 @@ export { canonicalHeader, foldRequestHeader, headerEquals } from './request-head
 export { KNOWN_SESSION_EVENT_TYPES } from './known-event-types.ts'
 export { buildSessionHeader, needsInheritedSeedMarker, validateSessionLog } from './validation.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     sessions: SessionStore
   }
@@ -54,7 +54,7 @@ declare module '@deepseek-ai/cordis' {
      * detach requested during dispatch is deferred.
      * A returned-promise rejection is logged but cannot retroactively veto this
      * synchronous boundary.
-     * Scope-filtered dispatch (`@deepseek-ai/dsh-scope`): agent-scoped listeners
+     * Scope-filtered dispatch (`@carnival/dsh-scope`): agent-scoped listeners
      * receive only sessions entered through that agent's context.
      * @param session - the session just entered and announced.
      * @mode emit
@@ -64,7 +64,7 @@ declare module '@deepseek-ai/cordis' {
      * Emitted once when an announced session leaves the store, including
      * publication rollback, but never for an entry whose creation announcement
      * did not begin. Listener failures are logged and contained.
-     * Scope-filtered dispatch (`@deepseek-ai/dsh-scope`) reuses the owner scope.
+     * Scope-filtered dispatch (`@carnival/dsh-scope`) reuses the owner scope.
      * @param session - the session that is no longer live in the store.
      * @mode emit
      */
@@ -76,7 +76,7 @@ declare module '@deepseek-ai/cordis' {
      * Array append commits every member before publishing them in order;
      * `session.seq` and `session.surface` already include the complete batch.
      * `session.currentBatchPublication` identifies the member being delivered.
-     * Scope-filtered dispatch (`@deepseek-ai/dsh-scope`): agent-scoped listeners
+     * Scope-filtered dispatch (`@carnival/dsh-scope`): agent-scoped listeners
      * receive only events from sessions entered through that agent's context.
      * @param session - the session whose log grew.
      * @param event - the appended event, exactly as recorded.
@@ -86,7 +86,7 @@ declare module '@deepseek-ai/cordis' {
     /**
      * Awaited parallel durability checkpoint: every listener runs and the
      * caller awaits all of them, with no waterfall veto. Scope-filtered dispatch
-     * (`@deepseek-ai/dsh-scope`) reuses the session's owner scope.
+     * (`@carnival/dsh-scope`) reuses the session's owner scope.
      * @param session - the session whose buffered events must reach durable storage.
      * @mode parallel
      */
@@ -94,7 +94,7 @@ declare module '@deepseek-ai/cordis' {
   }
 }
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface TypertLookupMap {
     session: TypertLookup<Session, SessionId>
   }
@@ -853,8 +853,8 @@ export class SessionStore extends Service {
         parameter: 'session',
         wire: 'sessionId',
         resource: 'session',
-        hostTypeSymbol: '@deepseek-ai/dsh-session#Session',
-        wireTypeSymbol: '@deepseek-ai/dsh-session/types#SessionId',
+        hostTypeSymbol: '@carnival/dsh-session#Session',
+        wireTypeSymbol: '@carnival/dsh-session/types#SessionId',
         resolve: sessionId => this.get(sessionId),
       })
     })

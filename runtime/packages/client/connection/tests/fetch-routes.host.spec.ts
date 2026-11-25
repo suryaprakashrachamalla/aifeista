@@ -1,5 +1,5 @@
-import { Context } from '@deepseek-ai/cordis'
-import type { PeerScope, Principal } from '@deepseek-ai/dsh-typert-protocol'
+import { Context } from '@carnival/cordis'
+import type { PeerScope, Principal } from '@carnival/dsh-typert-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { HostConnectionService } from '../src/rpc-host.ts'
 import { ConnectionAuthentication } from '../src/authentication.ts'
@@ -21,7 +21,7 @@ async function mounted(): Promise<{
 
 const GUEST: Principal = { kind: 'test-guest', guest: 'connection' }
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface PrincipalMap {
     /** Test-only non-owner caller shared by the access specs. */
     'test-guest': { readonly kind: 'test-guest'; readonly guest: string }

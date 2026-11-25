@@ -6,12 +6,12 @@
  * Draft text and reference chips live in the shell's Lexical editor; the machine
  * here owns submission state (phase, claim, attempt).
  */
-import type { Context } from '@deepseek-ai/cordis'
-import type { SessionBinding } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { InboxState } from '@deepseek-ai/dsh-agent/types'
-import type { ObservableSnapshot, SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { QuoteSummary } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { Context } from '@carnival/cordis'
+import type { SessionBinding } from '@carnival/dsh-api-session-controller/client'
+import type { InboxState } from '@carnival/dsh-agent/types'
+import type { ObservableSnapshot, SnapshotStore } from '@carnival/dsh-client-store'
+import type { Branded } from '@carnival/dsh-brand'
+import type { QuoteSummary } from '@carnival/dsh-client-ui-primitives'
 import type { ArbitrateKey, ArbitrateOutcome, DraftQuote, Occurrence, ReferenceInsert, TokenSpan } from './draft-editor.ts'
 import type { InputSubmitMode, MessageSubmission } from './composer-submission.ts'
 
@@ -137,7 +137,7 @@ export interface InputTriggerController {
   toggleSource(source: string, hit: InputTriggerHit): void
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Events {
     /**
      * Claim a command token for the scoped input machine.

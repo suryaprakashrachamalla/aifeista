@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 /** Prompt recall from the loaded Session history through the real input shell and the composer keymap. */
 import { setImmediate } from 'node:timers/promises'
-import { Context } from '@deepseek-ai/cordis'
-import { MutableSessionEventSource } from '@deepseek-ai/dsh-api-session-controller/client'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, MessageSource } from '@deepseek-ai/dsh-llm'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
+import { Context } from '@carnival/cordis'
+import { MutableSessionEventSource } from '@carnival/dsh-api-session-controller/client'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContentBlock, MessageSource } from '@carnival/dsh-llm'
+import { SessionSeq } from '@carnival/dsh-session/types'
 import { fireEvent } from '@testing-library/react'
 import {
   $createLineBreakNode, $createParagraphNode, $createTextNode, $getRoot, CLEAR_HISTORY_COMMAND, createEditor, KEY_ARROW_UP_COMMAND,

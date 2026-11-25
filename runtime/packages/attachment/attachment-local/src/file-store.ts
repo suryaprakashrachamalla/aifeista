@@ -1,14 +1,14 @@
-/** Verbatim content-addressed local file storage. @module @deepseek-ai/dsh-attachment-local/file-store */
+/** Verbatim content-addressed local file storage. @module @carnival/dsh-attachment-local/file-store */
 
 import { createHash } from 'node:crypto'
 import { createReadStream } from 'node:fs'
 import { join } from 'node:path'
-import { AttachmentError } from '@deepseek-ai/dsh-attachment'
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { AttachmentError } from '@carnival/dsh-attachment'
+import type { AttachmentId } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   FileAttachmentRef, SaveFileAttachment, SaveFileStreamAttachment,
-} from '@deepseek-ai/dsh-attachment'
+} from '@carnival/dsh-attachment'
 import {
   publishImmutableAlias, publishImmutableObject, publishImmutableObjectStream,
 } from './store.ts'

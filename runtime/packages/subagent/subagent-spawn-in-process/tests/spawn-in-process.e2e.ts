@@ -1,12 +1,12 @@
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { createUserMessage } from '@carnival/dsh-llm'
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { spawnHarness, waitForIdle } from './harness.ts'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { SessionId } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
 
 /** Key-gated smoke for a real parent delegating filesystem work to a real child. */
 

@@ -3,13 +3,13 @@
  * connection over the plugins' config resolvers, so `composition.spec.ts`, which boots the real route plugins through
  * the Loader, is what covers the production path.
  */
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-deepseek-auth'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import { Config as AccountConfig } from '@deepseek-ai/dsh-llm-deepseek-account'
-import { plainAccountOptions, resolveAccountOptions } from '@deepseek-ai/dsh-llm-deepseek-account/src/config.ts'
-import { Config as OfficialConfig } from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import { plainOptions, resolveAdapterOptions } from '@deepseek-ai/dsh-llm-deepseek-api-key/src/config.ts'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-deepseek-auth'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
+import { Config as AccountConfig } from '@carnival/dsh-llm-deepseek-account'
+import { plainAccountOptions, resolveAccountOptions } from '@carnival/dsh-llm-deepseek-account/src/config.ts'
+import { Config as OfficialConfig } from '@carnival/dsh-llm-deepseek-api-key'
+import { plainOptions, resolveAdapterOptions } from '@carnival/dsh-llm-deepseek-api-key/src/config.ts'
 
 /** One model route row. */
 export interface RouteRow {

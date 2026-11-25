@@ -2,14 +2,14 @@
 import { mkdtemp, mkdir, realpath, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { describe, expect, it } from 'vitest'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
-import WorkingDirectory from '@deepseek-ai/dsh-working-directory'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import type { Session, SessionId } from '@deepseek-ai/dsh-session'
-import { renderContextSnapshot } from '@deepseek-ai/dsh-system-prompt'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import LocalFileSystem from '@carnival/dsh-fs-local'
+import WorkingDirectory from '@carnival/dsh-working-directory'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import type { Session, SessionId } from '@carnival/dsh-session'
+import { renderContextSnapshot } from '@carnival/dsh-system-prompt'
+import { brandString } from '@carnival/dsh-brand'
 
 async function fixture() {
   const scratch = await realpath(await mkdtemp(join(tmpdir(), 'dsh-stored-changes-')))

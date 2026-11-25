@@ -3,17 +3,17 @@
  * selected file's turn-start and turn-end comparison drawn unified or side by
  * side, wrapped or scrolling, and controls to open the file itself.
  */
-import { selectSessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
+import { selectSessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   IconChevronDownOutlineRegular, IconCompareSplitOutlineRegular, IconInspectOutlineRegular,
   IconNowrapFillRegular, IconWrapFillRegular, Menu, PathLabel, Tooltip,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale, PropsRenderSlots, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
-import { fileAddressFor, resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
-import type { WorkspaceChangedFile } from '@deepseek-ai/dsh-workspace-changes/types'
+} from '@carnival/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, PropsRenderSlots, PropsRuntime, PropsStore } from '@carnival/dsh-client-ui-slots'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
+import { fileAddressFor, resolveWorkspacePath } from '@carnival/dsh-util-workspace-path'
+import type { WorkspaceChangedFile } from '@carnival/dsh-workspace-changes/types'
 import { changedFileUrl, changesDiffUrl, changesSummaryUrl, parseChangesReviewAddress } from '../changes.ts'
 import type { ChangesDiffStore } from './changes-diff.ts'
 import type { ChangesSummaryStore } from './changes-summary.ts'

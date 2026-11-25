@@ -3,13 +3,13 @@
  * CLI's absolute path and shows the account on the Plugins page, and registers the `tencent-meeting` entry skill with
  * `ctx.upstreamSkills`, which downloads the upstream guide it indexes. The CLI's default sign-in is shared with the
  * user's own terminal.
- * @module @deepseek-ai/dsh-tencent-meeting
+ * @module @carnival/dsh-tencent-meeting
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-cli-account'
-import type {} from '@deepseek-ai/dsh-upstream-skills'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-cli-account'
+import type {} from '@carnival/dsh-upstream-skills'
 import { performWith } from './account.ts'
 import { PROGRAM, resolveCliExecutable } from './directory.ts'
 import { dictionaries, type TencentMeetingTextKey } from './locales.ts'

@@ -36,11 +36,11 @@ use tokio_stream::StreamExt;
 use uuid::Uuid;
 
 use crate::agent_manager::{AgentManager, AgentViewMode, SpawnAgentRequest};
-use crate::openbitfun::OpenBitFunAdapter;
 use crate::remote_handoff::{
     AddPeerRequest, DispatchHandoffRequest, ReceiveHandoffRequest, RemoteHandoffManager,
 };
 use crate::studio_recipes::{SaveRecipeRequest, StudioRecipes};
+use crate::workspace_core::WorkspaceCoreAdapter;
 
 const AGENT_MANAGER_HTML: &str = include_str!("../../../desktop/web-shell/agent-manager.html");
 
@@ -161,7 +161,7 @@ pub struct AppState {
     pub store: EventStore,
     pub cordis: CordisBus,
     pub optimizer: OptimizationMiddleware,
-    pub openbitfun: OpenBitFunAdapter,
+    pub workspace_core: WorkspaceCoreAdapter,
     pub privacy_guard: PrivacyGuard,
     pub cua_envelope: CapabilityEnvelope,
     pub overlay_state: Arc<RwLock<OverlayState>>,
@@ -172,9 +172,9 @@ pub struct AppState {
 }
 
 pub struct BoundBridges {
-    pub clicky_addr: SocketAddr,
+    pub companion_addr: SocketAddr,
     pub bridge_addr: SocketAddr,
-    pub clicky_handle: tokio::task::JoinHandle<()>,
+    pub companion_handle: tokio::task::JoinHandle<()>,
     pub bridge_handle: tokio::task::JoinHandle<()>,
 }
 
@@ -203,15 +203,15 @@ fn attach_cors_headers(resp: &mut Response) {
     );
 }
 
-/// Starts both the companion `/chat` compatibility server (`clicky_port`, default 8787)
+/// Starts both the companion `/chat` compatibility server (`companion_port`, default 8787)
 /// and the Carnival UI/telemetry bridge (`bridge_port`, default 32123).
 pub async fn spawn_bridge_servers(
     state: AppState,
-    clicky_port: u16,
+    companion_port: u16,
     bridge_port: u16,
 ) -> std::io::Result<BoundBridges> {
-    let clicky_router = Router::new()
-        .route("/chat", post(handle_clicky_chat))
+    let companion_router = Router::new()
+        .route("/chat", post(handle_companion_chat))
         .route("/health", get(handle_health))
         .layer(middleware::from_fn(cors_middleware))
         .with_state(state.clone());
@@ -266,46 +266,46 @@ pub async fn spawn_bridge_servers(
         .layer(middleware::from_fn(cors_middleware))
         .with_state(state);
 
-    let clicky_listener =
-        TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], clicky_port))).await?;
-    let clicky_addr = clicky_listener.local_addr()?;
+    let companion_listener =
+        TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], companion_port))).await?;
+    let companion_addr = companion_listener.local_addr()?;
 
     let bridge_listener =
         TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], bridge_port))).await?;
     let bridge_addr = bridge_listener.local_addr()?;
 
-    let clicky_handle = tokio::spawn(async move {
-        let _ = axum::serve(clicky_listener, clicky_router).await;
+    let companion_handle = tokio::spawn(async move {
+        let _ = axum::serve(companion_listener, companion_router).await;
     });
     let bridge_handle = tokio::spawn(async move {
         let _ = axum::serve(bridge_listener, bridge_router).await;
     });
 
     Ok(BoundBridges {
-        clicky_addr,
+        companion_addr,
         bridge_addr,
-        clicky_handle,
+        companion_handle,
         bridge_handle,
     })
 }
 
 #[derive(Debug, Deserialize)]
-struct ClickyChatRequest {
+struct CompanionChatRequest {
     #[serde(default)]
     session_id: Option<String>,
     #[serde(default)]
-    messages: Vec<ClickyMessage>,
+    messages: Vec<CompanionMessage>,
     #[serde(default)]
     prompt: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-struct ClickyMessage {
+struct CompanionMessage {
     role: String,
     content: Value,
 }
 
-fn extract_prompt_from_clicky(req: &ClickyChatRequest) -> String {
+fn extract_prompt_from_companion(req: &CompanionChatRequest) -> String {
     if let Some(p) = &req.prompt {
         if !p.trim().is_empty() {
             return p.clone();
@@ -332,11 +332,11 @@ fn extract_prompt_from_clicky(req: &ClickyChatRequest) -> String {
 
 /// Companion-compatible `POST /chat` endpoint emitting Anthropic-style SSE
 /// (`content_block_delta` + `message_stop`) backed by SQLite WAL + SkillTree + CordisBus.
-async fn handle_clicky_chat(
+async fn handle_companion_chat(
     State(state): State<AppState>,
-    Json(payload): Json<ClickyChatRequest>,
+    Json(payload): Json<CompanionChatRequest>,
 ) -> Response {
-    let prompt = extract_prompt_from_clicky(&payload);
+    let prompt = extract_prompt_from_companion(&payload);
     let session_id = payload
         .session_id
         .unwrap_or_else(|| "companion-live".to_string());
@@ -344,7 +344,7 @@ async fn handle_clicky_chat(
     let turn_req = TurnRequest {
         request_id: Uuid::new_v4().to_string(),
         session_id,
-        lane: LaneKind::ClickyAmbient,
+        lane: LaneKind::CompanionAmbient,
         prompt,
         screen_context: Some(ScreenContext::default()),
         optimizations: None,
@@ -514,8 +514,8 @@ async fn handle_health(State(state): State<AppState>) -> impl IntoResponse {
         "ok": true,
         "timestamp_ms": now_ms(),
         "seams_mounted": seams.len(),
-        "openbitfun_present": state.openbitfun.is_present(),
-        "indexed_files": state.openbitfun.index.file_count(),
+        "workspace_core_present": state.workspace_core.is_present(),
+        "indexed_files": state.workspace_core.index.file_count(),
         "active_agents": active_agents,
         "glass_opacity": glass_opacity,
         "glass_tint": glass_tint,
@@ -614,7 +614,7 @@ async fn handle_search(
     Query(params): Query<SearchParams>,
 ) -> impl IntoResponse {
     let start = Instant::now();
-    let matches = state.openbitfun.search(&params.q, params.max);
+    let matches = state.workspace_core.search(&params.q, params.max);
     Json(json!({
         "query": params.q,
         "elapsed_us": start.elapsed().as_micros(),
@@ -956,7 +956,7 @@ async fn handle_window_overlay(
         let _ = tx.send(cmd);
     }
 
-    Json(json!({ "ok": true, "window": "clicky-overlay", "visible": next_visible }))
+    Json(json!({ "ok": true, "window": "companion-overlay", "visible": next_visible }))
 }
 
 async fn handle_window_main(

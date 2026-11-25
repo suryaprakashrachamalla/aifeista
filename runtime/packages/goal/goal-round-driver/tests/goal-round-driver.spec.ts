@@ -1,22 +1,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { agentEvents } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { GoalId } from '@deepseek-ai/dsh-goal/types'
-import GoalService from '@deepseek-ai/dsh-goal'
-import type { GoalView } from '@deepseek-ai/dsh-goal'
-import { createUserMessage, LlmAdapter, LlmError  } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { UserMessage } from '@deepseek-ai/dsh-session'
-import type { SubagentRuntime } from '@deepseek-ai/dsh-subagent'
+import { Context } from '@carnival/cordis'
+import type { Agent, PreStepDecision } from '@carnival/dsh-agent'
+import { agentEvents } from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { brandString } from '@carnival/dsh-brand'
+import type { GoalId } from '@carnival/dsh-goal/types'
+import GoalService from '@carnival/dsh-goal'
+import type { GoalView } from '@carnival/dsh-goal'
+import { createUserMessage, LlmAdapter, LlmError  } from '@carnival/dsh-llm'
+import type { GenerateOptions, StreamChunk } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
+import type { UserMessage } from '@carnival/dsh-session'
+import type { SubagentRuntime } from '@carnival/dsh-subagent'
 import * as goalSession from '../src/index.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

@@ -7,9 +7,9 @@ import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed, onTestFinished, vi } from 'vitest'
-import type { GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
-import { LlmAdapter } from '@deepseek-ai/dsh-llm'
-import type {} from '@deepseek-ai/dsh-webhook'
+import type { GenerateOptions, StreamChunk } from '@carnival/dsh-llm'
+import { LlmAdapter } from '@carnival/dsh-llm'
+import type {} from '@carnival/dsh-webhook'
 import {
   captureExpandedTurnProcessAria,
   captureStableAria,
@@ -140,7 +140,7 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
       repository: { full_name: 'deepseek-ai/deepseek-harness' },
       pull_request: {
         title: 'Fix session replay',
-        html_url: 'https://github.com/deepseek-ai/deepseek-harness/pull/314',
+        html_url: 'https://carnival.local',
         draft: false,
         user: { login: 'octocat' },
         base: { ref: 'master', sha: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },

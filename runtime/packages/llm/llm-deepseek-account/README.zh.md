@@ -3,7 +3,7 @@ description: "DeepSeek 账号鉴权、模型列表与模型门控。"
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-llm-deepseek-account
+# @carnival/dsh-llm-deepseek-account
 
 [English](README.md) | 中文
 
@@ -25,7 +25,7 @@ kind: "package-reference"
 <a id="use-this-package"></a>
 ## 使用此包
 
-凭据只来自账号登录：`ctx.deepseekAuth` 调用 `deepseekAccount.resolveRequestCredential(url)`，目标地址必须通过账号服务的来源校验。未登录或目标不允许账号鉴权时，请求以 `ACCOUNT_SIGN_IN_REQUIRED` 失败，目录为空；不会回退到 API key。其他凭据查询错误继续向调用者报告。本插件只在挂载了 `@deepseek-ai/dsh-deepseek-auth` 的组合中启动；`base` 组合包挂载它。
+凭据只来自账号登录：`ctx.deepseekAuth` 调用 `deepseekAccount.resolveRequestCredential(url)`，目标地址必须通过账号服务的来源校验。未登录或目标不允许账号鉴权时，请求以 `ACCOUNT_SIGN_IN_REQUIRED` 失败，目录为空；不会回退到 API key。其他凭据查询错误继续向调用者报告。本插件只在挂载了 `@carnival/dsh-deepseek-auth` 的组合中启动；`base` 组合包挂载它。
 
 路由的目录来自账号的 `GET /models` 列表，地址为 Messages `baseURL` 的 origin 加 `/models`（官方端点即 `https://api.deepseek.com/models`），不可配置。列表请求用 `x-dsh-auth-token` 携带账号 token，带上 harness 的 `User-Agent`，并拒绝重定向。
 
@@ -41,7 +41,7 @@ kind: "package-reference"
 
 ```yaml
 - id: llm-deepseek-account
-  name: '@deepseek-ai/dsh-llm-deepseek-account'
+  name: '@carnival/dsh-llm-deepseek-account'
   config:
     reasoningEffort: high
     modelOverrides:

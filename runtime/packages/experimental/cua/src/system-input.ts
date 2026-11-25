@@ -1,7 +1,7 @@
 /** Session approval for explicit system input, shared by capable CUA providers. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { UserQuestionError } from '@deepseek-ai/dsh-user-questions'
+import type { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import { UserQuestionError } from '@carnival/dsh-user-questions'
 import { NativeError } from './native-client.ts'
 import { applicationAccessDisplay } from './locales.ts'
 import { systemInputControlPrompt } from './system-input-locales.ts'

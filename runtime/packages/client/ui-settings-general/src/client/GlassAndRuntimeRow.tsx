@@ -1,6 +1,6 @@
 /** General Settings control for Carnival Glass Appearance and Runtime engines. */
 import { useEffect, useState } from 'react'
-import { Switch } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Switch } from '@carnival/dsh-client-ui-primitives'
 import css from './DeveloperToolsRow.module.css'
 
 const BRIDGE = 'http://127.0.0.1:32123'
@@ -20,7 +20,7 @@ export function GlassAndRuntimeRow() {
     return Number.isFinite(saved) ? Math.min(0.96, Math.max(0.08, saved)) : 0.80
   })
   const [tint, setTint] = useState<string>(() => localStorage.getItem('carnival.glassTint') || 'obsidian')
-  const [clicky, setClicky] = useState(false)
+  const [companionOverlay, setCompanionOverlay] = useState(false)
   const [cache, setCache] = useState(true)
   const [skills, setSkills] = useState(true)
   const [forge, setForge] = useState(true)
@@ -45,7 +45,7 @@ export function GlassAndRuntimeRow() {
       }
       if (ov && typeof ov === 'object') {
         const o = ov as { visible?: boolean; glass_opacity?: number; glass_tint?: string }
-        setClicky(Boolean(o.visible))
+        setCompanionOverlay(Boolean(o.visible))
         if (typeof o.glass_opacity === 'number') setOpacity(o.glass_opacity)
         if (typeof o.glass_tint === 'string' && FINISHES.some(f => f.id === o.glass_tint)) {
           setTint(o.glass_tint)
@@ -156,14 +156,14 @@ export function GlassAndRuntimeRow() {
 
       <div className={css.row}>
         <div>
-          <div className={css.title}>Clicky Overlay</div>
+          <div className={css.title}>Voice Companion Overlay</div>
           <div className={css.description}>Show transparent pointer and spatial callout HUD ({cordisState})</div>
         </div>
         <Switch
-          checked={clicky}
-          label="Clicky Overlay"
+          checked={companionOverlay}
+          label="Voice Companion Overlay"
           onChange={(next) => {
-            setClicky(next)
+            setCompanionOverlay(next)
             void fetch(`${BRIDGE}/window/overlay`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

@@ -1,14 +1,14 @@
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context, type Fiber } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
-import { createUserMessage, type ToolCallId, HarnessError , createMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import { MAX_TIMER_DELAY_MS, TimeoutReason } from '@deepseek-ai/dsh-timeout'
-import * as TimeoutPolicy from '@deepseek-ai/dsh-tool-call-timeout-policy'
+import { Context, type Fiber } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import AgentRegistry, { type Agent } from '@carnival/dsh-agent'
+import { createUserMessage, type ToolCallId, HarnessError , createMessage } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import { MAX_TIMER_DELAY_MS, TimeoutReason } from '@carnival/dsh-timeout'
+import * as TimeoutPolicy from '@carnival/dsh-tool-call-timeout-policy'
 import SessionStore, {
   SESSION_FORMAT_VERSION,
   type SessionId,
@@ -17,8 +17,8 @@ import SessionStore, {
   type SessionEvent,
   type SessionHeader,
   type SessionId as SessionIdValue,
-} from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+} from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import SessionQueryEngine, {
   SessionQueryError,
   type SessionSearchCursor,
@@ -31,13 +31,13 @@ import SessionQueryEngine, {
   type SessionSearchPage,
   type SessionSearchRequest,
   type SessionTitleObservationResult,
-} from '@deepseek-ai/dsh-session-query'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ToolExecutionResult } from '@deepseek-ai/dsh-tools'
-import type { Config as ToolSessionQueryConfig } from '@deepseek-ai/dsh-tool-session-query'
-import * as ToolSessionQuery from '@deepseek-ai/dsh-tool-session-query'
+} from '@carnival/dsh-session-query'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { type ToolExecutionResult } from '@carnival/dsh-tools'
+import type { Config as ToolSessionQueryConfig } from '@carnival/dsh-tool-session-query'
+import * as ToolSessionQuery from '@carnival/dsh-tool-session-query'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

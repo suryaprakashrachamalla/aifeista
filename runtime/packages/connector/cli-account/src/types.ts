@@ -1,13 +1,13 @@
 /**
  * What an app plugin registers with `ctx.cliAccounts` and gets back: the registration, the control its operations
  * receive, the handle, and the credential-free account view. The Plugins page display types come from
- * `@deepseek-ai/dsh-client-ui-connector-account/types`.
+ * `@carnival/dsh-client-ui-connector-account/types`.
  */
 
 import type {
   ConnectorAccountCopy, ConnectorAccountDisplay, ConnectorAccountOperation, ConnectorAccountView,
-} from '@deepseek-ai/dsh-client-ui-connector-account/types'
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
+} from '@carnival/dsh-client-ui-connector-account/types'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
 import type { CliPathContext } from './context.ts'
 import type { CliCommandResult, CliRunOptions } from './executor.ts'
 

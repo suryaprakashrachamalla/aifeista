@@ -3,7 +3,7 @@ description: "二维码登录、私密登录链接和 owner 审批的浏览器�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-remote-connection
+# @carnival/dsh-client-remote-connection
 
 [English](README.md) | 中文
 
@@ -89,10 +89,10 @@ owner 的审批返回 `approved`、`denied` 或 `unavailable` 后，卡片先从
 在根作用域的列表插槽 `settings.remoteConnection.extensions` 中注册，即可在主面板（包括默认的访问地址、二维码登录和配对卡片）之后添加选项。各插件使用唯一的 `id`；条目按 `order` 升序排列，相同值按注册顺序排列。扩展内容可与默认面板或替换面板同时显示。`RemoteConnectionExtensionProps` 提供与[面板替换组件](#replace-the-settings-panel)相同的共享状态 Hook、操作和 `close()`。各扩展组件负责自己的渲染和本地化文案。
 
 ```ts client
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
 import type { FunctionComponent } from 'react'
-import type { RemoteConnectionExtensionProps } from '@deepseek-ai/dsh-client-remote-connection/client'
+import type { RemoteConnectionExtensionProps } from '@carnival/dsh-client-remote-connection/client'
 
 declare const ConnectionOptions: FunctionComponent<RemoteConnectionExtensionProps>
 
@@ -115,10 +115,10 @@ export function apply(ctx: Context): void {
 在 Client 插件中注册替换组件，优先级应低于默认面板的 `0`：
 
 ```ts client
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
 import type { FunctionComponent } from 'react'
-import type { RemoteConnectionContentProps } from '@deepseek-ai/dsh-client-remote-connection/client'
+import type { RemoteConnectionContentProps } from '@carnival/dsh-client-remote-connection/client'
 
 declare const CustomPanel: FunctionComponent<RemoteConnectionContentProps>
 

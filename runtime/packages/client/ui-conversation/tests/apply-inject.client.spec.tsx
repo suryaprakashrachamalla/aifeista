@@ -1,37 +1,37 @@
 // @vitest-environment jsdom
-import { syncedConfig } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply as applyMenus, inject as injectMenus } from '@deepseek-ai/dsh-client-ui-context-menu/client'
+import { syncedConfig } from '@carnival/dsh-client-test-runtime'
+import { apply as applyMenus, inject as injectMenus } from '@carnival/dsh-client-ui-context-menu/client'
 import { render, cleanup } from '@testing-library/react'
 import { $getRoot, $isTextNode, PASTE_COMMAND } from 'lexical'
 import { createUserTextFixture } from './user-text-component-fixture.client.tsx'
 import { registerComposerKeymap } from '../src/client/input/editor/keymap.ts'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import type { CommandContribution, CommandUiContract } from '@deepseek-ai/dsh-client-ui-commands/client'
-import type { SessionRequestId } from '@deepseek-ai/dsh-api-session-controller/types'
-import type { ISession, SessionReference } from '@deepseek-ai/dsh-api-session-controller/client'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import * as messageQuotes from '@deepseek-ai/dsh-message-quotes/client'
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { CommandContribution, CommandUiContract } from '@carnival/dsh-client-ui-commands/client'
+import type { SessionRequestId } from '@carnival/dsh-api-session-controller/types'
+import type { ISession, SessionReference } from '@carnival/dsh-api-session-controller/client'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import * as messageQuotes from '@carnival/dsh-message-quotes/client'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
 import {
   SlotTestRuntime, stubConfigForm, usePinnedBrowserLanguages,
-} from '@deepseek-ai/dsh-client-test-runtime'
-import type { SessionBehaviorOverrides } from '@deepseek-ai/dsh-client-test-runtime'
+} from '@carnival/dsh-client-test-runtime'
+import type { SessionBehaviorOverrides } from '@carnival/dsh-client-test-runtime'
 import {
   apply, inject, type ComposerBarInjected, type ConversationInjected, type ConversationShellInjected,
   type ConversationSessionHeaderInjected, type ConversationSessionInjected, type ViewTab,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
+} from '@carnival/dsh-client-ui-conversation/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { WorkspaceId } from '@carnival/dsh-workspace/types'
 import { createConversationStore } from '../src/client/stores.ts'
 import type { SessionInputShell } from '../src/client/input/facade.ts'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { InboxWireState } from '@deepseek-ai/dsh-agent/types'
+import { RemoteError } from '@carnival/dsh-client-test-runtime'
+import { SessionSeq } from '@carnival/dsh-session/types'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { InboxWireState } from '@carnival/dsh-agent/types'
 import { continuationTurn } from './continuation-fixture.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface SlotMap {
     'quote-probe': { kind: 'single'; scope: 'session' }
   }

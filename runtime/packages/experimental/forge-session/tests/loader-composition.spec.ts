@@ -5,40 +5,40 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import LocalBashExecutor from '@deepseek-ai/dsh-bash-local'
-import ForgeService from '@deepseek-ai/dsh-experimental-forge'
-import * as ForgeGitHub from '@deepseek-ai/dsh-experimental-forge-github'
-import * as ForgeGitLab from '@deepseek-ai/dsh-forge-gitlab'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
-import LlmRuntime, { createUserMessage, LlmAdapter, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk, ToolCallBlock } from '@deepseek-ai/dsh-llm'
-import NodeRuntime from '@deepseek-ai/dsh-ptc-runtime-node'
-import LocalSandbox from '@deepseek-ai/dsh-sandbox-local'
-import SandboxPolicy from '@deepseek-ai/dsh-sandbox-policy'
-import SessionStore, { pluginRecordOf, type SessionId } from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import * as ShellEnv from '@deepseek-ai/dsh-shell-env'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import * as ToolBash from '@deepseek-ai/dsh-tool-bash'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import * as PtcToolExecutor from '@deepseek-ai/dsh-tool-executor-ptc'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import WorkingDirectoryService from '@deepseek-ai/dsh-working-directory'
-import { GH_COMMANDS } from '@deepseek-ai/dsh-experimental-forge-github/src/commands.ts'
-import { GLAB_COMMANDS } from '@deepseek-ai/dsh-forge-gitlab/src/commands.ts'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import AgentRegistry from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import LocalBashExecutor from '@carnival/dsh-bash-local'
+import ForgeService from '@carnival/dsh-experimental-forge'
+import * as ForgeGitHub from '@carnival/dsh-experimental-forge-github'
+import * as ForgeGitLab from '@carnival/dsh-forge-gitlab'
+import LocalFileSystem from '@carnival/dsh-fs-local'
+import LlmRuntime, { createUserMessage, LlmAdapter, type ToolCallId } from '@carnival/dsh-llm'
+import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk, ToolCallBlock } from '@carnival/dsh-llm'
+import NodeRuntime from '@carnival/dsh-ptc-runtime-node'
+import LocalSandbox from '@carnival/dsh-sandbox-local'
+import SandboxPolicy from '@carnival/dsh-sandbox-policy'
+import SessionStore, { pluginRecordOf, type SessionId } from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import * as ShellEnv from '@carnival/dsh-shell-env'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import * as ToolBash from '@carnival/dsh-tool-bash'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import * as PtcToolExecutor from '@carnival/dsh-tool-executor-ptc'
+import ToolRuntime from '@carnival/dsh-tools'
+import WorkingDirectoryService from '@carnival/dsh-working-directory'
+import { GH_COMMANDS } from '@carnival/dsh-experimental-forge-github/src/commands.ts'
+import { GLAB_COMMANDS } from '@carnival/dsh-forge-gitlab/src/commands.ts'
 import { compileRules } from '../src/commands.ts'
 import ForgeSessionService from '../src/index.ts'
 import type { SessionChangeRequest, SessionChangeRequestsListener } from '../src/index.ts'
-import type { ShellExecution } from '@deepseek-ai/dsh-shell'
-import type { ToolExecution, ToolExecutionResult, ToolExecutionToken } from '@deepseek-ai/dsh-tools'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { ShellExecution } from '@carnival/dsh-shell'
+import type { ToolExecution, ToolExecutionResult, ToolExecutionToken } from '@carnival/dsh-tools'
+import { brandString } from '@carnival/dsh-brand'
 
 /**
  * GitHub CLI fixture: `pr create` prints PR 8; `pr view` prints PR 9, whose description links PR 6;
@@ -222,10 +222,10 @@ const suite = process.platform === 'win32' ? describe.skip : describe
 
 /** Plugins that replace the native executor in PTC mode, in load order. */
 const PTC_MODULES = [
-  ['@deepseek-ai/dsh-sandbox-local', LocalSandbox],
-  ['@deepseek-ai/dsh-sandbox-policy', SandboxPolicy],
-  ['@deepseek-ai/dsh-ptc-runtime-node', NodeRuntime],
-  ['@deepseek-ai/dsh-tool-executor-ptc', PtcToolExecutor],
+  ['@carnival/dsh-sandbox-local', LocalSandbox],
+  ['@carnival/dsh-sandbox-policy', SandboxPolicy],
+  ['@carnival/dsh-ptc-runtime-node', NodeRuntime],
+  ['@carnival/dsh-tool-executor-ptc', PtcToolExecutor],
 ] as const
 
 /**
@@ -246,34 +246,34 @@ async function load(mode: 'native' | 'ptc' = 'native') {
   await chmod(join(bin, 'git'), 0o755)
 
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-llm', LlmRuntime],
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-    ['@deepseek-ai/dsh-system-prompt', SystemPrompt],
-    ['@deepseek-ai/dsh-fs-local', LocalFileSystem],
-    ['@deepseek-ai/dsh-working-directory', WorkingDirectoryService],
-    ['@deepseek-ai/dsh-tools', ToolRuntime],
-    ...mode === 'native' ? [['@deepseek-ai/dsh-tool-executor-native', NativeToolExecutor] as const] : PTC_MODULES,
-    ['@deepseek-ai/dsh-agent', AgentRegistry],
-    ['@deepseek-ai/dsh-agent-loop', AgentLoop],
-    ['@deepseek-ai/dsh-subprocess-local', LocalSubprocessRuntime],
-    ['@deepseek-ai/dsh-shell-env', ShellEnv],
-    ['@deepseek-ai/dsh-bash-local', LocalBashExecutor],
-    ['@deepseek-ai/dsh-tool-bash', ToolBash],
-    ['@deepseek-ai/dsh-experimental-forge', ForgeService],
-    ['@deepseek-ai/dsh-experimental-forge-github', ForgeGitHub],
-    ['@deepseek-ai/dsh-forge-gitlab', ForgeGitLab],
-    ['@deepseek-ai/dsh-experimental-forge-session', ForgeSessionService],
+    ['@carnival/dsh-llm', LlmRuntime],
+    ['@carnival/dsh-session', SessionStore],
+    ['@carnival/dsh-session-projection', SessionProjectionRegistry],
+    ['@carnival/dsh-system-prompt', SystemPrompt],
+    ['@carnival/dsh-fs-local', LocalFileSystem],
+    ['@carnival/dsh-working-directory', WorkingDirectoryService],
+    ['@carnival/dsh-tools', ToolRuntime],
+    ...mode === 'native' ? [['@carnival/dsh-tool-executor-native', NativeToolExecutor] as const] : PTC_MODULES,
+    ['@carnival/dsh-agent', AgentRegistry],
+    ['@carnival/dsh-agent-loop', AgentLoop],
+    ['@carnival/dsh-subprocess-local', LocalSubprocessRuntime],
+    ['@carnival/dsh-shell-env', ShellEnv],
+    ['@carnival/dsh-bash-local', LocalBashExecutor],
+    ['@carnival/dsh-tool-bash', ToolBash],
+    ['@carnival/dsh-experimental-forge', ForgeService],
+    ['@carnival/dsh-experimental-forge-github', ForgeGitHub],
+    ['@carnival/dsh-forge-gitlab', ForgeGitLab],
+    ['@carnival/dsh-experimental-forge-session', ForgeSessionService],
   ])
   const configs: Record<string, readonly string[]> = {
-    '@deepseek-ai/dsh-agent-loop': ['agents: []'],
-    '@deepseek-ai/dsh-shell-env': [`dshHome: ${JSON.stringify(join(root, 'dsh-home'))}`],
-    '@deepseek-ai/dsh-sandbox-policy': ['mode: danger-full-access'],
-    '@deepseek-ai/dsh-bash-local': ['timeoutMs: 20000'],
-    '@deepseek-ai/dsh-experimental-forge': ['activeIntervalMs: 600000', 'idleIntervalMs: 600000'],
-    '@deepseek-ai/dsh-experimental-forge-github': [`ghCommand: ${JSON.stringify(join(bin, 'gh'))}`],
-    '@deepseek-ai/dsh-forge-gitlab': [`glabCommand: ${JSON.stringify(join(bin, 'glab'))}`, 'hosts: [gitlab.example.test]'],
-    '@deepseek-ai/dsh-experimental-forge-session': ['discoveryTimeoutMs: 20000'],
+    '@carnival/dsh-agent-loop': ['agents: []'],
+    '@carnival/dsh-shell-env': [`dshHome: ${JSON.stringify(join(root, 'dsh-home'))}`],
+    '@carnival/dsh-sandbox-policy': ['mode: danger-full-access'],
+    '@carnival/dsh-bash-local': ['timeoutMs: 20000'],
+    '@carnival/dsh-experimental-forge': ['activeIntervalMs: 600000', 'idleIntervalMs: 600000'],
+    '@carnival/dsh-experimental-forge-github': [`ghCommand: ${JSON.stringify(join(bin, 'gh'))}`],
+    '@carnival/dsh-forge-gitlab': [`glabCommand: ${JSON.stringify(join(bin, 'glab'))}`, 'hosts: [gitlab.example.test]'],
+    '@carnival/dsh-experimental-forge-session': ['discoveryTimeoutMs: 20000'],
   }
   const configPath = join(root, 'cordis.yml')
   await writeFile(configPath, [...modules.keys()].flatMap(name => [
@@ -307,7 +307,7 @@ async function observerFixture() {
     isError: false, content: [{ type: 'text', text: '{"number":9}' }],
     value: { kind: 'foreground', cwd: root, exitCode: 0, signal: null, timedOut: false, aborted: false },
   }
-  const entry = [...ctx.loader.entries()].find(candidate => candidate.options.name === 'cordis:@deepseek-ai/dsh-experimental-forge-session')!
+  const entry = [...ctx.loader.entries()].find(candidate => candidate.options.name === 'cordis:@carnival/dsh-experimental-forge-session')!
   const records = () => handle.agent.session.snapshotEvents().flatMap((event) => {
     const record = pluginRecordOf(event)
     return record?.type === 'plugin:forge-session/binding' ? [record.data] : []
@@ -484,7 +484,7 @@ suite('forge-session through a real cordis.yml Loader composition', () => {
       ? [entry.update.snapshot.title, entry.update.snapshot.checksRollup]
       : null)).toEqual([['Change 7', 'pending'], ['Change 8', 'success'], ['Change 9', 'success']]) })
 
-    const entry = [...ctx.loader.entries()].find(candidate => candidate.options.name === 'cordis:@deepseek-ai/dsh-experimental-forge-session')
+    const entry = [...ctx.loader.entries()].find(candidate => candidate.options.name === 'cordis:@carnival/dsh-experimental-forge-session')
     const row = ctx.sessionProjections.checkpoint(agent.session).forgeChangeRequests
     await entry?.fiber?.dispose()
     expect(ctx.sessionProjections.checkpoint(agent.session)).toHaveProperty('forgeChangeRequests', row)

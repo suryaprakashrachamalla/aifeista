@@ -1,13 +1,13 @@
 /** Binds change requests to the Session that created, pushed, or tracked them, and watches the bound ones. */
 
-import { Context, FiberState, Service } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { changeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
-import type { ChangeRequestKey, ChangeRequestRef, ChangeRequestWatchOptions, ForgeRepository } from '@deepseek-ai/dsh-experimental-forge'
-import { appendPluginRecord, pluginRecordOf } from '@deepseek-ai/dsh-session'
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import { deadline, MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import { Context, FiberState, Service } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import { changeRequestKey } from '@carnival/dsh-experimental-forge'
+import type { ChangeRequestKey, ChangeRequestRef, ChangeRequestWatchOptions, ForgeRepository } from '@carnival/dsh-experimental-forge'
+import { appendPluginRecord, pluginRecordOf } from '@carnival/dsh-session'
+import type { Session, SessionEvent } from '@carnival/dsh-session'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import { deadline, MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
 import { compileRules, sameChangeRequestUrl, validateRule } from './commands.ts'
 import type { CommandRules } from './commands.ts'
 import { BINDING_RECORD, forgeChangeRequestsProjection } from './projection.ts'
@@ -23,7 +23,7 @@ import type {
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     forgeSession: ForgeSessionService
   }

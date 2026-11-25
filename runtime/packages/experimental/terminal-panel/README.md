@@ -3,7 +3,7 @@ description: "Persistent Agent terminals shown in the Web sidebar, which the per
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-terminal-panel
+# @carnival/dsh-terminal-panel
 
 English | [中文](README.zh.md)
 
@@ -33,9 +33,9 @@ Mount the plugin in a group that isolates `terminals`, beside the registry and t
   isolate:
     terminals: true
   config:
-    - name: '@deepseek-ai/dsh-terminal'
-    - name: '@deepseek-ai/dsh-terminal-panel'
-    - name: '@deepseek-ai/dsh-tool-terminal'
+    - name: '@carnival/dsh-terminal'
+    - name: '@carnival/dsh-terminal-panel'
+    - name: '@carnival/dsh-tool-terminal'
 ```
 
 ### Agent terminals

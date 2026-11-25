@@ -1,6 +1,6 @@
 /** Which kinds a request can authenticate with, in which order, and where each one is sent. */
 import { afterEach, describe, expect, it } from 'vitest'
-import { DeepSeekAuthError } from '@deepseek-ai/dsh-deepseek-auth'
+import { DeepSeekAuthError } from '@carnival/dsh-deepseek-auth'
 import { disposeMounted, mount, request, summary } from './harness.ts'
 
 const OFFICIAL = 'https://api.deepseek.com/v1/tools/search'

@@ -2,12 +2,12 @@
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { AssistantStreamAccumulator } from '@deepseek-ai/dsh-llm/assistant-stream'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { MessageId, ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, StreamChunk } from '@deepseek-ai/dsh-llm'
-import { SESSION_FORMAT_VERSION, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionEventMap, SessionEventType, SessionHeader } from '@deepseek-ai/dsh-session'
+import { AssistantStreamAccumulator } from '@carnival/dsh-llm/assistant-stream'
+import { brandString } from '@carnival/dsh-brand'
+import type { MessageId, ToolCallId } from '@carnival/dsh-llm'
+import type { ContentBlock, StreamChunk } from '@carnival/dsh-llm'
+import { SESSION_FORMAT_VERSION, type SessionId } from '@carnival/dsh-session'
+import type { SessionEvent, SessionEventMap, SessionEventType, SessionHeader } from '@carnival/dsh-session'
 import {
   eventLines,
   generationLogPath,

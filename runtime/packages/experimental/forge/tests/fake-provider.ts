@@ -1,5 +1,5 @@
-import { Context } from '@deepseek-ai/cordis'
-import type { Fiber } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
+import type { Fiber } from '@carnival/cordis'
 import ForgeService, { changeRequestKey } from '../src/index.ts'
 import type { Config } from '../src/index.ts'
 import type {

@@ -1,31 +1,31 @@
 /** Built bridge imports and retained objects from a project outside the Harness installation. */
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 import { existsSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import LocalAttachmentStore from '@deepseek-ai/dsh-attachment-local'
-import ComputerUseRegistry from '@deepseek-ai/dsh-computer-use'
-import FileSystem from '@deepseek-ai/dsh-fs-local'
-import { LlmAdapter, type ToolCallId, type LlmResolvedModelInfo, type StreamChunk } from '@deepseek-ai/dsh-llm'
-import NodeRuntime from '@deepseek-ai/dsh-ptc-runtime-node'
-import { PtcImage } from '@deepseek-ai/dsh-ptc-runtime'
-import Sandbox from '@deepseek-ai/dsh-sandbox-local'
-import SandboxPolicy from '@deepseek-ai/dsh-sandbox-policy'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import Subprocess from '@deepseek-ai/dsh-subprocess-local'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import LocalAttachmentStore from '@carnival/dsh-attachment-local'
+import ComputerUseRegistry from '@carnival/dsh-computer-use'
+import FileSystem from '@carnival/dsh-fs-local'
+import { LlmAdapter, type ToolCallId, type LlmResolvedModelInfo, type StreamChunk } from '@carnival/dsh-llm'
+import NodeRuntime from '@carnival/dsh-ptc-runtime-node'
+import { PtcImage } from '@carnival/dsh-ptc-runtime'
+import Sandbox from '@carnival/dsh-sandbox-local'
+import SandboxPolicy from '@carnival/dsh-sandbox-policy'
+import type { SessionId } from '@carnival/dsh-session'
+import Subprocess from '@carnival/dsh-subprocess-local'
 import { expect, it } from 'vitest'
 import * as Cua from '../src/index.ts'
 import { installNativeFixture, startFixtureHost } from './native-fixture.ts'
-import { Request } from '@deepseek-ai/dsh-cua/protocol'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { Request } from '@carnival/dsh-cua/protocol'
+import { brandString } from '@carnival/dsh-brand'
 
 const bridge = fileURLToPath(new URL('../../cua/lib/bridge.js', import.meta.url))
-const bootstrap = join(dirname(fileURLToPath(import.meta.resolve('@deepseek-ai/dsh-ptc-runtime-node/package.json'))), 'lib/persistent-process.js')
+const bootstrap = join(dirname(fileURLToPath(import.meta.resolve('@carnival/dsh-ptc-runtime-node/package.json'))), 'lib/persistent-process.js')
 
 class VisualAdapter extends LlmAdapter {
   override resolveModel(provider: string, model: string): Promise<LlmResolvedModelInfo> {
@@ -79,7 +79,7 @@ it.skipIf(process.platform === 'win32' || !existsSync(bridge) || !existsSync(boo
           return result.value
         } } }],
       }))
-      expect((await run('await import("@deepseek-ai/dsh-cua/bridge")', 'unresolved')).error?.message).toContain('Cannot find package')
+      expect((await run('await import("@carnival/dsh-cua/bridge")', 'unresolved')).error?.message).toContain('Cannot find package')
       const section = (await ctx.systemPrompt.assemble()).sections.find(value => value.name === 'computer-use:dsh-cua')
       const initialization = section?.text.match(/Persistent PTC initialization:\n\n```ts\n([\s\S]*?)\n```/u)?.[1]
       expect(initialization).toContain('/lib/bridge.js')

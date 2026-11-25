@@ -4,28 +4,28 @@
  * catalog injection, unavailable-model refusals, and the prompt-assembly
  * boundary for a running selection change.
  */
-import { AgentModel, modelSelectionProjectionDefinition } from '@deepseek-ai/dsh-agent'
-import { createInboxStub } from '@deepseek-ai/dsh-agent-loop-testkit'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { AgentModel, modelSelectionProjectionDefinition } from '@carnival/dsh-agent'
+import { createInboxStub } from '@carnival/dsh-agent-loop-testkit'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 
 import { describe, expect, it, vi, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import AttachmentStore from '@deepseek-ai/dsh-attachment'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import LlmRuntime, { LlmAdapter, type ReasoningEffortId } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import AttachmentStore from '@carnival/dsh-attachment'
+import { brandString } from '@carnival/dsh-brand'
+import LlmRuntime, { LlmAdapter, type ReasoningEffortId } from '@carnival/dsh-llm'
 import type {
   GenerateOptions, LlmCallConfigAdapterDefaults, LlmModelInfo,
   LlmModelReasoningInfo, LlmProviderInfo, LlmResolvedModelInfo, StreamChunk,
   UserMessage,
-} from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { SessionId } from '@carnival/dsh-session'
 import type { SessionPromptRequest, SessionRequestId } from '../src/types.ts'
 import { buildModelCatalog, hasProviderApiKey } from '../src/catalog.ts'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
 import { createSessionTestController, createSessionTestRemote } from './test-remote.ts'
 
 function request<P>(payload: P): P {

@@ -1,7 +1,7 @@
 /** Browser-side state and face of the accounts the Plugins page shows. */
-import type { ClientRemote } from '@deepseek-ai/dsh-api-remotes/client'
-import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
+import type { ClientRemote } from '@carnival/dsh-api-remotes/client'
+import type { HostObservable } from '@carnival/dsh-client-ui-slots'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
 import type { ConnectorAccountEntry, ConnectorOperationId } from '../types.ts'
 
 /** A transient outcome the page reports outside its own lifetime; `seq` distinguishes repeats. */

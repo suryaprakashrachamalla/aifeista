@@ -3,7 +3,7 @@ description: "Register code host providers and poll change request status throug
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-forge
+# @carnival/dsh-experimental-forge
 
 English | [中文](README.zh.md)
 
@@ -28,8 +28,8 @@ Read and act on pull requests and merge requests without coupling consumers to o
 Mount the registry with at least one provider package, such as the GitHub provider.
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-experimental-forge-github'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-experimental-forge-github'
 ```
 
 `ctx.forge.register(provider)` is an effect on the calling fiber and returns an async disposer that cancels and drains that registration's calls. Results arriving after cancellation are discarded. One provider serves one forge family on the hosts its `hosts` lists, and names itself with `label`, such as `GitHub`, and `changeRequestNoun`, `pull-request` or `merge-request`; registering a second provider for the same family, or one that lists a host, compared without case, that a registered provider lists, throws. Registration changes announce `forge/providers-changed`; registering a provider polls its existing watches immediately. `repositoryFromRemote(url)` and `changeRequestFromUrl(url)` return the match of the provider that serves the URL's host, and `describe(forge)` returns a family's `ForgeDescription`, its `label` and `changeRequestNoun`, or undefined without a provider. `changeRequestUrl(ref)`, `findByHead(repository, branch, signal)`, and `readiness(repository, signal)` delegate to the provider of the reference's forge and throw when none is registered; `readiness` reports whether the provider can reach the host with current credentials and, while it cannot sign in, the shell command that signs the user in as `signIn`.

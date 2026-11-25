@@ -1,9 +1,9 @@
 /** DeepSeek Files API transport. @module dsh-llm-deepseek/files-api */
 
 import { randomUUID } from 'node:crypto'
-import { attributionHeaders, LlmError } from '@deepseek-ai/dsh-llm'
-import type { ImageMediaType } from '@deepseek-ai/dsh-attachment'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { attributionHeaders, LlmError } from '@carnival/dsh-llm'
+import type { ImageMediaType } from '@carnival/dsh-attachment'
+import { brandString } from '@carnival/dsh-brand'
 import { retryAfterMs } from './transport.ts'
 import type { DeepSeekFileId as DeepSeekFileIdType } from './file-id.ts'
 import { messagesApiRoot, MESSAGES_FILES_BETA } from './messages-api.ts'

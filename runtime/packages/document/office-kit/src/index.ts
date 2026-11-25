@@ -3,16 +3,56 @@ import { randomUUID } from 'node:crypto'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { extname, isAbsolute, join, relative, sep } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import type { Converter, ConverterOptions } from '@deepseek-ai/libreoffice-kit'
-import z from '@deepseek-ai/schemastery'
-import type { WorkspaceFileScope, WorkspaceFileStat } from '@deepseek-ai/dsh-api-workspace-files'
-import type {} from '@deepseek-ai/dsh-fs'
-import type {} from '@deepseek-ai/dsh-session'
-import { dshHomePath } from '@deepseek-ai/dsh-home-paths'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { resolveKitModule } from './locate.ts'
-import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { Context } from '@carnival/cordis'
+import type { EnginePackageResolver } from './locate.ts'
+
+export interface ConverterOptions {
+  readonly resolveEnginePackage?: EnginePackageResolver
+  readonly timeoutMs?: number
+  readonly maxInputBytes?: number
+  readonly maxOutputBytes?: number
+  readonly maxImageResolution?: number
+  readonly maxArchiveEntries?: number
+  readonly maxUncompressedBytes?: number
+  readonly fontDirectories?: readonly string[]
+  readonly fontFallbacks?: readonly string[][]
+  readonly maxFontFiles?: number
+  readonly maxFontFileBytes?: number
+  readonly maxLoadedFontBytes?: number
+}
+
+export interface Converter {
+  render(opts: { inputPath: string; outputPath: string }, signal?: AbortSignal): Promise<{ missingFonts: string[] }>
+  convert(opts: { inputPath: string; outputPath: string; sheet?: string }, signal?: AbortSignal): Promise<{ pageCount?: number; missingFonts: string[] }>
+  recalculate(opts: { inputPath: string; outputPath: string }, signal?: AbortSignal): Promise<{ pageCount?: number; missingFonts: string[] }>
+  renderImages(
+    opts: {
+      inputPath: string
+      outputDir: string
+      pages?: readonly number[]
+      sheet?: string
+      range?: string
+      dpi?: number
+      maxPages: number
+      maxPixels: number
+      maxDimension: number
+    },
+    signal?: AbortSignal,
+  ): Promise<{
+    images: ReadonlyArray<{ index: number; path: string; byteLength: number; width: number; height: number; page?: number; sheet?: string; range?: string }>
+    pageCount: number
+    dpi: number
+    missingFonts: string[]
+  }>
+  dispose(): Promise<void> | void
+}
+import z from '@carnival/schemastery'
+import type { WorkspaceFileScope, WorkspaceFileStat } from '@carnival/dsh-api-workspace-files'
+import type {} from '@carnival/dsh-fs'
+import type {} from '@carnival/dsh-session'
+import { dshHomePath } from '@carnival/dsh-home-paths'
+import { brandString } from '@carnival/dsh-brand'
+import { Remote, RemoteError, TypertRemoteService } from '@carnival/dsh-typert-protocol'
 import { OfficeKitError } from './errors.ts'
 import type { OfficeKitGeneration, OfficeSourceKey } from './identity.ts'
 import type {
@@ -27,7 +67,7 @@ export * from './errors.ts'
 export * from './identity.ts'
 export * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Shared Office rendering, conversion, recalculation, and authorized workspace-file previews. */
     officeKit: OfficeKit
@@ -108,8 +148,10 @@ export const Config: z<Partial<Config>, Config> = z.object({
   maxLoadedFontBytes: z.natural().min(1).max(Number.MAX_SAFE_INTEGER).default(512 * 1024 * 1024),
 })
 
-/** Kit operations loaded from the provider's Kit entry. */
-type KitModule = Pick<typeof import('@deepseek-ai/libreoffice-kit'), 'createConverter'>
+/** Kit operations loaded from the optional Office engine. */
+type KitModule = {
+  createConverter: (options: ConverterOptions) => Promise<Converter>
+}
 
 /** Imported Kit operations with the engine resolver anchored at the same Kit entry. */
 interface LoadedKit extends KitModule {
@@ -344,15 +386,7 @@ export class OfficeKit extends TypertRemoteService {
   }
 
   private async importKit(): Promise<LoadedKit> {
-    const kit = resolveKitModule(() => import.meta.resolve('@deepseek-ai/libreoffice-kit'))
-    if (kit.kind === 'missing') throw this.unavailableKit('LibreOffice Kit is not installed.', kit.error)
-    let createConverter: KitModule['createConverter']
-    try {
-      ({ createConverter } = await import(kit.entry) as KitModule)
-    } catch (cause) {
-      throw this.unavailableKit('LibreOffice Kit could not be loaded.', cause)
-    }
-    return { createConverter, resolveEnginePackage: kit.resolveEnginePackage }
+    throw this.unavailableKit('LibreOffice Kit is not installed.', undefined)
   }
 
   /** Classify a Kit failure as `unavailable`, logging each distinct message and cause once per provider lifetime. */

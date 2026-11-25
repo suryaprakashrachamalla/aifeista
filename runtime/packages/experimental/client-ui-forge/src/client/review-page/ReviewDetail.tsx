@@ -9,10 +9,10 @@ import clsx from 'clsx'
 import {
   Button, IconChevronLeftOutlineRegular, IconEllipsisOutlineRegular, IconPanelLeftOutlineRegular, MarkdownText, Menu,
   StateDot, Tooltip, type MenuEntry,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { ChangeRequestDescription, ChangeRequestSnapshot, ForgeFailure } from '@deepseek-ai/dsh-experimental-forge/types'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+} from '@carnival/dsh-client-ui-primitives'
+import type { PropsLocale } from '@carnival/dsh-client-ui-slots'
+import type { ChangeRequestDescription, ChangeRequestSnapshot, ForgeFailure } from '@carnival/dsh-experimental-forge/types'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { ForgeReviewChangeRequest } from '../../types.ts'
 import { ChangeRequestPrimary, type ChangeRequestActions } from '../ChangeRequestCard.tsx'
 import { formatAgo } from '../format.ts'

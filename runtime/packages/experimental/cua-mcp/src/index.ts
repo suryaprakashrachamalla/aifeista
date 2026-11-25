@@ -3,14 +3,14 @@
  * reference, the Agent's `cua_run_code` registration, and `cua_reset` to an external MCP client. Help exits
  * without claiming stdio; a served connection owns one Agent, created in the configured workspace before the
  * transport opens, until the client closes stdin.
- * @module @deepseek-ai/dsh-cua-mcp
+ * @module @carnival/dsh-cua-mcp
  */
 import { mkdir } from 'node:fs/promises'
 import { isAbsolute } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import Schema from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-app-boot'
-import { exitOnStdinEnd, internals, parseCmdline } from '@deepseek-ai/dsh-cmdline'
+import type { Context } from '@carnival/cordis'
+import Schema from '@carnival/schemastery'
+import type {} from '@carnival/dsh-app-boot'
+import { exitOnStdinEnd, internals, parseCmdline } from '@carnival/dsh-cmdline'
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 import { Command } from 'commander'
 import type { ConsentMode } from './consent.ts'

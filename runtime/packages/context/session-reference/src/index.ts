@@ -2,25 +2,25 @@
  * Cross-session snapshot preparation. Hosts adapt mentions into structured
  * references; this service owns exact reads, projection, budgets, and durable context.
  *
- * @module @deepseek-ai/dsh-session-reference
+ * @module @carnival/dsh-session-reference
  */
 
-import { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { TextSearchIndex, type SearchKeys } from '@deepseek-ai/dsh-util-text-search'
-import { createUserMessage, freezeMessage, LlmError } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, LlmCallConfig, LlmResolvedModelInfo, UserMessage } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type { Agent, PreStepDecision } from '@carnival/dsh-agent'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import { TextSearchIndex, type SearchKeys } from '@carnival/dsh-util-text-search'
+import { createUserMessage, freezeMessage, LlmError } from '@carnival/dsh-llm'
+import type { ContentBlock, LlmCallConfig, LlmResolvedModelInfo, UserMessage } from '@carnival/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
 // Type-only: the `title` projection key plus the live registry and durable
 // cache Context merges — the two projection faces discovery labels from.
-import type { ProjectionSnapshot } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-session-projection-cache'
-import type {} from '@deepseek-ai/dsh-session-title'
-import type {} from '@deepseek-ai/dsh-subagent'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import type { SessionRecord, SessionSurfaceSnapshot } from '@deepseek-ai/dsh-session-query'
+import type { ProjectionSnapshot } from '@carnival/dsh-session-projection'
+import type {} from '@carnival/dsh-session-projection-cache'
+import type {} from '@carnival/dsh-session-title'
+import type {} from '@carnival/dsh-subagent'
+import type {} from '@carnival/dsh-system-prompt'
+import type { SessionRecord, SessionSurfaceSnapshot } from '@carnival/dsh-session-query'
 import { prepareReferenceOmission, REFERENCE_WARNING } from './spill.ts'
 import {
   DEFAULT_CANDIDATE_LIMIT,
@@ -67,7 +67,7 @@ const PROMPT_SUFFIX = '\n</referenced-sessions>'
 /** Projection keys a discovery label is answered from. */
 const LABEL_KEYS = ['title', 'subagent'] as const
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     sessionReferenceResolver: SessionReferenceResolver
   }

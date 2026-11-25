@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-command-goal",
+  "name": "@carnival/dsh-command-goal",
   "description": "Human-facing slash command for persisted same-session goals",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/goal/command-goal"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,24 +27,24 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-commands": "workspace:*",
-    "@deepseek-ai/dsh-goal": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-commands": "workspace:*",
+    "@carnival/dsh-goal": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:*",
-    "@deepseek-ai/dsh-commands": "workspace:*",
-    "@deepseek-ai/dsh-goal": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-agent-loop": "workspace:*",
+    "@carnival/dsh-agent-loop-testkit": "workspace:*",
+    "@carnival/dsh-commands": "workspace:*",
+    "@carnival/dsh-goal": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-session-projection": "workspace:*"
   }
 }

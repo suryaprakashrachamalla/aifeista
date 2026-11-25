@@ -4,16 +4,16 @@ import { mkdtemp, mkdir, readFile, rm, writeFile, realpath } from 'node:fs/promi
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
+import { Context } from '@carnival/cordis'
+import LocalFileSystem from '@carnival/dsh-fs-local'
 import { LspInstance } from '../src/instance.ts'
 import { readHostSource } from '../src/host.ts'
 import { encodeMessage } from '../src/framing.ts'
-import type { ConnectionSpawner, ConnectionWriter } from '@deepseek-ai/dsh-lsp-stdio/src/connection.ts'
-import type { InstanceSpec } from '@deepseek-ai/dsh-lsp-stdio/src/instance.ts'
-import type { LspProviderQuery, LspQueryResult } from '@deepseek-ai/dsh-lsp'
-import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
-import { spawnSubprocess } from '@deepseek-ai/dsh-subprocess-local/src/spawn.ts'
+import type { ConnectionSpawner, ConnectionWriter } from '@carnival/dsh-lsp-stdio/src/connection.ts'
+import type { InstanceSpec } from '@carnival/dsh-lsp-stdio/src/instance.ts'
+import type { LspProviderQuery, LspQueryResult } from '@carnival/dsh-lsp'
+import { scrubbedParentEnv } from '@carnival/dsh-subprocess'
+import { spawnSubprocess } from '@carnival/dsh-subprocess-local/src/spawn.ts'
 
 const fixtureServer = fileURLToPath(new URL('./fixture-server.ts', import.meta.url))
 

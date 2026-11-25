@@ -3,9 +3,9 @@
  * @module subagent-settlement-fence
  */
 
-import { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-agent-loop'
-import type {} from '@deepseek-ai/dsh-subagent'
+import { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-agent-loop'
+import type {} from '@carnival/dsh-subagent'
 
 /** Fixture plugin name. */
 export const name = 'subagent-settlement-fence'

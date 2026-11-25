@@ -1,6 +1,6 @@
 /** Home frame layer: continuous ambient starlight + choreographed magical AI Carnival animation on blank-home clicks & mount. */
 import { useCallback, useEffect, useRef, type MouseEvent, type ReactNode } from 'react'
-import type { HeroFrameOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { HeroFrameOwnerProps } from '@carnival/dsh-client-ui-conversation/client'
 import { CARNIVAL_WHEEL_ARTWORK } from './artwork.ts'
 import { attachPixelWhale, type PixelWhaleHandle } from './renderer.ts'
 import css from './PixelWhale.module.css'

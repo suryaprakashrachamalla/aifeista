@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-connection",
+  "name": "@carnival/dsh-client-connection",
   "description": "Authenticated RPC transport and generation lifecycle",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/connection"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -37,8 +32,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "files": [
@@ -52,19 +47,19 @@
     "src"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-scope": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-scope": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-host-authentication-token": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-attachment": "workspace:*",
-    "@deepseek-ai/dsh-host-webserver": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-client-config": "workspace:*"
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-host-authentication-token": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-attachment": "workspace:*",
+    "@carnival/dsh-host-webserver": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-client-config": "workspace:*"
   }
 }

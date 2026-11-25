@@ -1,4 +1,4 @@
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { describe, expect, it, onTestFinished } from 'vitest'
 import { apply, Config } from '../src/index.ts'
 

@@ -1,10 +1,10 @@
 /** Model-call fixtures preserve raw JSON input and reject incomplete execution. */
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import Tools, { type ToolExecutor } from '@deepseek-ai/dsh-tools'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import Tools, { type ToolExecutor } from '@carnival/dsh-tools'
 import { expect, it, onTestFinished } from 'vitest'
 import { executeModelToolFixture } from '../src/index.ts'
 

@@ -1,30 +1,30 @@
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 import { mountWorkingDirectoryFixture } from '../../subagent/tests/working-directory-fixture.ts'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId, ReasoningEffortId } from '@deepseek-ai/dsh-llm/types'
-import { TOOL_ABORTED_BEFORE_DISPATCH } from '@deepseek-ai/dsh-tools'
-import { assembleContextFor } from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
-import type { SubagentStartRequest } from '@deepseek-ai/dsh-subagent'
-import * as SubagentSpawn from '@deepseek-ai/dsh-subagent-spawn-in-process'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId, ReasoningEffortId } from '@carnival/dsh-llm/types'
+import { TOOL_ABORTED_BEFORE_DISPATCH } from '@carnival/dsh-tools'
+import { assembleContextFor } from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import SubagentRuntime from '@carnival/dsh-subagent'
+import type { SubagentStartRequest } from '@carnival/dsh-subagent'
+import * as SubagentSpawn from '@carnival/dsh-subagent-spawn-in-process'
 import { MockAdapter, textResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 import { loadStoredSession } from '../../subagent/tests/persistence-helpers.ts'
 import * as mock from './scripted-provider.ts'
 import type { Config as toolConfig } from '../src/index.ts'
 import * as tool from '../src/index.ts'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
+import { Session, type SessionId } from '@carnival/dsh-session'
 import {
   callSubagent,
   disposeSetupProvider,
@@ -960,6 +960,6 @@ describe('depth budget configuration', () => {
   })
 })
 
-function admittedMessages(assembly: import('@deepseek-ai/dsh-system-prompt').PromptAssembly) {
+function admittedMessages(assembly: import('@carnival/dsh-system-prompt').PromptAssembly) {
   return assembly.systemUpdates(false).map(update => update.message)
 }

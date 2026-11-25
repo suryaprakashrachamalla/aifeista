@@ -3,16 +3,16 @@
  * platform catalog), the write that validates against it, and the same stored selection reaching the
  * `share-viewer` policy that decides each viewer call.
  */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { randomUUID } from 'node:crypto'
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import RemoteAccessService, { type RemoteAccessAction, type RemoteAccessGrant } from '@deepseek-ai/dsh-api-remote-access'
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
-import type { TunnelRegistrationToken, TunnelWorkerEvent } from '@deepseek-ai/dsh-experimental-liveshare-protocol'
-import { identityKeyOf } from '@deepseek-ai/dsh-experimental-liveshare-protocol'
+import RemoteAccessService, { type RemoteAccessAction, type RemoteAccessGrant } from '@carnival/dsh-api-remote-access'
+import TypertRegistry from '@carnival/dsh-typert-registry'
+import type { TunnelRegistrationToken, TunnelWorkerEvent } from '@carnival/dsh-experimental-liveshare-protocol'
+import { identityKeyOf } from '@carnival/dsh-experimental-liveshare-protocol'
 import { apply, type Config } from '../src/host/share-host.ts'
 import type {} from '../src/index.ts'
 import { shareViewerPrincipal } from '../src/host/viewer-principal.ts'

@@ -42,21 +42,21 @@ impl SkillTreeRouter {
     pub fn new() -> Self {
         let skills = vec![
             SkillNode {
-                id: "clicky.pointer".into(),
-                domain: "spatial_clicky".into(),
+                id: "companion.pointer".into(),
+                domain: "spatial_companion".into(),
                 description: "Move flying pointer to a UI coordinate [POINT:x,y:label]".into(),
                 schema_json: r#"{"name":"point_ui","params":["x","y","label"]}"#.into(),
             },
             SkillNode {
-                id: "clicky.draw".into(),
-                domain: "spatial_clicky".into(),
+                id: "companion.draw".into(),
+                domain: "spatial_companion".into(),
                 description: "Draw translucent annotation overlays on screen".into(),
                 schema_json: r#"{"name":"draw_overlay","params":["shape","x","y","w","h"]}"#.into(),
             },
             SkillNode {
-                id: "clicky.cua".into(),
-                domain: "spatial_clicky".into(),
-                description: "Permission-gated mouse/keyboard automation via enigo".into(),
+                id: "companion.cua".into(),
+                domain: "spatial_companion".into(),
+                description: "Permission-gated mouse/keyboard automation".into(),
                 schema_json: r#"{"name":"cua_action","params":["target_app","action"]}"#.into(),
             },
             SkillNode {
@@ -108,14 +108,14 @@ impl SkillTreeRouter {
         }
 
         let lower = req.prompt.to_lowercase();
-        let domain = if req.lane == LaneKind::ClickyAmbient
+        let domain = if req.lane == LaneKind::CompanionAmbient
             || lower.contains("point")
             || lower.contains("where")
             || lower.contains("click")
             || lower.contains("screen")
             || lower.contains("draw")
         {
-            "spatial_clicky"
+            "spatial_companion"
         } else if lower.contains("sandbox")
             || lower.contains("fork")
             || lower.contains("replay")
@@ -143,7 +143,7 @@ impl SkillTreeRouter {
     }
 }
 
-/// Selects between Local Triage, DeepSeek-V4, and BYOK Cloud tiers.
+/// Selects between Local Triage, Primary Cloud, and BYOK Cloud tiers.
 #[derive(Debug, Clone, Default)]
 pub struct TieredModelRouter;
 
@@ -161,7 +161,7 @@ impl TieredModelRouter {
         } else if lower.contains("claude") || lower.contains("byok") {
             ModelTier::ByokCloud
         } else {
-            ModelTier::DeepSeekV4
+            ModelTier::PrimaryCloud
         }
     }
 }
@@ -375,7 +375,7 @@ mod tests {
         let req1 = TurnRequest {
             request_id: "r1".into(),
             session_id: "s1".into(),
-            lane: LaneKind::ClickyAmbient,
+            lane: LaneKind::CompanionAmbient,
             prompt: "Where is the export button?".into(),
             screen_context: Some(ScreenContext {
                 active_app: Some("Figma".into()),
@@ -388,7 +388,7 @@ mod tests {
         let req2 = TurnRequest {
             request_id: "r2".into(),
             session_id: "s1".into(),
-            lane: LaneKind::ClickyAmbient,
+            lane: LaneKind::CompanionAmbient,
             prompt: "Where is the save button?".into(),
             screen_context: Some(ScreenContext {
                 active_app: Some("Xcode".into()),
@@ -406,6 +406,6 @@ mod tests {
         assert!(p2.cache_hit);
         assert_eq!(p1.prefix_hash, p2.prefix_hash);
         assert!(p1.route.loaded_skills.len() < p1.route.total_catalog_skills);
-        assert_eq!(p1.route.domain_router, "spatial_clicky");
+        assert_eq!(p1.route.domain_router, "spatial_companion");
     }
 }

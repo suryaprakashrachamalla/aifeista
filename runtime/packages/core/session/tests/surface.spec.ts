@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { SessionEvent, SurfaceEvent, SurfaceEventType } from '@deepseek-ai/dsh-session'
+import type { SessionEvent, SurfaceEvent, SurfaceEventType } from '@carnival/dsh-session'
 import {
   Session,
   type SessionId,
@@ -11,9 +11,9 @@ import {
   isReplacementSurfaceEvent,
   isSurfaceEligibleType,
   isSurfaceEvent,
-} from '@deepseek-ai/dsh-session'
-import { SurfaceManager } from '@deepseek-ai/dsh-session/surface'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-session'
+import { SurfaceManager } from '@carnival/dsh-session/surface'
+import { brandString } from '@carnival/dsh-brand'
 import {
   type MessageId,
   type ToolCallId,
@@ -23,10 +23,10 @@ import {
   createToolResultMessage,
   createUserMessage,
   freezeMessage,
-} from '@deepseek-ai/dsh-llm'
-import type { ContextFormed, MessageSource } from '@deepseek-ai/dsh-llm'
+} from '@carnival/dsh-llm'
+import type { ContextFormed, MessageSource } from '@carnival/dsh-llm'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
     'watcher': { kind: 'watcher' } & ContextFormed

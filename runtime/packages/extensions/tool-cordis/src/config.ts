@@ -1,12 +1,12 @@
 /** Live plugin Config discovery projected from the running Loader tree. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { Entry } from '@deepseek-ai/cordis-plugin-loader'
+import type { Context } from '@carnival/cordis'
+import type { Entry } from '@carnival/cordis-plugin-loader'
 // Declares `Context.pluginPackages`, the profile package lookup that resolves an entry's package directory.
-import { createConfigProjector, isNativeConfigSchema, LOADER_EXPRESSION_SCHEMA, type NativeConfigSchema } from '@deepseek-ai/dsh-app-boot'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
-import { InspectError } from '@deepseek-ai/dsh-cordis-host-runner'
-import { ToolArgsError, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
+import { createConfigProjector, isNativeConfigSchema, LOADER_EXPRESSION_SCHEMA, type NativeConfigSchema } from '@carnival/dsh-app-boot'
+import type { JsonValue } from '@carnival/dsh-util-values'
+import { InspectError } from '@carnival/dsh-cordis-host-runner'
+import { ToolArgsError, ToolContextUnavailableError } from '@carnival/dsh-tools'
 
 /**
  * `schema`: the running plugin declares a native Schemastery Config. `absent`: it runs without one.

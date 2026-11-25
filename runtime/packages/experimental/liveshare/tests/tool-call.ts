@@ -1,8 +1,8 @@
 /** One-tool dispatch through the batch executor, for tests that drive a single call. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import type { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import type { ToolExecutionResult } from '@carnival/dsh-tools'
 
 /**
  * Dispatch one standalone tool call and return that call's own settled result.

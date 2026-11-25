@@ -1,11 +1,11 @@
 /** Structured Session actions over the workspace owner's existing callbacks. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { RemoteEndpoint } from '@deepseek-ai/dsh-api-remote-access/client'
-import type { ShortcutCommandId } from '@deepseek-ai/dsh-client-shortcuts/client'
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
-import type { MenuContribution, ContextMenuTargetMap } from '@deepseek-ai/dsh-client-ui-context-menu/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-client-ui-session-status/client'
+import type { Context } from '@carnival/cordis'
+import type { RemoteEndpoint } from '@carnival/dsh-api-remote-access/client'
+import type { ShortcutCommandId } from '@carnival/dsh-client-shortcuts/client'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
+import type { MenuContribution, ContextMenuTargetMap } from '@carnival/dsh-client-ui-context-menu/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-client-ui-session-status/client'
 import type {
   ArchiveSessionInjected, ForkSessionInjected, PinSessionInjected, RenameSessionInjected, SessionIdInjected,
 } from '../contract/slots.ts'

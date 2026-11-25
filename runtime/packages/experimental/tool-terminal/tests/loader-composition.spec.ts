@@ -1,29 +1,29 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { unsupportedModel, provideWorkingDirectoryFixture, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { unsupportedModel, provideWorkingDirectoryFixture, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import TerminalSessionService from '@deepseek-ai/dsh-terminal'
-import SandboxProvider from '@deepseek-ai/dsh-sandbox'
-import type { ConfinedArgv, SandboxPolicy } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import * as TerminalLocal from '@deepseek-ai/dsh-terminal-bash'
-import * as ToolPty from '@deepseek-ai/dsh-tool-terminal'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import TerminalSessionService from '@carnival/dsh-terminal'
+import SandboxProvider from '@carnival/dsh-sandbox'
+import type { ConfinedArgv, SandboxPolicy } from '@carnival/dsh-sandbox'
+import SandboxPolicyService from '@carnival/dsh-sandbox-policy'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import * as TerminalLocal from '@carnival/dsh-terminal-bash'
+import * as ToolPty from '@carnival/dsh-tool-terminal'
 
 let root: string | undefined
 let context: Context | undefined
@@ -70,19 +70,19 @@ suite('terminal real Loader composition through cordis.yml', () => {
     root = await mkdtemp(join(tmpdir(), 'dsh-pty-loader-'))
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
-      "- name: '@deepseek-ai/dsh-agent'",
-      "- name: '@deepseek-ai/dsh-system-prompt'",
-      "- name: '@deepseek-ai/dsh-tools'",
-      "- name: '@deepseek-ai/dsh-tool-executor-native'",
-      "- name: '@deepseek-ai/dsh-terminal'",
-      "- name: '@deepseek-ai/dsh-test-sandbox'",
-      "- name: '@deepseek-ai/dsh-session-projection'",
-      "- name: '@deepseek-ai/dsh-sandbox-policy'",
+      "- name: '@carnival/dsh-agent'",
+      "- name: '@carnival/dsh-system-prompt'",
+      "- name: '@carnival/dsh-tools'",
+      "- name: '@carnival/dsh-tool-executor-native'",
+      "- name: '@carnival/dsh-terminal'",
+      "- name: '@carnival/dsh-test-sandbox'",
+      "- name: '@carnival/dsh-session-projection'",
+      "- name: '@carnival/dsh-sandbox-policy'",
       '  config:',
       '    mode: danger-full-access',
       `    workspaceRoot: ${JSON.stringify(root)}`,
-      "- name: '@deepseek-ai/dsh-subprocess-local'",
-      "- name: '@deepseek-ai/dsh-terminal-bash'",
+      "- name: '@carnival/dsh-subprocess-local'",
+      "- name: '@carnival/dsh-terminal-bash'",
       '  config:',
       '    pollIntervalMs: 10',
       '    exactProbeAfterMs: 20',
@@ -90,7 +90,7 @@ suite('terminal real Loader composition through cordis.yml', () => {
       '    handoffGraceMs: 250',
       '    timeoutMs: 2000',
       '    disposeGraceMs: 500',
-      "- name: '@deepseek-ai/dsh-tool-terminal'",
+      "- name: '@carnival/dsh-tool-terminal'",
       '',
     ].join('\n'))
 
@@ -101,17 +101,17 @@ suite('terminal real Loader composition through cordis.yml', () => {
     await context.plugin(Loader)
     context.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-agent', AgentRegistry],
-      ['@deepseek-ai/dsh-system-prompt', SystemPrompt],
-      ['@deepseek-ai/dsh-tools', ToolRuntime],
-      ['@deepseek-ai/dsh-tool-executor-native', NativeToolExecutor],
-      ['@deepseek-ai/dsh-terminal', TerminalSessionService],
-      ['@deepseek-ai/dsh-test-sandbox', PassthroughSandbox],
-      ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-      ['@deepseek-ai/dsh-sandbox-policy', SandboxPolicyService],
-      ['@deepseek-ai/dsh-subprocess-local', LocalSubprocessRuntime],
-      ['@deepseek-ai/dsh-terminal-bash', TerminalLocal],
-      ['@deepseek-ai/dsh-tool-terminal', ToolPty],
+      ['@carnival/dsh-agent', AgentRegistry],
+      ['@carnival/dsh-system-prompt', SystemPrompt],
+      ['@carnival/dsh-tools', ToolRuntime],
+      ['@carnival/dsh-tool-executor-native', NativeToolExecutor],
+      ['@carnival/dsh-terminal', TerminalSessionService],
+      ['@carnival/dsh-test-sandbox', PassthroughSandbox],
+      ['@carnival/dsh-session-projection', SessionProjectionRegistry],
+      ['@carnival/dsh-sandbox-policy', SandboxPolicyService],
+      ['@carnival/dsh-subprocess-local', LocalSubprocessRuntime],
+      ['@carnival/dsh-terminal-bash', TerminalLocal],
+      ['@carnival/dsh-tool-terminal', ToolPty],
     ])
     context.loader.internal = {
       version: 'v2',

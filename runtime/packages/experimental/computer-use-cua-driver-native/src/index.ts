@@ -1,18 +1,18 @@
 /**
  * Computer use through the in-process Cua Driver native SDK and its own tools.
- * @module @deepseek-ai/dsh-experimental-computer-use-cua-driver-native
+ * @module @carnival/dsh-experimental-computer-use-cua-driver-native
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import Schema from '@deepseek-ai/schemastery'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ComputerUseProviderName } from '@deepseek-ai/dsh-computer-use/types'
-import { createMcpToolDefinition } from '@deepseek-ai/dsh-mcp-client'
+import type { Context } from '@carnival/cordis'
+import Schema from '@carnival/schemastery'
+import { brandString } from '@carnival/dsh-brand'
+import type { ComputerUseProviderName } from '@carnival/dsh-computer-use/types'
+import { createMcpToolDefinition } from '@carnival/dsh-mcp-client'
 import { z } from 'zod'
 import type { CuaDriver as NativeDriver } from '@trycua/cua-driver'
-import type {} from '@deepseek-ai/dsh-computer-use'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import type {} from '@deepseek-ai/dsh-tools'
+import type {} from '@carnival/dsh-computer-use'
+import type {} from '@carnival/dsh-system-prompt'
+import type {} from '@carnival/dsh-tools'
 import { CuaDriverError } from './error.ts'
 
 export { CuaDriverError, type CuaDriverErrorCode } from './error.ts'

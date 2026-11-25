@@ -1,13 +1,13 @@
 /** Session-log validation, header construction, and inherited-marker rules shared with Session construction. */
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage } from '@carnival/dsh-llm'
 import {
   buildSessionHeader, needsInheritedSeedMarker, Session, SESSION_FORMAT_VERSION, SessionLogOffset, SessionSeq, validateSessionLog,
-} from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader, SessionId, SessionMessageProjection } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-session'
+import type { SessionEvent, SessionHeader, SessionId, SessionMessageProjection } from '@carnival/dsh-session'
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@carnival/dsh-session/types' {
   interface SessionEventMap {
     'test/session-log-project': { seq: SessionSeq }
   }

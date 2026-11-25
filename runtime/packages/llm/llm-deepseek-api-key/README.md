@@ -3,7 +3,7 @@ description: "DeepSeek API-key authentication, model discovery, and the official
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-llm-deepseek-api-key
+# @carnival/dsh-llm-deepseek-api-key
 
 English | [中文](README.zh.md)
 
@@ -25,11 +25,11 @@ Authentication resolution asks [`ctx.deepseekAuth`](../../account/deepseek-auth/
 <a id="use-this-package"></a>
 ## Use this package
 
-`apiKeyEnv` defaults to `DEEPSEEK_API_KEY` and resolves per request and model discovery. `ctx.deepseekAuth` reads the key through the credential reference helpers of [`dsh-credentials`](../../credentials/credentials/README.md): when the credentials service exists, its precedence applies, and only compositions without that service read the launch environment directly. Requests with missing credentials fail with `MISSING_CREDENTIAL`; malformed credentials fail with `INVALID_CREDENTIAL`, whose diagnostic names this plugin's settings namespace and the credential reference. Model discovery returns an empty catalog when the credential is missing, hiding the route from model selectors while retaining its settings entry. Malformed credentials and other lookup failures propagate. Adding or removing a key affects the next discovery call. The plugin starts only in a composition that mounts `@deepseek-ai/dsh-deepseek-auth`; the `base` and `sdk-minimal` bundles mount it.
+`apiKeyEnv` defaults to `DEEPSEEK_API_KEY` and resolves per request and model discovery. `ctx.deepseekAuth` reads the key through the credential reference helpers of [`dsh-credentials`](../../credentials/credentials/README.md): when the credentials service exists, its precedence applies, and only compositions without that service read the launch environment directly. Requests with missing credentials fail with `MISSING_CREDENTIAL`; malformed credentials fail with `INVALID_CREDENTIAL`, whose diagnostic names this plugin's settings namespace and the credential reference. Model discovery returns an empty catalog when the credential is missing, hiding the route from model selectors while retaining its settings entry. Malformed credentials and other lookup failures propagate. Adding or removing a key affects the next discovery call. The plugin starts only in a composition that mounts `@carnival/dsh-deepseek-auth`; the `base` and `sdk-minimal` bundles mount it.
 
 ```yaml
 - id: llm-deepseek
-  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  name: '@carnival/dsh-llm-deepseek-api-key'
   config:
     reasoningEffort: high
     apiKeyEnv: DEEPSEEK_API_KEY

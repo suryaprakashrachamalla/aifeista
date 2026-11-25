@@ -9,21 +9,21 @@
  */
 
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry, { agentEvents } from '@deepseek-ai/dsh-agent'
-import type { Agent, AgentStatus } from '@deepseek-ai/dsh-agent'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { GoalId } from '@deepseek-ai/dsh-goal/types'
-import GoalService, { applyGoalProjection, foldGoal, goalProjectionDefinition } from '@deepseek-ai/dsh-goal'
-import type { GoalProjection, GoalProjectionState, GoalRef } from '@deepseek-ai/dsh-goal'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { Context } from '@carnival/cordis'
+import AgentRegistry, { agentEvents } from '@carnival/dsh-agent'
+import type { Agent, AgentStatus } from '@carnival/dsh-agent'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { brandString } from '@carnival/dsh-brand'
+import type { GoalId } from '@carnival/dsh-goal/types'
+import GoalService, { applyGoalProjection, foldGoal, goalProjectionDefinition } from '@carnival/dsh-goal'
+import type { GoalProjection, GoalProjectionState, GoalRef } from '@carnival/dsh-goal'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

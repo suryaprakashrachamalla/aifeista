@@ -1,12 +1,12 @@
 /** Discover the caller's entire subagent tree; the control plugin owns registration. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { defineTool, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import type { ToolDefinition } from '@deepseek-ai/dsh-tools'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { ROOT_AGENT_NAME } from '@deepseek-ai/dsh-subagent'
-import type { SubagentDescendantListEntry } from '@deepseek-ai/dsh-subagent'
+import type { Context } from '@carnival/cordis'
+import { defineTool, ToolContextUnavailableError } from '@carnival/dsh-tools'
+import type { ToolDefinition } from '@carnival/dsh-tools'
+import type { Agent } from '@carnival/dsh-agent'
+import type { SessionId } from '@carnival/dsh-session'
+import { ROOT_AGENT_NAME } from '@carnival/dsh-subagent'
+import type { SubagentDescendantListEntry } from '@carnival/dsh-subagent'
 
 
 type ListAgentsStatus = 'running' | 'inactive' | 'corrupt' | 'unsupported' | 'unavailable'

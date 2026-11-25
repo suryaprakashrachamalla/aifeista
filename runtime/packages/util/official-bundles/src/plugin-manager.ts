@@ -6,15 +6,15 @@
  * entry, installation-carried bundles, and unaddressable rows stay protected by their own rules.
  */
 export const PROTECTED_PLUGINS: ReadonlySet<string> = new Set([
-  '@deepseek-ai/dsh-plugin-manager', '@deepseek-ai/cordis-plugin-loader',
-  '@deepseek-ai/cordis-plugin-include', '@deepseek-ai/dsh-api-gateway',
-  '@deepseek-ai/dsh-host-webserver', '@deepseek-ai/dsh-client-modules',
-  '@deepseek-ai/dsh-client-ui-plugin-manager',
-  '@deepseek-ai/dsh-host-plugin-inventory', '@deepseek-ai/dsh-typert-registry',
-  '@deepseek-ai/dsh-api-remotes', '@deepseek-ai/dsh-api-remote-access',
-  '@deepseek-ai/cordis-plugin-timer', '@deepseek-ai/dsh-client-connection',
-  '@deepseek-ai/dsh-host-frontend-static', '@deepseek-ai/dsh-tools',
-  '@deepseek-ai/dsh-hmr',
+  '@carnival/dsh-plugin-manager', '@carnival/cordis-plugin-loader',
+  '@carnival/cordis-plugin-include', '@carnival/dsh-api-gateway',
+  '@carnival/dsh-host-webserver', '@carnival/dsh-client-modules',
+  '@carnival/dsh-client-ui-plugin-manager',
+  '@carnival/dsh-host-plugin-inventory', '@carnival/dsh-typert-registry',
+  '@carnival/dsh-api-remotes', '@carnival/dsh-api-remote-access',
+  '@carnival/cordis-plugin-timer', '@carnival/dsh-client-connection',
+  '@carnival/dsh-host-frontend-static', '@carnival/dsh-tools',
+  '@carnival/dsh-hmr',
 ])
 
 /**
@@ -23,14 +23,14 @@ export const PROTECTED_PLUGINS: ReadonlySet<string> = new Set([
  * Their Host availability and activation stay intact.
  */
 export const HIDDEN_BUNDLES: ReadonlySet<string> = new Set([
-  '@deepseek-ai/dsh-base',
-  '@deepseek-ai/dsh-web-app',
-  '@deepseek-ai/dsh-headless',
-  '@deepseek-ai/dsh-sdk-app',
-  '@deepseek-ai/dsh-acp-app',
-  '@deepseek-ai/dsh-sdk-minimal',
-  '@deepseek-ai/dsh-experimental-tool-worktree',
-  '@deepseek-ai/dsh-cua-mcp',
+  '@carnival/dsh-base',
+  '@carnival/dsh-web-app',
+  '@carnival/dsh-headless',
+  '@carnival/dsh-sdk-app',
+  '@carnival/dsh-acp-app',
+  '@carnival/dsh-sdk-minimal',
+  '@carnival/dsh-experimental-tool-worktree',
+  '@carnival/dsh-cua-mcp',
 ])
 
 /**
@@ -38,9 +38,9 @@ export const HIDDEN_BUNDLES: ReadonlySet<string> = new Set([
  * this list, decides whether a bundle appears on the main list.
  */
 export const EXTENSION_BUNDLES: readonly string[] = [
-  '@deepseek-ai/dsh-experimental-voice-input-bundle',
-  '@deepseek-ai/dsh-experimental-plugin-market-bundle',
-  '@deepseek-ai/dsh-experimental-auto-review',
+  '@carnival/dsh-experimental-voice-input-bundle',
+  '@carnival/dsh-experimental-plugin-market-bundle',
+  '@carnival/dsh-experimental-auto-review',
 ]
 
 /**
@@ -48,37 +48,37 @@ export const EXTENSION_BUNDLES: readonly string[] = [
  * which includes every eligible bundle, ranks them last in this order.
  */
 export const MORE_BUNDLES: readonly string[] = [
-  '@deepseek-ai/dsh-experimental-inspector-profile',
-  '@deepseek-ai/dsh-cua-bundle',
-  '@deepseek-ai/dsh-timeline',
-  '@deepseek-ai/dsh-experimental-terminal-bundle',
-  '@deepseek-ai/dsh-experimental-cot-translation-bundle',
-  '@deepseek-ai/dsh-experimental-session-search',
-  '@deepseek-ai/dsh-experimental-session-titles-bundle',
-  '@deepseek-ai/dsh-experimental-badge-skill-bundle',
-  '@deepseek-ai/dsh-experimental-ralph-bundle',
-  '@deepseek-ai/dsh-deepseek-chat-import',
-  '@deepseek-ai/dsh-subagent-codex',
-  '@deepseek-ai/dsh-subagent-claude-code',
+  '@carnival/dsh-experimental-inspector-profile',
+  '@carnival/dsh-cua-bundle',
+  '@carnival/dsh-timeline',
+  '@carnival/dsh-experimental-terminal-bundle',
+  '@carnival/dsh-experimental-cot-translation-bundle',
+  '@carnival/dsh-experimental-session-search',
+  '@carnival/dsh-experimental-session-titles-bundle',
+  '@carnival/dsh-experimental-badge-skill-bundle',
+  '@carnival/dsh-experimental-ralph-bundle',
+  '@carnival/dsh-deepseek-chat-import',
+  '@carnival/dsh-subagent-codex',
+  '@carnival/dsh-subagent-claude-code',
 ]
 
 /** Official bundles the plugin manager marks with the Experimental badge. */
 export const EXPERIMENTAL_BUNDLES: ReadonlySet<string> = new Set([
-  '@deepseek-ai/dsh-cua-bundle',
-  '@deepseek-ai/dsh-cua-mcp',
-  '@deepseek-ai/dsh-timeline',
-  '@deepseek-ai/dsh-experimental-terminal-bundle',
-  '@deepseek-ai/dsh-experimental-voice-input-bundle',
-  '@deepseek-ai/dsh-experimental-auto-review',
-  '@deepseek-ai/dsh-experimental-inspector-profile',
-  '@deepseek-ai/dsh-experimental-forge-bundle',
-  '@deepseek-ai/dsh-experimental-tool-worktree',
-  '@deepseek-ai/dsh-experimental-cot-translation-bundle',
-  '@deepseek-ai/dsh-experimental-session-search',
-  '@deepseek-ai/dsh-experimental-session-titles-bundle',
-  '@deepseek-ai/dsh-experimental-badge-skill-bundle',
-  '@deepseek-ai/dsh-experimental-ralph-bundle',
-  '@deepseek-ai/dsh-experimental-plugin-market-bundle',
-  '@deepseek-ai/dsh-experimental-liveshare',
-  '@deepseek-ai/dsh-deepseek-chat-import',
+  '@carnival/dsh-cua-bundle',
+  '@carnival/dsh-cua-mcp',
+  '@carnival/dsh-timeline',
+  '@carnival/dsh-experimental-terminal-bundle',
+  '@carnival/dsh-experimental-voice-input-bundle',
+  '@carnival/dsh-experimental-auto-review',
+  '@carnival/dsh-experimental-inspector-profile',
+  '@carnival/dsh-experimental-forge-bundle',
+  '@carnival/dsh-experimental-tool-worktree',
+  '@carnival/dsh-experimental-cot-translation-bundle',
+  '@carnival/dsh-experimental-session-search',
+  '@carnival/dsh-experimental-session-titles-bundle',
+  '@carnival/dsh-experimental-badge-skill-bundle',
+  '@carnival/dsh-experimental-ralph-bundle',
+  '@carnival/dsh-experimental-plugin-market-bundle',
+  '@carnival/dsh-experimental-liveshare',
+  '@carnival/dsh-deepseek-chat-import',
 ])

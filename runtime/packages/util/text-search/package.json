@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-util-text-search",
+  "name": "@carnival/dsh-util-text-search",
   "description": "Multilingual fuzzy filtering for in-memory search lists",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/util/text-search"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,13 +25,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-package-manifest": "workspace:*",
+    "@carnival/dsh-package-manifest": "workspace:*",
     "fuzzysort": "4.0.2"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   }
 }

@@ -9,16 +9,16 @@ import { resolveKitModule } from '../src/locate.ts'
 function kitTree() {
   const root = realpathSync(mkdtempSync(join(tmpdir(), 'dsh-kit-lookup-')))
   onTestFinished(() => { rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 10 }) })
-  const kitDirectory = join(root, 'node_modules', '@deepseek-ai', 'libreoffice-kit')
+  const kitDirectory = join(root, 'node_modules', '@carnival', 'libreoffice-kit')
   const entry = join(kitDirectory, 'lib', 'index.js')
-  const engine = join(kitDirectory, 'node_modules', '@deepseek-ai', 'libreoffice-kit-wasm', 'package.json')
+  const engine = join(kitDirectory, 'node_modules', '@carnival', 'libreoffice-kit-wasm', 'package.json')
   mkdirSync(dirname(engine), { recursive: true })
   mkdirSync(dirname(entry), { recursive: true })
   writeFileSync(join(kitDirectory, 'package.json'), JSON.stringify({
-    name: '@deepseek-ai/libreoffice-kit', exports: { '.': './lib/index.js' },
+    name: '@carnival/libreoffice-kit', exports: { '.': './lib/index.js' },
   }))
   writeFileSync(entry, '')
-  writeFileSync(engine, JSON.stringify({ name: '@deepseek-ai/libreoffice-kit-wasm' }))
+  writeFileSync(engine, JSON.stringify({ name: '@carnival/libreoffice-kit-wasm' }))
   return { entryUrl: pathToFileURL(entry), engine }
 }
 
@@ -30,7 +30,7 @@ it.each(['URL object', 'file URL string'])('locates the module entry and engines
   const resolution = resolveKitModule(() => input === 'URL object' ? fixture.entryUrl : fixture.entryUrl.href)
   if (resolution.kind !== 'available') throw new Error('Expected an available Kit')
   expect(resolution.entry).toBe(fixture.entryUrl.href)
-  expect(resolution.resolveEnginePackage('@deepseek-ai/libreoffice-kit-wasm')).toBe(fixture.engine)
+  expect(resolution.resolveEnginePackage('@carnival/libreoffice-kit-wasm')).toBe(fixture.engine)
 })
 
 it('reports a missing Kit module with the lookup failure', () => {

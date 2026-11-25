@@ -2,19 +2,19 @@
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage, isAgentLoopRequest, LlmAdapter, ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { LlmModelReasoningInfo } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
-import { pluginRecordOf, SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import { defineTool } from '@deepseek-ai/dsh-tools'
+import { Context } from '@carnival/cordis'
+import { createUserMessage, isAgentLoopRequest, LlmAdapter, ToolCallId } from '@carnival/dsh-llm'
+import type { LlmModelReasoningInfo } from '@carnival/dsh-llm'
+import type { GenerateOptions, StreamChunk } from '@carnival/dsh-llm'
+import { pluginRecordOf, SessionId } from '@carnival/dsh-session'
+import type { SessionEvent } from '@carnival/dsh-session'
+import { defineTool } from '@carnival/dsh-tools'
 import {
   mountAgentLoopTestDependencies,
   mountAgentLoopTestHarness,
-} from '@deepseek-ai/dsh-agent-loop-testkit'
-import * as Jsonl from '@deepseek-ai/dsh-session-persistence-jsonl'
-import type {} from '@deepseek-ai/dsh-session-persistence'
+} from '@carnival/dsh-agent-loop-testkit'
+import * as Jsonl from '@carnival/dsh-session-persistence-jsonl'
+import type {} from '@carnival/dsh-session-persistence'
 import * as Timeline from '../src/index.ts'
 
 export const textOutput = {

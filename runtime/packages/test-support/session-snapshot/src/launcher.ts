@@ -4,7 +4,7 @@
  * stdout tee, SDK client, update collection, permission fallback, and process
  * shutdown so e2e and snapshot suites do not each reconstruct that boundary.
  *
- * @module @deepseek-ai/dsh-session-snapshot/launcher
+ * @module @carnival/dsh-session-snapshot/launcher
  */
 
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
@@ -36,8 +36,8 @@ import {
   type SetSessionConfigOptionResponse,
   type SessionNotification,
 } from '@agentclientprotocol/sdk'
-import { parseEntryYaml, stringifyEntryYaml, type PatchOptions } from '@deepseek-ai/cordis-plugin-include'
-import { resolveExampleLaunch } from '@deepseek-ai/dsh-loader-smoke'
+import { parseEntryYaml, stringifyEntryYaml, type PatchOptions } from '@carnival/cordis-plugin-include'
+import { resolveExampleLaunch } from '@carnival/dsh-loader-smoke'
 
 const EXIT_MARKER_GRACE_MS = 250
 

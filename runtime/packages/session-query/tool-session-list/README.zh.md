@@ -3,7 +3,7 @@ description: "通过可选的只读工具列出 Workspace 和 Session 元数据�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-session-list
+# @carnival/dsh-tool-session-list
 
 [English](README.md) | 中文
 
@@ -36,9 +36,9 @@ kind: "package-reference"
 ```yaml
 - insert:
     - id: workspace-registry
-      name: '@deepseek-ai/dsh-workspace'
+      name: '@carnival/dsh-workspace'
     - id: tool-session-list
-      name: '@deepseek-ai/dsh-tool-session-list'
+      name: '@carnival/dsh-tool-session-list'
 ```
 
 如果组合已经挂载 `workspaceRegistry`，只添加工具条目。Workspace 初始化遵循[注册表现有的历史引导行为](../../workspace/workspace/README.zh.md)；列表调用不会创建或接入会话，也不会修改注册表记录。

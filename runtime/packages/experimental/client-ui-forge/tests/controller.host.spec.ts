@@ -1,11 +1,11 @@
 import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { ForgeFailure, ForgeProvider, ForgeReadiness, ForgeReviewData, ForgeViewedFiles } from '@deepseek-ai/dsh-experimental-forge'
-import { setSandboxMode } from '@deepseek-ai/dsh-sandbox-policy'
-import { appendPluginRecord, type SessionId } from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import WorktreeService from '@deepseek-ai/dsh-experimental-worktree'
+import type { ForgeFailure, ForgeProvider, ForgeReadiness, ForgeReviewData, ForgeViewedFiles } from '@carnival/dsh-experimental-forge'
+import { setSandboxMode } from '@carnival/dsh-sandbox-policy'
+import { appendPluginRecord, type SessionId } from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import WorktreeService from '@carnival/dsh-experimental-worktree'
 import ForgePanelController from '../src/index.ts'
 import type { Config, ForgeLocalDiff, ForgePanelState, ForgeSessionWorktree, ForgeWorktreeState } from '../src/index.ts'
 import { GitOutputTooLarge } from '../src/git.ts'
@@ -16,7 +16,7 @@ import {
   rejectionOf, repository, scratch, sendPrompt, shellTurn, snapshot, startStep, startTurn,
 } from './harness.ts'
 import type { Bench, BenchOptions, Follower } from './harness.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const cleanups: (() => Promise<void>)[] = []
 

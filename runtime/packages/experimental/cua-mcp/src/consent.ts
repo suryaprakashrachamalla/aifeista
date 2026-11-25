@@ -1,6 +1,6 @@
 /** Consent answerer for the connection's Agent: unattended approval or MCP elicitation. @module */
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { UserQuestionError, type AskUserQuestionAnswer, type AskUserQuestionItem } from '@deepseek-ai/dsh-user-questions'
+import type { Agent } from '@carnival/dsh-agent'
+import { UserQuestionError, type AskUserQuestionAnswer, type AskUserQuestionItem } from '@carnival/dsh-user-questions'
 import type { ElicitResult } from '@modelcontextprotocol/server'
 
 /** Who decides application and pointer consent for the connection's Agent. */

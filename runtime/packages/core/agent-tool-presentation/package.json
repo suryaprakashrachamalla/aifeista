@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-agent-tool-presentation",
+  "name": "@carnival/dsh-agent-tool-presentation",
   "description": "Deprecated tool presentation selector; use dsh-tool-executor-native or dsh-tool-executor-ptc directly",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/core/agent-tool-presentation"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,23 +27,23 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-ptc": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tool-executor-ptc": "workspace:*",
+    "@carnival/schemastery": "workspace:~"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-ptc-runtime": "workspace:*",
-    "@deepseek-ai/dsh-scope": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-session-projection": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-ptc-runtime": "workspace:*",
+    "@carnival/dsh-scope": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-session-projection": "workspace:*"
   }
 }

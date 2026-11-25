@@ -1,33 +1,33 @@
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import AgentRegistry, { agentEvents } from '@deepseek-ai/dsh-agent'
-import type { Agent, AgentStatus, Inbox } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { GoalId } from '@deepseek-ai/dsh-goal/types'
-import GoalService from '@deepseek-ai/dsh-goal'
-import type { GoalRef } from '@deepseek-ai/dsh-goal'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { MessageSource } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import AgentRegistry, { agentEvents } from '@carnival/dsh-agent'
+import type { Agent, AgentStatus, Inbox } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import type { GoalId } from '@carnival/dsh-goal/types'
+import GoalService from '@carnival/dsh-goal'
+import type { GoalRef } from '@carnival/dsh-goal'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { MessageSource } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import SessionStore, {
   SESSION_FORMAT_VERSION,
   Session,
   type SessionId,
   SessionLogOffset,
-} from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import type { ToolExecutionResult } from '@deepseek-ai/dsh-tools'
-import * as toolGoal from '@deepseek-ai/dsh-tool-goal'
-import { unsupportedModel, createInboxStub } from '@deepseek-ai/dsh-agent-loop-testkit'
+} from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import type { ToolExecutionResult } from '@carnival/dsh-tools'
+import * as toolGoal from '@carnival/dsh-tool-goal'
+import { unsupportedModel, createInboxStub } from '@carnival/dsh-agent-loop-testkit'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

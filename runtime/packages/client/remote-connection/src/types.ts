@@ -1,5 +1,5 @@
 /** Browser login invitations and deployment availability. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
+import type { Branded } from '@carnival/dsh-brand'
 
 export type * from './pairing-types.ts'
 
@@ -36,7 +36,7 @@ export interface RemoteLoginTicket {
   readonly lifetimeMs: number
 }
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     'remote-connection/owner-required': Record<string, never>
     'remote-connection/disposed': Record<string, never>

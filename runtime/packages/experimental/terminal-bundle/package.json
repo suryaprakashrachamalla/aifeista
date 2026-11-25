@@ -1,15 +1,10 @@
 {
-  "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+  "name": "@carnival/dsh-experimental-terminal-bundle",
   "description": "Let the agent run long-lived commands in terminals you can watch in the sidebar.",
   "version": "0.2.3-alpha.2",
   "icon": "./icon.svg",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/terminal-bundle"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -42,14 +37,14 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-tool-terminal": "workspace:*",
-    "@deepseek-ai/dsh-terminal": "workspace:*",
-    "@deepseek-ai/dsh-terminal-panel": "workspace:*"
+    "@carnival/dsh-tool-terminal": "workspace:*",
+    "@carnival/dsh-terminal": "workspace:*",
+    "@carnival/dsh-terminal-panel": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   }
 }

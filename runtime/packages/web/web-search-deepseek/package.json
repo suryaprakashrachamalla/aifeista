@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-web-search-deepseek",
+  "name": "@carnival/dsh-web-search-deepseek",
   "description": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/web/web-search-deepseek"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,30 +27,30 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-launch-environment": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-web": "workspace:*",
-    "@deepseek-ai/dsh-deepseek-auth": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-launch-environment": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-web": "workspace:*",
+    "@carnival/dsh-deepseek-auth": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/schemastery": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-credentials-local": "workspace:*",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:*",
-    "@deepseek-ai/dsh-http-proxy": "workspace:*",
-    "@deepseek-ai/dsh-launch-environment": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-llm-deepseek-account": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-web": "workspace:*",
-    "@deepseek-ai/dsh-deepseek-auth": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-credentials-local": "workspace:*",
+    "@carnival/dsh-deepseek-account": "workspace:*",
+    "@carnival/dsh-http-proxy": "workspace:*",
+    "@carnival/dsh-launch-environment": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-llm-deepseek-account": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-web": "workspace:*",
+    "@carnival/dsh-deepseek-auth": "workspace:*"
   }
 }

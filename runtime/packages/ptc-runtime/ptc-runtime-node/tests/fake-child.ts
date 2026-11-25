@@ -1,8 +1,8 @@
 /** A scripted Node child whose control traffic tests read and forge without starting a process. */
 import { Duplex, PassThrough } from 'node:stream'
-import type { Context } from '@deepseek-ai/cordis'
-import type { PtcRunRequest } from '@deepseek-ai/dsh-ptc-runtime'
-import type { SubprocessHandle, SubprocessOutcome } from '@deepseek-ai/dsh-subprocess'
+import type { Context } from '@carnival/cordis'
+import type { PtcRunRequest } from '@carnival/dsh-ptc-runtime'
+import type { SubprocessHandle, SubprocessOutcome } from '@carnival/dsh-subprocess'
 import { onTestFinished, vi } from 'vitest'
 import { PROGRAM_PROTOCOL_VERSION } from '../src/protocol.ts'
 import type NodeRuntime from '../src/index.ts'

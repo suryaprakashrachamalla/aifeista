@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   abbreviateHomePath, fileAddressFor, isAbsoluteWorkspacePath, parseFileAddress, pathPartsOf, relativizeToCwd,
   resolveWorkspacePath, workspaceTitleOf,
-} from '@deepseek-ai/dsh-util-workspace-path'
+} from '@carnival/dsh-util-workspace-path'
 
 describe('Workspace path helpers', () => {
   it('addresses a file by its absolute path when the path or the Session directory supplies one', () => {

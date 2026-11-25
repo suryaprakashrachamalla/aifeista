@@ -1,7 +1,7 @@
 /** Test-only Loader plugin that creates a disarmed goal at the first real step edge. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-goal'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-goal'
 
 export const name = 'seed-goal'
 export const inject = ['goals']

@@ -2,10 +2,10 @@
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import type { Converter, ConverterOptions } from '@deepseek-ai/libreoffice-kit'
+import { Context } from '@carnival/cordis'
+import type { Converter, ConverterOptions } from '@carnival/libreoffice-kit'
 import { afterEach, beforeEach, expect, it, onTestFinished, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import OfficeKit, { Config, type OfficeSourceKey, type OfficeKitRequest } from '../src/index.ts'
 import { resolveKitModule, type KitModuleResolution } from '../src/locate.ts'
 import { expectDefaultOutputsUntouched } from './default-outputs.ts'
@@ -15,9 +15,9 @@ const home = await vi.hoisted(async () => {
   const { tmpdir } = await import('node:os')
   return mkdtemp(`${tmpdir()}/dsh-office-kit-home-`)
 })
-vi.mock('@deepseek-ai/dsh-home-paths', async (original) => {
+vi.mock('@carnival/dsh-home-paths', async (original) => {
   const path = await import('node:path')
-  return { ...await original<typeof import('@deepseek-ai/dsh-home-paths')>(), dshHomePath: (...segments: string[]) => path.join(home, ...segments) }
+  return { ...await original<typeof import('@carnival/dsh-home-paths')>(), dshHomePath: (...segments: string[]) => path.join(home, ...segments) }
 })
 expectDefaultOutputsUntouched(home)
 
@@ -27,7 +27,7 @@ vi.mock('../src/locate.ts', async (original) => {
 })
 
 const kit = vi.hoisted(() => ({ create: vi.fn<(options?: ConverterOptions) => Promise<Converter>>() }))
-vi.mock('@deepseek-ai/libreoffice-kit', () => ({ createConverter: kit.create }))
+vi.mock('@carnival/libreoffice-kit', () => ({ createConverter: kit.create }))
 
 const absentKit = Object.assign(new Error('Cannot find package'), { code: 'ERR_MODULE_NOT_FOUND' })
 const pdf = Buffer.from('%PDF-1.7\npreview\n%%EOF\n')
@@ -80,8 +80,8 @@ function resolvedKit(): Extract<KitModuleResolution, { kind: 'available' }> {
 it('loads its own Kit installation and passes the engine resolver anchored there to the converter', async () => {
   const provider = await mount()
   await provider.convert(request)
-  expect(vi.mocked(resolveKitModule).mock.calls[0]?.[0]()).toBe(import.meta.resolve('@deepseek-ai/libreoffice-kit'))
-  expect(resolvedKit().entry).toBe(import.meta.resolve('@deepseek-ai/libreoffice-kit'))
+  expect(vi.mocked(resolveKitModule).mock.calls[0]?.[0]()).toBe(import.meta.resolve('@carnival/libreoffice-kit'))
+  expect(resolvedKit().entry).toBe(import.meta.resolve('@carnival/libreoffice-kit'))
   expect(kit.create.mock.calls[0]?.[0]?.resolveEnginePackage).toBe(resolvedKit().resolveEnginePackage)
 })
 

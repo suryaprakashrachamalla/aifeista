@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 /** File-operation contributions survive removal of application-opening providers. */
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { SessionId } from '@carnival/dsh-session'
 import { afterEach, expect, it, onTestFinished, vi } from 'vitest'
-import { MenuRegistry } from '@deepseek-ai/dsh-client-ui-context-menu/src/client/registry.ts'
-import { SlotTestRuntime } from '@deepseek-ai/dsh-client-test-runtime'
+import { MenuRegistry } from '@carnival/dsh-client-ui-context-menu/src/client/registry.ts'
+import { SlotTestRuntime } from '@carnival/dsh-client-test-runtime'
 import { apply } from '../src/client/index.ts'
 import type { FileActionSource } from '../src/types.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 afterEach(() => { vi.unstubAllGlobals() })
 

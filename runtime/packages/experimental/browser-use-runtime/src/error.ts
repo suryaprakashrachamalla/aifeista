@@ -1,6 +1,6 @@
 /** Machine-routable browser ownership failures. @module */
 
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 
 /**
  * Every {@link BrowserSessionError} code:

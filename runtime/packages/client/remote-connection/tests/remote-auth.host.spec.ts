@@ -1,10 +1,10 @@
 /** Remote browser credentials retain their own durable key and fixed authority-scoped expiry. */
 
 import { createHmac, randomBytes } from 'node:crypto'
-import { Context } from '@deepseek-ai/cordis'
-import { CredentialProvider, credentialKey } from '@deepseek-ai/dsh-credentials'
-import type { CredentialKey, CredentialRecord } from '@deepseek-ai/dsh-credentials'
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { Context } from '@carnival/cordis'
+import { CredentialProvider, credentialKey } from '@carnival/dsh-credentials'
+import type { CredentialKey, CredentialRecord } from '@carnival/dsh-credentials'
+import { HarnessError } from '@carnival/dsh-error'
 import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 import { RemoteBrowserAuth } from '../src/remote-auth.ts'
 

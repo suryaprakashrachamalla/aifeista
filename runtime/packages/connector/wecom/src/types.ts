@@ -1,7 +1,7 @@
 /** Credential-free WeCom authorization and operation views the Plugins page presenter reads. */
 
-import type { CliAccountView } from '@deepseek-ai/dsh-cli-account/types'
-import type { UpstreamSkillsState } from '@deepseek-ai/dsh-upstream-skills/types'
+import type { CliAccountView } from '@carnival/dsh-cli-account/types'
+import type { UpstreamSkillsState } from '@carnival/dsh-upstream-skills/types'
 
 /** The CLI's authorization as the latest `auth show` reported it, and where the upstream guides stand. */
 export interface WecomAccountState {

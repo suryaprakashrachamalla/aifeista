@@ -1,11 +1,11 @@
 /** The MCP client host: configuration validation, instances below the host, probes, and authorization owners. */
 
 import { expect, it, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import Tools from '@deepseek-ai/dsh-tools'
-import { McpClientHost, type ConfigInput } from '@deepseek-ai/dsh-mcp-client'
+import { Context } from '@carnival/cordis'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import Tools from '@carnival/dsh-tools'
+import { McpClientHost, type ConfigInput } from '@carnival/dsh-mcp-client'
 import { authorize, oauthWorld } from './oauth-fixture.ts'
 import { startHttpMcpFixture } from './http-fixture.ts'
 

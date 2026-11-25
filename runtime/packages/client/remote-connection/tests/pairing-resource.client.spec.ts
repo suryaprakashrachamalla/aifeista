@@ -1,9 +1,9 @@
 /** Pending-list polling is held by a view and never survives its resource release. */
 import { afterEach, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { ResourceRegistry } from '@deepseek-ai/dsh-client-resources/src/client/resources.ts'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import { Context } from '@carnival/cordis'
+import { ResourceRegistry } from '@carnival/dsh-client-resources/src/client/resources.ts'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { PairingRequestId, PairingRequestsValue } from '../src/types.ts'
 import { requestsResource } from '../src/client/pairing-resource.ts'
 

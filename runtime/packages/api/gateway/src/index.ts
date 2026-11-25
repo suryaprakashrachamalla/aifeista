@@ -2,22 +2,22 @@
  * Live Typert Remote dispatch over Cordis Services and registered providers.
  * Unary transport and response envelopes belong to Connection; live Remote
  * streams use the Gateway-owned WebSocket mux.
- * @module @deepseek-ai/dsh-api-gateway
+ * @module @carnival/dsh-api-gateway
  */
 
 import { randomUUID } from 'node:crypto'
-import { Context, Service, symbols } from '@deepseek-ai/cordis'
+import { Context, Service, symbols } from '@carnival/cordis'
 import type {
   ConnectionRpcAttachment,
   ConnectionRpcHandler,
-} from '@deepseek-ai/dsh-client-connection'
-import type { RemoteAccessDecision } from '@deepseek-ai/dsh-api-remote-access'
+} from '@carnival/dsh-client-connection'
+import type { RemoteAccessDecision } from '@carnival/dsh-api-remote-access'
 import { callResources, eventResources } from './access.ts'
-import { Deque } from '@deepseek-ai/dsh-deque'
-import type { WebUpgradeRoute } from '@deepseek-ai/dsh-host-webserver'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import type {} from '@deepseek-ai/dsh-cmdline'
-import z from '@deepseek-ai/schemastery'
+import { Deque } from '@carnival/dsh-deque'
+import type { WebUpgradeRoute } from '@carnival/dsh-host-webserver'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import type {} from '@carnival/dsh-cmdline'
+import z from '@carnival/schemastery'
 export type { TypertGatewayFaultDetails } from './remote-error-codes.ts'
 import {
   RemoteError,
@@ -33,7 +33,7 @@ import {
   type RemoteMethodMarker,
   type TypertCodec,
   type TypertGatewayBinding,
-} from '@deepseek-ai/dsh-typert-protocol'
+} from '@carnival/dsh-typert-protocol'
 import type {
   InvokeRemoteRequest,
   PendingRemoteEventInfo,

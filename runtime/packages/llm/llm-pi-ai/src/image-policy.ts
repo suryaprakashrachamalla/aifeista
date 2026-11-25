@@ -1,6 +1,6 @@
 /** Resolve pi-ai image resize metadata and route-owned overrides. */
 
-import { LlmError } from '@deepseek-ai/dsh-llm'
+import { LlmError } from '@carnival/dsh-llm'
 import type { Api, Model } from '@earendil-works/pi-ai'
 import { DEFAULT_REQUEST_IMAGE_MAX_BYTES } from './config.ts'
 import type { ResolvedPiAiProviderProfile } from './config.ts'

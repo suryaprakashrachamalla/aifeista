@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-typert-generator",
+  "name": "@carnival/dsh-typert-generator",
   "description": "TypeScript project analyzer and model-driven Typert artifact generator",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/typert/generator"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -39,13 +34,13 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-tool-cordis": "workspace:*",
-    "@deepseek-ai/dsh-typert-registry": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-tool-cordis": "workspace:*",
+    "@carnival/dsh-typert-registry": "workspace:*",
+    "@carnival/cordis": "workspace:~",
     "zod": "4.6.6"
   }
 }

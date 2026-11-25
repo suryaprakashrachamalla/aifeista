@@ -1,5 +1,5 @@
 /**
- * Real-load-path guard for @deepseek-ai/dsh-tool-fs-search. `tool-fs-search` is
+ * Real-load-path guard for @carnival/dsh-tool-fs-search. `tool-fs-search` is
  * a NAMESPACE plugin with `inject` — so a stray `export default apply` would
  * make the cordis Loader's `unwrapExports` (`exports.default ?? exports`)
  * collapse the module to the bare `apply` function, DROPPING `inject`. The
@@ -14,16 +14,16 @@
  * red, revert.
  */
 
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import * as toolFsSearch from '@deepseek-ai/dsh-tool-fs-search'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import * as toolFsSearch from '@carnival/dsh-tool-fs-search'
 
 describe('dsh-tool-fs-search real-load-path guard', () => {
   it('has no default export and keeps name/inject/Config through unwrapExports', () => {

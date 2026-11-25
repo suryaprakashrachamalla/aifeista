@@ -3,7 +3,7 @@ description: "One progressively loaded Office skill with concise inline authorin
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-skill-office
+# @carnival/dsh-skill-office
 
 English | [中文](README.zh.md)
 
@@ -29,7 +29,7 @@ The catalog lists one `office` skill. Its instructions load on demand, cover Wor
 Mount the skill provider beside the skill registry and `dsh-tool-skill`. The provider supplies the `office` instructions and appends a Python environment section. The instructions direct operations to `office_render`, `office_convert`, and `office_recalculate`, so compose [`tool-office`](../../document/tool-office/README.md) beside this provider.
 
 ```yaml
-- name: '@deepseek-ai/dsh-skill-office'
+- name: '@carnival/dsh-skill-office'
 
 ```
 

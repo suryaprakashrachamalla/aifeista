@@ -1,7 +1,7 @@
 /** Model-facing guidance lists the object API with platform availability and input constraints. */
 import { expect, it } from 'vitest'
-import type { CuaApi, CuaApp, CuaSurface, CuaWindow } from '@deepseek-ai/dsh-cua/api'
-import { COMMON_GUIDANCE, withHeldInputGuidance, withSystemInputGuidance } from '@deepseek-ai/dsh-cua/guidance'
+import type { CuaApi, CuaApp, CuaSurface, CuaWindow } from '@carnival/dsh-cua/api'
+import { COMMON_GUIDANCE, withHeldInputGuidance, withSystemInputGuidance } from '@carnival/dsh-cua/guidance'
 import { GUIDANCE, PLATFORM_GUIDANCE, PROGRAM_GUIDANCE } from '../src/guidance.ts'
 
 const apiNames: Array<keyof CuaApi> = ['getCapabilities', 'listApps', 'findApps', 'getState', 'getApp']

@@ -1,13 +1,13 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
+import { Session, type SessionId } from '@carnival/dsh-session'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { BrowserSessionError, SessionResources } from '../src/index.ts'
 import type { BrowserSessionErrorCode } from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const contexts: Context[] = []
 

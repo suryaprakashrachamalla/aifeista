@@ -7,25 +7,25 @@
  * through one property read; assignment through the tracker proxy and `#`
  * private fields bypass that rebinding.
  */
-import { Service } from '@deepseek-ai/cordis'
-import type { Context } from '@deepseek-ai/cordis'
-import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
+import { Service } from '@carnival/cordis'
+import type { Context } from '@carnival/cordis'
+import { randomUUID } from '@carnival/dsh-util-crypto'
 // Type-only imports: a plugin-to-plugin value import is a bundle purity
 // error, so scope resolution goes through the sessions service (scopeOf
 // method) instead of the standalone helper.
 import type {
   ISessions, PendingSubmissionRetirement, SessionFace,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type {} from '@deepseek-ai/dsh-client-file-upload/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { FileAttachmentRef, ImageMediaType } from '@deepseek-ai/dsh-attachment'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { ObservableSnapshot, SnapshotStore } from '@deepseek-ai/dsh-client-store'
+} from '@carnival/dsh-api-session-controller/client'
+import type {} from '@carnival/dsh-client-file-upload/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { FileAttachmentRef, ImageMediaType } from '@carnival/dsh-attachment'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import type { ObservableSnapshot, SnapshotStore } from '@carnival/dsh-client-store'
 import type {
   ComposerAttachment, ComposerFileAttachment, ComposerImageAttachment, DraftFileUpload,
 } from './contract/slots.ts'
-import type { QueueAction } from '@deepseek-ai/dsh-api-session-controller/types'
-import type { MessageId } from '@deepseek-ai/dsh-llm/types'
+import type { QueueAction } from '@carnival/dsh-api-session-controller/types'
+import type { MessageId } from '@carnival/dsh-llm/types'
 import type { ComposerBlocks } from './contract/composer-blocks.ts'
 import type {
   DraftAttachmentId, DraftAttachmentSerializationResult, SessionInputResolver, SubmitAttachment, SubmitOutcome,

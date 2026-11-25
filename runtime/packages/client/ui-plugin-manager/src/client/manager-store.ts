@@ -6,9 +6,9 @@ import { sanitizeInstallInput } from './sanitize-install-input.ts'
  * after each action and after every `plugin-manager/changed` event, so a
  * change made on another surface shows here without a manual refresh.
  */
-import type {} from '@deepseek-ai/dsh-client-product-analytics/client'
-import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
+import type {} from '@carnival/dsh-client-product-analytics/client'
+import { randomUUID } from '@carnival/dsh-util-crypto'
+import type { Context as ClientContext } from '@carnival/cordis'
 import type {
   BundleInfo,
   ChangeResult,
@@ -31,18 +31,18 @@ import type {
   ReadOnlyReason,
   Registry,
   RestartReason,
-} from '@deepseek-ai/dsh-api-remotes/client'
-import { normalizeRegistry, NPMMIRROR_REGISTRY, OFFICIAL_NPM_REGISTRY, REGISTRY_URL } from '@deepseek-ai/dsh-plugin-manager/registry'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
-import type { LocalizedText, PluginLocalizedMeta } from '@deepseek-ai/dsh-package-manifest'
-import type { SettingsDescribeFace, ConfigForms } from '@deepseek-ai/dsh-client-ui-settings/client'
+} from '@carnival/dsh-api-remotes/client'
+import { normalizeRegistry, NPMMIRROR_REGISTRY, OFFICIAL_NPM_REGISTRY, REGISTRY_URL } from '@carnival/dsh-plugin-manager/registry'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
+import type { HostObservable } from '@carnival/dsh-client-ui-slots'
+import type { LocalizedText, PluginLocalizedMeta } from '@carnival/dsh-package-manifest'
+import type { SettingsDescribeFace, ConfigForms } from '@carnival/dsh-client-ui-settings/client'
 import type { ConfigLedger } from './config-ledger.ts'
 import type { PluginTabInstall, PluginTabUpdate } from './slot-contract.ts'
 import type { PluginTab } from './tab-ledger.ts'
 import { shortName } from './presentation.ts'
 import { BundleDetailController, type BundleDetailsState } from './detail-store.ts'
-import type { LocaleSnapshot } from '@deepseek-ai/dsh-client-locale/client'
+import type { LocaleSnapshot } from '@carnival/dsh-client-locale/client'
 
 /**
  * Read whether a bundle has a pending management action.

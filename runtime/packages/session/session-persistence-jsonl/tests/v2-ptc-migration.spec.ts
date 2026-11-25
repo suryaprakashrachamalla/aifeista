@@ -1,16 +1,16 @@
 /** Real JSONL publication and provider-neutral message preservation across the V2 PTC rename. */
 
-import { Context } from '@deepseek-ai/cordis'
-import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionFormatEvent } from '@deepseek-ai/dsh-session-format'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@carnival/cordis'
+import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@carnival/dsh-session'
+import type { SessionFormatEvent } from '@carnival/dsh-session-format'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
 import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { generationLogPath } from '../src/format.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const userMessage = {
   id: 'tools-code-mode:user', role: 'user', source: { kind: 'user' },

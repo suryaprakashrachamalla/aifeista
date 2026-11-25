@@ -5,7 +5,7 @@
  */
 
 import { Buffer } from 'node:buffer'
-import type { ChangeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
+import type { ChangeRequestKey } from '@carnival/dsh-experimental-forge'
 
 interface Entry<T> {
   /** What the read was made at: the head commit and update time of review threads, the head commit of viewed marks. */

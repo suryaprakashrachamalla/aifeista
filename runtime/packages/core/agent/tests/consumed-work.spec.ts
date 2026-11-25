@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import type { TurnEndReason } from '@deepseek-ai/dsh-session'
-import { foldConsumedWork } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { createUserMessage } from '@carnival/dsh-llm'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import type { TurnEndReason } from '@carnival/dsh-session'
+import { foldConsumedWork } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
 
 /** One pending message, as the inbox records it. */
 function message(text: string) {

@@ -3,7 +3,7 @@ description: "把飞书插件加入 profile：带内嵌技能的官方 lark-cli�
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-feishu
+# @carnival/dsh-feishu
 
 [English](README.md) | 中文
 
@@ -30,8 +30,8 @@ kind: "package-bundle"
 在 Web 侧栏的**插件**页面安装，或使用 CLI：
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-feishu
-dsh plugin --profile web remove @deepseek-ai/dsh-feishu
+dsh plugin --profile web add @carnival/dsh-feishu
+dsh plugin --profile web remove @carnival/dsh-feishu
 ```
 
 pnpm 会拦截 `@larksuite/cli` 的安装脚本，该脚本负责下载并校验官方原生程序；请通过插件页的**允许这些脚本并重试**，或 [Plugin Manager](../../boot/plugin-manager/README.zh.md) 记录的其他方式批准。可执行文件存在之前，`feishu` 行会加载失败，并给出缺失的路径。

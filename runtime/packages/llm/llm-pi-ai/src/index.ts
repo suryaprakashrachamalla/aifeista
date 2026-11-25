@@ -11,7 +11,7 @@
  *
  * ```yaml
  * - id: llm
- *   name: '@deepseek-ai/dsh-llm-pi-ai'
+ *   name: '@carnival/dsh-llm-pi-ai'
  *   config:
  *     providers:
  *       # Catalog route: everything but the credential comes from pi-ai.
@@ -52,20 +52,20 @@
  *               max: ultra
  * ```
  *
- * @module @deepseek-ai/dsh-llm-pi-ai
+ * @module @carnival/dsh-llm-pi-ai
  */
-import type {} from '@deepseek-ai/dsh-settings'
+import type {} from '@carnival/dsh-settings'
 
-import type {} from '@deepseek-ai/cordis-plugin-loader'
+import type {} from '@carnival/cordis-plugin-loader'
 
-import type { Context } from '@deepseek-ai/cordis'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import { normalizeApiKey } from '@deepseek-ai/dsh-credentials'
-import type { ApiKeyRejection } from '@deepseek-ai/dsh-credentials'
-import { INVALID_CREDENTIAL_CODE, LlmError, resolveImageAttachmentAccess } from '@deepseek-ai/dsh-llm'
-import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigurableProvider } from '@deepseek-ai/dsh-llm'
-import type {} from '@deepseek-ai/dsh-fs'
-import { deepEqualJson } from '@deepseek-ai/dsh-util-values'
+import type { Context } from '@carnival/cordis'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
+import { normalizeApiKey } from '@carnival/dsh-credentials'
+import type { ApiKeyRejection } from '@carnival/dsh-credentials'
+import { INVALID_CREDENTIAL_CODE, LlmError, resolveImageAttachmentAccess } from '@carnival/dsh-llm'
+import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigurableProvider } from '@carnival/dsh-llm'
+import type {} from '@carnival/dsh-fs'
+import { deepEqualJson } from '@carnival/dsh-util-values'
 import { PiAiAdapter } from './adapter.ts'
 import { authContextFrom, credentialStoreFrom } from './auth.ts'
 import { catalogProvider, catalogProviderIds } from './catalog.ts'
@@ -97,7 +97,7 @@ export { supportedProtocols } from './provider.ts'
 export const name = 'llm-pi-ai'
 export const inject = ['llm']
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Events {
     /**
      * Prepare headers for one pi-ai inference call, excluding model discovery.

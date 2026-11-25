@@ -3,17 +3,17 @@
  * authorization as the operation, and the page's operations run through the manager.
  */
 import { randomUUID } from 'node:crypto'
-import type { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   ConnectorAccountButton, ConnectorAccountCopy, ConnectorAccountDisplay, ConnectorAccountSource, ConnectorAccountView,
   ConnectorOperationId, ConnectorOperationResult,
-} from '@deepseek-ai/dsh-client-ui-connector-account/types'
-import type { McpAuthorizationReason, McpOAuthAttemptId, McpOAuthAttemptView } from '@deepseek-ai/dsh-mcp-client/types'
-import type {} from '@deepseek-ai/dsh-mcp-manager'
-import type { McpManagedServerView } from '@deepseek-ai/dsh-mcp-manager/types'
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-client-ui-connector-account/types'
+import type { McpAuthorizationReason, McpOAuthAttemptId, McpOAuthAttemptView } from '@carnival/dsh-mcp-client/types'
+import type {} from '@carnival/dsh-mcp-manager'
+import type { McpManagedServerView } from '@carnival/dsh-mcp-manager/types'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
+import { assertNever } from '@carnival/dsh-util-values'
 import { text, type McpAccountKey } from './locales.ts'
 import type { McpAccountCopy } from './types.ts'
 

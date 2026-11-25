@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-goal-round-driver",
+  "name": "@carnival/dsh-goal-round-driver",
   "description": "Race-fenced same-session goal-round driver",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/goal/goal-round-driver"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,29 +27,29 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-goal": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-subagent": "workspace:*"
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-goal": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-subagent": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:*",
-    "@deepseek-ai/dsh-goal": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-subagent": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-agent-loop": "workspace:*",
+    "@carnival/dsh-agent-loop-testkit": "workspace:*",
+    "@carnival/dsh-goal": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-subagent": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-subagent": {
+    "@carnival/dsh-subagent": {
       "optional": true
     }
   }

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-desktop-publisher",
+  "name": "@carnival/dsh-desktop-publisher",
   "version": "0.2.3-alpha.2",
   "description": "Private Desktop release metadata, rollout and website publisher",
   "private": true,

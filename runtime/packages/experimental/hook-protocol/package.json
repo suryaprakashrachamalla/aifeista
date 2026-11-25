@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-hook-protocol",
+  "name": "@carnival/dsh-hook-protocol",
   "description": "Shared Claude Code / Codex hook wire protocol: matcher engine, stdin/exit-code/stdout codec, multi-hook merge, and hook/* session events",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/hook-protocol"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,14 +25,14 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-shell": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-shell": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-shell": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-shell": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   }
 }

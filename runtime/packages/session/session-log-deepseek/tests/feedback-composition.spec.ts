@@ -3,21 +3,21 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import MessageFeedback from '@deepseek-ai/dsh-message-feedback'
-import { recordFeedback } from '@deepseek-ai/dsh-command-feedback'
-import LlmRuntime, { createAssistantMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import * as LlmDeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import DeepSeekLlmApiExtensions from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import { startMockLlmServer, type MockLlmServer, type MockLlmServerOptions } from '@deepseek-ai/dsh-llm-mock-server'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import * as JsonlSessionPersistence from '@carnival/dsh-session-persistence-jsonl'
+import MessageFeedback from '@carnival/dsh-message-feedback'
+import { recordFeedback } from '@carnival/dsh-command-feedback'
+import LlmRuntime, { createAssistantMessage, createUserMessage } from '@carnival/dsh-llm'
+import * as LlmDeepSeek from '@carnival/dsh-llm-deepseek-api-key'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import DeepSeekLlmApiExtensions from '@carnival/dsh-deepseek-llm-api-extensions'
+import { startMockLlmServer, type MockLlmServer, type MockLlmServerOptions } from '@carnival/dsh-llm-mock-server'
 import * as SessionLogDeepSeek from '../src/index.ts'
 import type { DeepSeekSessionLogExtension } from '../src/types.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 let root: string | undefined
 let ctx: Context | undefined
@@ -42,25 +42,25 @@ async function boot(
   vi.stubEnv('DEEPSEEK_API_KEY', 'feedback-test-key')
   server = await startMockLlmServer(mock)
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-session-persistence-jsonl', JsonlSessionPersistence],
-    ['@deepseek-ai/dsh-message-feedback', MessageFeedback],
-    ['@deepseek-ai/dsh-llm', LlmRuntime],
-    ['@deepseek-ai/dsh-deepseek-auth', DeepSeekAuth],
-    ['@deepseek-ai/dsh-llm-deepseek-api-key', LlmDeepSeek],
-    ['@deepseek-ai/dsh-deepseek-llm-api-extensions', DeepSeekLlmApiExtensions],
-    ['@deepseek-ai/dsh-session-log-deepseek', SessionLogDeepSeek],
+    ['@carnival/dsh-session', SessionStore],
+    ['@carnival/dsh-session-persistence-jsonl', JsonlSessionPersistence],
+    ['@carnival/dsh-message-feedback', MessageFeedback],
+    ['@carnival/dsh-llm', LlmRuntime],
+    ['@carnival/dsh-deepseek-auth', DeepSeekAuth],
+    ['@carnival/dsh-llm-deepseek-api-key', LlmDeepSeek],
+    ['@carnival/dsh-deepseek-llm-api-extensions', DeepSeekLlmApiExtensions],
+    ['@carnival/dsh-session-log-deepseek', SessionLogDeepSeek],
   ])
   const config = join(root, 'cordis.yml')
   await writeFile(config, JSON.stringify([...modules.keys()].map(name => ({
     name,
-    ...name === '@deepseek-ai/dsh-session-persistence-jsonl'
+    ...name === '@carnival/dsh-session-persistence-jsonl'
       ? { config: { root: join(root!, 'sessions'), compression: 'none' } }
-      : name === '@deepseek-ai/dsh-message-feedback'
+      : name === '@carnival/dsh-message-feedback'
         ? { config: { maxNoteBytes: 1024 } }
-        : name === '@deepseek-ai/dsh-llm-deepseek-api-key'
+        : name === '@carnival/dsh-llm-deepseek-api-key'
           ? { config: { baseURL: server!.baseURL } }
-          : name === '@deepseek-ai/dsh-session-log-deepseek'
+          : name === '@carnival/dsh-session-log-deepseek'
             ? { config: sessionLog }
             : {},
   }))))
@@ -185,7 +185,7 @@ it('changes API log upload on the next request without replacing the plugin fibe
   const { ctx, server } = await boot({ enabled: true }, { sequence: ['success'], repeatLast: true })
   const session = ctx.sessions.create(brandString<SessionId>('live-upload-setting'))
   session.append('user/message', createUserMessage({ content: [{ type: 'text', text: 'Hello' }], source: { kind: 'user' } }), { surfaceOp: 'append' })
-  const entry = [...ctx.loader.entries()].find(entry => entry.options.name === '@deepseek-ai/dsh-session-log-deepseek')!
+  const entry = [...ctx.loader.entries()].find(entry => entry.options.name === '@carnival/dsh-session-log-deepseek')!
   const fiber = entry.fiber
   const request = async () => {
     const chunks = []

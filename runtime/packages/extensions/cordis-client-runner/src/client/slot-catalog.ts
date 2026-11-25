@@ -10,7 +10,7 @@
  * mounted for the seat to exist. Data only — this module is the one legitimate
  * meeting point of the two planes, so it carries strings, never client imports.
  *
- * @module @deepseek-ai/dsh-cordis-client-runner/client/slot-catalog
+ * @module @carnival/dsh-cordis-client-runner/client/slot-catalog
  */
 
 /* jscpd:ignore-start */
@@ -481,10 +481,10 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     slotInject: '',
     declaredBy: 'an entry in \'conversation.view\' (client-ui-chat), so it exists while that entry is mounted',
     occupants: [
-      'client-ui-action-cards HiddenCardBlock id \'@deepseek-ai/dsh-client-ui-action-cards/block\'',
-      'client-ui-chat MathFenceLayer id \'@deepseek-ai/dsh-client-ui-chat/fence/math\' key \'math\'',
-      'client-ui-chat DiffFenceLayer id \'@deepseek-ai/dsh-client-ui-chat/fence/diff\' key \'diff\'',
-      'client-ui-chat DiffFenceLayer id \'@deepseek-ai/dsh-client-ui-chat/fence/diff\' key \'patch\'',
+      'client-ui-action-cards HiddenCardBlock id \'@carnival/dsh-client-ui-action-cards/block\'',
+      'client-ui-chat MathFenceLayer id \'@carnival/dsh-client-ui-chat/fence/math\' key \'math\'',
+      'client-ui-chat DiffFenceLayer id \'@carnival/dsh-client-ui-chat/fence/diff\' key \'diff\'',
+      'client-ui-chat DiffFenceLayer id \'@carnival/dsh-client-ui-chat/fence/diff\' key \'patch\'',
     ],
     replaceRisk: 'wraps-owner-content',
     example: 'return {\n  inject: [\'slots\'],\n  apply(ctx) {\n    ctx.slots.inject(\'conversation.chat.markdown.fence\', () => ctx.slots.register(\n      { name: \'conversation.chat.markdown.fence\', id: \'my-layer\', order: 100 },\n      ({ children }) => React.createElement(\'div\', null, children),\n    ))\n  },\n}',
@@ -764,8 +764,8 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     slotInject: '',
     declaredBy: 'an entry in \'conversation.chat.node\' (client-ui-chat), so it exists while that entry is mounted',
     occupants: [
-      'client-ui-action-cards ActionCardTail id \'@deepseek-ai/dsh-client-ui-action-cards\'',
-      'client-ui-deliverables DeliverablesTail id \'@deepseek-ai/dsh-client-ui-deliverables\'',
+      'client-ui-action-cards ActionCardTail id \'@carnival/dsh-client-ui-action-cards\'',
+      'client-ui-deliverables DeliverablesTail id \'@carnival/dsh-client-ui-deliverables\'',
       'client-ui-plan PlanCards',
       'client-ui-schedule ScheduleTurnCard id \'schedule-created\'',
     ],
@@ -3511,14 +3511,14 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
       'useSessionAccess: (sessionId: SessionId, action: RemoteEndpoint) => boolean',
       'useWorkspaceAccess: (workspaceId: WorkspaceId, action: RemoteEndpoint) => boolean',
     ],
-    keyDomain: 'open: any string the owner dispatches (no compile-time key set), already taken: @deepseek-ai/dsh-cua-bundle, @deepseek-ai/dsh-experimental-voice-input-bundle',
+    keyDomain: 'open: any string the owner dispatches (no compile-time key set), already taken: @carnival/dsh-cua-bundle, @carnival/dsh-experimental-voice-input-bundle',
     hookContext: '',
     slotInject: '',
     declaredBy: 'an entry in \'main\' (client-ui-plugin-manager), so it exists while that entry is mounted',
     occupants: [
       'client-ui-connector-account ConnectorAccountActivationEntry',
-      'experimental-client-ui-voice-input VoiceSetupPrompt key \'@deepseek-ai/dsh-experimental-voice-input-bundle\'',
-      'cua PermissionSetup key \'@deepseek-ai/dsh-cua-bundle\'',
+      'experimental-client-ui-voice-input VoiceSetupPrompt key \'@carnival/dsh-experimental-voice-input-bundle\'',
+      'cua PermissionSetup key \'@carnival/dsh-cua-bundle\'',
     ],
     replaceRisk: 'shadows-shipped-ui',
     example: 'return {\n  inject: [\'slots\'],\n  apply(ctx) {\n    ctx.slots.inject(\'plugins.bundle.activation\', () => ctx.slots.register(\n      { name: \'plugins.bundle.activation\', key: \'<one key the owner dispatches>\' },\n      () => React.createElement(\'div\', null, \'hello\'),\n    ))\n  },\n}',
@@ -3556,15 +3556,15 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
       'useSessionAccess: (sessionId: SessionId, action: RemoteEndpoint) => boolean',
       'useWorkspaceAccess: (workspaceId: WorkspaceId, action: RemoteEndpoint) => boolean',
     ],
-    keyDomain: 'open: any string the owner dispatches (no compile-time key set), already taken: @deepseek-ai/dsh-cua-bundle, @deepseek-ai/dsh-experimental-cot-translation-bundle, @deepseek-ai/dsh-experimental-voice-input-bundle',
+    keyDomain: 'open: any string the owner dispatches (no compile-time key set), already taken: @carnival/dsh-cua-bundle, @carnival/dsh-experimental-cot-translation-bundle, @carnival/dsh-experimental-voice-input-bundle',
     hookContext: '',
     slotInject: '',
     declaredBy: 'an entry in \'main\' (client-ui-plugin-manager), so it exists while that entry is mounted',
     occupants: [
       'client-ui-connector-account ConnectorAccountSectionEntry',
-      'experimental-client-ui-cot-translation TranslationSettings key \'@deepseek-ai/dsh-experimental-cot-translation-bundle\'',
-      'experimental-client-ui-voice-input VoicePreparation key \'@deepseek-ai/dsh-experimental-voice-input-bundle\'',
-      'cua PermissionPanel key \'@deepseek-ai/dsh-cua-bundle\'',
+      'experimental-client-ui-cot-translation TranslationSettings key \'@carnival/dsh-experimental-cot-translation-bundle\'',
+      'experimental-client-ui-voice-input VoicePreparation key \'@carnival/dsh-experimental-voice-input-bundle\'',
+      'cua PermissionPanel key \'@carnival/dsh-cua-bundle\'',
       'timeline Settings',
     ],
     replaceRisk: 'shadows-shipped-ui',

@@ -1,11 +1,11 @@
 /** Window-specific input notices for an already scheduled model step. */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { z } from 'zod'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { CuaBackend, CuaWindowRead } from '@deepseek-ai/dsh-cua'
-import { NativeError } from '@deepseek-ai/dsh-cua/native-client'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { CuaBackend, CuaWindowRead } from '@carnival/dsh-cua'
+import { NativeError } from '@carnival/dsh-cua/native-client'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     /** Activity detected since the Agent last observed a window. */
     'cua-activity': { kind: 'cua-activity'; form: 'notice'; summary: string }

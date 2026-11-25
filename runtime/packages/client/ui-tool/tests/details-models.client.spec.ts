@@ -1,20 +1,20 @@
 // @vitest-environment jsdom
 /** Detail adapters accept the exact recorded result text and retain safe fallback paths. */
 import { describe, expect, it } from 'vitest'
-import type { ToolResultNode } from '@deepseek-ai/dsh-client-ui-chat/client'
-import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { en, zh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
-import { statusLine } from '@deepseek-ai/dsh-tool-jobs/src/render.ts'
-import { presentation } from '@deepseek-ai/dsh-tool-session-query/src/presentation.ts'
-import { renderList, renderRead, renderSpawn } from '@deepseek-ai/dsh-tool-terminal/src/render.ts'
-import { formatSpillNotice } from '@deepseek-ai/dsh-spill-policy/notice'
+import type { ToolResultNode } from '@carnival/dsh-client-ui-chat/client'
+import { makeTranslate } from '@carnival/dsh-client-test-runtime'
+import { en, zh } from '@carnival/dsh-client-ui-conversation/src/client/locales.ts'
+import { en as commonEn } from '@carnival/dsh-client-locale/src/locales/en.ts'
+import { zh as commonZh } from '@carnival/dsh-client-locale/src/locales/zh.ts'
+import { statusLine } from '@carnival/dsh-tool-jobs/src/render.ts'
+import { presentation } from '@carnival/dsh-tool-session-query/src/presentation.ts'
+import { renderList, renderRead, renderSpawn } from '@carnival/dsh-tool-terminal/src/render.ts'
+import { formatSpillNotice } from '@carnival/dsh-spill-policy/notice'
 import { detailBadge, detailJson, detailList, detailRecord, inspectionItems, nonempty } from '../src/client/tool/models/detail-model-shared.ts'
 import { detailsCardModel } from '../src/client/tool/models/details-card-model.ts'
-import type { SpillLocator } from '@deepseek-ai/dsh-spill'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { PartialArguments } from '@deepseek-ai/dsh-util-values'
+import type { SpillLocator } from '@carnival/dsh-spill'
+import { brandString } from '@carnival/dsh-brand'
+import { PartialArguments } from '@carnival/dsh-util-values'
 
 const t = makeTranslate(en, commonEn)
 

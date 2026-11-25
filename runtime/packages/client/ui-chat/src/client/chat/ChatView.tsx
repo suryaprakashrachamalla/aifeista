@@ -4,13 +4,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type {
   NodeKey, RenderEntry,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { InboxState } from '@deepseek-ai/dsh-agent/types'
-import type { PendingSubmission } from '@deepseek-ai/dsh-api-session-controller/client'
+} from '@carnival/dsh-client-ui-conversation/client'
+import type { InboxState } from '@carnival/dsh-agent/types'
+import type { PendingSubmission } from '@carnival/dsh-api-session-controller/client'
 import {
   Button, FenceCodeBlock, IconChevronDownOutlineRegular, MarkdownDelegateProvider, Modal,
   type MarkdownDelegateFenceInfo, type MarkdownMenuTarget,
-} from '@deepseek-ai/dsh-client-ui-primitives'
+} from '@carnival/dsh-client-ui-primitives'
 import { isAtOrOutside } from '../contract/group-tree.ts'
 import type { ChatFlowHookContext, ChatViewSlotProps, OpenFileOptions } from '../contract/slots.ts'
 import type { ChatSnapshot } from '../contract/snapshot.ts'
@@ -20,8 +20,8 @@ import { ChatAside } from './ChatAside.tsx'
 import { mergeTurnRailItems } from './turn-rail-items.ts'
 import { useTextInteraction } from './text-interaction.ts'
 import { useChatScroll } from './use-chat-scroll.ts'
-import { fileMediaUrl, resolveWorkspacePath, sessionFileAddress } from '@deepseek-ai/dsh-util-workspace-path'
-import { selectSessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
+import { fileMediaUrl, resolveWorkspacePath, sessionFileAddress } from '@carnival/dsh-util-workspace-path'
+import { selectSessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
 import css from './ChatView.module.css'
 
 /** Host/OS refusal text for the file-open dialog; empty throws keep a locale fallback. */

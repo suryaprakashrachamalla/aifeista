@@ -3,7 +3,7 @@ description: "按照调用 Session 的文件策略创建、进入并离开保留
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-worktree
+# @carnival/dsh-experimental-worktree
 
 [English](README.md) | 中文
 
@@ -28,8 +28,8 @@ kind: "package-reference"
 将服务与 `workingDirectory`、`fs`、`subprocess`、`sandbox`、`sandboxPolicy` 和 `sessionProjections` 提供方一起挂载。归档清理还需要 `workspaceRegistry` 与 `sessionQuery`，并在挂载了 `sessionProjectionCache` 时使用它；缺少前两者时服务只创建与恢复。模型需要此操作时，再添加工具包。
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-worktree'
-- name: '@deepseek-ai/dsh-experimental-tool-worktree'
+- name: '@carnival/dsh-experimental-worktree'
+- name: '@carnival/dsh-experimental-tool-worktree'
 ```
 
 `ctx.worktrees.create(agent, { name?, from?, fetch? }, signal?, onPhase?)` 创建新分支与检出目录，再通过 `ctx.workingDirectory.set` 进入规范化的检出目录。`from` 在创建前解析为本地提交，默认是 `HEAD`。`fetch: true` 时，`from` 必须是某个已配置远程的远程跟踪分支完整引用名 `refs/remotes/<remote>/<branch>`，远程名相互嵌套时取最长的；创建前先运行 `git fetch --no-tags --no-recurse-submodules --no-write-fetch-head --no-auto-maintenance <remote> +refs/heads/<branch>:<from>`，只获取这一个分支，再解析获取到的提交。获取在 Session 的沙箱策略与命令期限下运行，不会提示输入，获取失败时不创建任何东西；暂存、未暂存、未跟踪以及被忽略的源文件均不复制。`baseCommit` 报告解析出的提交对象名称；仓库本地的替换引用仍作用于检出的内容。检出操作禁用已配置的 Git clean、smudge 和 process 过滤器，不修改仓库配置。分支或检出路径已存在时会报错。返回记录包含 `path`、`branch`、`baseCommit` 和 `repositoryRoot`。可选的第四个参数 `onPhase` 在请求要求获取时先收到 `fetch`，在校验、分配目录与创建分支之前收到 `prepare`，在写入文件并进入检出之前收到 `checkout`；它不得抛出异常。

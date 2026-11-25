@@ -1,4 +1,4 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 // Web e2e scenario: fresh round trip. A real chromium types a prompt into the
 // real composer; the wire, Remote gateway, agent loop, and the REAL bash tool (echo
 // in the temp workspace) all run; the model adapter is dsh-llm-replay (keyless)
@@ -19,10 +19,10 @@ import { fileURLToPath } from 'node:url'
 import type { Browser, Page, Route, WebSocketRoute } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import { type ToolCallId, expandAssistantStream } from '@deepseek-ai/dsh-llm'
-import type { SessionId, Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import type { SessionListValue } from '@deepseek-ai/dsh-api-session-controller/types'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import { type ToolCallId, expandAssistantStream } from '@carnival/dsh-llm'
+import type { SessionId, Session, SessionEvent } from '@carnival/dsh-session'
+import type { SessionListValue } from '@carnival/dsh-api-session-controller/types'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureExpandedTurnProcessAria, captureStableAria,
   compareOrRefreshGolden, fixtureUserPrompts,
@@ -31,7 +31,7 @@ import {
 import {
   connectFreshWorkspace, expandTurnProcesses, newEnglishPage, REPO_ROOT, saveFailureShot,
 } from './support.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const SNAPSHOT_DIR = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip', import.meta.url))
 const FIXTURE = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip/session.v3.jsonl', import.meta.url))

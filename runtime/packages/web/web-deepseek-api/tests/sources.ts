@@ -1,6 +1,6 @@
 /** Credential sources for provider tests that construct a provider or a request directly. */
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import type { DeepSeekAuthCandidate } from '@deepseek-ai/dsh-deepseek-auth'
+import { credentialRef } from '@carnival/dsh-credentials'
+import type { DeepSeekAuthCandidate } from '@carnival/dsh-deepseek-auth'
 
 /**
  * An API-key candidate bound to `endpoint`, as `ctx.deepseekAuth` binds one: it releases `key` as a bearer token and

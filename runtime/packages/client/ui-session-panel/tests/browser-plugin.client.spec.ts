@@ -6,12 +6,12 @@
  * the inert node entry.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import { stubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { Context } from '@carnival/cordis'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
+import { stubConfigForm } from '@carnival/dsh-client-test-runtime'
+import { apply as applyLocale, inject as localeInject } from '@carnival/dsh-client-locale/client'
+import type { SessionId } from '@carnival/dsh-session/types'
 import { apply, inject } from '../src/client/index.ts'
 import type { ProjectRowInjected, SessionPanelInjected, SessionPanelToggleInjected } from '../src/client/slots.ts'
 import { apply as applyNode } from '../src/index.ts'

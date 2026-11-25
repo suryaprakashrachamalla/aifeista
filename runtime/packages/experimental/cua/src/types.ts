@@ -1,12 +1,12 @@
 /** Native application objects independent of evaluator ownership and persistence. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import type { ObjectJsonSchema } from '@deepseek-ai/dsh-tools'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
+import type { Branded } from '@carnival/dsh-brand'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import type { ObjectJsonSchema } from '@carnival/dsh-tools'
+import type { JsonValue } from '@carnival/dsh-util-values'
 import type { z } from 'zod'
 import type { ActionResult, CapabilitiesResult, FoundAppsResult, HoverResult, SystemInputRequest, ShowResult, WindowsResult } from './protocol.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'cua-held-inputs': { kind: 'cua-held-inputs' } & Extract<ContextFormed, { form: 'notice' }>
     'cua-inputs-released': { kind: 'cua-inputs-released' } & Extract<ContextFormed, { form: 'notice' }>

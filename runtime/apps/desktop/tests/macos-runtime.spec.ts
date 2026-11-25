@@ -28,7 +28,7 @@ it('signs Mach-O files in their final locations and verifies each signature', as
   expect(verifyMacOSRuntimeCode).toHaveBeenCalledWith(join(path, 'addon.node'), identity)
 })
 
-const helperBundle = 'node_modules/@deepseek-ai/dsh-cua-macos/native/bin/darwin-arm64/generation/DSH Computer Use.app'
+const helperBundle = 'node_modules/@carnival/dsh-cua-macos/native/bin/darwin-arm64/generation/DSH Computer Use.app'
 function machO(path: string): void {
   mkdirSync(join(path, '..'), { recursive: true })
   writeFileSync(path, Buffer.from('cffaedfe00000000', 'hex'))
@@ -39,7 +39,7 @@ it('verifies the notarized Computer Use helper as a bundle and signs other bundl
   machO(join(path, helperBundle, 'Contents/MacOS/dsh-cua-native'))
   writeFileSync(join(path, helperBundle, 'Contents/Info.plist'), '<plist/>')
   // LibreOffice ships an unsigned application bundle whose executables are signed in place.
-  const office = join(path, 'node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/program/LibreOfficeDev.app/Contents/MacOS/soffice')
+  const office = join(path, 'node_modules/@carnival/libreoffice-kit-darwin-arm64/program/LibreOfficeDev.app/Contents/MacOS/soffice')
   machO(office)
   machO(join(path, 'addon.node'))
   await expect(signMacOSRuntime(path, 'com.example.app', identity, 'arm64')).resolves.toBe(2)
@@ -117,8 +117,8 @@ it.each(['arm64', 'x64'] as const)('selects %s Node entitlements and keeps helpe
   mkdirSync(join(path, 'dependencies/node/bin'), { recursive: true })
   const node = join(path, 'dependencies/node/bin/node')
   const addon = join(path, 'addon.node')
-  const helpers = ['arm64', 'x64'].map(helperArch => join(path, 'node_modules/@deepseek-ai', `libreoffice-kit-darwin-${helperArch}`, 'bin/dsoffice'))
-  const library = join(path, 'node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/lib/libmergedlo.dylib')
+  const helpers = ['arm64', 'x64'].map(helperArch => join(path, 'node_modules/@carnival', `libreoffice-kit-darwin-${helperArch}`, 'bin/dsoffice'))
+  const library = join(path, 'node_modules/@carnival/libreoffice-kit-darwin-arm64/lib/libmergedlo.dylib')
   for (const file of [...helpers, library]) mkdirSync(join(file, '..'), { recursive: true })
   for (const file of [node, addon, library, ...helpers]) writeFileSync(file, Buffer.from('cffaedfe00000000', 'hex'))
   await signMacOSRuntime(path, 'com.example.app', identity, arch)
@@ -137,8 +137,8 @@ it.each(['arm64', 'x64'] as const)('selects %s Node entitlements and keeps helpe
 
 it('grants JIT to every Mach-O executable directly under a darwin Kit engine bin directory regardless of its name', async () => {
   const path = root()
-  const helpers = ['dsoffice', 'renamed-helper'].map(name => join(path, 'node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/bin', name))
-  const nested = join(path, 'node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/bin/nested/tool')
+  const helpers = ['dsoffice', 'renamed-helper'].map(name => join(path, 'node_modules/@carnival/libreoffice-kit-darwin-arm64/bin', name))
+  const nested = join(path, 'node_modules/@carnival/libreoffice-kit-darwin-arm64/bin/nested/tool')
   for (const file of [...helpers, nested]) {
     mkdirSync(join(file, '..'), { recursive: true })
     writeFileSync(file, Buffer.from('cffaedfe00000000', 'hex'))

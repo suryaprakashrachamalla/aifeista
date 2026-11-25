@@ -1,6 +1,6 @@
 /** Routing scans share JSONL's filesystem budget and settle before returning. @module */
-import { Context } from '@deepseek-ai/cordis'
-import { SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
+import { Context } from '@carnival/cordis'
+import { SessionId, SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'

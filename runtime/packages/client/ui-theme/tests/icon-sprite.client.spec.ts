@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 /** Icon sprite: default symbols, theme replacements, replacement validation, and disposal. */
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { stubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
-import { ICON_SYMBOLS } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { ThemeSettings } from '@deepseek-ai/dsh-client-ui-theme/client'
-import { ThemeRuntime } from '@deepseek-ai/dsh-client-ui-theme/client'
+import { Context } from '@carnival/cordis'
+import { stubConfigForm } from '@carnival/dsh-client-test-runtime'
+import { ICON_SYMBOLS } from '@carnival/dsh-client-ui-primitives'
+import type { ThemeSettings } from '@carnival/dsh-client-ui-theme/client'
+import { ThemeRuntime } from '@carnival/dsh-client-ui-theme/client'
 import { installIconSprite } from '../src/client/icon-sprite.ts'
 
 const SEARCH = 'dsw-icon-search-outline-regular'

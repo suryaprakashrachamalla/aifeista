@@ -5,12 +5,12 @@
  * operation, so a changed credential reaches the next operation without any
  * plugin restart, and configuration surfaces describe a reference without
  * ever seeing its full value.
- * @module @deepseek-ai/dsh-credentials
+ * @module @carnival/dsh-credentials
  */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
+import { Context, Service } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
 import type { CredentialInfo, CredentialKey, CredentialRecord, CredentialRef } from './types.ts'
 
 export type {
@@ -147,7 +147,7 @@ export interface CredentialRecordEntry {
   kind: CredentialRecord['kind']
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     credentials: CredentialProvider
   }

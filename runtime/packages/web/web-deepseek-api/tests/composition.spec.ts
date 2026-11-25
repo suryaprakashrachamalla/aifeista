@@ -7,16 +7,16 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { Context } from '@deepseek-ai/cordis'
-import type { ModuleLoaderV2 } from '@deepseek-ai/cordis-plugin-loader'
-import { boot } from '@deepseek-ai/dsh-app-boot'
-import { createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import * as Account from '@deepseek-ai/dsh-llm-deepseek-account'
-import * as Official from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import WebRuntime from '@deepseek-ai/dsh-web'
-import * as webApiPlugin from '@deepseek-ai/dsh-web-deepseek-api'
+import type { Context } from '@carnival/cordis'
+import type { ModuleLoaderV2 } from '@carnival/cordis-plugin-loader'
+import { boot } from '@carnival/dsh-app-boot'
+import { createLaunchEnvironmentSnapshot } from '@carnival/dsh-launch-environment'
+import LlmRuntime from '@carnival/dsh-llm'
+import * as Account from '@carnival/dsh-llm-deepseek-account'
+import * as Official from '@carnival/dsh-llm-deepseek-api-key'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import WebRuntime from '@carnival/dsh-web'
+import * as webApiPlugin from '@carnival/dsh-web-deepseek-api'
 import { accountStub } from '../../../account/deepseek-account/tests/account-stub.ts'
 
 const cleanups: Array<() => Promise<void>> = []
@@ -27,12 +27,12 @@ afterEach(async () => {
 })
 
 const MODULES = new Map<string, unknown>([
-  ['@deepseek-ai/dsh-llm', LlmRuntime],
-  ['@deepseek-ai/dsh-deepseek-auth', DeepSeekAuth],
-  ['@deepseek-ai/dsh-llm-deepseek-api-key', Official],
-  ['@deepseek-ai/dsh-llm-deepseek-account', Account],
-  ['@deepseek-ai/dsh-web', WebRuntime],
-  ['@deepseek-ai/dsh-web-deepseek-api', webApiPlugin],
+  ['@carnival/dsh-llm', LlmRuntime],
+  ['@carnival/dsh-deepseek-auth', DeepSeekAuth],
+  ['@carnival/dsh-llm-deepseek-api-key', Official],
+  ['@carnival/dsh-llm-deepseek-account', Account],
+  ['@carnival/dsh-web', WebRuntime],
+  ['@carnival/dsh-web-deepseek-api', webApiPlugin],
 ])
 
 /** One dispatched Search or Fetch API request. */
@@ -70,12 +70,12 @@ async function bootComposition(
   })
   const configPath = join(root, 'cordis.yml')
   await writeFile(configPath, JSON.stringify([
-    { id: 'llm', name: '@deepseek-ai/dsh-llm' },
-    { id: 'deepseek-auth', name: '@deepseek-ai/dsh-deepseek-auth' },
-    { id: 'llm-deepseek', name: '@deepseek-ai/dsh-llm-deepseek-api-key' },
-    { id: 'llm-deepseek-account', name: '@deepseek-ai/dsh-llm-deepseek-account' },
-    { id: 'web', name: '@deepseek-ai/dsh-web', config: { searchProvider: 'deepseek-search-api', fetchProvider: 'deepseek-fetch-api' } },
-    { id: 'web-deepseek-api', name: '@deepseek-ai/dsh-web-deepseek-api', config: web },
+    { id: 'llm', name: '@carnival/dsh-llm' },
+    { id: 'deepseek-auth', name: '@carnival/dsh-deepseek-auth' },
+    { id: 'llm-deepseek', name: '@carnival/dsh-llm-deepseek-api-key' },
+    { id: 'llm-deepseek-account', name: '@carnival/dsh-llm-deepseek-account' },
+    { id: 'web', name: '@carnival/dsh-web', config: { searchProvider: 'deepseek-search-api', fetchProvider: 'deepseek-fetch-api' } },
+    { id: 'web-deepseek-api', name: '@carnival/dsh-web-deepseek-api', config: web },
   ]))
   const ctx: Context = await boot('web-deepseek-api-composition', configPath, [], (host) => {
     const modules: ModuleLoaderV2 = {

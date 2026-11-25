@@ -1,6 +1,6 @@
 /** Retained request-image references and per-occurrence transport budgets. */
 
-import type { ImageAttachmentRef, RequestImageAttachment } from '@deepseek-ai/dsh-attachment'
+import type { ImageAttachmentRef, RequestImageAttachment } from '@carnival/dsh-attachment'
 import type { ImageBlock, LlmFailure, LlmImageRequestBudget, RequestMessage } from './types.ts'
 import { IMAGE_OFFLOAD_REQUIRED_CODE } from './error.ts'
 

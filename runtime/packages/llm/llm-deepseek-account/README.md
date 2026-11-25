@@ -3,7 +3,7 @@ description: "DeepSeek account authentication, model listing, and model gating."
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-llm-deepseek-account
+# @carnival/dsh-llm-deepseek-account
 
 English | [中文](README.zh.md)
 
@@ -25,7 +25,7 @@ Authentication resolution asks [`ctx.deepseekAuth`](../../account/deepseek-auth/
 <a id="use-this-package"></a>
 ## Use this package
 
-Only the account sign-in supplies the credential: `ctx.deepseekAuth` asks `deepseekAccount.resolveRequestCredential(url)`, and the account service validates the destination. Signed-out or ineligible requests fail with `ACCOUNT_SIGN_IN_REQUIRED` and discovery returns an empty catalog. The route never falls back to an API key. Other credential lookup errors propagate. The plugin starts only in a composition that mounts `@deepseek-ai/dsh-deepseek-auth`; the `base` bundle mounts it.
+Only the account sign-in supplies the credential: `ctx.deepseekAuth` asks `deepseekAccount.resolveRequestCredential(url)`, and the account service validates the destination. Signed-out or ineligible requests fail with `ACCOUNT_SIGN_IN_REQUIRED` and discovery returns an empty catalog. The route never falls back to an API key. Other credential lookup errors propagate. The plugin starts only in a composition that mounts `@carnival/dsh-deepseek-auth`; the `base` bundle mounts it.
 
 The route's catalog comes from the account's `GET /models` listing at the origin of the Messages `baseURL` (`https://api.deepseek.com/models` for the official endpoint); the listing endpoint is not configurable. Listing requests carry the account token in `x-dsh-auth-token` and the harness `User-Agent`, and reject redirects.
 
@@ -41,7 +41,7 @@ An offered model shows the badge its listing entry declares under `client_metada
 
 ```yaml
 - id: llm-deepseek-account
-  name: '@deepseek-ai/dsh-llm-deepseek-account'
+  name: '@carnival/dsh-llm-deepseek-account'
   config:
     reasoningEffort: high
     modelOverrides:

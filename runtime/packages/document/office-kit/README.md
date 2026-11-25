@@ -3,7 +3,7 @@ description: "Host Office rendering, conversion, and recalculation with the inde
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-office-kit
+# @carnival/dsh-office-kit
 
 English | [中文](README.zh.md)
 
@@ -25,7 +25,7 @@ Render Office documents as PDFs or PNG images, convert them between formats, and
 <a id="use-this-package"></a>
 ## Use this package
 
-The [Web bundle](../../bundle/web-app/README.md) and the [SDK bundle](../../bundle/sdk-app/README.md) mount this provider as `office-kit`; the [Office tools](../tool-office/README.md) are its model-facing consumers. Independent compositions mount `@deepseek-ai/dsh-office-kit` as a `cordis.yml` row.
+The [Web bundle](../../bundle/web-app/README.md) and the [SDK bundle](../../bundle/sdk-app/README.md) mount this provider as `office-kit`; the [Office tools](../tool-office/README.md) are its model-facing consumers. Independent compositions mount `@carnival/dsh-office-kit` as a `cordis.yml` row.
 
 Callers submit authorized source identity, version, optional byte size, a deferred bounded read, and input extension; PDF conversions also name a scheduling priority, and image rendering, format conversion, and recalculation run at foreground priority. A changed source version rejects the operation. Cancellation rejects with its reason; failures use `OfficeKitError`, whose lowercase `code` is also the `document-render/failed` reason; [`dsh-tool-office`](../tool-office/README.md#use-this-package) maps it to `OfficeToolError` codes for tool results. Every result carries the missing fonts; PDF results also carry the conversion generation, which changes on configuration replacement.
 
@@ -38,7 +38,7 @@ Callers submit authorized source identity, version, optional byte size, a deferr
 
 `renderImages()` requires `maxImages`, `maxPixels`, `maxDimension`, and `maxBytes`. The engine rejects a selection with more images than `maxImages` or an image above the pixel or dimension limit; the provider rejects images whose total PNG bytes exceed `maxBytes` with `output-too-large`, before and while reading them. A page, sheet, range, resolution, or format selection the engine rejects fails with `invalid-request` and the engine's description. Converted and recalculated files obey `maxOutputBytes`. The provider never writes into a workspace: it saves each output in its own owner-only directory under `outputDirectory`, grouped by the request's `output.owner` (`office_convert` and `office_recalculate` pass the root Session of the caller's subagent tree), and returns the absolute Host path. A file is deleted after `outputRetentionMs`, when newer outputs need room within `maxOutputStoreBytes` (oldest first), when the Session whose id equals the owner is disposed, or when the provider unloads; a file larger than `maxOutputStoreBytes` fails with `output-too-large`. A file counts toward `maxOutputStoreBytes` until its deletion succeeds; a failed deletion is logged and retried by later eviction, release, and unload, and a save that cannot free enough room fails with `unavailable`. Unload waits for deletions in progress. Startup also removes expired output directories of earlier processes, considering only real directories, not links or junctions, with the names the provider generates: `session-` and 24 lowercase hexadecimal digits directly under `outputDirectory`, each holding lowercase UUID v4 output directories. Other entries are left untouched. `outputDirectory` is exposed on the service so consumers can check that their execution world reads it.
 
-The provider depends on the independently published [`@deepseek-ai/libreoffice-kit`](https://github.com/deepseek-ai/dsh-libreoffice-kit) npm API at kit version `0.2.3`. Application packaging selects the matching native package declared in the kit’s `optionalDependencies`, or WASM when no native package is declared for that target. A missing declared native engine rejects packaging without selecting WASM. The [release ownership decision](../../../.agents/notes/implemented/architecture/2026-09-14-independent-libreoffice-kit.md) defines the independent kit and Harness responsibilities.
+The provider depends on the independently published [`@carnival/libreoffice-kit`](https://carnival.local) npm API at kit version `0.2.3`. Application packaging selects the matching native package declared in the kit’s `optionalDependencies`, or WASM when no native package is declared for that target. A missing declared native engine rejects packaging without selecting WASM. The [release ownership decision](../../../.agents/notes/implemented/architecture/2026-09-14-independent-libreoffice-kit.md) defines the independent kit and Harness responsibilities.
 
 The provider registers even when its Kit is absent, such as a Python SDK executable launched without a downloaded Office sidecar. A conversion that needs a new converter then rejects with `OfficeKitError` code `unavailable`, and the provider logs each distinct failure once through `ctx.logger`. A Kit entry that fails to import behaves the same way. The provider retains only a successful import, so a later conversion locates and imports Kit again. The Office preview shows its localized `unavailable` message for the `document-render/failed` reason.
 
@@ -74,11 +74,11 @@ The defaults retain 8 outputs/128 MiB and 64 source aliases, admit 32 readers an
 <details>
 <summary>Implementation internals — click to expand</summary>
 
-Until a Kit import succeeds, each converter request passes a lookup that returns the provider's own `import.meta.resolve('@deepseek-ai/libreoffice-kit')` to [`resolveKitModule`](src/locate.ts), which returns the Kit entry with an engine-package resolver anchored there, or `missing`. The provider then dynamically imports that entry; it has no static Kit value import. This anchors engine lookup to the Kit installation used by the provider.
+Until a Kit import succeeds, each converter request passes a lookup that returns the provider's own `import.meta.resolve('@carnival/libreoffice-kit')` to [`resolveKitModule`](src/locate.ts), which returns the Kit entry with an engine-package resolver anchored there, or `missing`. The provider then dynamically imports that entry; it has no static Kit value import. This anchors engine lookup to the Kit installation used by the provider.
 
 The engine-package resolver is created from the Kit entry; each resolver is independent. A successful call returns an absolute engine `package.json` path. An absent package preserves Node's original `MODULE_NOT_FOUND`, allowing Kit's native-to-WASM fallback. If a package directory exists, including a dangling symlink, but its manifest cannot resolve, the resolver throws an incomplete-installation error with the Node error as `cause`; reinstall that package. Other resolution and filesystem inspection errors propagate unchanged. Kit owns validation of the returned manifest and required assets.
 
-The locate functions call the provider's lookup once per resolution and treat any thrown value as an absent Kit. Native engine paths use one mapping that replaces only the first `.asar` archive segment with `.asar.unpacked`, regardless of whether the process runs in Electron. Already-unpacked paths and paths outside an archive remain unchanged. `@deepseek-ai/libreoffice-kit-wasm` always keeps Node's logical path for archive-aware filesystem access. These functions do not import Kit, load engine code, register services, mutate module resolution, or retain module-level state; [Desktop packaging](../../../apps/desktop/packaging/README.md#runtime-file-selection) owns which packages are unpacked.
+The locate functions call the provider's lookup once per resolution and treat any thrown value as an absent Kit. Native engine paths use one mapping that replaces only the first `.asar` archive segment with `.asar.unpacked`, regardless of whether the process runs in Electron. Already-unpacked paths and paths outside an archive remain unchanged. `@carnival/libreoffice-kit-wasm` always keeps Node's logical path for archive-aware filesystem access. These functions do not import Kit, load engine code, register services, mutate module resolution, or retain module-level state; [Desktop packaging](../../../apps/desktop/packaging/README.md#runtime-file-selection) owns which packages are unpacked.
 
 Invalid engine metadata, missing required assets, and conversion errors reject the request instead of switching engines. The shared WASM engine uses LibreOffice's CPU image filter. Native conversion uses its separate platform engine.
 
@@ -112,7 +112,7 @@ None; this service does not construct or modify model requests.
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- Conversion fidelity and installed native/WASM assets belong to `@deepseek-ai/libreoffice-kit`; this provider neither searches for system LibreOffice nor downloads an engine at runtime.
+- Conversion fidelity and installed native/WASM assets belong to `@carnival/libreoffice-kit`; this provider neither searches for system LibreOffice nor downloads an engine at runtime.
 - Queue waiting time is not bounded by `timeoutMs`, which starts only when kit conversion begins.
 - The provider locates only the Kit installation it resolves itself; it does not search other locations or install Kit or engines.
 - Rendered images are returned as bytes. Converted and recalculated files are stored in the provider's output directory, not in the workspace; the caller copies each file to its destination.

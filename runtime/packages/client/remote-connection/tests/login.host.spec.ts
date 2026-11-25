@@ -1,20 +1,20 @@
 /** QR login credentials, owner-only management, and anonymous exchange. */
-import { Context } from '@deepseek-ai/cordis'
-import type { WebResourceRoute, WebRoute, WebServer } from '@deepseek-ai/dsh-host-webserver'
-import type { Principal, RemoteInvocation } from '@deepseek-ai/dsh-typert-protocol'
-import * as Token from '@deepseek-ai/dsh-host-authentication-token'
+import { Context } from '@carnival/cordis'
+import type { WebResourceRoute, WebRoute, WebServer } from '@carnival/dsh-host-webserver'
+import type { Principal, RemoteInvocation } from '@carnival/dsh-typert-protocol'
+import * as Token from '@carnival/dsh-host-authentication-token'
 import { IncomingMessage, type ServerResponse } from 'node:http'
 import { Socket } from 'node:net'
 import { EventEmitter } from 'node:events'
 import { afterEach, expect, it, onTestFinished, vi } from 'vitest'
-import * as Connection from '@deepseek-ai/dsh-client-connection'
+import * as Connection from '@carnival/dsh-client-connection'
 import { MemoryCredentials } from '../../../credentials/credentials/tests/memory.ts'
 import RemoteConnection from '../src/index.ts'
 import { LoginTickets } from '../src/login-tickets.ts'
 import { RemoteBrowserAuth } from '../src/remote-auth.ts'
 import type { RemoteLoginTicket } from '../src/types.ts'
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface PrincipalMap {
     /** Non-owner exercising direct QR invitation calls. */
     'qr-test-guest': { readonly kind: 'qr-test-guest' }

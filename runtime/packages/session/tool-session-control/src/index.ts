@@ -1,17 +1,17 @@
 /**
  * Model-authored messages to ordinary Web Sessions with runtime-owned sender attribution.
- * @module @deepseek-ai/dsh-tool-session-control
+ * @module @carnival/dsh-tool-session-control
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-api-session-controller'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-subagent'
-import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-workspace'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-api-session-controller'
+import { brandString } from '@carnival/dsh-brand'
+import { HarnessError } from '@carnival/dsh-error'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-subagent'
+import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@carnival/dsh-tools'
+import type {} from '@carnival/dsh-workspace'
 
 /** Cordis plugin name. */
 export const name = 'tool-session-control'

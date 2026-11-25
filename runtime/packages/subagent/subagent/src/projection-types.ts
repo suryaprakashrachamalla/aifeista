@@ -1,10 +1,10 @@
 /**
  * Pure client-safe subagent projection vocabulary.
  *
- * @module @deepseek-ai/dsh-subagent/projection-types
+ * @module @carnival/dsh-subagent/projection-types
  */
 
-import type { SessionId, SessionSeq } from '@deepseek-ai/dsh-session/types'
+import type { SessionId, SessionSeq } from '@carnival/dsh-session/types'
 
 /** Known child modes with their creation labels and names, shared by catalog views. */
 export type KnownSubagentCatalogFields =
@@ -89,7 +89,7 @@ export type SubagentIdentityProjection =
     seq: SessionSeq
   }
 
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@carnival/dsh-session-projection/types' {
   interface SessionProjectionMap {
     /** Direct children in parent catalog event order, excluding fork-inherited facts. */
     subagentCatalog: SubagentCatalogEntry[]

@@ -49,93 +49,93 @@ describe('release families', () => {
     expect(members
       .filter(member => member.directory.startsWith('packages/experimental/'))
       .map(member => member.name)).toEqual([
-      '@deepseek-ai/dsh-experimental-api-speech-to-text',
-      '@deepseek-ai/dsh-experimental-auto-review',
-      '@deepseek-ai/dsh-experimental-badge-skill-bundle',
-      '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp',
-      '@deepseek-ai/dsh-experimental-browser-use-playwright-mcp',
-      '@deepseek-ai/dsh-experimental-browser-use-runtime',
-      '@deepseek-ai/dsh-experimental-browser-use-stagehand-native',
-      '@deepseek-ai/dsh-experimental-claude-code-mods',
-      '@deepseek-ai/dsh-experimental-client-ui-claude-code-mods',
-      '@deepseek-ai/dsh-experimental-client-ui-cot-translation',
-      '@deepseek-ai/dsh-experimental-client-ui-forge',
-      '@deepseek-ai/dsh-experimental-client-ui-stats',
-      '@deepseek-ai/dsh-experimental-client-ui-voice-input',
-      '@deepseek-ai/dsh-experimental-computer-use-cua-driver-mcp',
-      '@deepseek-ai/dsh-experimental-computer-use-cua-driver-native',
-      '@deepseek-ai/dsh-experimental-cot-translation-bundle',
-      '@deepseek-ai/dsh-cua-bundle',
-      '@deepseek-ai/dsh-cua-macos',
-      '@deepseek-ai/dsh-cua-mcp',
-      '@deepseek-ai/dsh-cua-windows',
-      '@deepseek-ai/dsh-cua',
-      '@deepseek-ai/dsh-deepseek-chat-import',
-      '@deepseek-ai/dsh-experimental-forge-bundle',
-      '@deepseek-ai/dsh-experimental-forge-github',
-      '@deepseek-ai/dsh-forge-gitlab',
-      '@deepseek-ai/dsh-experimental-forge-session',
-      '@deepseek-ai/dsh-experimental-forge',
-      '@deepseek-ai/dsh-hook-protocol',
-      '@deepseek-ai/dsh-hooks-claude-code',
-      '@deepseek-ai/dsh-hooks-codex',
-      '@deepseek-ai/dsh-experimental-inspector-profile',
-      '@deepseek-ai/dsh-experimental-inspector',
-      '@deepseek-ai/dsh-experimental-liveshare-protocol',
-      '@deepseek-ai/dsh-experimental-liveshare',
-      '@deepseek-ai/dsh-experimental-plugin-market-bundle',
-      '@deepseek-ai/dsh-experimental-ralph-bundle',
-      '@deepseek-ai/dsh-experimental-session-inspector',
-      '@deepseek-ai/dsh-experimental-session-search',
-      '@deepseek-ai/dsh-session-title-all-prompts-llm',
-      '@deepseek-ai/dsh-experimental-session-titles-bundle',
-      '@deepseek-ai/dsh-skill-badge',
-      '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice',
-      '@deepseek-ai/dsh-experimental-speech-to-text',
-      '@deepseek-ai/dsh-experimental-subagent-oar',
-      '@deepseek-ai/dsh-experimental-terminal-bundle',
-      '@deepseek-ai/dsh-terminal-panel',
-      '@deepseek-ai/dsh-timeline',
-      '@deepseek-ai/dsh-tool-ralph',
-      '@deepseek-ai/dsh-tool-session-query',
-      '@deepseek-ai/dsh-experimental-tool-subagent-oar',
-      '@deepseek-ai/dsh-tool-terminal',
-      '@deepseek-ai/dsh-experimental-tool-worktree',
-      '@deepseek-ai/dsh-experimental-translator',
-      '@deepseek-ai/dsh-experimental-voice-input-bundle',
-      '@deepseek-ai/dsh-webhook-github',
-      '@deepseek-ai/dsh-webhook',
-      '@deepseek-ai/dsh-experimental-webworker-packer',
-      '@deepseek-ai/dsh-experimental-webworker-runtime',
-      '@deepseek-ai/dsh-experimental-worktree',
+      '@carnival/dsh-experimental-api-speech-to-text',
+      '@carnival/dsh-experimental-auto-review',
+      '@carnival/dsh-experimental-badge-skill-bundle',
+      '@carnival/dsh-experimental-browser-use-chrome-devtools-mcp',
+      '@carnival/dsh-experimental-browser-use-playwright-mcp',
+      '@carnival/dsh-experimental-browser-use-runtime',
+      '@carnival/dsh-experimental-browser-use-stagehand-native',
+      '@carnival/dsh-experimental-claude-code-mods',
+      '@carnival/dsh-experimental-client-ui-claude-code-mods',
+      '@carnival/dsh-experimental-client-ui-cot-translation',
+      '@carnival/dsh-experimental-client-ui-forge',
+      '@carnival/dsh-experimental-client-ui-stats',
+      '@carnival/dsh-experimental-client-ui-voice-input',
+      '@carnival/dsh-experimental-computer-use-cua-driver-mcp',
+      '@carnival/dsh-experimental-computer-use-cua-driver-native',
+      '@carnival/dsh-experimental-cot-translation-bundle',
+      '@carnival/dsh-cua-bundle',
+      '@carnival/dsh-cua-macos',
+      '@carnival/dsh-cua-mcp',
+      '@carnival/dsh-cua-windows',
+      '@carnival/dsh-cua',
+      '@carnival/dsh-deepseek-chat-import',
+      '@carnival/dsh-experimental-forge-bundle',
+      '@carnival/dsh-experimental-forge-github',
+      '@carnival/dsh-forge-gitlab',
+      '@carnival/dsh-experimental-forge-session',
+      '@carnival/dsh-experimental-forge',
+      '@carnival/dsh-hook-protocol',
+      '@carnival/dsh-hooks-claude-code',
+      '@carnival/dsh-hooks-codex',
+      '@carnival/dsh-experimental-inspector-profile',
+      '@carnival/dsh-experimental-inspector',
+      '@carnival/dsh-experimental-liveshare-protocol',
+      '@carnival/dsh-experimental-liveshare',
+      '@carnival/dsh-experimental-plugin-market-bundle',
+      '@carnival/dsh-experimental-ralph-bundle',
+      '@carnival/dsh-experimental-session-inspector',
+      '@carnival/dsh-experimental-session-search',
+      '@carnival/dsh-session-title-all-prompts-llm',
+      '@carnival/dsh-experimental-session-titles-bundle',
+      '@carnival/dsh-skill-badge',
+      '@carnival/dsh-experimental-speech-to-text-sensevoice',
+      '@carnival/dsh-experimental-speech-to-text',
+      '@carnival/dsh-experimental-subagent-oar',
+      '@carnival/dsh-experimental-terminal-bundle',
+      '@carnival/dsh-terminal-panel',
+      '@carnival/dsh-timeline',
+      '@carnival/dsh-tool-ralph',
+      '@carnival/dsh-tool-session-query',
+      '@carnival/dsh-experimental-tool-subagent-oar',
+      '@carnival/dsh-tool-terminal',
+      '@carnival/dsh-experimental-tool-worktree',
+      '@carnival/dsh-experimental-translator',
+      '@carnival/dsh-experimental-voice-input-bundle',
+      '@carnival/dsh-webhook-github',
+      '@carnival/dsh-webhook',
+      '@carnival/dsh-experimental-webworker-packer',
+      '@carnival/dsh-experimental-webworker-runtime',
+      '@carnival/dsh-experimental-worktree',
     ])
   })
 
   it('excludes private applications from the publish set', () => {
     const root = mkdtempSync(join(tmpdir(), 'dsh-release-private-'))
     roots.push(root)
-    write(join(root, 'apps/public/package.json'), '{"name":"@deepseek-ai/dsh-public","version":"0.0.1"}\n')
-    write(join(root, 'apps/private/package.json'), '{"name":"@deepseek-ai/dsh-private","version":"0.0.1","private":true}\n')
+    write(join(root, 'apps/public/package.json'), '{"name":"@carnival/dsh-public","version":"0.0.1"}\n')
+    write(join(root, 'apps/private/package.json'), '{"name":"@carnival/dsh-private","version":"0.0.1","private":true}\n')
 
-    expect(releaseFamily('dsh').members(root).map(entry => entry.name)).toEqual(['@deepseek-ai/dsh-public'])
+    expect(releaseFamily('dsh').members(root).map(entry => entry.name)).toEqual(['@carnival/dsh-public'])
   })
 
   it('publishes unlisted experimental packages while retaining private exclusions', () => {
     const root = mkdtempSync(join(tmpdir(), 'dsh-release-experimental-'))
     roots.push(root)
     write(join(root, 'packages/experimental/prototype/package.json'), JSON.stringify({
-      name: '@deepseek-ai/dsh-experimental-prototype',
+      name: '@carnival/dsh-experimental-prototype',
       version: '0.0.1',
       publishConfig: { access: 'public' },
     }))
     write(join(root, 'packages/experimental/inspector/package.json'), JSON.stringify({
-      name: '@deepseek-ai/dsh-experimental-inspector',
+      name: '@carnival/dsh-experimental-inspector',
       version: '0.0.1',
       private: true,
     }))
 
     expect(releaseFamily('dsh').members(root).map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-experimental-prototype',
+      '@carnival/dsh-experimental-prototype',
     ])
   })
 
@@ -148,7 +148,7 @@ describe('release families', () => {
     write(join(root, 'packages/core/unselected/package.json'), '{"version":"0.0.1"}\n')
 
     const dsh = releaseFamily('dsh')
-    const published = member('packages/core/published', '@deepseek-ai/dsh-published')
+    const published = member('packages/core/published', '@carnival/dsh-published')
     const { planned } = planShared(dsh, root, [published], '0.0.2')
 
     expect(planned.map(entry => ({ path: entry.manifestPath, tag: entry.tag }))).toEqual([
@@ -167,7 +167,7 @@ describe('release families', () => {
       write(join(root, 'package.json'), '{"version":"0.0.1"}\n')
 
       const dsh = releaseFamily('dsh')
-      const published = member('packages/core/published', '@deepseek-ai/dsh-published')
+      const published = member('packages/core/published', '@carnival/dsh-published')
       const plan = planShared(dsh, root, [published], version)
 
       expect(plan.version).toBe(version)
@@ -178,8 +178,8 @@ describe('release families', () => {
   it('names one tag for the whole dsh family and one per vendored package', () => {
     const dsh = releaseFamily('dsh')
     const vendor = releaseFamily('vendor')
-    const cli = member('apps/cli', '@deepseek-ai/dsh')
-    const cordis = { ...member('vendor/cordis', '@deepseek-ai/cordis'), version: '4.0.1' }
+    const cli = member('apps/cli', '@carnival/dsh')
+    const cordis = { ...member('vendor/cordis', '@carnival/cordis'), version: '4.0.1' }
 
     expect(dsh.tagFor(cli)).toBe('dsh-v0.0.1')
     expect(vendor.tagFor(cordis)).toBe('vendor-cordis-v4.0.1')
@@ -203,7 +203,7 @@ describe('release families', () => {
 
   it('rejects a family whose members disagree on the shared version', () => {
     const dsh = releaseFamily('dsh')
-    const members = [member('apps/cli', '@deepseek-ai/dsh'), { ...member('apps/web', '@deepseek-ai/dsh-web-frontend'), version: '0.0.2' }]
+    const members = [member('apps/cli', '@carnival/dsh'), { ...member('apps/web', '@carnival/dsh-web-frontend'), version: '0.0.2' }]
 
     expect(() => { dsh.verifyVersions(members) }).toThrow(/must share one version/)
     expect(() => { dsh.verifyVersions([members[0]!]) }).not.toThrow()
@@ -212,8 +212,8 @@ describe('release families', () => {
   it('accepts independent vendored versions and rejects an unpublishable one', () => {
     const vendor = releaseFamily('vendor')
     const members = [
-      { ...member('vendor/cordis', '@deepseek-ai/cordis'), version: '4.0.1' },
-      { ...member('vendor/cosmokit', '@deepseek-ai/cosmokit'), version: '1.8.2' },
+      { ...member('vendor/cordis', '@carnival/cordis'), version: '4.0.1' },
+      { ...member('vendor/cosmokit', '@carnival/cosmokit'), version: '1.8.2' },
     ]
 
     expect(() => { vendor.verifyVersions(members) }).not.toThrow()
@@ -242,20 +242,20 @@ describe('release families', () => {
   it('publishes a dependency before its consumer, and orders ties by name', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/consumer', '@deepseek-ai/dsh-consumer', { dependencies: { '@deepseek-ai/dsh-library': 'workspace:^' } }),
-      member('packages/a/library', '@deepseek-ai/dsh-library'),
-      member('packages/a/zebra', '@deepseek-ai/dsh-zebra'),
+      member('packages/a/consumer', '@carnival/dsh-consumer', { dependencies: { '@carnival/dsh-library': 'workspace:^' } }),
+      member('packages/a/library', '@carnival/dsh-library'),
+      member('packages/a/zebra', '@carnival/dsh-zebra'),
     ]
 
     expect(dsh.publishOrder(members).order.map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-library',
-      '@deepseek-ai/dsh-consumer',
-      '@deepseek-ai/dsh-zebra',
+      '@carnival/dsh-library',
+      '@carnival/dsh-consumer',
+      '@carnival/dsh-zebra',
     ])
   })
 
   it('publishes on-demand catalog members before dsh without adding installed dependencies', () => {
-    const dsh = member('apps/cli', '@deepseek-ai/dsh')
+    const dsh = member('apps/cli', '@carnival/dsh')
     const providers = ON_DEMAND_BUNDLES.map(name => member(`packages/subagent/${name}`, name))
     const plan = releaseFamily('dsh').publishOrder([dsh, ...providers])
     expect(plan.order.map(entry => entry.name)).toEqual([...ON_DEMAND_BUNDLES.toSorted(), dsh.name])
@@ -264,14 +264,14 @@ describe('release families', () => {
   })
 
   it('rejects an advertised provider missing from the public release family', () => {
-    expect(() => releaseFamily('dsh').publishOrder([member('apps/cli', '@deepseek-ai/dsh')]))
+    expect(() => releaseFamily('dsh').publishOrder([member('apps/cli', '@carnival/dsh')]))
       .toThrow('Official catalog prerequisite')
   })
 
   it('keeps catalog prerequisites ahead of a dsh peer declaration', () => {
-    const dsh = member('apps/cli', '@deepseek-ai/dsh')
+    const dsh = member('apps/cli', '@carnival/dsh')
     const providers = ON_DEMAND_BUNDLES.map(name => member(`packages/subagent/${name}`, name, {
-      peerDependencies: { '@deepseek-ai/dsh': 'workspace:*' },
+      peerDependencies: { '@carnival/dsh': 'workspace:*' },
     }))
     const plan = releaseFamily('dsh').publishOrder([dsh, ...providers])
     expect(plan.order.map(entry => entry.name)).toEqual([...ON_DEMAND_BUNDLES.toSorted(), dsh.name])
@@ -280,31 +280,31 @@ describe('release families', () => {
 
   it.each(['dependencies', 'optionalDependencies', 'peerDependencies'])(
     'requires exact packed DSH %s while preserving external ranges', (section) => {
-      const pkg = member('packages/example/provider', '@deepseek-ai/dsh-provider')
+      const pkg = member('packages/example/provider', '@carnival/dsh-provider')
       const family = releaseFamily('dsh')
-      const manifest = { name: pkg.name, version: pkg.version, [section]: { '@deepseek-ai/dsh-tools': pkg.version, external: '^4.0.0' } }
+      const manifest = { name: pkg.name, version: pkg.version, [section]: { '@carnival/dsh-tools': pkg.version, external: '^4.0.0' } }
       expect(() => { family.validatePackedManifest(pkg, manifest) }).not.toThrow()
       for (const range of ['workspace:*', '^0.0.1', '~0.0.1', '0.0.2', '*']) {
-        expect(() => { family.validatePackedManifest(pkg, { ...manifest, [section]: { '@deepseek-ai/dsh-tools': range } }) })
-          .toThrow(`packed ${section}.@deepseek-ai/dsh-tools must equal`)
+        expect(() => { family.validatePackedManifest(pkg, { ...manifest, [section]: { '@carnival/dsh-tools': range } }) })
+          .toThrow(`packed ${section}.@carnival/dsh-tools must equal`)
       }
     },
   )
 
   it('checks packed identities and preserves independent vendor versions', () => {
-    const pkg = member('vendor/example', '@deepseek-ai/example')
+    const pkg = member('vendor/example', '@carnival/example')
     const family = releaseFamily('vendor')
-    expect(() => { family.validatePackedManifest(pkg, { name: pkg.name, version: pkg.version, dependencies: { '@deepseek-ai/dsh-tools': '^4.0.0' } }) })
+    expect(() => { family.validatePackedManifest(pkg, { name: pkg.name, version: pkg.version, dependencies: { '@carnival/dsh-tools': '^4.0.0' } }) })
       .not.toThrow()
-    expect(() => { family.validatePackedManifest(pkg, { name: '@deepseek-ai/other', version: pkg.version }) }).toThrow('packed identity')
+    expect(() => { family.validatePackedManifest(pkg, { name: '@carnival/other', version: pkg.version }) }).toThrow('packed identity')
     expect(() => { family.validatePackedManifest(pkg, { name: pkg.name, version: '0.0.2' }) }).toThrow('packed identity')
   })
 
   it('reports a runtime dependency cycle instead of emitting an arbitrary order', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/left', '@deepseek-ai/dsh-left', { dependencies: { '@deepseek-ai/dsh-right': 'workspace:^' } }),
-      member('packages/a/right', '@deepseek-ai/dsh-right', { dependencies: { '@deepseek-ai/dsh-left': 'workspace:^' } }),
+      member('packages/a/left', '@carnival/dsh-left', { dependencies: { '@carnival/dsh-right': 'workspace:^' } }),
+      member('packages/a/right', '@carnival/dsh-right', { dependencies: { '@carnival/dsh-left': 'workspace:^' } }),
     ]
 
     expect(() => { dsh.publishOrder(members) }).toThrow(/dependency cycle/)
@@ -313,44 +313,44 @@ describe('release families', () => {
   it('publishes a peer before its consumer', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/consumer', '@deepseek-ai/dsh-consumer', { peerDependencies: { '@deepseek-ai/dsh-zebra': 'workspace:^' } }),
-      member('packages/a/zebra', '@deepseek-ai/dsh-zebra'),
+      member('packages/a/consumer', '@carnival/dsh-consumer', { peerDependencies: { '@carnival/dsh-zebra': 'workspace:^' } }),
+      member('packages/a/zebra', '@carnival/dsh-zebra'),
     ]
 
     // Name order alone would place the consumer first; the peer edge moves it.
     expect(dsh.publishOrder(members).order.map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-zebra',
-      '@deepseek-ai/dsh-consumer',
+      '@carnival/dsh-zebra',
+      '@carnival/dsh-consumer',
     ])
   })
 
   it('orders around a peer cycle rather than refusing to publish, and reports the edge it dropped', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/left', '@deepseek-ai/dsh-left', { peerDependencies: { '@deepseek-ai/dsh-right': 'workspace:^' } }),
-      member('packages/a/right', '@deepseek-ai/dsh-right', { peerDependencies: { '@deepseek-ai/dsh-left': 'workspace:^' } }),
+      member('packages/a/left', '@carnival/dsh-left', { peerDependencies: { '@carnival/dsh-right': 'workspace:^' } }),
+      member('packages/a/right', '@carnival/dsh-right', { peerDependencies: { '@carnival/dsh-left': 'workspace:^' } }),
     ]
 
     // Sibling packages declare each other as peers, and npm treats an unmet peer
     // as a warning, so this pair has to publish rather than fail the release.
     const plan = dsh.publishOrder(members)
     expect(plan.order.map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-right',
-      '@deepseek-ai/dsh-left',
+      '@carnival/dsh-right',
+      '@carnival/dsh-left',
     ])
     // One of the two edges has to give, and which one it is belongs in the log.
     expect(plan.droppedPeerEdges).toEqual([
-      { consumer: '@deepseek-ai/dsh-right', peer: '@deepseek-ai/dsh-left' },
+      { consumer: '@carnival/dsh-right', peer: '@carnival/dsh-left' },
     ])
   })
 
   it('honours an install edge even when a peer cycle surrounds it', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/base', '@deepseek-ai/dsh-base', { peerDependencies: { '@deepseek-ai/dsh-consumer': 'workspace:^' } }),
-      member('packages/a/consumer', '@deepseek-ai/dsh-consumer', {
-        dependencies: { '@deepseek-ai/dsh-base': 'workspace:^' },
-        peerDependencies: { '@deepseek-ai/dsh-base': 'workspace:^' },
+      member('packages/a/base', '@carnival/dsh-base', { peerDependencies: { '@carnival/dsh-consumer': 'workspace:^' } }),
+      member('packages/a/consumer', '@carnival/dsh-consumer', {
+        dependencies: { '@carnival/dsh-base': 'workspace:^' },
+        peerDependencies: { '@carnival/dsh-base': 'workspace:^' },
       }),
     ]
 
@@ -358,49 +358,49 @@ describe('release families', () => {
     // would reverse it is the one dropped.
     const plan = dsh.publishOrder(members)
     expect(plan.order.map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-base',
-      '@deepseek-ai/dsh-consumer',
+      '@carnival/dsh-base',
+      '@carnival/dsh-consumer',
     ])
     expect(plan.droppedPeerEdges).toEqual([
-      { consumer: '@deepseek-ai/dsh-base', peer: '@deepseek-ai/dsh-consumer' },
+      { consumer: '@carnival/dsh-base', peer: '@carnival/dsh-consumer' },
     ])
   })
 
   it('refuses an order that would publish a consumer before a dependency it installs', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/alpha', '@deepseek-ai/dsh-alpha', { peerDependencies: { '@deepseek-ai/dsh-bravo': 'workspace:^' } }),
-      member('packages/a/bravo', '@deepseek-ai/dsh-bravo', { peerDependencies: { '@deepseek-ai/dsh-charlie': 'workspace:^' } }),
-      member('packages/a/charlie', '@deepseek-ai/dsh-charlie', { dependencies: { '@deepseek-ai/dsh-alpha': 'workspace:^' } }),
+      member('packages/a/alpha', '@carnival/dsh-alpha', { peerDependencies: { '@carnival/dsh-bravo': 'workspace:^' } }),
+      member('packages/a/bravo', '@carnival/dsh-bravo', { peerDependencies: { '@carnival/dsh-charlie': 'workspace:^' } }),
+      member('packages/a/charlie', '@carnival/dsh-charlie', { dependencies: { '@carnival/dsh-alpha': 'workspace:^' } }),
     ]
 
     // A cycle of two peer edges closed by one install edge: dropping a peer edge
     // would order this, and the traversal drops the install edge instead. That
     // order would publish charlie before the alpha it installs, so it is refused
     // here rather than published.
-    expect(() => { dsh.publishOrder(members) }).toThrow(/no publish order honours @deepseek-ai\/dsh-charlie -> @deepseek-ai\/dsh-alpha/)
+    expect(() => { dsh.publishOrder(members) }).toThrow(/no publish order honours @carnival\/dsh-charlie -> @carnival\/dsh-alpha/)
   })
 
   it('ignores devDependencies when ordering', () => {
     const dsh = releaseFamily('dsh')
     const members = [
-      member('packages/a/alpha', '@deepseek-ai/dsh-alpha', { devDependencies: { '@deepseek-ai/dsh-zebra': 'workspace:^' } }),
-      member('packages/a/zebra', '@deepseek-ai/dsh-zebra'),
+      member('packages/a/alpha', '@carnival/dsh-alpha', { devDependencies: { '@carnival/dsh-zebra': 'workspace:^' } }),
+      member('packages/a/zebra', '@carnival/dsh-zebra'),
     ]
 
     // A dev dependency is absent from the published package, so it must not move
     // the consumer behind it.
     expect(dsh.publishOrder(members).order.map(entry => entry.name)).toEqual([
-      '@deepseek-ai/dsh-alpha',
-      '@deepseek-ai/dsh-zebra',
+      '@carnival/dsh-alpha',
+      '@carnival/dsh-zebra',
     ])
   })
 
   it('accepts the harness payload and keeps upstream payloads for vendored packages', () => {
     const dsh = releaseFamily('dsh')
     const vendor = releaseFamily('vendor')
-    const harness = member('packages/a/library', '@deepseek-ai/dsh-library')
-    const vendored = member('vendor/cordis', '@deepseek-ai/cordis')
+    const harness = member('packages/a/library', '@carnival/dsh-library')
+    const vendored = member('vendor/cordis', '@carnival/cordis')
 
     expect(() => { dsh.validatePayload(harness, ['package/lib/index.js', 'package/lib/index.js.map', 'package/src/index.ts']) }).not.toThrow()
     expect(() => { vendor.validatePayload(vendored, ['package/lib/index.js', 'package/src/index.ts']) }).not.toThrow()
@@ -409,21 +409,21 @@ describe('release families', () => {
 
   it('requires the installed package payload the staging hook supplies', () => {
     const dsh = releaseFamily('dsh')
-    const installed = member('apps/cli', '@deepseek-ai/dsh')
+    const installed = member('apps/cli', '@carnival/dsh')
 
     expect(() => { dsh.validatePayload(installed, ['package/lib/index.js', 'package/src/bin.ts']) })
-      .toThrow(/@deepseek-ai\/dsh packed no documentation/)
+      .toThrow(/@carnival\/dsh packed no documentation/)
     expect(() => { dsh.validatePayload(installed, ['package/lib/index.js', 'package/docs/guide.md', 'package/src/bin.ts']) })
-      .toThrow(/@deepseek-ai\/dsh packed no upgrade guide index/)
+      .toThrow(/@carnival\/dsh packed no upgrade guide index/)
     const docs = ['package/docs/guide.md', 'package/docs/upgrade-guide/README.md']
     expect(() => { dsh.validatePayload(installed, ['package/lib/index.js', ...docs]) })
-      .toThrow(/@deepseek-ai\/dsh packed no source/)
+      .toThrow(/@carnival\/dsh packed no source/)
     expect(() => { dsh.validatePayload(installed, ['package/lib/index.js', ...docs, 'package/src/bin.ts']) })
       .not.toThrow()
   })
 
   it('drives the installed entry only for the family that publishes one', () => {
-    expect(releaseFamily('dsh').installedEntry).toEqual({ packageName: '@deepseek-ai/dsh', binPath: 'lib/bin.js' })
+    expect(releaseFamily('dsh').installedEntry).toEqual({ packageName: '@carnival/dsh', binPath: 'lib/bin.js' })
     expect(releaseFamily('vendor').installedEntry).toBeUndefined()
   })
 
@@ -484,10 +484,10 @@ describe('version precedence', () => {
 })
 
 describe('payload change judgement', () => {
-  const sourceShipping = member('vendor/cosmokit', '@deepseek-ai/cosmokit', {
+  const sourceShipping = member('vendor/cosmokit', '@carnival/cosmokit', {
     files: ['lib/index.js', 'lib/types/**/*.d.ts', 'src'],
   })
-  const buildOutputOnly = member('vendor/cordis', '@deepseek-ai/cordis', {
+  const buildOutputOnly = member('vendor/cordis', '@carnival/cordis', {
     files: ['lib/index.js', 'lib/types/**/*.d.ts', 'bin.js'],
   })
 
@@ -512,7 +512,7 @@ describe('payload change judgement', () => {
     // unnecessary patch bump, while under-reporting fails the next publish on a
     // version whose bytes moved.
     expect(reachesPayload(sourceShipping, 'vendor/cosmokit/README.i18n.yaml')).toBe(true)
-    expect(reachesPayload(member('packages/a/library', '@deepseek-ai/dsh-library', { files: ['lib/index.js'] }),
+    expect(reachesPayload(member('packages/a/library', '@carnival/dsh-library', { files: ['lib/index.js'] }),
       'packages/a/library/tests/library.spec.ts')).toBe(false)
   })
 })

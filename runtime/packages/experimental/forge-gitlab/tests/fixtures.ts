@@ -1,4 +1,4 @@
-import type { ChangeRequestRef, ForgeRepository } from '@deepseek-ai/dsh-experimental-forge'
+import type { ChangeRequestRef, ForgeRepository } from '@carnival/dsh-experimental-forge'
 import type { GlabOutput, GlabRunner } from '../src/glab.ts'
 
 /** Host the provider tests serve. */

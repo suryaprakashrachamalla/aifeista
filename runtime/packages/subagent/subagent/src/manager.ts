@@ -3,22 +3,22 @@
  * One child lock orders input acceptance and closure; one activation map owns
  * capacity, runtime ownership, and resource release across all providers.
  *
- * @module @deepseek-ai/dsh-subagent/manager
+ * @module @carnival/dsh-subagent/manager
  */
 
 import { randomUUID } from 'node:crypto'
 import { isAbsolute, resolve } from 'node:path'
-import type {} from '@deepseek-ai/dsh-working-directory'
-import { FiberState, type Context } from '@deepseek-ai/cordis'
-import type { Agent, AgentOptions, CreateAgentOptions } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { type ReasoningEffortId, contentHasImage, createUserMessage, errorChain } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, MessageId, MessageSource } from '@deepseek-ai/dsh-llm'
-import { SessionLogOffset } from '@deepseek-ai/dsh-session'
-import type { Session, SessionId, SessionEvent, UserMessage } from '@deepseek-ai/dsh-session'
-import type { SessionPersistence } from '@deepseek-ai/dsh-session-persistence'
-import type { SessionObservation, SessionQueryEngine } from '@deepseek-ai/dsh-session-query'
-import type { ObjectJsonSchema } from '@deepseek-ai/dsh-tools'
+import type {} from '@carnival/dsh-working-directory'
+import { FiberState, type Context } from '@carnival/cordis'
+import type { Agent, AgentOptions, CreateAgentOptions } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import { type ReasoningEffortId, contentHasImage, createUserMessage, errorChain } from '@carnival/dsh-llm'
+import type { ContentBlock, MessageId, MessageSource } from '@carnival/dsh-llm'
+import { SessionLogOffset } from '@carnival/dsh-session'
+import type { Session, SessionId, SessionEvent, UserMessage } from '@carnival/dsh-session'
+import type { SessionPersistence } from '@carnival/dsh-session-persistence'
+import type { SessionObservation, SessionQueryEngine } from '@carnival/dsh-session-query'
+import type { ObjectJsonSchema } from '@carnival/dsh-tools'
 import {
   appendDelegatedPolicyOverrides, applyChildComposition, captureDelegatedPolicyOverrides,
   childSessionMeta, resolveChildAgentOptions, resolveChildDepth,
@@ -1374,7 +1374,7 @@ export class SubagentManager {
     const query = this.ctx.get('sessionQuery')
     if (query === undefined) {
       throw new SubagentError(
-        'continuable subagents require session query (load @deepseek-ai/dsh-session-query)',
+        'continuable subagents require session query (load @carnival/dsh-session-query)',
         'CONTINUATION_UNAVAILABLE',
       )
     }

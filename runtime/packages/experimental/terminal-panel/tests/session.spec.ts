@@ -1,9 +1,9 @@
 /** Sends, reads, signals and release over a scripted Agent terminal on a fake clock. */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { AgentTerminalError } from '@deepseek-ai/dsh-api-terminal-controller'
-import { TerminalError } from '@deepseek-ai/dsh-terminal'
-import type { TerminalSendResult } from '@deepseek-ai/dsh-terminal'
-import type { SandboxExecutionPolicy } from '@deepseek-ai/dsh-sandbox'
+import { AgentTerminalError } from '@carnival/dsh-api-terminal-controller'
+import { TerminalError } from '@carnival/dsh-terminal'
+import type { TerminalSendResult } from '@carnival/dsh-terminal'
+import type { SandboxExecutionPolicy } from '@carnival/dsh-sandbox'
 import { POLICY_CHANGED, PanelTerminalSession, TAKEN_OVER, changedWithin, modelError, samePolicy, statusOf } from '../src/session.ts'
 import { FakeTerminal, SHELL_PID } from './fake.ts'
 

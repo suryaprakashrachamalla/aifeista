@@ -1,7 +1,7 @@
 /** Durable OAuth validation and refresh through the real SDK and credential store. */
 import { randomUUID } from 'node:crypto'
-import { Context } from '@deepseek-ai/cordis'
-import { credentialRef, parseCredentialKey, type CredentialRecord } from '@deepseek-ai/dsh-credentials'
+import { Context } from '@carnival/cordis'
+import { credentialRef, parseCredentialKey, type CredentialRecord } from '@carnival/dsh-credentials'
 import { expect, it, onTestFinished, vi } from 'vitest'
 import { McpOAuthCredentials, oauthFetch, oauthRecord } from '../src/oauth-credentials.ts'
 import { probeServer } from '../src/probe.ts'

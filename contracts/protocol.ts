@@ -4,16 +4,16 @@
  * spatial companion bridge, and Tauri v2 desktop UI.
  */
 
-export type HarnessId = "openbitfun" | "deepseek_harness" | "clicky";
+export type HarnessId = "carnival_core" | "carnival_runtime" | "companion";
 
 export type LaneKind =
-  | "clicky_ambient"
+  | "companion_ambient"
   | "builder_workspace"
   | "optimization_deck";
 
 export type CordisState = "stopped" | "starting" | "running" | "degraded";
 
-export type ModelTier = "local_triage" | "deepseek_v4" | "byok_cloud";
+export type ModelTier = "local_triage" | "primary_cloud" | "byok_cloud";
 
 export interface OptimizationFlags {
   prefix_cache_lock: boolean;

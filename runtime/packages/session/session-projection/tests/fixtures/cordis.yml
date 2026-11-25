@@ -1,3 +1,3 @@
-- name: '@deepseek-ai/dsh-session'
-- name: '@deepseek-ai/dsh-session-projection'
+- name: '@carnival/dsh-session'
+- name: '@carnival/dsh-session-projection'
 - name: './legacy-plugin.ts'

@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
-import type { Context } from '@deepseek-ai/cordis'
-import { pluginRecordOf } from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
+import type { ProjectionDefinition } from '@carnival/dsh-session-projection'
+import type { Context } from '@carnival/cordis'
+import { pluginRecordOf } from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
 import {
   activitySchema,
   annotationRecordSchema,

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-atomic-write",
+  "name": "@carnival/dsh-atomic-write",
   "description": "Atomic file replacement: exclusive-create random-suffix temp + rename carrying the caller-stated permissions (writeFileAtomic)",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/util/atomic-write"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,11 +25,11 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-error": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-error": "workspace:*"
   }
 }

@@ -3,7 +3,7 @@ description: "Serve the experimental forge registry for GitLab hosts through the
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-forge-gitlab
+# @carnival/dsh-forge-gitlab
 
 English | [中文](README.zh.md)
 
@@ -28,8 +28,8 @@ Read and write GitLab.com and self-managed GitLab merge requests for `ctx.forge`
 Mount the provider after the forge registry and list every self-managed host explicitly. The Forge bundle mounts it with `gitlab.com`.
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-forge-gitlab'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-forge-gitlab'
   config:
     hosts: [gitlab.com, gitlab.example.com]
 ```

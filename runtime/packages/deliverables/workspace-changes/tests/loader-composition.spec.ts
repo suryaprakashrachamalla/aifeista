@@ -8,15 +8,15 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
-import * as WorkspaceChangesPlugin from '@deepseek-ai/dsh-workspace-changes'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import LocalFileSystem from '@carnival/dsh-fs-local'
+import * as WorkspaceChangesPlugin from '@carnival/dsh-workspace-changes'
 import { changes, endTurn, git, startTurn, toolCall } from './support.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 let root: string | undefined
 let context: Context | undefined
@@ -33,10 +33,10 @@ describe('real Loader composition', () => {
     root = await mkdtemp(join(tmpdir(), 'dsh-workspace-changes-loader-'))
     const cwd = join(root, 'ws')
     await writeFile(join(root, 'cordis.yml'), [
-      "- name: '@deepseek-ai/dsh-session'",
-      "- name: '@deepseek-ai/dsh-subprocess-local'",
-      "- name: '@deepseek-ai/dsh-fs-local'",
-      "- name: '@deepseek-ai/dsh-workspace-changes'",
+      "- name: '@carnival/dsh-session'",
+      "- name: '@carnival/dsh-subprocess-local'",
+      "- name: '@carnival/dsh-fs-local'",
+      "- name: '@carnival/dsh-workspace-changes'",
       '',
     ].join('\n'))
     context = new Context()
@@ -44,10 +44,10 @@ describe('real Loader composition', () => {
     await context.plugin(Loader)
     context.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-session', SessionStore],
-      ['@deepseek-ai/dsh-subprocess-local', LocalSubprocessRuntime],
-      ['@deepseek-ai/dsh-fs-local', LocalFileSystem],
-      ['@deepseek-ai/dsh-workspace-changes', WorkspaceChangesPlugin],
+      ['@carnival/dsh-session', SessionStore],
+      ['@carnival/dsh-subprocess-local', LocalSubprocessRuntime],
+      ['@carnival/dsh-fs-local', LocalFileSystem],
+      ['@carnival/dsh-workspace-changes', WorkspaceChangesPlugin],
     ])
     context.loader.internal = {
       version: 'v2',

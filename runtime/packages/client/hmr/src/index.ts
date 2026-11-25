@@ -8,10 +8,10 @@
  * a development rebuild watcher also supplies bundle changes.
  */
 import { statSync } from 'node:fs'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
 // Type import carries the clientModules Context merge.
-import type { ClientArtifactBaseline } from '@deepseek-ai/dsh-client-modules'
+import type { ClientArtifactBaseline } from '@carnival/dsh-client-modules'
 import { PluginEvents } from './plugin-events.ts'
 
 export type * from './types.ts'

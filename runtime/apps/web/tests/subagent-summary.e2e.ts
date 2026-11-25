@@ -2,14 +2,14 @@
 import { mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { Agent, AssistantStreamFrame } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { Agent, AssistantStreamFrame } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
 import {
   AssistantStreamAccumulator, type LlmAttemptId, type ToolCallId,
   createAssistantMessage, createToolResultMessage, createUserMessage,
   type StreamChunk,
-} from '@deepseek-ai/dsh-llm'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-llm'
+import type { SessionEvent } from '@carnival/dsh-session'
 import type { Browser, Locator, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'

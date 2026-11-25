@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-hmr",
+  "name": "@carnival/dsh-client-hmr",
   "description": "Web client graph and rebuilt-bundle delivery over an authenticated Remote stream",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/hmr"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -40,12 +35,12 @@
   "dsh": {
     "client": {
       "external": [
-        "@deepseek-ai/dsh-api-gateway/client"
+        "@carnival/dsh-api-gateway/client"
       ],
       "inject": [
-        "@deepseek-ai/dsh-api-gateway",
-        "@deepseek-ai/dsh-api-remote-access",
-        "@deepseek-ai/dsh-client-modules"
+        "@carnival/dsh-api-gateway",
+        "@carnival/dsh-api-remote-access",
+        "@carnival/dsh-client-modules"
       ],
       "platform": "web",
       "immediately": true
@@ -53,20 +48,20 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-deque": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-deque": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-client-modules": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-client-modules": "workspace:*"
   },
   "files": [
     "locale/*.json",

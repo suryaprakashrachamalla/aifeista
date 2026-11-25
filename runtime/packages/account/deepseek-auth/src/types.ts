@@ -1,9 +1,9 @@
 /**
  * Types of DeepSeek request authentication. Host-only: an authorization carries a secret, so none of these values
  * crosses a Remote boundary or enters a log.
- * @module @deepseek-ai/dsh-deepseek-auth/types
+ * @module @carnival/dsh-deepseek-auth/types
  */
-import type { CredentialRef } from '@deepseek-ai/dsh-credentials'
+import type { CredentialRef } from '@carnival/dsh-credentials'
 
 /** A way to authenticate a DeepSeek API request: the API key, or the account sign-in. */
 export type DeepSeekAuthKind = 'api-key' | 'account'

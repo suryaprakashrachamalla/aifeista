@@ -1,7 +1,7 @@
 /** Session-list metadata projection definition registered by `SessionQueryEngine`. */
 
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
+import type { SessionEvent } from '@carnival/dsh-session'
+import type { ProjectionDefinition } from '@carnival/dsh-session-projection'
 import { z } from 'zod'
 import type { SessionListMetadata } from './types.ts'
 

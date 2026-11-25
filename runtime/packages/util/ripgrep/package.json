@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-util-ripgrep",
+  "name": "@carnival/dsh-util-ripgrep",
   "description": "Packaged ripgrep resolution and subprocess streaming helpers",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/util/ripgrep"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -33,11 +28,11 @@
     "@vscode/ripgrep": "^1.18.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-subprocess": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-subprocess": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-subprocess": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-subprocess": "workspace:*"
   }
 }

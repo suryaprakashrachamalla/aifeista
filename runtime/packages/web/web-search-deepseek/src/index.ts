@@ -6,18 +6,18 @@
  * allows the endpoint; every other search reuses `DEEPSEEK_API_KEY`. The provider
  * does not reuse `DEEPSEEK_BASE_URL`; auxiliary search has its own endpoint configuration. The
  * provider reports itself not ready for a model request whose search would have no credential.
- * @module @deepseek-ai/dsh-web-search-deepseek
+ * @module @carnival/dsh-web-search-deepseek
  */
-import type { Volatile } from '@deepseek-ai/cordis'
+import type { Volatile } from '@carnival/cordis'
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-agent'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import type { DeepSeekAuthRequest } from '@deepseek-ai/dsh-deepseek-auth'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import type {} from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-web'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-agent'
+import { credentialRef } from '@carnival/dsh-credentials'
+import type { DeepSeekAuthRequest } from '@carnival/dsh-deepseek-auth'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
+import type {} from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-web'
 import {
   DeepSeekSearchProvider,
   DEEPSEEK_DEFAULT_API_VERSION,

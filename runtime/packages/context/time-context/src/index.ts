@@ -2,25 +2,25 @@
  * Opt-in request clock context. Eligible steps add durable,
  * source-attributed time readings to the request history.
  *
- * @module @deepseek-ai/dsh-time-context
+ * @module @carnival/dsh-time-context
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
 import { z as zod } from 'zod'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-declare module '@deepseek-ai/dsh-llm' {
+import type { Agent, PreStepDecision } from '@carnival/dsh-agent'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'time-context': { kind: 'time-context' } & ContextFormed
   }
 }
 
-import type { UserMessage } from '@deepseek-ai/dsh-llm'
-import { SessionSeq } from '@deepseek-ai/dsh-session'
-import { Duration } from '@deepseek-ai/dsh-util-time'
-import type {} from '@deepseek-ai/dsh-session-projection'
+import type { UserMessage } from '@carnival/dsh-llm'
+import { SessionSeq } from '@carnival/dsh-session'
+import { Duration } from '@carnival/dsh-util-time'
+import type {} from '@carnival/dsh-session-projection'
 import {
   deriveBrowserTimeZoneContext,
   reportedBrowserTimeZone,

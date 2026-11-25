@@ -1,11 +1,11 @@
 /** File references contributed to the shared file menu. */
-import type { Context } from '@deepseek-ai/cordis'
-import { sessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
-import type { ContextMenuTargetMap } from '@deepseek-ai/dsh-client-ui-context-menu/client'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { IconPlusOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
-import { formatFileMention } from '@deepseek-ai/dsh-file-reference/grammar'
-import { resolveWorkspacePath, workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path'
+import type { Context } from '@carnival/cordis'
+import { sessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
+import type { ContextMenuTargetMap } from '@carnival/dsh-client-ui-context-menu/client'
+import type {} from '@carnival/dsh-client-ui-conversation/client'
+import { IconPlusOutlineRegular } from '@carnival/dsh-client-ui-primitives'
+import { formatFileMention } from '@carnival/dsh-file-reference/grammar'
+import { resolveWorkspacePath, workspaceTitleOf } from '@carnival/dsh-util-workspace-path'
 import type { ReferenceKey } from './locales.ts'
 
 /**

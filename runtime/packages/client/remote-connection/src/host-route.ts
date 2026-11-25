@@ -1,6 +1,6 @@
 /** Anonymous one-use credential exchange; application RPC remains authenticated. */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import type { ConnectionTrustRequest } from '@deepseek-ai/dsh-client-connection'
+import type { ConnectionTrustRequest } from '@carnival/dsh-client-connection'
 
 interface LoginRoute {
   readonly root: string

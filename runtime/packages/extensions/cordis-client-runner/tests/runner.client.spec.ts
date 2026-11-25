@@ -11,15 +11,15 @@
  */
 /* oxlint-disable typescript/no-unsafe-assignment -- Vitest asymmetric matchers are typed as any. */
 
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { Loader } from '@deepseek-ai/cordis-plugin-loader'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import type { Loader } from '@carnival/cordis-plugin-loader'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import type {
   CordisDynamicPackageId, CordisDynamicPluginId, CordisDynamicPluginRunId, SessionId,
-} from '@deepseek-ai/dsh-api-remotes/client'
-import type { ClientModuleSystem } from '@deepseek-ai/dsh-client-modules/client'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
+} from '@carnival/dsh-api-remotes/client'
+import type { ClientModuleSystem } from '@carnival/dsh-client-modules/client'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
 import { DYNAMIC_CLIENT_REDIRECTS } from '../src/client/evaluator.ts'
 import { DynamicCordisPackageRunner } from '../src/client/runtime.ts'
 import type { DynamicCordisClientHalf, DynamicCordisRenderFailure } from '../src/client/runtime.ts'

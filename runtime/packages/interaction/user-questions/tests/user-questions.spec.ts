@@ -1,17 +1,17 @@
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry, { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
+import { Context } from '@carnival/cordis'
+import AgentRegistry, { agentEvents, type Agent } from '@carnival/dsh-agent'
 import UserQuestionService, {
   TIMED_WAIT_PARAMETER,
   UserQuestionError,
   type AskUserQuestionAnswer,
   type AskUserQuestionRequest,
-} from '@deepseek-ai/dsh-user-questions'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import { createToolResultMessage, createUserMessage, type ToolCallId, type ToolSchema, type UserMessage } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId, SESSION_FORMAT_VERSION, TOOL_OUTCOME_UNKNOWN } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+} from '@carnival/dsh-user-questions'
+import { brandString } from '@carnival/dsh-brand'
+import { HarnessError } from '@carnival/dsh-error'
+import { createToolResultMessage, createUserMessage, type ToolCallId, type ToolSchema, type UserMessage } from '@carnival/dsh-llm'
+import { Session, type SessionId, SESSION_FORMAT_VERSION, TOOL_OUTCOME_UNKNOWN } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 
 interface QuestionAnswerer {
   ask(request: AskUserQuestionRequest): Promise<AskUserQuestionAnswer>

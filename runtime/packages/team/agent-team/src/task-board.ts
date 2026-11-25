@@ -1,15 +1,15 @@
 /** Shared Team task DAG commands and runtime-enriched views. */
 
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-subagent'
+import type { Agent } from '@carnival/dsh-agent'
+import type { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-subagent'
 import { TeamError } from './error.ts'
 import type { TeamJournal } from './journal.ts'
 import type { TeamState } from './projection.ts'
 import { assertTaskGraphCandidate, TeamTaskGraphError } from './task-graph.ts'
 import type { TeamTaskGraphViolation } from './task-graph.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import type { TeamTaskId } from './types.ts'
 import type {
   CreateTeamTaskRequest,

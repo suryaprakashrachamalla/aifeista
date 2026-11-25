@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-ptc-runtime",
+  "name": "@carnival/dsh-ptc-runtime",
   "description": "Abstract PTC execution seam (ctx.ptcRuntime) for the DeepSeek Harness",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/ptc-runtime/ptc-runtime"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,15 +25,15 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-sandbox": "workspace:*",
-    "@deepseek-ai/dsh-attachment": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-sandbox": "workspace:*",
+    "@carnival/dsh-attachment": "workspace:*",
+    "@carnival/dsh-error": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-sandbox": "workspace:*",
-    "@deepseek-ai/dsh-attachment": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-sandbox": "workspace:*",
+    "@carnival/dsh-attachment": "workspace:*",
+    "@carnival/dsh-error": "workspace:*"
   }
 }

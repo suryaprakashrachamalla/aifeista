@@ -1,6 +1,6 @@
 /** Typed skill failures shared by the registry, providers, and the `skill` tool. */
 
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 
 /**
  * Every {@link SkillError} code:

@@ -1,6 +1,6 @@
 /** Clipboard feedback that survives closing the settings panel. */
-import { IconWarningOutlineMedium, Toast } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import { IconWarningOutlineMedium, Toast } from '@carnival/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@carnival/dsh-client-ui-slots'
 import type { LoginLinkFace } from './login-link-controller.ts'
 
 /**

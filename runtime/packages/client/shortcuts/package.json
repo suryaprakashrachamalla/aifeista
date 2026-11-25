@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-shortcuts",
+  "name": "@carnival/dsh-client-shortcuts",
   "description": "Application keyboard command registry and physical-key routing",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/shortcuts"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -33,7 +28,7 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-locale"
+        "@carnival/dsh-client-locale"
       ],
       "platform": "web"
     }
@@ -44,16 +39,16 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-client-locale": "workspace:*",
-    "@deepseek-ai/dsh-client-store": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:*",
-    "@deepseek-ai/dsh-client-config": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-client-locale": "workspace:*",
+    "@carnival/dsh-client-store": "workspace:*",
+    "@carnival/dsh-client-ui-primitives": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-client-test-runtime": "workspace:*",
+    "@carnival/dsh-client-config": "workspace:*"
   },
   "files": [
     "locale/*.json",
@@ -66,8 +61,8 @@
     "src"
   ],
   "dependencies": {
-    "@deepseek-ai/dsh-util-crypto": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/dsh-util-crypto": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/schemastery": "workspace:~"
   }
 }

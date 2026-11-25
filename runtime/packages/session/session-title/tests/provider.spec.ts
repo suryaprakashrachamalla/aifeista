@@ -1,18 +1,18 @@
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import { Context } from '@deepseek-ai/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import { Context } from '@carnival/cordis'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import LlmRuntime, { createUserMessage, markAgentLoopRequest } from '@deepseek-ai/dsh-llm'
-import { deepFreeze } from '@deepseek-ai/dsh-util-values'
-import SessionStore, { type SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionTitleProviderId } from '@deepseek-ai/dsh-session-title/types'
+import LlmRuntime, { createUserMessage, markAgentLoopRequest } from '@carnival/dsh-llm'
+import { deepFreeze } from '@carnival/dsh-util-values'
+import SessionStore, { type SessionId, SessionSeq } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionTitleProviderId } from '@carnival/dsh-session-title/types'
 import SessionTitleService, {
   type SessionTitleProvider,
   type SessionTitleProviderRequest,
   type SessionTitleProviderResult,
   type SessionTitleSnapshot,
-} from '@deepseek-ai/dsh-session-title'
+} from '@carnival/dsh-session-title'
 
 const CONFIG = {
   fallbackMaxWords: 5,

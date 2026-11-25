@@ -3,7 +3,7 @@ description: "通过宿主上的 GitLab CLI 为实验性 forge 注册表服务 G
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-forge-gitlab
+# @carnival/dsh-forge-gitlab
 
 [English](README.md) | 中文
 
@@ -28,8 +28,8 @@ kind: "package-reference"
 在 forge 注册表之后挂载提供方，并显式列出每个自建主机。Forge 插件包以 `gitlab.com` 挂载它。
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-forge-gitlab'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-forge-gitlab'
   config:
     hosts: [gitlab.com, gitlab.example.com]
 ```

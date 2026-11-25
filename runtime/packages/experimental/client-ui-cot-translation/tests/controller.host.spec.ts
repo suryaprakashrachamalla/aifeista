@@ -1,13 +1,13 @@
 /** Remote translation enforces accepted routing and sanitizes provider failures. */
-import { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session/types'
 import { afterEach, expect, it, vi } from 'vitest'
-import { TranslationError } from '@deepseek-ai/dsh-experimental-translator'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { TranslationProvider, TranslationRequest } from '@deepseek-ai/dsh-experimental-translator/types'
+import { TranslationError } from '@carnival/dsh-experimental-translator'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import type { TranslationProvider, TranslationRequest } from '@carnival/dsh-experimental-translator/types'
 import type { CotTranslationPreferences } from '../src/preferences.ts'
 import CotTranslationController from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const roots: Context[] = []
 afterEach(async () => { await Promise.all(roots.splice(0).map(ctx => ctx.fiber.dispose())) })

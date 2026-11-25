@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { stubConfigForm, type StubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
-import type { LocaleSettings, LocaleSnapshot } from '@deepseek-ai/dsh-client-locale/client'
+import { Context } from '@carnival/cordis'
+import { stubConfigForm, type StubConfigForm } from '@carnival/dsh-client-test-runtime'
+import type { LocaleSettings, LocaleSnapshot } from '@carnival/dsh-client-locale/client'
 import { zh, en, ja } from '../src/locales/settings.ts'
-import { FALLBACK_LOCALE, LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
+import { FALLBACK_LOCALE, LocaleRuntime } from '@carnival/dsh-client-locale/client'
 const make = (host?: StubConfigForm<LocaleSettings>): {
   ctx: Context
   svc: LocaleRuntime

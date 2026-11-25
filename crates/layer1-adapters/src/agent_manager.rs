@@ -11,7 +11,7 @@ use serde_json::{json, Value};
 use tokio::sync::broadcast;
 use uuid::Uuid;
 
-use crate::openbitfun::OpenBitFunAdapter;
+use crate::workspace_core::WorkspaceCoreAdapter;
 
 const MAX_RAW_LOG_BYTES: usize = 256 * 1024;
 const MAX_MASKED_TURNS: usize = 120;
@@ -462,7 +462,7 @@ fn classify_line_turn(line: &str) -> MaskedTurn {
 
 struct ManagerInner {
     default_workspace: PathBuf,
-    openbitfun: Option<OpenBitFunAdapter>,
+    workspace_core: Option<WorkspaceCoreAdapter>,
     agents: RwLock<HashMap<String, Arc<Mutex<AgentRecord>>>>,
     order: RwLock<Vec<String>>,
     events_tx: broadcast::Sender<Value>,
@@ -474,12 +474,12 @@ pub struct AgentManager {
 }
 
 impl AgentManager {
-    pub fn new(default_workspace: impl Into<PathBuf>, openbitfun: Option<OpenBitFunAdapter>) -> Self {
+    pub fn new(default_workspace: impl Into<PathBuf>, workspace_core: Option<WorkspaceCoreAdapter>) -> Self {
         let (events_tx, _) = broadcast::channel(256);
         Self {
             inner: Arc::new(ManagerInner {
                 default_workspace: default_workspace.into(),
-                openbitfun,
+                workspace_core,
                 agents: RwLock::new(HashMap::new()),
                 order: RwLock::new(Vec::new()),
                 events_tx,
@@ -823,9 +823,9 @@ impl AgentManager {
 
         let search_hits = self
             .inner
-            .openbitfun
+            .workspace_core
             .as_ref()
-            .map(|obf| obf.index.search(&initial_prompt, 4))
+            .map(|core| core.index.search(&initial_prompt, 4))
             .unwrap_or_default();
         let hit_summary = if search_hits.is_empty() {
             "Ready — send prompts below to query workspace, stage plans, or inspect diffs.".to_string()
@@ -1076,9 +1076,9 @@ impl AgentManager {
         let ts = now_ms();
         let matches = self
             .inner
-            .openbitfun
+            .workspace_core
             .as_ref()
-            .map(|obf| obf.index.search(trimmed, 5))
+            .map(|core| core.index.search(trimmed, 5))
             .unwrap_or_default();
 
         let response_text = if matches.is_empty() {

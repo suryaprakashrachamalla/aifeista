@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-plugin-recommendations",
+  "name": "@carnival/dsh-plugin-recommendations",
   "description": "Official plugin suggestions with explicit user activation and persistent conversation decisions",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/extensions/plugin-recommendations"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -37,29 +32,29 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-plugin-manager": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*"
+    "@carnival/dsh-plugin-manager": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-plugin-manager": "workspace:*",
-    "@deepseek-ai/dsh-package-manifest": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-plugin-manager": "workspace:*",
+    "@carnival/dsh-package-manifest": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*"
   },
   "dependencies": {
     "zod": "4.6.6",
-    "@deepseek-ai/dsh-client-ui-plugin-recommendations": "workspace:*",
-    "@deepseek-ai/dsh-action-cards": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-action-cards": "workspace:*"
+    "@carnival/dsh-client-ui-plugin-recommendations": "workspace:*",
+    "@carnival/dsh-action-cards": "workspace:*",
+    "@carnival/dsh-client-ui-action-cards": "workspace:*"
   },
   "files": [
     "icon.svg",

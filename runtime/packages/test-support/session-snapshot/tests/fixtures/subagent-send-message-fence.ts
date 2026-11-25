@@ -4,8 +4,8 @@
  * @module subagent-send-message-fence
  */
 
-import { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-agent-loop'
+import { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-agent-loop'
 
 /** Fixture plugin name. */
 export const name = 'subagent-send-message-fence'

@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url'
 import { strToU8, zipSync } from 'fflate'
 import { chromium, type Browser } from 'playwright'
 import { expect, it, onTestFailed } from 'vitest'
-import { SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
+import { SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
 import {
   assertFixtureInventory, fixtureUserPrompts, launchWebScaffold, recordFixture, selectedSessionFixture,
   watchConsole, webSnapshotMode, type WebScaffold,

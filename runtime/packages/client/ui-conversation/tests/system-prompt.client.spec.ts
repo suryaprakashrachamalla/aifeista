@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { SessionSeq, type SessionEvent } from '@deepseek-ai/dsh-session/types'
-import type { MessageId } from '@deepseek-ai/dsh-llm/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { SessionSeq, type SessionEvent } from '@carnival/dsh-session/types'
+import type { MessageId } from '@carnival/dsh-llm/types'
+import { brandString } from '@carnival/dsh-brand'
 import { inspectSystemPrompt, type SystemPromptState } from '../src/client/contract/system-prompt.ts'
 
 function system(seq: number, text: string, replaces?: number): SessionEvent<'system/message'> {

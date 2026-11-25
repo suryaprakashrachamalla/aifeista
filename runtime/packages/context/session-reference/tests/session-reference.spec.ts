@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry, { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
-import type { CompactionId } from '@deepseek-ai/dsh-compaction/types'
-import { compactCheckpointSource } from '@deepseek-ai/dsh-compaction'
-import LlmRuntime, { createDeveloperMessage, createMessage, createSystemMessage, createToolResultMessage, createUserMessage, LlmError, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import SessionStore, { Session, type SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SessionQueryEngine from '@deepseek-ai/dsh-session-query'
-import SessionTitleService from '@deepseek-ai/dsh-session-title'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
+import { Context } from '@carnival/cordis'
+import AgentRegistry, { agentEvents, type Agent } from '@carnival/dsh-agent'
+import type { CompactionId } from '@carnival/dsh-compaction/types'
+import { compactCheckpointSource } from '@carnival/dsh-compaction'
+import LlmRuntime, { createDeveloperMessage, createMessage, createSystemMessage, createToolResultMessage, createUserMessage, LlmError, type ToolCallId } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import SessionStore, { Session, type SessionId, SessionSeq } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SessionQueryEngine from '@carnival/dsh-session-query'
+import SessionTitleService from '@carnival/dsh-session-title'
+import SystemPrompt from '@carnival/dsh-system-prompt'
 import SessionReferenceResolver, {
   decodeSessionReferenceUri,
   encodeSessionReferenceUri,
@@ -17,12 +17,12 @@ import SessionReferenceResolver, {
   parseSessionReferenceText,
   type Config,
   type SessionReferenceErrorCode,
-} from '@deepseek-ai/dsh-session-reference'
+} from '@carnival/dsh-session-reference'
 import { stringifyTagSafeJson } from '../src/serialization.ts'
-import { type SpillLocator, SpillStore, type SaveTextSpill, type SpillRef } from '@deepseek-ai/dsh-spill'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { type SpillLocator, SpillStore, type SaveTextSpill, type SpillRef } from '@carnival/dsh-spill'
+import { brandString } from '@carnival/dsh-brand'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
     'workspace': { kind: 'workspace' } & ContextFormed

@@ -2,14 +2,14 @@
  * Feishu plugin: registers the managed lark-cli and its account with `ctx.cliAccounts`, which tells the model the CLI's
  * absolute path and shows the account on the Plugins page, and lists the packaged `feishu` skill that indexes the
  * guides embedded in that CLI. The CLI's default account is shared with the user's own terminal.
- * @module @deepseek-ai/dsh-feishu
+ * @module @carnival/dsh-feishu
  */
 
 import { fileURLToPath } from 'node:url'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-cli-account'
-import type {} from '@deepseek-ai/dsh-skill'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-cli-account'
+import type {} from '@carnival/dsh-skill'
 import { perform } from './account.ts'
 import { PROGRAM, resolveCliExecutable } from './cli.ts'
 import { dictionaries, type FeishuTextKey } from './locales.ts'

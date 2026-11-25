@@ -16,19 +16,19 @@
  * confirms it, and any other mention stays original text until a Host stat
  * answers.
  *
- * @module @deepseek-ai/dsh-client-ui-reference/client
+ * @module @carnival/dsh-client-ui-reference/client
  */
 // Type-only: pulls the generated Remote API and ctx.remote merge through the Client assembly boundary.
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
+import type {} from '@carnival/dsh-api-remotes/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { ISessions } from '@deepseek-ai/dsh-api-session-controller/client'
-import { sessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
-import { relativeTime } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { UserTextNodeProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type {} from '@carnival/dsh-client-locale/client'
+import type {} from '@carnival/dsh-client-ui-sidebar-right/client'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
+import type { Context as ClientContext } from '@carnival/cordis'
+import type { ISessions } from '@carnival/dsh-api-session-controller/client'
+import { sessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
+import { relativeTime } from '@carnival/dsh-client-ui-primitives'
+import type { UserTextNodeProps } from '@carnival/dsh-client-ui-conversation/client'
 import {
   FileReference, FolderReference, type FileReferenceInjected, type PathPresenceInjected,
 } from './FileReference.tsx'
@@ -37,15 +37,15 @@ import { fileReferenceRule, folderReferenceRule, mentionPath } from './user-text
 export type {} from './user-text-rules.ts'
 import type {
   ClientSessionContext, InputTriggerCrumb, InputTriggerServiceContract, InputTriggerSource,
-} from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import { formatFileMention } from '@deepseek-ai/dsh-file-reference/grammar'
-import type { FileReferenceCandidate } from '@deepseek-ai/dsh-file-reference/types'
-import type { SessionReferenceMentionCandidate } from '@deepseek-ai/dsh-session-reference/types'
-import { abbreviateHomePath, fileAddressFor, resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
+} from '@carnival/dsh-client-ui-input-trigger/client'
+import { formatFileMention } from '@carnival/dsh-file-reference/grammar'
+import type { FileReferenceCandidate } from '@carnival/dsh-file-reference/types'
+import type { SessionReferenceMentionCandidate } from '@carnival/dsh-session-reference/types'
+import { abbreviateHomePath, fileAddressFor, resolveWorkspacePath } from '@carnival/dsh-util-workspace-path'
 import { en, ja, es, fr, de, ru, pt, NS, zh, type ReferenceKey } from './locales.ts'
 import { registerReferenceMenu } from './context-menu.ts'
 
-declare module '@deepseek-ai/dsh-api-session-controller/client' {
+declare module '@carnival/dsh-api-session-controller/client' {
   interface SessionReferenceSourceMap {
     /** File and Session candidates waiting for initial history and their RPC results. */
     referenceCandidates: unknown

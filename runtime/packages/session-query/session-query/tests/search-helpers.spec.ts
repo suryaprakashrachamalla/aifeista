@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage, type ToolCallId, createMessage, createToolResultMessage } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import { createUserMessage, type ToolCallId, createMessage, createToolResultMessage } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import SessionStore, {
   SESSION_FORMAT_VERSION,
   type SessionId,
   SessionSeq,
-} from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { SessionEvent, SessionHeader } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import type { SessionEvent, SessionHeader } from '@carnival/dsh-session'
 import {
   buildSessionEventRecords,
   buildSessionEventSearchDocuments,
@@ -20,10 +20,10 @@ import {
   materializeSessionEventResultFilters,
   materializeSessionResultFilters,
   type SessionQueryErrorCode,
-} from '@deepseek-ai/dsh-session-query'
+} from '@carnival/dsh-session-query'
 import { TestSessionQueryEngine } from './test-service.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-experimental-api-speech-to-text",
+  "name": "@carnival/dsh-experimental-api-speech-to-text",
   "description": "Authenticated experimental speech transcription for browser clients",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/api-speech-to-text"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -50,17 +45,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-experimental-speech-to-text": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-experimental-speech-to-text": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*"
   }
 }

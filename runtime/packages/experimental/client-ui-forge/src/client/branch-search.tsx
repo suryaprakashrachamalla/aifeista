@@ -1,9 +1,9 @@
 /** The search shared by the branch pickers: the query, the listing it read, and the status a menu shows instead of rows. */
 
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
-import { Button, StateDot } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import { Button, StateDot } from '@carnival/dsh-client-ui-primitives'
+import type { PropsLocale } from '@carnival/dsh-client-ui-slots'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { NS } from './locales.ts'
 
 /** Milliseconds between the last keystroke of a search and the listing it reads. */

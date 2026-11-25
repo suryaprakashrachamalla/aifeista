@@ -2,11 +2,11 @@
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import SessionStore, { appendPluginRecord, type SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { type ReasoningEffortId, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type {} from '@deepseek-ai/dsh-experimental-translator/types'
+import { Context } from '@carnival/cordis'
+import SessionStore, { appendPluginRecord, type SessionId, type SessionEvent } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import { type ReasoningEffortId, createUserMessage } from '@carnival/dsh-llm'
+import type {} from '@carnival/dsh-experimental-translator/types'
 import { createProcessDeepSeekHarness } from '../src/api.ts'
 
 const expectedPath = fileURLToPath(new URL('./expected/cot-translation-projection.json', import.meta.url))

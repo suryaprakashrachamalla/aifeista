@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-settings-models",
+  "name": "@carnival/dsh-client-ui-settings-models",
   "description": "Models settings and shared product-onboarding dialogs over existing settings and credential joins",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/ui-settings-models"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -29,9 +24,9 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-ui-settings",
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-api-remotes"
+        "@carnival/dsh-client-ui-settings",
+        "@carnival/dsh-client-locale",
+        "@carnival/dsh-api-remotes"
       ],
       "platform": "web"
     }
@@ -42,27 +37,27 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:*",
-    "@deepseek-ai/dsh-client-locale": "workspace:*",
-    "@deepseek-ai/dsh-client-store": "workspace:*",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-settings": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
+    "@carnival/dsh-api-remotes": "workspace:*",
+    "@carnival/dsh-client-locale": "workspace:*",
+    "@carnival/dsh-client-store": "workspace:*",
+    "@carnival/dsh-client-test-runtime": "workspace:*",
+    "@carnival/dsh-client-ui-primitives": "workspace:*",
+    "@carnival/dsh-client-ui-settings": "workspace:*",
+    "@carnival/dsh-client-ui-slots": "workspace:*",
+    "@carnival/cordis": "workspace:~",
     "react": "^18.2.0",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/dsh-remote-mock": "workspace:*",
-    "@deepseek-ai/dsh-client-product-analytics": "workspace:*",
-    "@deepseek-ai/dsh-util-text-search": "workspace:*",
-    "@deepseek-ai/dsh-client-config": "workspace:*"
+    "@carnival/dsh-client-ui-renderer": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/dsh-remote-mock": "workspace:*",
+    "@carnival/dsh-client-product-analytics": "workspace:*",
+    "@carnival/dsh-util-text-search": "workspace:*",
+    "@carnival/dsh-client-config": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/schemastery": "workspace:~"
   },
   "files": [
     "locale/*.json",

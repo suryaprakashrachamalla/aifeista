@@ -1,19 +1,19 @@
 /** Mounted-only polling for the owner's pending pairing requests. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { ResourceProvider } from '@deepseek-ai/dsh-client-resources/client'
-import { RemoteError, remoteErrorOf } from '@deepseek-ai/dsh-typert-protocol'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import type { Context } from '@carnival/cordis'
+import type { ResourceProvider } from '@carnival/dsh-client-resources/client'
+import { RemoteError, remoteErrorOf } from '@carnival/dsh-typert-protocol'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import type { PairingRequestId, PairingRequestsValue } from '../types.ts'
-import type {} from '@deepseek-ai/dsh-client-remote-connection/remote'
+import type {} from '@carnival/dsh-client-remote-connection/remote'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface ResourceProtocolMap {
     /** Pairing requests whose displayed codes require owner approval. */
     'device-pairing': PairingRequestsValue
   }
 }
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@carnival/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     /** The approval-list read failed before a response was received. */
     'pairing/read-failed': {}

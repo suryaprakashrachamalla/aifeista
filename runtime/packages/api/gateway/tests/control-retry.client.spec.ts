@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-api-remotes/client'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import type { ConnectionHandle } from '@carnival/dsh-api-remotes/client'
 import {
   RemoteStreamCarrierError,
   RemoteStream,

@@ -1,7 +1,7 @@
 /** Native action descriptions retain JSON metadata and remain usable by schema-aware consumers. */
 import { expect, it } from 'vitest'
-import { assertObjectJsonSchema, validateJsonSchemaValue } from '@deepseek-ai/dsh-tools'
-import type { JsonSchemaNode, ObjectJsonSchema } from '@deepseek-ai/dsh-tools'
+import { assertObjectJsonSchema, validateJsonSchemaValue } from '@carnival/dsh-tools'
+import type { JsonSchemaNode, ObjectJsonSchema } from '@carnival/dsh-tools'
 import { ActionSchemaResult } from '../src/protocol.ts'
 
 function parameters(argument: JsonSchemaNode): ObjectJsonSchema {

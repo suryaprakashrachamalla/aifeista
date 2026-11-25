@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import { expect, it } from 'vitest'
-import type {} from '@deepseek-ai/dsh-token-meter'
+import type {} from '@carnival/dsh-token-meter'
 import { fixtureUserPrompts, launchWebScaffold } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage } from './support.ts'
 

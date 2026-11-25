@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionSearchCursor, SessionQueryErrorCode } from '@deepseek-ai/dsh-session-query'
+import type { SessionId } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionSearchCursor, SessionQueryErrorCode } from '@carnival/dsh-session-query'
 import {
   buildEventWhere,
   buildSessionWhere,

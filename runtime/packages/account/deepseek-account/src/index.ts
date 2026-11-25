@@ -1,17 +1,17 @@
 /** DeepSeek account service; browser approval never bypasses local cancellation. */
 import { randomBytes, randomUUID, createHash, timingSafeEqual } from 'node:crypto'
 import type { ServerResponse } from 'node:http'
-import type {} from '@deepseek-ai/dsh-host-webserver'
+import type {} from '@carnival/dsh-host-webserver'
 import { arch, platform, release } from 'node:os'
 import { promises as streamPromises } from 'node:stream'
-import { Context, Service } from '@deepseek-ai/cordis'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import Schema from '@deepseek-ai/schemastery'
+import { Context, Service } from '@carnival/cordis'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import Schema from '@carnival/schemastery'
 import { z } from 'zod'
 import { mergePlatformCookies, platformClientHeaders, platformWireLocale } from './client-metadata.ts'
 import { type AccountNotification, type AccountNotificationBatch, type AccountNotificationEvent, type AccountNotificationId, type AccountClientMetadata, type AccountDetails, type AccountRequestCredential, type AccountUserId, type AccountView, type AccountUpdate, type PlatformSession, type SignInAttemptId, type SignInAttemptView } from './types.ts'
-import { credentialKey } from '@deepseek-ai/dsh-credentials'
-import type { AuthorizationSession } from '@deepseek-ai/dsh-authorization'
+import { credentialKey } from '@carnival/dsh-credentials'
+import type { AuthorizationSession } from '@carnival/dsh-authorization'
 import { profile, readAccountDetail } from './details.ts'
 import { readNotificationContent, readNotifications, sendNotificationEvent } from './notifications.ts'
 import { revokeAccount, type LogoutRetryPolicy } from './logout.ts'
@@ -19,7 +19,7 @@ import { ACCOUNT_TOKEN_HEADER, AccountUnauthorizedError, PlatformAuthError, plat
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context { deepseekAccount: DeepSeekAccount }
   interface Events {
     /** Local grant removal has completed. After the listeners return, the `revoked` signal of that grant's request credentials aborts.

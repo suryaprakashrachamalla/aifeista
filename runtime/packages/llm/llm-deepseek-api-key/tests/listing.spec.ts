@@ -1,10 +1,10 @@
 /** The API-key route serves the official /models listing while its catalog is the built-in one. */
 import { afterEach, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import LlmRuntime from '@carnival/dsh-llm'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 import * as ApiKey from '../src/index.ts'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
 
 const LISTING_URL = 'https://api.deepseek.com/models'
 const MESSAGES = { output_modalities: ['text'], api_capabilities: { anthropic_messages: {} } }

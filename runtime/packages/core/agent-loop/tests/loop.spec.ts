@@ -1,21 +1,21 @@
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import LlmRuntime, { createUserMessage, type ToolCallId, LlmError, type ReasoningEffortId, StreamChunk, expandAssistantStream } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions } from '@deepseek-ai/dsh-llm'
-import SessionStore, { type SessionId, TurnEndReason } from '@deepseek-ai/dsh-session'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import AgentRegistry, { type Agent, type AssistantStreamFrame } from '@deepseek-ai/dsh-agent'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import LlmRuntime, { createUserMessage, type ToolCallId, LlmError, type ReasoningEffortId, StreamChunk, expandAssistantStream } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import type { GenerateOptions } from '@carnival/dsh-llm'
+import SessionStore, { type SessionId, TurnEndReason } from '@carnival/dsh-session'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
+import AgentRegistry, { type Agent, type AssistantStreamFrame } from '@carnival/dsh-agent'
 
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { MockAdapter, maxTokensResponse, textResponse, toolCallResponse } from './mock-adapter.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'loop-test': { kind: 'loop-test' } & ContextFormed
     'max-tokens-test': { kind: 'max-tokens-test' } & ContextFormed

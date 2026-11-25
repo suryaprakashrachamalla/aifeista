@@ -1,17 +1,17 @@
 /** The DingTalk account section the Plugins page shows for each Host view. */
-import type { CliAccountText } from '@deepseek-ai/dsh-cli-account/types'
+import type { CliAccountText } from '@carnival/dsh-cli-account/types'
 import type {
   ConnectorAccountButton, ConnectorAccountCopy, ConnectorAccountDisplay, ConnectorAccountFailure,
   ConnectorAccountOperation,
-} from '@deepseek-ai/dsh-client-ui-connector-account/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-client-ui-connector-account/types'
+import { assertNever } from '@carnival/dsh-util-values'
 import type { DingtalkTextKey } from './locales.ts'
 import type { DingtalkOperationKind, DingtalkState } from './types.ts'
 
 type Text = CliAccountText<DingtalkTextKey>
 
 /** The npm package whose bundle page carries the account section. */
-export const DINGTALK_PACKAGE = '@deepseek-ai/dsh-dingtalk'
+export const DINGTALK_PACKAGE = '@carnival/dsh-dingtalk'
 
 /* jscpd:ignore-start -- CLI app plugins declare page operations, copy, and commands alike, each with its own text. */
 /**

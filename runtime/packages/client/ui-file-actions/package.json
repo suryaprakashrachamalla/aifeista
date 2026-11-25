@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-file-actions",
+  "name": "@carnival/dsh-client-ui-file-actions",
   "description": "Original-file saving and image clipboard actions for Web and Desktop",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/ui-file-actions"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,10 +27,10 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-context-menu",
-        "@deepseek-ai/dsh-api-workspace-files",
-        "@deepseek-ai/dsh-api-session-controller"
+        "@carnival/dsh-client-locale",
+        "@carnival/dsh-client-ui-context-menu",
+        "@carnival/dsh-api-workspace-files",
+        "@carnival/dsh-api-session-controller"
       ],
       "platform": "web"
     }
@@ -46,24 +41,24 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
     "react": "^18.2.0",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:*",
-    "@deepseek-ai/dsh-api-session-controller": "workspace:*",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:*",
-    "@deepseek-ai/dsh-util-file-drag": "workspace:*",
-    "@deepseek-ai/dsh-client-locale": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-context-menu": "workspace:*",
-    "@deepseek-ai/dsh-api-workspace-files": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-util-workspace-path": "workspace:*",
+    "@carnival/dsh-client-ui-primitives": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-client-ui-slots": "workspace:*",
+    "@carnival/dsh-api-session-controller": "workspace:*",
+    "@carnival/dsh-client-test-runtime": "workspace:*",
+    "@carnival/dsh-util-file-drag": "workspace:*",
+    "@carnival/dsh-client-locale": "workspace:*",
+    "@carnival/dsh-client-ui-context-menu": "workspace:*",
+    "@carnival/dsh-api-workspace-files": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-util-workspace-path": "workspace:*",
     "mime": "^4.1.0",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:*"
+    "@carnival/dsh-client-ui-renderer": "workspace:*"
   },
   "files": [
     "locale/*.json",

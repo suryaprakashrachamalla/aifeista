@@ -44,30 +44,30 @@ const DEV_ONLY_AREAS = [
 /** Third-party implementations embedded by named Host packages' shipping build configurations. */
 const HOST_BUNDLED_DEPENDENCIES: Readonly<Record<string, readonly string[]>> = {
   // subagent-oar/tsdown.config.ts embeds the patched adapter instead of installing a second copy.
-  '@deepseek-ai/dsh-experimental-subagent-oar': ['@botiverse/oar'],
+  '@carnival/dsh-experimental-subagent-oar': ['@botiverse/oar'],
 }
 
 /** First-party public native packages: reachable at runtime but not third-party. */
 const FIRST_PARTY = new Set([
-  '@deepseek-ai/node-addon-system',
-  '@deepseek-ai/node-addon-system-darwin-arm64',
-  '@deepseek-ai/node-addon-system-darwin-x64',
-  '@deepseek-ai/node-addon-system-linux-arm64',
-  '@deepseek-ai/node-addon-system-linux-x64',
+  '@carnival/node-addon-system',
+  '@carnival/node-addon-system-darwin-arm64',
+  '@carnival/node-addon-system-darwin-x64',
+  '@carnival/node-addon-system-linux-arm64',
+  '@carnival/node-addon-system-linux-x64',
 ])
 
 /** Official SDK identity covered by the project's narrow owner authorization. */
 export const CLAUDE_AGENT_SDK_PACKAGE = '@anthropic-ai/claude-agent-sdk'
 const CLAUDE_PLATFORM_PACKAGE_PREFIX = `${CLAUDE_AGENT_SDK_PACKAGE}-`
 const CLAUDE_PLATFORM_DECLARED_LICENSE = 'SEE LICENSE IN LICENSE.md'
-const LIBREOFFICE_KIT_PACKAGE = '@deepseek-ai/libreoffice-kit'
+const LIBREOFFICE_KIT_PACKAGE = '@carnival/libreoffice-kit'
 const LIBREOFFICE_PACKAGES = new Set([
   LIBREOFFICE_KIT_PACKAGE,
-  '@deepseek-ai/libreoffice-kit-wasm',
-  '@deepseek-ai/libreoffice-kit-darwin-arm64',
-  '@deepseek-ai/libreoffice-kit-darwin-x64',
-  '@deepseek-ai/libreoffice-kit-win32-arm64',
-  '@deepseek-ai/libreoffice-kit-win32-x64',
+  '@carnival/libreoffice-kit-wasm',
+  '@carnival/libreoffice-kit-darwin-arm64',
+  '@carnival/libreoffice-kit-darwin-x64',
+  '@carnival/libreoffice-kit-win32-arm64',
+  '@carnival/libreoffice-kit-win32-x64',
 ])
 
 /**
@@ -796,7 +796,7 @@ The complete npm transitive closure, including the Landlock launcher workspace, 
 
 ## Vendored source (\`vendor/\`)
 
-The Cordis framework and its foundation libraries are source-vendored into this repository rather than consumed from npm, and republished under the \`@deepseek-ai\` scope. All are MIT-licensed; each directory preserves its upstream \`LICENSE\` file. Exact upstream commits and local modifications are recorded in [\`vendor/README.md\`](vendor/README.md).
+The Cordis framework and its foundation libraries are source-vendored into this repository rather than consumed from npm, and republished under the \`@carnival\` scope. All are MIT-licensed; each directory preserves its upstream \`LICENSE\` file. Exact upstream commits and local modifications are recorded in [\`vendor/README.md\`](vendor/README.md).
 
 | Package | Upstream name | Source | License |
 | --- | --- | --- | --- |
@@ -822,7 +822,7 @@ ${kitRuntime ? `
 
 ${[...LIBREOFFICE_PACKAGES].map(name => `\`${name}\``).join(', ')} declare MPL-2.0, which remains outside the permissive-license allowlist; the notices check accepts only these package identities at those terms. The [distribution decision](.agents/notes/implemented/architecture/2026-09-14-independent-libreoffice-kit.md) records the source obligations.
 
-The [kit repository](https://github.com/deepseek-ai/dsh-libreoffice-kit) supplies the corresponding LibreOffice source pin, modifications, build instructions, Node API, and artifact validation. Its engine packages retain their license and third-party notices; the Node API retains its MPL-2.0 declaration and NOTICE. Recipients must have access to those corresponding sources and notices.
+The [kit repository](https://carnival.local) supplies the corresponding LibreOffice source pin, modifications, build instructions, Node API, and artifact validation. Its engine packages retain their license and third-party notices; the Node API retains its MPL-2.0 declaration and NOTICE. Recipients must have access to those corresponding sources and notices.
 ` : ''}
 
 ## Development-only npm dependencies
@@ -850,7 +850,7 @@ ${bundledPython.map(dep => `| [\`${dep.name}\`](${dep.repo}) | ${dep.version} | 
 
 ## First-party native packages
 
-\`@deepseek-ai/node-addon-system\` (and its platform packages) is built and released from this repository under BSD 3-Clause. It is listed here for completeness; it is first-party, not third-party.
+\`@carnival/node-addon-system\` (and its platform packages) is built and released from this repository under BSD 3-Clause. It is listed here for completeness; it is first-party, not third-party.
 `
 }
 

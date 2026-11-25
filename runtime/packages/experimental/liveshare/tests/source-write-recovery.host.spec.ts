@@ -10,12 +10,12 @@
  * the reader wait and without leaving the share writable when it cannot be driven.
  */
 
-import { Context } from '@deepseek-ai/cordis'
-import { Peer } from '@deepseek-ai/dsh-client-connection'
-import RemoteAccessService from '@deepseek-ai/dsh-api-remote-access'
+import { Context } from '@carnival/cordis'
+import { Peer } from '@carnival/dsh-client-connection'
+import RemoteAccessService from '@carnival/dsh-api-remote-access'
 import { randomUUID } from 'node:crypto'
-import { createScope } from '@deepseek-ai/dsh-scope'
-import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
+import { createScope } from '@carnival/dsh-scope'
+import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -24,13 +24,13 @@ import type {
   TunnelRegistrationToken,
   TunnelRequestToken,
   TunnelWorkerEvent,
-} from '@deepseek-ai/dsh-experimental-liveshare-protocol'
+} from '@carnival/dsh-experimental-liveshare-protocol'
 import type {} from '../src/index.ts'
 import { apply } from '../src/host/share-host.ts'
 import { SHARED_TOOL_PROFILES } from '../src/host/shared-tools.ts'
 import type { TunnelWorkerInput } from '../src/host/tunnel-worker.ts'
 import { shareViewerPrincipal } from '../src/host/viewer-principal.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const worker = vi.hoisted(() => ({
   event: undefined as ((event: TunnelWorkerEvent) => void) | undefined,

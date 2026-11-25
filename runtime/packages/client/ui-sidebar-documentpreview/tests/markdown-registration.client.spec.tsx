@@ -2,15 +2,15 @@
 /** Markdown metadata, deferred slot registration, localization, and unload through the real renderer. */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, waitFor } from '@testing-library/react'
-import { apply as resourcesApply, inject as resourcesInject } from '@deepseek-ai/dsh-client-resources/src/client/index.ts'
-import { SlotTestRuntime } from '@deepseek-ai/dsh-client-test-runtime'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import type { UseSidebarRightTabInfo } from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { apply as resourcesApply, inject as resourcesInject } from '@carnival/dsh-client-resources/src/client/index.ts'
+import { SlotTestRuntime } from '@carnival/dsh-client-test-runtime'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import type { UseSidebarRightTabInfo } from '@carnival/dsh-client-ui-sidebar-right/client'
+import type { SessionId } from '@carnival/dsh-session/types'
 import { DocumentPreviewRegistry } from '../src/client/document/registry.ts'
 import { documentTabInfoFactory } from '../src/client/document/contract.ts'
 import { apply, MARKDOWN_BODY_ID, markdownDefinition } from '../src/client/markdown/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const runtimes: SlotTestRuntime[] = []
 

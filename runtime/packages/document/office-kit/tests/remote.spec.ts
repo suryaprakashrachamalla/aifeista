@@ -2,13 +2,13 @@
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { WorkspaceFiles } from '@deepseek-ai/dsh-api-workspace-files'
-import type { FileSystem, FsInfo, FsTarget } from '@deepseek-ai/dsh-fs'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { WorkspaceFiles } from '@carnival/dsh-api-workspace-files'
+import type { FileSystem, FsInfo, FsTarget } from '@carnival/dsh-fs'
+import { brandString } from '@carnival/dsh-brand'
 import { OfficeKitError, type OfficeKitKey, type OfficeKitResult } from '../src/index.ts'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import OfficeKit from '../src/index.ts'
 import { expectDefaultOutputsUntouched } from './default-outputs.ts'
@@ -18,9 +18,9 @@ const home = await vi.hoisted(async () => {
   const { tmpdir } = await import('node:os')
   return mkdtemp(`${tmpdir()}/dsh-office-kit-home-`)
 })
-vi.mock('@deepseek-ai/dsh-home-paths', async (original) => {
+vi.mock('@carnival/dsh-home-paths', async (original) => {
   const path = await import('node:path')
-  return { ...await original<typeof import('@deepseek-ai/dsh-home-paths')>(), dshHomePath: (...segments: string[]) => path.join(home, ...segments) }
+  return { ...await original<typeof import('@carnival/dsh-home-paths')>(), dshHomePath: (...segments: string[]) => path.join(home, ...segments) }
 })
 expectDefaultOutputsUntouched(home)
 

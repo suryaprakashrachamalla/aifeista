@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-deepseek-account",
+  "name": "@carnival/dsh-deepseek-account",
   "description": "Sign in to DeepSeek and manage account credentials and notifications",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/account/deepseek-account"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -54,26 +49,26 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/dsh-authorization": "workspace:*",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-host-webserver": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/dsh-authorization": "workspace:*",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-host-webserver": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/dsh-authorization": "workspace:*",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-host-webserver": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/dsh-authorization": "workspace:*",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-host-webserver": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   }
 }

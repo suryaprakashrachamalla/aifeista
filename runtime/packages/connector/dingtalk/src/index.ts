@@ -4,19 +4,19 @@
  * account on the Plugins page, and registers the `dingtalk` skill once its root is published. In a profile, the
  * release in place replaces the earlier ones in that profile's cache directory. The CLI's sign-in is shared with the
  * user's own terminal.
- * @module @deepseek-ai/dsh-dingtalk
+ * @module @carnival/dsh-dingtalk
  */
 
 /* jscpd:ignore-start -- CLI app plugins compose the same Service, registry, and skill-loading imports. */
 import { join } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import * as SkillFilesystem from '@deepseek-ai/dsh-skill-filesystem'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import * as SkillFilesystem from '@carnival/dsh-skill-filesystem'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
 // Declares `Context.profileContext`, the launcher-provided profile that owns the downloads.
-import type {} from '@deepseek-ai/dsh-app-boot'
-import type {} from '@deepseek-ai/dsh-cli-account'
-import type {} from '@deepseek-ai/dsh-skill'
+import type {} from '@carnival/dsh-app-boot'
+import type {} from '@carnival/dsh-cli-account'
+import type {} from '@carnival/dsh-skill'
 import { performWith } from './account.ts'
 import { dictionaries, type DingtalkTextKey } from './locales.ts'
 import { copy, DINGTALK_PACKAGE, operations, presentAccount } from './presentation.ts'

@@ -1,8 +1,8 @@
 /** Durable MCP OAuth records and refresh serialized by the credential provider. */
 import { createHash } from 'node:crypto'
-import type { Context } from '@deepseek-ai/cordis'
-import { credentialKey, credentialKeyId, credentialKeyScope, parseCredentialKey } from '@deepseek-ai/dsh-credentials'
-import type { CredentialKey, CredentialRecord } from '@deepseek-ai/dsh-credentials'
+import type { Context } from '@carnival/cordis'
+import { credentialKey, credentialKeyId, credentialKeyScope, parseCredentialKey } from '@carnival/dsh-credentials'
+import type { CredentialKey, CredentialRecord } from '@carnival/dsh-credentials'
 import { OAuthClientInformationFullSchema, OAuthClientInformationSchema, OAuthMetadataSchema, OAuthTokensSchema, OpenIdProviderMetadataSchema } from '@modelcontextprotocol/core'
 import { refreshAuthorization } from '@modelcontextprotocol/client'
 import type { AuthProvider, FetchLike, StoredOAuthClientInformation } from '@modelcontextprotocol/client'

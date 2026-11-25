@@ -1,10 +1,10 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { Context } from '@deepseek-ai/cordis'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import { bindScopeParent, createScope, type ScopeKey } from '@deepseek-ai/dsh-scope'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import SystemPrompt, { renderPrompt } from '@carnival/dsh-system-prompt'
+import { bindScopeParent, createScope, type ScopeKey } from '@carnival/dsh-scope'
 import { afterEach, describe, expect, it } from 'vitest'
-import * as Persona from '@deepseek-ai/dsh-persona'
-import { PERSONA_SUFFIX_SECTION, PERSONA_PREFIX_SECTION } from '@deepseek-ai/dsh-persona'
+import * as Persona from '@carnival/dsh-persona'
+import { PERSONA_SUFFIX_SECTION, PERSONA_PREFIX_SECTION } from '@carnival/dsh-persona'
 
 const contexts: Context[] = []
 afterEach(async () => {

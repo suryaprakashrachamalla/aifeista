@@ -1,16 +1,16 @@
 /** Composer menu grouping, localized labels, descriptions, and icons. */
 import type { ComponentType } from 'react'
-import type { InputTriggerCandidate } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
+import type { InputTriggerCandidate } from '@carnival/dsh-client-ui-input-trigger/client'
 import {
   IconCompactOutlineRegular, IconDownloadOutlineRegular,
   IconGoalOutlineRegular, IconPaperPlaneOutlineRegular, IconPlanOutlineRegular,
   PermissionIconFullAccessRegular,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { IconProps } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { TranslateNS } from '@deepseek-ai/dsh-client-locale/client'
-import type { CommandDescriptor } from '@deepseek-ai/dsh-commands/types'
+} from '@carnival/dsh-client-ui-primitives'
+import type { IconProps } from '@carnival/dsh-client-ui-primitives'
+import type { TranslateNS } from '@carnival/dsh-client-locale/client'
+import type { CommandDescriptor } from '@carnival/dsh-commands/types'
 import type { CommandKey } from './locales.ts'
-import { builtinCommandName, type BuiltinCommandName } from '@deepseek-ai/dsh-commands/builtin'
+import { builtinCommandName, type BuiltinCommandName } from '@carnival/dsh-commands/builtin'
 
 /** The menu's two sections. */
 export type MenuSection = 'add' | 'commands'

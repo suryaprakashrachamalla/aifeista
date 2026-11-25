@@ -1,5 +1,5 @@
 /**
- * Integration tests: the REAL `@deepseek-ai/dsh-pwsh-local` executor plus the
+ * Integration tests: the REAL `@carnival/dsh-pwsh-local` executor plus the
  * `pwsh` tool, exercised through `executeToolFixture()` with a real PowerShell
  * process. These verify the world — actual commands run, stdout/stderr come
  * back, exit codes render, timeouts abort, background jobs settle through the
@@ -8,27 +8,27 @@
  * PowerShell); the fake-executor suite (tools.spec.ts) carries the coverage
  * gate.
  */
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { Context } from '@deepseek-ai/cordis'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED } from '@deepseek-ai/dsh-tools'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import * as ToolJobs from '@deepseek-ai/dsh-tool-jobs'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import { PwshLocalExecutor, resolvePwshPath } from '@deepseek-ai/dsh-pwsh-local'
-import * as ToolPwsh from '@deepseek-ai/dsh-tool-pwsh'
-import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
+import { Context } from '@carnival/cordis'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED } from '@carnival/dsh-tools'
+import LocalJobRegistry from '@carnival/dsh-jobs-local'
+import * as ToolJobs from '@carnival/dsh-tool-jobs'
+import LocalSubprocessRuntime from '@carnival/dsh-subprocess-local'
+import { PwshLocalExecutor, resolvePwshPath } from '@carnival/dsh-pwsh-local'
+import * as ToolPwsh from '@carnival/dsh-tool-pwsh'
+import * as BashEnvPlugin from '@carnival/dsh-shell-env'
 
 const testToolSignal = new AbortController().signal
 

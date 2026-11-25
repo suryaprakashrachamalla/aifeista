@@ -4,7 +4,7 @@
  * choices while its scope is retained, across hiding and showing the panel.
  */
 
-import { defineStore, type EngineStoreHandle } from '@deepseek-ai/dsh-client-store'
+import { defineStore, type EngineStoreHandle } from '@carnival/dsh-client-store'
 
 /** Card choices of one Session. */
 export interface ChangeRequestsSectionState {

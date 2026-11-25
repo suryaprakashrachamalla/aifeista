@@ -1,9 +1,9 @@
 /** OAuth management through the real profile loader, SDK, and durable credential provider. */
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { ToolCallId } from '@deepseek-ai/dsh-llm'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { ToolCallId } from '@carnival/dsh-llm'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 import { Client, UnauthorizedError } from '@modelcontextprotocol/client'
-import { McpOAuthCredentials } from '@deepseek-ai/dsh-mcp-client/src/oauth-credentials.ts'
+import { McpOAuthCredentials } from '@carnival/dsh-mcp-client/src/oauth-credentials.ts'
 import { callback, oauthWorld, phase } from '../../mcp-client/tests/oauth-fixture.ts'
 import { managerProfile } from './profile-fixture.ts'
 import type { McpManagedServerView } from '../src/types.ts'

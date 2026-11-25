@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import {
   AssistantStreamAccumulator,
   BlockAssembler,
@@ -17,8 +17,8 @@ import {
   lastAssistantStreamChunk,
   runFirstTokenTime,
   runFirstVisibleTime,
-} from '@deepseek-ai/dsh-llm'
-import type { AssistantStreamRecord, AssistantStreamRun, StreamChunk, TimedStreamChunk } from '@deepseek-ai/dsh-llm'
+} from '@carnival/dsh-llm'
+import type { AssistantStreamRecord, AssistantStreamRun, StreamChunk, TimedStreamChunk } from '@carnival/dsh-llm'
 
 describe('AssistantStreamAccumulator', () => {
   it('keeps delta boundaries and timestamps while compacting one attempt', () => {

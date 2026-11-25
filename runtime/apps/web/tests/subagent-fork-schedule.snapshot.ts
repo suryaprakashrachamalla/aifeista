@@ -3,19 +3,19 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SubagentPromptRequestId } from '@deepseek-ai/dsh-subagent'
-import { createUserMessage, type ContentBlock } from '@deepseek-ai/dsh-llm'
-import { parseSessionLog, prepareSessionSnapshotFixtureForComparison } from '@deepseek-ai/dsh-llm-replay'
-import type { Session } from '@deepseek-ai/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import type { SubagentPromptRequestId } from '@carnival/dsh-subagent'
+import { createUserMessage, type ContentBlock } from '@carnival/dsh-llm'
+import { parseSessionLog, prepareSessionSnapshotFixtureForComparison } from '@carnival/dsh-llm-replay'
+import type { Session } from '@carnival/dsh-session'
 import {
   fixtureContext, normalizeSessionSnapshots, normalizedSystemPrompts, normalizedToolSchemas,
   formatSystemPromptSnapshot, parseToolSchemasSnapshot, redactSessionSnapshotIds, refreshFixtureReplacements,
   scrubSessionSnapshot, stabilizeFixtureMessageIds, stabilizeRefreshLog, tokenizeSessionFixtureCwd,
-} from '@deepseek-ai/dsh-session-snapshot'
-import type {} from '@deepseek-ai/dsh-api-session-controller'
-import type {} from '@deepseek-ai/dsh-schedule'
-import type {} from '@deepseek-ai/dsh-subagent'
+} from '@carnival/dsh-session-snapshot'
+import type {} from '@carnival/dsh-api-session-controller'
+import type {} from '@carnival/dsh-schedule'
+import type {} from '@carnival/dsh-subagent'
 import {
   fixtureUserPrompts, launchWebScaffold, normalizeWebSessionVolatiles, rawSessionLog, readPersistedEvents,
   recordedSessionFixturePath, selectedSessionFixture, webSnapshotMode,

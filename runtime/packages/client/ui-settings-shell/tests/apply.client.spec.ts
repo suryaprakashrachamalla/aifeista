@@ -1,12 +1,12 @@
 /** What the browser half registers, when, and that it all leaves with the fiber. */
 
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { describe, expect, it, vi } from 'vitest'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import { RemoteError, TestRemote } from '@deepseek-ai/dsh-client-test-runtime'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { apply as settingsApply, inject as settingsInject } from '@deepseek-ai/dsh-client-ui-settings/client'
+import { resolveSlotLabel } from '@carnival/dsh-client-ui-slots'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
+import { RemoteError, TestRemote } from '@carnival/dsh-client-test-runtime'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import { apply as settingsApply, inject as settingsInject } from '@carnival/dsh-client-ui-settings/client'
 import { apply, inject, NS } from '../src/client/index.ts'
 import type { ShellCardFace } from '../src/client/index.ts'
 import { apply as hostApply } from '../src/index.ts'

@@ -10,8 +10,8 @@ import {
   type SessionHeader,
   type SessionSeq as SessionSeqType,
   type SessionSeqCursor,
-} from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
 
 describe('Session log positions', () => {
   it('admits non-negative safe integers into distinct sequence roles', () => {

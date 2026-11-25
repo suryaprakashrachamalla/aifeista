@@ -1,5 +1,5 @@
 /** Theme CSS is compiled into module resources; DPR presentation follows the plugin lifetime. */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import '../styles/base.css'
 import '../styles/corner-shape.css'
 import '../styles/design-platform.css'

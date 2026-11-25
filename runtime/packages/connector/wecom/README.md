@@ -3,7 +3,7 @@ description: "Add the WeCom plugin to a profile: the official wecom-cli with its
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-wecom
+# @carnival/dsh-wecom
 
 English | [中文](README.zh.md)
 
@@ -30,8 +30,8 @@ The WeCom plugin lets conversations use WeCom through the official `wecom-cli`. 
 Install the plugin from the Web sidebar's **Plugins** page or with the CLI:
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-wecom
-dsh plugin --profile web remove @deepseek-ai/dsh-wecom
+dsh plugin --profile web add @carnival/dsh-wecom
+dsh plugin --profile web remove @carnival/dsh-wecom
 ```
 
 `@wecom/cli` ships its native binary in a platform package such as `@wecom/cli-darwin-arm64`, which installs without a build script. When no platform package matches the computer, or the executable is missing, the `wecom` row fails to load with an error that names the missing package or path.

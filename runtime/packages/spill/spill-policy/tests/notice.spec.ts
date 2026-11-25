@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { SpillLocator } from '@deepseek-ai/dsh-spill'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { SpillLocator } from '@carnival/dsh-spill'
+import { brandString } from '@carnival/dsh-brand'
 import { formatSpillNotice, hasSpillNotice } from '../src/notice.ts'
 
 const ref = { locator: brandString<SpillLocator>('/spill/output.txt'), retrievalHint: 'Read the file.' }

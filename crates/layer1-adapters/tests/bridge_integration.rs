@@ -7,8 +7,8 @@ use layer0_core::{default_workspace_roots, SeamRegistry, WorkspaceIndex};
 use layer0_sandbox::PrivacyGuard;
 use layer0_store::EventStore;
 use layer1_adapters::{
-    spawn_bridge_servers, AgentManager, AppState, OpenBitFunAdapter, OverlayState,
-    RemoteHandoffManager, StudioRecipes,
+    spawn_bridge_servers, AgentManager, AppState, OverlayState, RemoteHandoffManager,
+    StudioRecipes, WorkspaceCoreAdapter,
 };
 use layer1_cordis_bus::{CordisBus, CordisConfig};
 use layer1_router::OptimizationMiddleware;
@@ -46,7 +46,7 @@ async fn http_request(
 }
 
 #[tokio::test]
-async fn clicky_8787_and_bridge_32123_end_to_end() {
+async fn companion_8787_and_bridge_32123_end_to_end() {
     let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .canonicalize()
@@ -55,14 +55,14 @@ async fn clicky_8787_and_bridge_32123_end_to_end() {
     let registry = SeamRegistry::new(repo_root.display().to_string());
     let store = EventStore::open_in_memory().unwrap();
     let index = WorkspaceIndex::new(default_workspace_roots(&repo_root));
-    let openbitfun = OpenBitFunAdapter::new(&repo_root, index);
-    registry.mount(Arc::new(openbitfun.clone())).unwrap();
+    let workspace_core = WorkspaceCoreAdapter::new(&repo_root, index);
+    registry.mount(Arc::new(workspace_core.clone())).unwrap();
 
     let cordis = CordisBus::new(CordisConfig::default_for_repo(&repo_root));
     let optimizer = OptimizationMiddleware::default();
     let privacy_guard = PrivacyGuard::new();
     let cua_envelope = CapabilityEnvelope {
-        subject: "clicky-cua".into(),
+        subject: "carnival-cua".into(),
         fs_read: vec![repo_root.display().to_string()],
         fs_write: vec![],
         network_allow: false,
@@ -77,12 +77,12 @@ async fn clicky_8787_and_bridge_32123_end_to_end() {
         store: store.clone(),
         cordis: cordis.clone(),
         optimizer,
-        openbitfun: openbitfun.clone(),
+        workspace_core: workspace_core.clone(),
         privacy_guard,
         cua_envelope,
         overlay_state: Arc::new(RwLock::new(OverlayState::default())),
         window_tx: None,
-        agent_manager: AgentManager::new(&repo_root, Some(openbitfun)),
+        agent_manager: AgentManager::new(&repo_root, Some(workspace_core)),
         studio_recipes: StudioRecipes::new(cfg_tmp.path()),
         remote_handoff: RemoteHandoffManager::new(cfg_tmp.path(), &repo_root),
     };
@@ -96,7 +96,7 @@ async fn clicky_8787_and_bridge_32123_end_to_end() {
     })
     .to_string();
     let (chat_status, chat_resp) =
-        http_request(bound.clicky_addr, "POST", "/chat", Some(&chat_body)).await;
+        http_request(bound.companion_addr, "POST", "/chat", Some(&chat_body)).await;
     assert_eq!(chat_status, 200);
     assert!(chat_resp.contains("content_block_delta"));
     assert!(chat_resp.contains("[POINT:"));
@@ -291,6 +291,6 @@ async fn clicky_8787_and_bridge_32123_end_to_end() {
     .await;
 
     let _ = state.agent_manager.stop_all();
-    bound.clicky_handle.abort();
+    bound.companion_handle.abort();
     bound.bridge_handle.abort();
 }

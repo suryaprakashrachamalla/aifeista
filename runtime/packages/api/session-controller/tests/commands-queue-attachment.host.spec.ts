@@ -1,28 +1,28 @@
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent, Inbox } from '@deepseek-ai/dsh-agent'
-import { AttachmentError } from '@deepseek-ai/dsh-attachment'
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import { createUserMessage, type MessageId } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import TypertRegistry from '@carnival/dsh-typert-registry'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent, Inbox } from '@carnival/dsh-agent'
+import { AttachmentError } from '@carnival/dsh-attachment'
+import type { AttachmentId } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
+import type { ImageAttachmentRef } from '@carnival/dsh-attachment'
+import { createUserMessage, type MessageId } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import SessionStore, {
   Session, type SessionId, SessionLogOffset,
-} from '@deepseek-ai/dsh-session'
-import type { UserMessage } from '@deepseek-ai/dsh-session'
-import { snapshotSubagentDescriptor, SUBAGENT_DESCRIPTOR_VERSION } from '@deepseek-ai/dsh-subagent'
-import { subagentIdentityProjectionDefinition } from '@deepseek-ai/dsh-subagent/src/projection.ts'
+} from '@carnival/dsh-session'
+import type { UserMessage } from '@carnival/dsh-session'
+import { snapshotSubagentDescriptor, SUBAGENT_DESCRIPTOR_VERSION } from '@carnival/dsh-subagent'
+import { subagentIdentityProjectionDefinition } from '@carnival/dsh-subagent/src/projection.ts'
 import { describe, expect, it, vi } from 'vitest'
 import { ApiSessionAgentController } from '../src/agent.ts'
 import { SessionCommandController } from '../src/commands.ts'
-import { unsupportedModel, createInboxStub } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { unsupportedModel, createInboxStub } from '@carnival/dsh-agent-loop-testkit'
 import { installSessionReadTestServices } from './test-remote.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

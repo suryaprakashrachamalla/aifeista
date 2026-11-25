@@ -1,8 +1,8 @@
 /** A context with the DeepSeek authentication service over stand-in credential planes. */
-import { Context } from '@deepseek-ai/cordis'
-import DeepSeekAuth, { type DeepSeekAuthCandidate, type DeepSeekAuthRequest, type DeepSeekAuthUnresolved } from '@deepseek-ai/dsh-deepseek-auth'
-import type { DeepSeekAccount } from '@deepseek-ai/dsh-deepseek-account'
-import { DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
+import { Context } from '@carnival/cordis'
+import DeepSeekAuth, { type DeepSeekAuthCandidate, type DeepSeekAuthRequest, type DeepSeekAuthUnresolved } from '@carnival/dsh-deepseek-auth'
+import type { DeepSeekAccount } from '@carnival/dsh-deepseek-account'
+import { DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@carnival/dsh-launch-environment'
 
 /** Credential planes of one test context. */
 export interface Planes {

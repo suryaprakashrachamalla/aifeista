@@ -6,12 +6,12 @@ import { homedir } from 'node:os'
 import type { Browser, Locator, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed, onTestFinished, vi } from 'vitest'
-import type {} from '@deepseek-ai/dsh-agent-team'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { CommandId } from '@deepseek-ai/dsh-commands/types'
-import { createMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import { abbreviateHomePath } from '@deepseek-ai/dsh-util-workspace-path'
+import type {} from '@carnival/dsh-agent-team'
+import type { SessionId } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import type { CommandId } from '@carnival/dsh-commands/types'
+import { createMessage, createUserMessage } from '@carnival/dsh-llm'
+import { abbreviateHomePath } from '@carnival/dsh-util-workspace-path'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold,

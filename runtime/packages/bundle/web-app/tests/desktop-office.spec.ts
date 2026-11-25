@@ -4,32 +4,32 @@ import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import { loadOverlayPatches } from '@deepseek-ai/dsh-app-boot'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
-import { dshHomePath } from '@deepseek-ai/dsh-home-paths'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import OfficeKit from '@deepseek-ai/dsh-office-kit'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@deepseek-ai/dsh-session'
-import { resolveKitModule } from '@deepseek-ai/dsh-office-kit/src/locate.ts'
-import SkillRegistry from '@deepseek-ai/dsh-skill'
-import * as SkillOffice from '@deepseek-ai/dsh-skill-office'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import * as ToolOffice from '@deepseek-ai/dsh-tool-office'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import * as WorkspaceDependencies from '@deepseek-ai/dsh-tool-workspace-dependencies'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import AgentRegistry from '@carnival/dsh-agent'
+import { loadOverlayPatches } from '@carnival/dsh-app-boot'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
+import LocalFileSystem from '@carnival/dsh-fs-local'
+import { dshHomePath } from '@carnival/dsh-home-paths'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import OfficeKit from '@carnival/dsh-office-kit'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { SESSION_FORMAT_VERSION, Session, type SessionId } from '@carnival/dsh-session'
+import { resolveKitModule } from '@carnival/dsh-office-kit/src/locate.ts'
+import SkillRegistry from '@carnival/dsh-skill'
+import * as SkillOffice from '@carnival/dsh-skill-office'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import * as ToolOffice from '@carnival/dsh-tool-office'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import ToolRuntime from '@carnival/dsh-tools'
+import * as WorkspaceDependencies from '@carnival/dsh-tool-workspace-dependencies'
 import { afterEach, expect, it, onTestFinished, vi } from 'vitest'
 
 // Kit presence is the deployment fact under test; every other row runs unmodified.
-vi.mock('@deepseek-ai/dsh-office-kit/src/locate.ts', async (original) => {
-  const actual = await original<typeof import('@deepseek-ai/dsh-office-kit/src/locate.ts')>()
+vi.mock('@carnival/dsh-office-kit/src/locate.ts', async (original) => {
+  const actual = await original<typeof import('@carnival/dsh-office-kit/src/locate.ts')>()
   return { ...actual, resolveKitModule: vi.fn(() => ({ kind: 'missing', error: new Error('Cannot find package') })) }
 })
 
@@ -49,8 +49,8 @@ function presetPlugins(preset: string): { id: string; name: string }[] {
 
 it('mounts the Office tools in the standard and PTC presets and omits it from the minimal preset', () => {
   const office = (preset: string) => presetPlugins(preset).filter(row => row.id === 'tool-office').map(row => row.name)
-  expect(office('standard')).toEqual(['@deepseek-ai/dsh-tool-office'])
-  expect(office('ptc')).toEqual(['@deepseek-ai/dsh-tool-office'])
+  expect(office('standard')).toEqual(['@carnival/dsh-tool-office'])
+  expect(office('ptc')).toEqual(['@carnival/dsh-tool-office'])
   expect(office('minimal')).toEqual([])
   const host = loadOverlayPatches('desktop-office', fileURLToPath(new URL('../cordis.patch.yml', import.meta.url)))
     .flatMap(patch => patch.insert ?? []).map(row => row.id)

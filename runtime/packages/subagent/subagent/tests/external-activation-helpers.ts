@@ -1,15 +1,15 @@
 /** Registered parent fixtures for external backend activation tests. */
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 
 import { randomUUID } from 'node:crypto'
 import { onTestFinished } from 'vitest'
-import type { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import { unsupportedModel, createInboxStub } from '@deepseek-ai/dsh-agent-loop-testkit'
+import type { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import { unsupportedModel, createInboxStub } from '@carnival/dsh-agent-loop-testkit'
 import type { SubagentActivation, SubagentStartRequest } from '../src/types.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const parents = new WeakMap<Context, Promise<WeakMap<Agent, Agent>>>()
 

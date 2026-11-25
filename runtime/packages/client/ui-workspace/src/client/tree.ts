@@ -5,16 +5,16 @@
  */
 import {
   type SessionListState, type SessionSearchResultItem, type SessionSummary,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { selectSessionDirectory } from '@deepseek-ai/dsh-api-session-controller/client/directories'
-import type { WorkspaceId, WorkspaceView } from '@deepseek-ai/dsh-api-workspace-controller/client'
+} from '@carnival/dsh-api-session-controller/client'
+import { selectSessionDirectory } from '@carnival/dsh-api-session-controller/client/directories'
+import type { WorkspaceId, WorkspaceView } from '@carnival/dsh-api-workspace-controller/client'
 import type {
   SessionStatusSnapshot,
-} from '@deepseek-ai/dsh-client-ui-session-status/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { TextSearchIndex, type SearchKeys } from '@deepseek-ai/dsh-util-text-search'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
-import { workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path'
+} from '@carnival/dsh-client-ui-session-status/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import { TextSearchIndex, type SearchKeys } from '@carnival/dsh-util-text-search'
+import { assertNever } from '@carnival/dsh-util-values'
+import { workspaceTitleOf } from '@carnival/dsh-util-workspace-path'
 
 /** Group key for Sessions outside every Workspace. */
 export const UNGROUPED_KEY = ''

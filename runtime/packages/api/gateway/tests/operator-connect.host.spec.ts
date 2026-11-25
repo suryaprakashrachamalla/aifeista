@@ -7,18 +7,18 @@ import type { Duplex } from 'node:stream'
 import { tmpdir } from 'node:os'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import * as Connection from '@deepseek-ai/dsh-client-connection'
-import * as Token from '@deepseek-ai/dsh-host-authentication-token'
-import { BrowserAuth } from '@deepseek-ai/dsh-host-authentication-token/src/browser-auth.ts'
-import LocalCredentials from '@deepseek-ai/dsh-credentials-local'
-import WebServer from '@deepseek-ai/dsh-host-webserver'
-import * as FrontendStatic from '@deepseek-ai/dsh-host-frontend-static'
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
-import TypertGateway from '@deepseek-ai/dsh-api-gateway'
-import RemoteAccess from '@deepseek-ai/dsh-api-remote-access'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import * as Connection from '@carnival/dsh-client-connection'
+import * as Token from '@carnival/dsh-host-authentication-token'
+import { BrowserAuth } from '@carnival/dsh-host-authentication-token/src/browser-auth.ts'
+import LocalCredentials from '@carnival/dsh-credentials-local'
+import WebServer from '@carnival/dsh-host-webserver'
+import * as FrontendStatic from '@carnival/dsh-host-frontend-static'
+import TypertRegistry from '@carnival/dsh-typert-registry'
+import TypertGateway from '@carnival/dsh-api-gateway'
+import RemoteAccess from '@carnival/dsh-api-remote-access'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import WebSocket, { WebSocketServer } from 'ws'
 import { z } from 'zod'
@@ -352,7 +352,7 @@ describe('operator connect through Loader composition', () => {
       await finish.promise
       await dispose()
     })
-    const token = [...host.ctx.loader.entries()].find(entry => entry.options.name === 'cordis:@deepseek-ai/dsh-host-authentication-token')
+    const token = [...host.ctx.loader.entries()].find(entry => entry.options.name === 'cordis:@carnival/dsh-host-authentication-token')
     if (token?.fiber === undefined) throw new Error('Token provider did not activate')
     const entered = Promise.withResolvers<undefined>()
     const resume = Promise.withResolvers<undefined>()
@@ -439,14 +439,14 @@ async function boot(): Promise<Host> {
   await writeFile(distIndex, '<head></head><body>operator fixture</body>')
   const configPath = join(root, 'cordis.yml')
   const rows = [
-    { name: '@deepseek-ai/dsh-credentials-local', config: { path: join(root, '.credentials.yaml'), watch: false } },
-    { name: '@deepseek-ai/dsh-host-webserver', config: { host: '127.0.0.1', port: 0 } },
-    { name: '@deepseek-ai/dsh-client-connection' },
-    { name: '@deepseek-ai/dsh-host-authentication-token' },
-    { name: '@deepseek-ai/dsh-host-frontend-static', config: { distIndex } },
-    { name: '@deepseek-ai/dsh-typert-registry' },
-    { name: '@deepseek-ai/dsh-api-remote-access' },
-    { name: '@deepseek-ai/dsh-api-gateway' },
+    { name: '@carnival/dsh-credentials-local', config: { path: join(root, '.credentials.yaml'), watch: false } },
+    { name: '@carnival/dsh-host-webserver', config: { host: '127.0.0.1', port: 0 } },
+    { name: '@carnival/dsh-client-connection' },
+    { name: '@carnival/dsh-host-authentication-token' },
+    { name: '@carnival/dsh-host-frontend-static', config: { distIndex } },
+    { name: '@carnival/dsh-typert-registry' },
+    { name: '@carnival/dsh-api-remote-access' },
+    { name: '@carnival/dsh-api-gateway' },
     { name: '@fixture/operator-connect' },
   ]
   await writeFile(configPath, rows.map(row => `- ${JSON.stringify({ ...row, name: `cordis:${row.name}` })}`).join('\n') + '\n')
@@ -456,14 +456,14 @@ async function boot(): Promise<Host> {
     await ctx.plugin(Loader)
     Object.assign(ctx.loader.builtins, {
       include: Include,
-      '@deepseek-ai/dsh-credentials-local': LocalCredentials,
-      '@deepseek-ai/dsh-host-webserver': WebServer,
-      '@deepseek-ai/dsh-client-connection': Connection,
-      '@deepseek-ai/dsh-host-authentication-token': Token,
-      '@deepseek-ai/dsh-host-frontend-static': FrontendStatic,
-      '@deepseek-ai/dsh-typert-registry': TypertRegistry,
-      '@deepseek-ai/dsh-api-remote-access': RemoteAccess,
-      '@deepseek-ai/dsh-api-gateway': TypertGateway,
+      '@carnival/dsh-credentials-local': LocalCredentials,
+      '@carnival/dsh-host-webserver': WebServer,
+      '@carnival/dsh-client-connection': Connection,
+      '@carnival/dsh-host-authentication-token': Token,
+      '@carnival/dsh-host-frontend-static': FrontendStatic,
+      '@carnival/dsh-typert-registry': TypertRegistry,
+      '@carnival/dsh-api-remote-access': RemoteAccess,
+      '@carnival/dsh-api-gateway': TypertGateway,
       '@fixture/operator-connect': OperatorConnectFixture,
     })
     await ctx.loader.create({ name: 'cordis:include', config: { path: pathToFileURL(configPath).href } })

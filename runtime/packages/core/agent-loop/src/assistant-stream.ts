@@ -1,6 +1,6 @@
 /** Process-local assistant attempt framing and durable stream accumulation. */
 
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import {
   AssistantStreamAccumulator,
   BlockAssembler,
@@ -11,9 +11,9 @@ import {
   type ReplayEnvelope,
   type StreamChunk,
   type TokenUsage,
-} from '@deepseek-ai/dsh-llm'
-import type { AssistantStreamFrame } from '@deepseek-ai/dsh-agent'
-import type { SessionEventMap, SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-llm'
+import type { AssistantStreamFrame } from '@carnival/dsh-agent'
+import type { SessionEventMap, SessionId, SessionSeq } from '@carnival/dsh-session'
 
 /** Folds one model attempt into one compact stream plus ordered transient frames. */
 export class AssistantStreamAttempt {

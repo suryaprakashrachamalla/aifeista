@@ -1,11 +1,11 @@
 /** JSONL teardown preserves events emitted by an asynchronously disposing injected consumer. */
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import * as SessionPlugin from '@deepseek-ai/dsh-session'
-import type { SessionId, Session } from '@deepseek-ai/dsh-session'
-import * as JsonlPlugin from '@deepseek-ai/dsh-session-persistence-jsonl'
-import { SessionHandleClosedError } from '@deepseek-ai/dsh-session-persistence'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import * as SessionPlugin from '@carnival/dsh-session'
+import type { SessionId, Session } from '@carnival/dsh-session'
+import * as JsonlPlugin from '@carnival/dsh-session-persistence-jsonl'
+import { SessionHandleClosedError } from '@carnival/dsh-session-persistence'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -13,7 +13,7 @@ import { scheduler } from 'node:timers/promises'
 import { pathToFileURL } from 'node:url'
 import { expect, it } from 'vitest'
 import { logPath } from '../src/format.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 it('waits for injected consumer teardown, persists its final event, and releases listeners and leases', async () => {
   const root = await mkdtemp(join(tmpdir(), 'dsh-jsonl-teardown-'))
@@ -49,9 +49,9 @@ it('waits for injected consumer teardown, persists its final event, and releases
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
       '- id: sessions',
-      "  name: '@deepseek-ai/dsh-session'",
+      "  name: '@carnival/dsh-session'",
       '- id: persistence',
-      "  name: '@deepseek-ai/dsh-session-persistence-jsonl'",
+      "  name: '@carnival/dsh-session-persistence-jsonl'",
       '  config:',
       `    root: ${JSON.stringify(root)}`,
       '    compression: none',
@@ -67,8 +67,8 @@ it('waits for injected consumer teardown, persists its final event, and releases
       loadCache: new Map(),
       async import(specifier: string) {
         switch (specifier) {
-          case '@deepseek-ai/dsh-session': return SessionPlugin
-          case '@deepseek-ai/dsh-session-persistence-jsonl': return JsonlPlugin
+          case '@carnival/dsh-session': return SessionPlugin
+          case '@carnival/dsh-session-persistence-jsonl': return JsonlPlugin
           case 'async-persistence-consumer': return consumer
           default: throw new Error(`Unexpected plugin: ${specifier}`)
         }

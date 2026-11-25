@@ -1,12 +1,12 @@
 /** Discover state: configured index sources, the selected index's query and loaded results, and source editing. */
-import { NPMMIRROR_REGISTRY } from '@deepseek-ai/dsh-plugin-manager/registry'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
-import type { MarketIndexSummary, MarketSearchResult, PluginDetail, PluginDetailDocumentId, RemoteFailure } from '@deepseek-ai/dsh-api-remotes/client'
-import type { LocaleSnapshot } from '@deepseek-ai/dsh-client-locale/client'
-import { gitMarketIndexSource, isGitMarketIndexSourceAddress } from '@deepseek-ai/dsh-plugin-market-index/source'
+import { NPMMIRROR_REGISTRY } from '@carnival/dsh-plugin-manager/registry'
+import type { Context as ClientContext } from '@carnival/cordis'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
+import type { HostObservable } from '@carnival/dsh-client-ui-slots'
+import type { MarketIndexSummary, MarketSearchResult, PluginDetail, PluginDetailDocumentId, RemoteFailure } from '@carnival/dsh-api-remotes/client'
+import type { LocaleSnapshot } from '@carnival/dsh-client-locale/client'
+import { gitMarketIndexSource, isGitMarketIndexSourceAddress } from '@carnival/dsh-plugin-market-index/source'
 import { declaredQuery, INITIAL_QUERY, type DiscoverQuery } from './presentation.ts'
 
 /** Why the last listing read failed: the index could not be fetched, is not a valid index, or changed while its pages loaded. */

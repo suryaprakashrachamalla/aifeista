@@ -1,7 +1,7 @@
 /** The packaged `wecom` entry skill and the upstream guides it indexes. */
 
 import { fileURLToPath } from 'node:url'
-import type { UpstreamSkillSet } from '@deepseek-ai/dsh-upstream-skills'
+import type { UpstreamSkillSet } from '@carnival/dsh-upstream-skills'
 
 /** The packaged entry, whose index names each guide by its repository path `skills/<guide>/SKILL.md`. */
 export const ENTRY = fileURLToPath(new URL('../skills/wecom/SKILL.md', import.meta.url))

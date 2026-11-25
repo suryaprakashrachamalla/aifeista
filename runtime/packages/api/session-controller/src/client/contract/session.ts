@@ -7,11 +7,11 @@
  * must stub); implementation-internal wire-frame dispatch stays on the class,
  * invisible out here.
  */
-import type { FileAttachmentRef, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import type { MessageId } from '@deepseek-ai/dsh-llm/types'
-import type { SessionId, SessionSeq } from '@deepseek-ai/dsh-session/types'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { FileAttachmentRef, ImageAttachmentRef } from '@carnival/dsh-attachment'
+import type { MessageId } from '@carnival/dsh-llm/types'
+import type { SessionId, SessionSeq } from '@carnival/dsh-session/types'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
 import type { PromptContentPart, QueueAction, SessionRequestId } from '../../types.ts'
 import type { PendingSubmissionAttachment, SessionSnapshot } from './snapshot.ts'
 

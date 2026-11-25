@@ -1,16 +1,16 @@
 /** Initial and incremental tool definitions survive current-format restoration and forks. */
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { createDeveloperMessage } from '@deepseek-ai/dsh-llm'
-import type { ToolAdditionBlock, ToolSchema } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId, SessionLogOffset } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader } from '@deepseek-ai/dsh-session'
-import { buildForkSeed } from '@deepseek-ai/dsh-session/fork'
-import { createSessionFormatCatalog } from '@deepseek-ai/dsh-session-format'
-import { restoreReleasedV4Artifact } from '@deepseek-ai/dsh-session-format-v3-to-v4'
+import { createDeveloperMessage } from '@carnival/dsh-llm'
+import type { ToolAdditionBlock, ToolSchema } from '@carnival/dsh-llm'
+import { Session, type SessionId, SessionLogOffset } from '@carnival/dsh-session'
+import type { SessionEvent, SessionHeader } from '@carnival/dsh-session'
+import { buildForkSeed } from '@carnival/dsh-session/fork'
+import { createSessionFormatCatalog } from '@carnival/dsh-session-format'
+import { restoreReleasedV4Artifact } from '@carnival/dsh-session-format-v3-to-v4'
 import { sessionFormatCatalogOptions } from '../src/generated.ts'
-import type { SessionFormatEvent } from '@deepseek-ai/dsh-session-format'
+import type { SessionFormatEvent } from '@carnival/dsh-session-format'
 import { sessionFormatCatalog } from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 function restore(session: Session): Session {
   const header = { ...session.header, delegationDepth: 0 }

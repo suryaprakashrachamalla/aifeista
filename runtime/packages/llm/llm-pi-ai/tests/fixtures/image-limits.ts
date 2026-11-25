@@ -1,10 +1,10 @@
 /** Recorded-session probe of catalog and locally overridden request images. */
 
 import { readFile } from 'node:fs/promises'
-import type { Context } from '@deepseek-ai/cordis'
-import { isAttachmentError } from '@deepseek-ai/dsh-attachment'
-import type {} from '@deepseek-ai/dsh-llm'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import type { Context } from '@carnival/cordis'
+import { isAttachmentError } from '@carnival/dsh-attachment'
+import type {} from '@carnival/dsh-llm'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
 
 export const name = 'snapshot-pi-image-limits'
 export const inject = ['tools', 'llm', 'attachments']

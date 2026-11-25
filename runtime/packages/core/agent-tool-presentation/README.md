@@ -3,11 +3,11 @@ description: "The agent-plane presentation selector for users and maintainers ch
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-agent-tool-presentation
+# @carnival/dsh-agent-tool-presentation
 
 English | [中文](README.zh.md)
 
-> **Deprecated:** For new configurations, mount `@deepseek-ai/dsh-tool-executor-native` or `@deepseek-ai/dsh-tool-executor-ptc` directly. Existing configurations remain supported. To migrate, replace this selector row with the corresponding executor row and remove `config.mode`; do not load both in the same scope.
+> **Deprecated:** For new configurations, mount `@carnival/dsh-tool-executor-native` or `@carnival/dsh-tool-executor-ptc` directly. Existing configurations remain supported. To migrate, replace this selector row with the corresponding executor row and remove `config.mode`; do not load both in the same scope.
 
 ## Summary
 
@@ -32,7 +32,7 @@ Add this row to an agent preset to fix how every agent joined to that preset see
 ### Add the row to a preset
 
 ```yaml
-- name: '@deepseek-ai/dsh-agent-tool-presentation'
+- name: '@carnival/dsh-agent-tool-presentation'
   config:
     mode: ptc
 ```

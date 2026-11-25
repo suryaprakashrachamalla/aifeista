@@ -1,16 +1,16 @@
 /** Right-Sidebar presentation of an existing subagent or dragged root Session Conversation. */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import type {
   ISessions, SessionReference, SessionTarget,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { ResourceProvider } from '@deepseek-ai/dsh-client-resources/client'
-import type { ConversationViewsProps, WorkspaceSelectedHandler } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { PaneId, SidebarRightTabDefinition } from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
+} from '@carnival/dsh-api-session-controller/client'
+import type { ResourceProvider } from '@carnival/dsh-client-resources/client'
+import type { ConversationViewsProps, WorkspaceSelectedHandler } from '@carnival/dsh-client-ui-conversation/client'
+import type { PaneId, SidebarRightTabDefinition } from '@carnival/dsh-client-ui-sidebar-right/client'
 import type {
   HostObservable, PropsRenderFactories, PropsRenderSlots, PropsRuntime, TranslateNS,
-} from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
+} from '@carnival/dsh-client-ui-slots'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { SubagentAddress } from '@carnival/dsh-subagent/client'
 import { NS } from '../locales.ts'
 import css from './SidebarChat.module.css'
 import {
@@ -18,7 +18,7 @@ import {
 } from './SessionDropZone.tsx'
 
 /** Stable implementation identity for the Sidebar tab body. */
-export const SUBAGENT_CHAT_ID = '@deepseek-ai/dsh-client-ui-subagent'
+export const SUBAGENT_CHAT_ID = '@carnival/dsh-client-ui-subagent'
 
 /** Resource-address prefix for an embedded Session chat. */
 export const SUBAGENT_CHAT_ADDRESS = 'dsh-resource://subagentchat/session/'
@@ -29,13 +29,13 @@ export interface SubagentChatResource {
   readonly reference: SessionReference
 }
 
-declare module '@deepseek-ai/dsh-api-session-controller/client' {
+declare module '@carnival/dsh-api-session-controller/client' {
   interface SessionReferenceSourceMap {
     sidebarChat: unknown
   }
 }
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface ResourceProtocolMap {
     subagentchat: SubagentChatResource
   }

@@ -1,35 +1,35 @@
 /** Host BFF entry and Loader shell for the Remote contribution assembly. */
 
 import { homedir } from 'node:os'
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
+import type { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
 import type {
   TypertRemoteEventDispatch,
   TypertRemoteEventInvocation,
   TypertRemoteEventOutcome,
   TypertRemoteEventSource,
-} from '@deepseek-ai/dsh-api-gateway'
-import { Deque } from '@deepseek-ai/dsh-deque'
-import { carrierKeyOf } from '@deepseek-ai/dsh-scope'
-import { isJsonValue, type JsonValue } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-api-gateway'
+import { Deque } from '@carnival/dsh-deque'
+import { carrierKeyOf } from '@carnival/dsh-scope'
+import { isJsonValue, type JsonValue } from '@carnival/dsh-util-values'
 import { API_REMOTE_FORWARDED_EVENTS } from './remote-events.ts'
 
 // The owner packages' client-safe `./types` exports carry the cordis `Events`
 // declarations for every allowlisted event. Pulling them into this face is what
 // makes the shape assertion below judge real signatures rather than an empty
 // event vocabulary.
-import type {} from '@deepseek-ai/dsh-commands/types'
-import type {} from '@deepseek-ai/dsh-cordis-host-runner/types'
-import type {} from '@deepseek-ai/dsh-credentials/types'
-import type {} from '@deepseek-ai/dsh-goal/types'
-import type {} from '@deepseek-ai/dsh-llm/types'
-import type {} from '@deepseek-ai/dsh-agent-preset-registry/types'
-import type {} from '@deepseek-ai/dsh-permission-presets/types'
-import type {} from '@deepseek-ai/dsh-settings/types'
-import type {} from '@deepseek-ai/dsh-user-approval'
-import type {} from '@deepseek-ai/dsh-user-questions'
-import type {} from '@deepseek-ai/dsh-web/types'
-export type {} from '@deepseek-ai/dsh-api-session-controller/types'
+import type {} from '@carnival/dsh-commands/types'
+import type {} from '@carnival/dsh-cordis-host-runner/types'
+import type {} from '@carnival/dsh-credentials/types'
+import type {} from '@carnival/dsh-goal/types'
+import type {} from '@carnival/dsh-llm/types'
+import type {} from '@carnival/dsh-agent-preset-registry/types'
+import type {} from '@carnival/dsh-permission-presets/types'
+import type {} from '@carnival/dsh-settings/types'
+import type {} from '@carnival/dsh-user-approval'
+import type {} from '@carnival/dsh-user-questions'
+import type {} from '@carnival/dsh-web/types'
+export type {} from '@carnival/dsh-api-session-controller/types'
 
 export { API_REMOTE_FORWARDED_EVENTS } from './remote-events.ts'
 export type { ApiRemoteForwardedEvent } from './types.ts'

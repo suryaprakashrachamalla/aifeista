@@ -1,18 +1,18 @@
 /** Optional action cards below an answer: the switch, card state, user actions and status notices for registered kinds. */
-import { FiberState, Service, type Context, type Volatile } from '@deepseek-ai/cordis'
-import Schema from '@deepseek-ai/schemastery'
+import { FiberState, Service, type Context, type Volatile } from '@carnival/cordis'
+import Schema from '@carnival/schemastery'
 import type { ZodType } from 'zod'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import { SessionSeq, type Session } from '@deepseek-ai/dsh-session'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import type { SkillCandidate, SkillProvider, SkillProviderControl } from '@deepseek-ai/dsh-skill'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
-import type {} from '@deepseek-ai/dsh-api-remote-access'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import { createUserMessage } from '@carnival/dsh-llm'
+import { SessionSeq, type Session } from '@carnival/dsh-session'
+import type { Agent } from '@carnival/dsh-agent'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import type { SkillCandidate, SkillProvider, SkillProviderControl } from '@carnival/dsh-skill'
+import type { JsonValue } from '@carnival/dsh-util-values'
+import type {} from '@carnival/dsh-api-remote-access'
+import type {} from '@carnival/dsh-sandbox-policy'
 // Type-only: the Loader's `loader/volatile-update` event.
-import type {} from '@deepseek-ai/cordis-plugin-loader'
+import type {} from '@carnival/cordis-plugin-loader'
 import { actionCardProjection, type ActionCardState } from './projection.ts'
 import type { ActionCardDecision, ActionCardFields, ActionCardId, ActionCardProposal, ActionCardResult, ActionCardView } from './types.ts'
 export type * from './types.ts'
@@ -27,7 +27,7 @@ export interface Config {
   enabled: Volatile<boolean>
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context { actionCards: ActionCards }
 }
 

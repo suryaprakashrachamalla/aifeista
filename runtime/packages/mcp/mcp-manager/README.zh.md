@@ -3,7 +3,7 @@ description: "MCP 服务器管理器：面向需要在运行时添加、修改�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-mcp-manager
+# @carnival/dsh-mcp-manager
 
 [English](README.md) | 中文
 
@@ -37,7 +37,7 @@ kind: "package-reference"
 
 ```yaml
 - id: mcp
-  name: '@deepseek-ai/dsh-mcp-manager'
+  name: '@carnival/dsh-mcp-manager'
   inject: [credentials]
   config:
     servers:
@@ -86,8 +86,8 @@ Settings 写入经 ConfigEditor 持久化并检查 revision；Loader 更新 vola
 接入某个 MCP 服务的插件注册自己的服务器，而不是写入配置：
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-mcp-manager'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-mcp-manager'
 
 export const name = 'example-app'
 export const inject = ['mcpManager']

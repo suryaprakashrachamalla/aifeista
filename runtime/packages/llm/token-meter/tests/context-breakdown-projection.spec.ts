@@ -2,17 +2,17 @@
 // plus the shared estimator's pricing branches.
 
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createMessage, createSystemMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, ToolSchema } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import type { Session, SessionEvent, SessionSeq as SessionSeqType } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
-import type { ContextBreakdownProjection } from '@deepseek-ai/dsh-token-meter/client'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { CompactionId } from '@deepseek-ai/dsh-compaction/types'
+import { Context } from '@carnival/cordis'
+import { createMessage, createSystemMessage, createUserMessage } from '@carnival/dsh-llm'
+import type { ContentBlock, ToolSchema } from '@carnival/dsh-llm'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import SessionStore, { SessionLogOffset, SessionSeq } from '@carnival/dsh-session'
+import type { Session, SessionEvent, SessionSeq as SessionSeqType } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import TokenMeter from '@carnival/dsh-token-meter'
+import type { ContextBreakdownProjection } from '@carnival/dsh-token-meter/client'
+import { brandString } from '@carnival/dsh-brand'
+import type { CompactionId } from '@carnival/dsh-compaction/types'
 import { contextBreakdownProjectionDefinition } from '../src/breakdown-projection.ts'
 import {
   estimateContent,
@@ -21,7 +21,7 @@ import {
   estimateToolsTokens,
 } from '../src/estimate.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

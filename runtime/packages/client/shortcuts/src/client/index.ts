@@ -1,8 +1,8 @@
 /** Browser command service, with one keyboard adapter per plugin lifetime. */
-import { Service } from '@deepseek-ai/cordis'
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { SyncedConfig, SyncedConfigRef } from '@deepseek-ai/dsh-client-config/types'
+import { Service } from '@carnival/cordis'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-locale/client'
+import type { SyncedConfig, SyncedConfigRef } from '@carnival/dsh-client-config/types'
 import type { ShortcutsConfig } from '../types.ts'
 import { ShortcutRegistry } from './registry.ts'
 import { detectEnvironment, installKeyboard } from './dom.ts'
@@ -17,7 +17,7 @@ export type { ShortcutCatalogEntry, ShortcutCommand, ShortcutContext, ShortcutGe
 export type { ShortcutFixedInput, ShortcutFixedCommand, ShortcutFixedCatalogEntry } from './types.ts'
 export type { ShortcutBinding, ShortcutCommandId, ShortcutPlatform, ShortcutRuntime } from '../protocol.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Window-local application commands and effective keycap catalog. */
     shortcuts: Shortcuts

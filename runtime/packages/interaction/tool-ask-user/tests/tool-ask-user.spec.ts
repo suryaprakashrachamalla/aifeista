@@ -1,23 +1,23 @@
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { unsupportedModel } from '@deepseek-ai/dsh-agent-loop-testkit'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { unsupportedModel } from '@carnival/dsh-agent-loop-testkit'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createToolResultMessage, type ToolCallId, type ToolSchema } from '@deepseek-ai/dsh-llm'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
-import { Session, type SessionId, SessionSeq, SESSION_FORMAT_VERSION, type SessionEvent } from '@deepseek-ai/dsh-session'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import { createToolResultMessage, type ToolCallId, type ToolSchema } from '@carnival/dsh-llm'
+import AgentRegistry, { type Agent } from '@carnival/dsh-agent'
+import { Session, type SessionId, SessionSeq, SESSION_FORMAT_VERSION, type SessionEvent } from '@carnival/dsh-session'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
 import UserQuestionService, {
   isTimedAskUserQuestionSchema,
   type AskUserQuestionAnswer,
   type AskUserQuestionRequest,
-} from '@deepseek-ai/dsh-user-questions'
+} from '@carnival/dsh-user-questions'
 // The fold is the projection's own reader of a recorded result, not a service method.
-import { foldUserQuestions } from '@deepseek-ai/dsh-user-questions/src/projection.ts'
-import * as toolAskUser from '@deepseek-ai/dsh-tool-ask-user'
+import { foldUserQuestions } from '@carnival/dsh-user-questions/src/projection.ts'
+import * as toolAskUser from '@carnival/dsh-tool-ask-user'
 
 const testToolSignal = new AbortController().signal
 

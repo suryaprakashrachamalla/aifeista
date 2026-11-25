@@ -1,7 +1,7 @@
 /** Credential-free Feishu account and operation views the Plugins page presenter reads. */
 
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { CliAccountView } from '@deepseek-ai/dsh-cli-account/types'
+import type { Branded } from '@carnival/dsh-brand'
+import type { CliAccountView } from '@carnival/dsh-cli-account/types'
 
 /** The Feishu app the CLI's default configuration uses, as `auth status` reports it. */
 export type FeishuAppId = Branded<'FeishuAppId'>

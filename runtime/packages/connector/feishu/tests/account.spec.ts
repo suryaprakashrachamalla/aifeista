@@ -1,7 +1,7 @@
 /** Account operations over a scripted lark-cli: checks, app linking, sign-in, sign-out, cancellation, and the Plugins page wiring. */
 import { rm } from 'node:fs/promises'
-import type { Context } from '@deepseek-ai/cordis'
-import type { ConnectorOperationId } from '@deepseek-ai/dsh-client-ui-connector-account/types'
+import type { Context } from '@carnival/cordis'
+import type { ConnectorOperationId } from '@carnival/dsh-client-ui-connector-account/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as Feishu from '../src/index.ts'
 import type { FeishuAppId, FeishuOperationKind, FeishuState } from '../src/types.ts'

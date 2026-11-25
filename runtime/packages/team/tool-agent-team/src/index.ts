@@ -1,13 +1,13 @@
 /** Conditionally available task-board tools and guidance for Agent Teams. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { SubagentError } from '@deepseek-ai/dsh-subagent'
-import type { TeamTaskId, TeamTaskView } from '@deepseek-ai/dsh-agent-team'
-import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@deepseek-ai/dsh-tools'
-import type { InferValue, ValueSchemaSpec } from '@deepseek-ai/dsh-tools'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type { Agent } from '@carnival/dsh-agent'
+import { SubagentError } from '@carnival/dsh-subagent'
+import type { TeamTaskId, TeamTaskView } from '@carnival/dsh-agent-team'
+import { defineTool, ToolArgsError, ToolContextUnavailableError } from '@carnival/dsh-tools'
+import type { InferValue, ValueSchemaSpec } from '@carnival/dsh-tools'
+import { brandString } from '@carnival/dsh-brand'
 
 /** Cordis plugin name. */
 export const name = 'tool-agent-team'

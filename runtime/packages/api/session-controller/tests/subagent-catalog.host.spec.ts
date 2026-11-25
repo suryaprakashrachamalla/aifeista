@@ -1,18 +1,18 @@
-import { Context } from '@deepseek-ai/cordis'
-import { provideWorkingDirectoryFixture } from '@deepseek-ai/dsh-agent-loop-testkit'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import SessionStore, { SESSION_FORMAT_VERSION, SessionSeq, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader } from '@deepseek-ai/dsh-session'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
+import { Context } from '@carnival/cordis'
+import { provideWorkingDirectoryFixture } from '@carnival/dsh-agent-loop-testkit'
+import AgentRegistry from '@carnival/dsh-agent'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import type { Agent } from '@carnival/dsh-agent'
+import SessionStore, { SESSION_FORMAT_VERSION, SessionSeq, type SessionId } from '@carnival/dsh-session'
+import type { SessionEvent, SessionHeader } from '@carnival/dsh-session'
+import SubagentRuntime from '@carnival/dsh-subagent'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   createSessionTestController,
   installSessionReadTestServices,
   testSessionPersistence,
 } from './test-remote.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const defaults = {
   defaultModelSelection: () => ({ provider: 'fixture', model: 'fixture-model' }),

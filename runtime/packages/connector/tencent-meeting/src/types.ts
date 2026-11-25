@@ -1,7 +1,7 @@
 /** Credential-free Tencent Meeting account and operation views the Plugins page presenter reads. */
 
-import type { CliAccountView } from '@deepseek-ai/dsh-cli-account/types'
-import type { UpstreamSkillsState } from '@deepseek-ai/dsh-upstream-skills/types'
+import type { CliAccountView } from '@carnival/dsh-cli-account/types'
+import type { UpstreamSkillsState } from '@carnival/dsh-upstream-skills/types'
 
 /** The default tmeet account as the latest `auth status` observed it. */
 export type TencentMeetingSignIn =

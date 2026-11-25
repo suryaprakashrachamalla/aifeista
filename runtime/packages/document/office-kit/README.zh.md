@@ -3,7 +3,7 @@ description: "通过独立发布的 kit 在 Host 渲染、转换 Office 文档�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-office-kit
+# @carnival/dsh-office-kit
 
 [English](README.md) | 中文
 
@@ -25,7 +25,7 @@ kind: "package-reference"
 <a id="use-this-package"></a>
 ## 使用此包
 
-[Web bundle](../../bundle/web-app/README.zh.md)和 [SDK bundle](../../bundle/sdk-app/README.zh.md)以 `office-kit` 条目挂载此提供方；[Office 工具](../tool-office/README.zh.md)是其面向模型的消费方。独立组合通过 `cordis.yml` 条目挂载 `@deepseek-ai/dsh-office-kit`。
+[Web bundle](../../bundle/web-app/README.zh.md)和 [SDK bundle](../../bundle/sdk-app/README.zh.md)以 `office-kit` 条目挂载此提供方；[Office 工具](../tool-office/README.zh.md)是其面向模型的消费方。独立组合通过 `cordis.yml` 条目挂载 `@carnival/dsh-office-kit`。
 
 调用方提交已授权源的标识、版本、可选字节数、延迟的有界读取、输入扩展名；PDF 转换还指定调度优先级，图片渲染、格式转换和重算以前台优先级运行。源版本变化会拒绝操作。取消以原因为拒绝值，失败使用 `OfficeKitError`，其小写 `code` 也是 `document-render/failed` 的原因；[`dsh-tool-office`](../tool-office/README.zh.md#use-this-package) 在工具结果中把它映射为 `OfficeToolError` 的代码。每个结果都携带缺失字体；PDF 结果还携带转换 generation（配置替换后随之改变）。
 
@@ -38,7 +38,7 @@ kind: "package-reference"
 
 `renderImages()` 要求提供 `maxImages`、`maxPixels`、`maxDimension` 和 `maxBytes`。图片数超过 `maxImages`，或单张图片超过像素或尺寸上限时，引擎拒绝该选择；图片 PNG 总字节数超过 `maxBytes` 时，提供方在读取前和读取过程中以 `output-too-large` 拒绝。引擎拒绝的页、工作表、区域、分辨率或格式选择以 `invalid-request` 失败，并附带引擎的说明。转换和重算的文件受 `maxOutputBytes` 限制。提供方从不写入工作区：它把每个输出保存在 `outputDirectory` 下各自仅属主可访问的目录中，按请求的 `output.owner`（`office_convert` 和 `office_recalculate` 传入调用方 subagent 树的根 Session）分组，并返回绝对 Host 路径。文件在 `outputRetentionMs` 到期、较新的输出需要 `maxOutputStoreBytes` 内的空间（最旧的先删）、id 等于 owner 的 Session 卸载或提供方卸载时删除；单个文件超过 `maxOutputStoreBytes` 时以 `output-too-large` 失败。文件在删除成功之前一直计入 `maxOutputStoreBytes`；删除失败时记录日志，并在之后的淘汰、释放和卸载时重试，腾不出足够空间的保存以 `unavailable` 失败。卸载会等待进行中的删除结束。启动时还会删除之前进程留下的、超过保留期的输出目录，但只处理名字符合提供方生成格式的真实目录，不处理链接或 junction：`outputDirectory` 下一级为 `session-` 加 24 位小写十六进制数字，其下为小写 UUID v4 的输出目录。其他条目保持不动。服务公开 `outputDirectory`，供消费方检查其执行环境能否读取。
 
-此 provider 依赖独立发布的 [`@deepseek-ai/libreoffice-kit`](https://github.com/deepseek-ai/dsh-libreoffice-kit) npm API，kit 版本为 `0.2.3`。应用打包选择 kit 的 `optionalDependencies` 中声明的匹配原生包；目标没有声明原生包时选择 WASM。已声明的原生引擎缺失时拒绝打包，不会选择 WASM。[发布归属决策](../../../.agents/notes/implemented/architecture/2026-09-14-independent-libreoffice-kit.zh.md)定义独立 kit 与 Harness 各自的职责。
+此 provider 依赖独立发布的 [`@carnival/libreoffice-kit`](https://carnival.local) npm API，kit 版本为 `0.2.3`。应用打包选择 kit 的 `optionalDependencies` 中声明的匹配原生包；目标没有声明原生包时选择 WASM。已声明的原生引擎缺失时拒绝打包，不会选择 WASM。[发布归属决策](../../../.agents/notes/implemented/architecture/2026-09-14-independent-libreoffice-kit.zh.md)定义独立 kit 与 Harness 各自的职责。
 
 Kit 缺失时提供方照常注册，例如未下载 Office sidecar 就启动的 Python SDK 可执行程序。此时需要新转换器的转换以代码为 `unavailable` 的 `OfficeKitError` 拒绝，提供方通过 `ctx.logger` 对每种不同的失败只报告一次。Kit 入口导入失败时行为相同。提供方只保留成功的导入，因此之后的转换会重新定位并导入 Kit。Office 预览对 `document-render/failed` 原因显示本地化的 `unavailable` 提示。
 
@@ -74,11 +74,11 @@ Kit 缺失时提供方照常注册，例如未下载 Office sidecar 就启动的
 <details>
 <summary>实现内部细节 — 点击展开</summary>
 
-在 Kit 导入成功之前，每次需要转换器时，提供方都把返回自身 `import.meta.resolve('@deepseek-ai/libreoffice-kit')` 的查找函数传给 [`resolveKitModule`](src/locate.ts)，它返回 Kit 入口和以其为起点的引擎包解析器，或返回 `missing`。随后提供方动态导入该入口；提供方没有静态导入 Kit 的值。这使引擎查找以提供方实际使用的 Kit 安装为起点。
+在 Kit 导入成功之前，每次需要转换器时，提供方都把返回自身 `import.meta.resolve('@carnival/libreoffice-kit')` 的查找函数传给 [`resolveKitModule`](src/locate.ts)，它返回 Kit 入口和以其为起点的引擎包解析器，或返回 `missing`。随后提供方动态导入该入口；提供方没有静态导入 Kit 的值。这使引擎查找以提供方实际使用的 Kit 安装为起点。
 
 引擎包解析器以 Kit 入口为起点创建；每个解析器互相独立。解析成功时返回引擎 `package.json` 的绝对路径。包不存在时保留 Node 原始的 `MODULE_NOT_FOUND`，允许 Kit 从原生引擎回退到 WASM。如果包目录存在（包括断开的符号链接），但清单无法解析，解析器抛出安装不完整错误，并将 Node 错误保存在 `cause` 中；此时应重新安装该包。其他解析错误和文件系统检查错误原样传播。Kit 负责验证返回的清单和必需资源。
 
-定位函数每次解析调用一次提供方的查找函数，并把任何抛出的值视为 Kit 缺失。原生引擎路径使用同一映射，只将第一个 `.asar` 归档段替换为 `.asar.unpacked`，不论进程是否运行在 Electron 中。已解包路径及归档外路径保持不变。`@deepseek-ai/libreoffice-kit-wasm` 始终保留 Node 逻辑路径，供支持归档的文件系统访问。这些函数不导入 Kit、不加载引擎代码、不注册服务、不修改模块解析，也不保留模块级状态；[Desktop 打包](../../../apps/desktop/packaging/README.zh.md#runtime-file-selection)负责决定解包哪些包。
+定位函数每次解析调用一次提供方的查找函数，并把任何抛出的值视为 Kit 缺失。原生引擎路径使用同一映射，只将第一个 `.asar` 归档段替换为 `.asar.unpacked`，不论进程是否运行在 Electron 中。已解包路径及归档外路径保持不变。`@carnival/libreoffice-kit-wasm` 始终保留 Node 逻辑路径，供支持归档的文件系统访问。这些函数不导入 Kit、不加载引擎代码、不注册服务、不修改模块解析，也不保留模块级状态；[Desktop 打包](../../../apps/desktop/packaging/README.zh.md#runtime-file-selection)负责决定解包哪些包。
 
 引擎元数据无效、必需资源缺失和转换错误会拒绝请求，不会切换引擎。共享的 WASM 引擎使用 LibreOffice 的 CPU 图像过滤器。原生转换使用独立的平台引擎。
 
@@ -112,7 +112,7 @@ Remote 文件读取在查询转换缓存前重新检查内容读取授权和源�
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- 转换保真度和已安装的原生/WASM 资产由 `@deepseek-ai/libreoffice-kit` 负责；此提供方不查找系统 LibreOffice，也不在运行时下载引擎。
+- 转换保真度和已安装的原生/WASM 资产由 `@carnival/libreoffice-kit` 负责；此提供方不查找系统 LibreOffice，也不在运行时下载引擎。
 - `timeoutMs` 仅在 kit 开始转换时计时，不限制队列等待时间。
 - 提供方只定位自身解析到的 Kit 安装；不搜索其他位置，也不安装 Kit 或引擎。
 - 渲染的图片以字节返回。转换和重算后的文件存放在提供方的输出目录中，不写入工作区；由调用方把每个文件复制到目标位置。

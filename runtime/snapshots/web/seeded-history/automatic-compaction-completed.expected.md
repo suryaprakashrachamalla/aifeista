@@ -1,1 +1,0 @@
-- button "Context compacted Compacted 1 history items (~{{tokens}} tokens) View compaction summary in the sidebar"

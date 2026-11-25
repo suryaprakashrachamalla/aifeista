@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-typert-protocol",
+  "name": "@carnival/dsh-typert-protocol",
   "description": "Compiler-independent Remote metadata and Typert provider protocols",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/typert/protocol"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -39,15 +34,15 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-error": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-error": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-error": "workspace:*"
   }
 }

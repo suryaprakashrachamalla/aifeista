@@ -1,9 +1,9 @@
 /**
  * DeepSeek Search API provider: one direct request per search, without an
  * auxiliary model request.
- * @module @deepseek-ai/dsh-web-deepseek-api/search
+ * @module @carnival/dsh-web-deepseek-api/search
  */
-import type { WebSearchProvider, WebSearchRequest, WebSearchResult } from '@deepseek-ai/dsh-web'
+import type { WebSearchProvider, WebSearchRequest, WebSearchResult } from '@carnival/dsh-web'
 import {
   dispatchDeepSeekWeb, hasDeepSeekWebCredential, invalidResponse, isRecord, searchAborted,
   type DeepSeekWebAuth, type DeepSeekWebGuidance,

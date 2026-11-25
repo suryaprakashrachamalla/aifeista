@@ -18,9 +18,9 @@ Native macOS Swift companion (`companion/leanring-buddy/`) that provides push-to
 
 ```bash
 xcodebuild -project companion/leanring-buddy.xcodeproj -scheme leanring-buddy -configuration Debug CODE_SIGN_IDENTITY="-" build
-cp -R ~/Library/Developer/Xcode/DerivedData/leanring-buddy-*/Build/Products/Debug/Clicky.app ~/Applications/
-codesign -f -s - --deep --entitlements companion/leanring-buddy/leanring-buddy.entitlements -r='designated => identifier "com.yourcompany.leanring-buddy"' ~/Applications/Clicky.app
-open ~/Applications/Clicky.app
+cp -R ~/Library/Developer/Xcode/DerivedData/leanring-buddy-*/Build/Products/Debug/*.app ~/Applications/"Carnival Companion.app"
+codesign -f -s - --deep --entitlements companion/leanring-buddy/leanring-buddy.entitlements ~/Applications/"Carnival Companion.app"
+open ~/Applications/"Carnival Companion.app"
 ```
 
 Grant **Microphone**, **Accessibility** (`Ctrl + Option` hotkey & window bounds), and **Screen Recording** permissions in **System Settings → Privacy & Security**.

@@ -100,6 +100,7 @@ export function repositoryGitDirty(root: string): boolean | undefined {
   const status = spawnSync('git', ['status', '--porcelain=v1', '--untracked-files=normal'], {
     cwd: root,
     encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   if (status.error !== undefined) throw status.error

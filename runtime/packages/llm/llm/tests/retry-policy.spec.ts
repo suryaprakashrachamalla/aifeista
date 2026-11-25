@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import Schema from '@deepseek-ai/schemastery'
+import Schema from '@carnival/schemastery'
 import {
   LLM_FAILURE_CODES,
   resolveRetryPolicy,
   RETRY_CODE_CHOICES,
   RetryPolicySchema,
-} from '@deepseek-ai/dsh-llm'
-import type { RetryPolicyConfig } from '@deepseek-ai/dsh-llm'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+} from '@carnival/dsh-llm'
+import type { RetryPolicyConfig } from '@carnival/dsh-llm'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
 
 describe('provider retry policy', () => {
   it('resolves immutable normal defaults', () => {

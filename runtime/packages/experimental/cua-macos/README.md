@@ -3,7 +3,7 @@ description: "Inspect and operate native macOS applications through scoped app a
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-cua-macos
+# @carnival/dsh-cua-macos
 
 English | [中文](README.zh.md)
 
@@ -43,7 +43,7 @@ pnpm dsh headless --patch packages/experimental/cua-macos/examples/macos.cordis.
 
 The dump command checks profile composition without a model request. For a real task, replace `--dump-config` with a prompt and configure the profile’s model credentials. The overlay mounts the computer-use registry and this provider; remove an existing competing provider before using it. The helper needs Accessibility permission for AX/input and Screen Recording permission for capture; use the Computer Use permission page to open System Settings and add the helper. Source builds use the bundle filename `DSH Computer Use Dev.app` and declare `DSH Computer Use Dev` in Info.plist; select the development entry when granting access. `getCapabilities` returns the provider’s declared capabilities with observed permissions and session lock state. Locked or unavailable desktop sessions reject UI observations and input before dispatch; the user must unlock macOS before resuming. `listApps` and `cua.getState` list running applications. `findApps(query)` searches standard macOS application directories by name, bundle ID or absolute path. `getApp` selects a unique name, bundle ID, path or running PID, obtains application consent, and launches a stopped app in the background when needed. A stopped application’s bundle identifier and executable path are read from disk before approval and rechecked before and after launch; applications without a bundle identifier use their canonical executable path for reusable consent. When a selector resolves to an installation, `getApp` matches its executable path to running processes, regardless of their localized names. If launch is needed, macOS opens that installation and can reuse a process started during approval. The helper waits for launch to complete before reporting the running state. A post-launch verification failure expires the pending handle but can leave the process running; inspect running applications before selecting a fresh handle. The returned object does not read AX or activate the app. Launch cancellation may leave the application running. Model guidance starts with background observation and input, without activation during initialization or before each action. For hidden or minimized windows, try `app.show()` or `window.show()` and read fresh state. This requests unhide and unminimize without activation, raising or switching Spaces; app-level restoration selects the focused, main or sole AX window. The result names the selected `windowId`, or null when no window was selected, and reports `foregroundChanged` by comparing the front app and top window before and after the request. Null means foreground evidence was unavailable; later focus changes remain possible. If restoration fails or the window remains unusable, explain the needed foreground step, call `app.activate()` or an observed window’s advertised `AXRaise` action, then observe again. Necessary foreground access takes priority over preserving focus. Applications may change focus after input; background delivery does not guarantee an undisturbed user session.
 
-Source builds default to `sourceSigning: ad-hoc`, without creating certificates or keychains. Changed binaries can require new permission grants. To reduce repeated grants during rebuilds and across worktrees, select an existing certificate and its absolute keychain path in the DSH home’s `cordis.patch.yml`; `cua-macos` is the entry ID loading `@deepseek-ai/dsh-cua-macos`:
+Source builds default to `sourceSigning: ad-hoc`, without creating certificates or keychains. Changed binaries can require new permission grants. To reduce repeated grants during rebuilds and across worktrees, select an existing certificate and its absolute keychain path in the DSH home’s `cordis.patch.yml`; `cua-macos` is the entry ID loading `@carnival/dsh-cua-macos`:
 
 ```yaml
 - id: cua-macos
@@ -111,7 +111,7 @@ Native preparation serializes building and signing with a file lock. It retains 
 To run through persistent PTC, add `--patch packages/experimental/cua-macos/examples/persistent-ptc.cordis.yml` after the macOS overlay. This provider keeps variables for the live Agent and applies the selected file sandbox policy. The caller imports the bridge and supplies the current authorized `tools.cua` binding. Persistent PTC receives an installation-owned bridge file URL in its CUA instructions, so the project does not need to install this package. The example below is for an external host that resolves the package from its own installation and supplies `tools`. For other Agents, `cua_run_code` already supplies the global object and retains variables through the [shared CUA package](../cua/README.md):
 
 ```javascript
-import { connectCua } from '@deepseek-ai/dsh-cua/bridge'
+import { connectCua } from '@carnival/dsh-cua/bridge'
 const cua = connectCua(() => tools.cua)
 const app = await cua.getApp("com.apple.TextEdit")
 const windows = await app.getWindows()

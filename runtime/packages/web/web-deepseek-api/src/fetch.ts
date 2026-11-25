@@ -1,9 +1,9 @@
 /**
  * DeepSeek Fetch API provider: page Markdown through one direct request, without
  * a model request.
- * @module @deepseek-ai/dsh-web-deepseek-api/fetch
+ * @module @carnival/dsh-web-deepseek-api/fetch
  */
-import type { WebFetchProvider, WebFetchRequest, WebFetchResult } from '@deepseek-ai/dsh-web'
+import type { WebFetchProvider, WebFetchRequest, WebFetchResult } from '@carnival/dsh-web'
 import {
   dispatchDeepSeekWeb, hasDeepSeekWebCredential, invalidResponse, isRecord,
   type DeepSeekWebAuth, type DeepSeekWebGuidance,

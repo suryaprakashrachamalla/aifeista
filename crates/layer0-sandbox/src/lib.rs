@@ -262,7 +262,7 @@ mod tests {
     #[test]
     fn cua_validation_enforces_per_app_envelope() {
         let env = CapabilityEnvelope {
-            subject: "clicky".into(),
+            subject: "companion".into(),
             fs_read: vec![],
             fs_write: vec![],
             network_allow: false,

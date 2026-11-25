@@ -3,7 +3,7 @@ description: "Add the DingTalk plugin to a profile: the official dws with its sk
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-dingtalk
+# @carnival/dsh-dingtalk
 
 English | [中文](README.zh.md)
 
@@ -30,8 +30,8 @@ The DingTalk plugin lets conversations use DingTalk through the official DingTal
 Install the plugin from the Web sidebar's **Plugins** page or with the CLI:
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-dingtalk
-dsh plugin --profile web remove @deepseek-ai/dsh-dingtalk
+dsh plugin --profile web add @carnival/dsh-dingtalk
+dsh plugin --profile web remove @carnival/dsh-dingtalk
 ```
 
 The package has no install script to approve. When the `dingtalk` row loads, it downloads two assets of dws release 1.0.64: the archive for the computer's platform, 16 to 20 MB, and `dws-skills.zip`, 3.3 MB. Each comes from GitHub Releases, or from the official Gitee mirror when GitHub fails or has not delivered it within `releaseTimeoutMs`; the row verifies its size and SHA-256 and keeps it in its cache directory, which is `$DSH_HOME/cache/dingtalk/<profile>/` in a profile that `dsh` launches and `$DSH_HOME/cache/dingtalk/` otherwise. The first time its release is in place in a profile's directory, at load or after the download, the row deletes the other releases from it, once, so a plugin update that pins another release leaves one copy, and a release that did not change is not downloaded again. The runtime context gives no `dws` path, and the catalog has no `dingtalk` skill, until those downloads finish. On a platform the release has no archive for, the row fails to load and names the platform; set `binDir` to use another `dws`. With both `binDir` and `skillsDir` set, the row downloads nothing.

@@ -1,13 +1,13 @@
 /** GitHub implementation of the forge provider contract. */
 
-import { changeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
+import { changeRequestKey } from '@carnival/dsh-experimental-forge'
 import type {
   BranchUpdateRequest, ChangeRequestBrief, ChangeRequestDescription, ChangeRequestKey, ChangeRequestRef, ChangeRequestSnapshot,
   ForgeActionFailure,
   ForgeCommitList, ForgeFailure, ForgeViewerCapability, ForgeViewerFilter, ForgeViewerList, ForgeViewerQuery,
   ForgeProvider, ForgeReadiness, ForgeRepository, ForgeRerunRequest, ForgeReviewData, ForgeReviewerCandidate, ForgeReviewersRequest,
   ForgeReviewRequest, ForgeReviewResult, ForgeReviewWrite, ForgeReviewWriteResult, ForgeViewedFiles, ForgeViewedRequest, MergeRequest,
-} from '@deepseek-ai/dsh-experimental-forge'
+} from '@carnival/dsh-experimental-forge'
 import { listCommits } from './commits.ts'
 import type { GraphqlReader } from './commits.ts'
 import { sendMutation, type GraphqlWriter } from './mutation.ts'

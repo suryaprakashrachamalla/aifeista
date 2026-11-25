@@ -3,7 +3,7 @@ description: "DeepSeek Search 与 Fetch API 提供者、共享的鉴权与传输
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-web-deepseek-api
+# @carnival/dsh-web-deepseek-api
 
 [English](README.md) | 中文
 
@@ -27,12 +27,12 @@ kind: "package-reference"
 将插件与 `dsh-web` 以及为它释放凭据的 [`dsh-deepseek-auth`](../../account/deepseek-auth/README.zh.md) 一起挂载，并选择它的提供方。内置配置挂载此插件，不配置搜索提供方，并为抓取选择本地 HTTP 抓取；未配置时搜索使用它的 Search API（`deepseek-search-api`），但为 DeepSeek 模型路由上的模型请求发起的搜索使用[旧版 Messages 搜索](../web/README.zh.md#provider-selection)。在**插件 > 内置插件配置 > 网页搜索与获取**中，在**搜索**下拉框选择 **DeepSeek Search API** 会选中 `deepseek-search-api`，在**获取**下拉框选择 **DeepSeek Fetch API** 会选中 `deepseek-fetch-api`；两个下拉框分别保存，选择其他条目即改用其他提供方。下拉框选中这两个提供方之一时，其下方的**计费方式**下拉框写入 `searchBilling` 或 `fetchBilling`：**自动**、**已登录的 DeepSeek 账号**或 **DeepSeek API Key**。保存的选择从下一次操作开始生效。
 
 ```yaml
-- name: '@deepseek-ai/dsh-web'
+- name: '@carnival/dsh-web'
   config:
     searchProvider: deepseek-search-api
     fetchProvider: deepseek-fetch-api
-- name: '@deepseek-ai/dsh-deepseek-auth'
-- name: '@deepseek-ai/dsh-web-deepseek-api'
+- name: '@carnival/dsh-deepseek-auth'
+- name: '@carnival/dsh-web-deepseek-api'
   config:
     searchBaseURL: https://search.example.test/api/v1/tools
     searchApiKeyEnv: DEEPSEEK_SEARCH_API_KEY

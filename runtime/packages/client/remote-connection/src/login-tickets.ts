@@ -1,7 +1,7 @@
 /** One service-owned, single-use browser login invitation. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
+import { brandString } from '@carnival/dsh-brand'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
 import type { RemoteLoginId, RemoteLoginState, RemoteLoginTicket } from './types.ts'
 import { encodeBase64Url } from './base64.ts'
 

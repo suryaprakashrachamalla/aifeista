@@ -2,8 +2,8 @@
  * The DingTalk section offers each state's next step, the signed-in user, a sign-out confirmation, and failure guidance,
  * in every shipped language.
  */
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
-import type { ConnectorAccountDisplay, ConnectorOperationId } from '@deepseek-ai/dsh-client-ui-connector-account/types'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
+import type { ConnectorAccountDisplay, ConnectorOperationId } from '@carnival/dsh-client-ui-connector-account/types'
 import { afterAll, beforeAll, expect, it } from 'vitest'
 import * as Dingtalk from '../src/index.ts'
 import { en, zh, type DingtalkTextKey } from '../src/locales.ts'

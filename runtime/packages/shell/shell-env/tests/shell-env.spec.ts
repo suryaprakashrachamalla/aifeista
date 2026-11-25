@@ -1,5 +1,5 @@
 /**
- * Registry tests for `@deepseek-ai/dsh-shell-env`: built-in facts, contributor
+ * Registry tests for `@carnival/dsh-shell-env`: built-in facts, contributor
  * ownership and validation, collection ordering, effect-scoped disposal, and
  * the explicit disposer contract.
  */
@@ -7,14 +7,14 @@
 import { homedir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import type { ToolExecution } from '@deepseek-ai/dsh-tools'
-import { ShellEnvRegistry } from '@deepseek-ai/dsh-shell-env'
-import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { Context } from '@carnival/cordis'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import type { Agent } from '@carnival/dsh-agent'
+import { SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
+import type { ToolExecution } from '@carnival/dsh-tools'
+import { ShellEnvRegistry } from '@carnival/dsh-shell-env'
+import * as BashEnvPlugin from '@carnival/dsh-shell-env'
+import { brandString } from '@carnival/dsh-brand'
 
 const testToolSignal = new AbortController().signal
 

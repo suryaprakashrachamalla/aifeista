@@ -3,9 +3,9 @@
  * with every `role('secret')` position removed, including positions inside volatile objects, dictionaries, and arrays.
  */
 import { isDeepStrictEqual } from 'node:util'
-import type { Volatile } from '@deepseek-ai/cordis'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
-import type { SyncedConfigValues } from '@deepseek-ai/dsh-client-config/types'
+import type { Volatile } from '@carnival/cordis'
+import type { JsonValue } from '@carnival/dsh-util-values'
+import type { SyncedConfigValues } from '@carnival/dsh-client-config/types'
 
 /** Schemastery node fields the projection reads; a Schemastery schema satisfies it structurally. */
 export interface SchemaNode {

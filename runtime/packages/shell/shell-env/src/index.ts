@@ -5,23 +5,23 @@
  * the registry itself while plugins can register additional, enumerable facts
  * with effect-scoped disposal.
  *
- * @module @deepseek-ai/dsh-shell-env
+ * @module @carnival/dsh-shell-env
  */
 
 import { dirname } from 'node:path'
-import { Service, type Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { DSH_ENV_PREFIX } from '@deepseek-ai/dsh-shell'
-import type { DshEnvironment, DshEnvironmentKey } from '@deepseek-ai/dsh-shell'
-import { DSH_HOME_ENV, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { Service, type Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import { DSH_ENV_PREFIX } from '@carnival/dsh-shell'
+import type { DshEnvironment, DshEnvironmentKey } from '@carnival/dsh-shell'
+import { DSH_HOME_ENV, resolveDshHome } from '@carnival/dsh-home-paths'
 import { ShellEnvError } from './error.ts'
-import type { ToolExecution } from '@deepseek-ai/dsh-tools'
+import type { ToolExecution } from '@carnival/dsh-tools'
 // Declares `Context.profileContext`, the launcher-provided profile the built-ins read.
-import type {} from '@deepseek-ai/dsh-app-boot'
+import type {} from '@carnival/dsh-app-boot'
 
 export { ShellEnvError, type ShellEnvErrorCode } from './error.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     shellEnv: ShellEnvRegistry
   }

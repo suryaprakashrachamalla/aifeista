@@ -1,22 +1,22 @@
 import { describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
-import { Context } from '@deepseek-ai/cordis'
-import SessionStore from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import SessionStore from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import {
   SessionLogOffset,
   SessionSeq,
   SESSION_FORMAT_VERSION,
   type SessionId,
-} from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader } from '@deepseek-ai/dsh-session'
+} from '@carnival/dsh-session'
+import type { SessionEvent, SessionHeader } from '@carnival/dsh-session'
 import {
   catalogNames,
   establishExternalCatalogChild,
   subagentCatalogProjectionDefinition,
 } from '../src/catalog.ts'
 import type { SubagentCatalogState } from '../src/catalog.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const header: SessionHeader = {
   version: SESSION_FORMAT_VERSION,

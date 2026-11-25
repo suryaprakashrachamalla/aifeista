@@ -3,7 +3,7 @@ description: "把企业微信插件加入 profile：官方 wecom-cli 及其技�
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-wecom
+# @carnival/dsh-wecom
 
 [English](README.md) | 中文
 
@@ -30,8 +30,8 @@ kind: "package-bundle"
 在 Web 侧栏的**插件**页面安装，或使用 CLI：
 
 ```sh
-dsh plugin --profile web add @deepseek-ai/dsh-wecom
-dsh plugin --profile web remove @deepseek-ai/dsh-wecom
+dsh plugin --profile web add @carnival/dsh-wecom
+dsh plugin --profile web remove @carnival/dsh-wecom
 ```
 
 `@wecom/cli` 把原生程序放在 `@wecom/cli-darwin-arm64` 等平台包中，这些包安装时不运行构建脚本。没有与本机匹配的平台包或可执行文件缺失时，`wecom` 行会加载失败，并给出缺失的包名或路径。

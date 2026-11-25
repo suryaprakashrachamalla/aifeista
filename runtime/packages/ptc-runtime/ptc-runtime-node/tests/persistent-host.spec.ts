@@ -1,15 +1,15 @@
 import { PROGRAM_PROTOCOL_VERSION } from '../src/protocol.ts'
 import { setImmediate } from 'node:timers/promises'
-import { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { setSandboxMode } from '@deepseek-ai/dsh-sandbox-policy'
+import { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session'
+import { setSandboxMode } from '@carnival/dsh-sandbox-policy'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import type { PtcBindingFunction, PtcRunRequest } from '@deepseek-ai/dsh-ptc-runtime'
+import type { PtcBindingFunction, PtcRunRequest } from '@carnival/dsh-ptc-runtime'
 import type { Config } from '../src/index.ts'
 import { mountRuntime } from './setup.ts'
 import { fakeChild, NO_INITIAL_FRAME } from './fake-child.ts'
 import { encodePtcJsonWire } from '../src/json-wire.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const request: PtcRunRequest = { program: '1', bindings: [], stateOwner: {} }
 /** Both retained REPL evaluators: Node's REPL and the scoped REPL. */

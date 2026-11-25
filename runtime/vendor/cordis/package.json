@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/cordis",
+  "name": "@carnival/cordis",
   "description": "Meta-Framework for Modern JavaScript Applications",
   "version": "4.2.0-alpha.1",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "vendor/cordis"
   },
   "sideEffects": false,
   "type": "module",
@@ -33,19 +28,19 @@
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~"
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/cordis-plugin-include": {
+    "@carnival/cordis-plugin-include": {
       "optional": true
     },
-    "@deepseek-ai/cordis-plugin-loader": {
+    "@carnival/cordis-plugin-loader": {
       "optional": true
     }
   },
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
-    "@deepseek-ai/cosmokit": "workspace:~"
+    "@carnival/cosmokit": "workspace:~"
   }
 }

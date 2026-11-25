@@ -1,13 +1,13 @@
 /**
  * Service Definition for the PTC execution capability seam that runs one model-written program against host async bindings.
  * Runtimes know nothing about tools or sessions; consumers own those concerns.
- * @module @deepseek-ai/dsh-ptc-runtime
+ * @module @carnival/dsh-ptc-runtime
  */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { Context, Service } from '@carnival/cordis'
+import { HarnessError } from '@carnival/dsh-error'
 import type { PtcProgramFormat, PtcRunRequest, PtcRunResult, PtcRunSpec } from './types.ts'
-import type { SandboxMode } from '@deepseek-ai/dsh-sandbox'
+import type { SandboxMode } from '@carnival/dsh-sandbox'
 
 export { PtcImage } from './image.ts'
 export { PtcInspectableValue } from './inspectable-value.ts'
@@ -41,7 +41,7 @@ export const RESERVED_BINDING_WORDS: ReadonlySet<string> = new Set([
   'private', 'protected', 'public', 'arguments', 'eval',
 ])
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     ptcRuntime: PtcRuntime
   }

@@ -3,7 +3,7 @@ description: "Save and reopen Session histories in SQLite, import existing JSONL
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-session-persistence-sqlite
+# @carnival/dsh-session-persistence-sqlite
 
 English | [中文](README.zh.md)
 
@@ -32,7 +32,7 @@ Mount this provider for the storage root whose Sessions should use SQLite.
 Replace the JSONL provider's package name in your composition, preserving its root and legacy encoding settings:
 
 ```yaml
-- name: '@deepseek-ai/dsh-session-persistence-sqlite'
+- name: '@carnival/dsh-session-persistence-sqlite'
   config:
     root: './.sessions'
 ```

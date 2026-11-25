@@ -1,8 +1,8 @@
 /** Account sign-out policy over the latest logged request route of each running Agent. */
-import type { Context } from '@deepseek-ai/cordis'
-import { LlmError } from '@deepseek-ai/dsh-llm'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-deepseek-account'
+import type { Context } from '@carnival/cordis'
+import { LlmError } from '@carnival/dsh-llm'
+import type { Agent } from '@carnival/dsh-agent'
+import type {} from '@carnival/dsh-deepseek-account'
 
 /** Whether a running Agent's latest bound request used the account route `provider`. */
 function isRunningAccountTask(agent: Pick<Agent, 'status' | 'session'>, provider: string): boolean {

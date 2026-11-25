@@ -1,7 +1,7 @@
 /** The packaged `tencent-meeting` entry skill and the upstream guide it indexes. */
 
 import { fileURLToPath } from 'node:url'
-import type { UpstreamSkillSet } from '@deepseek-ai/dsh-upstream-skills'
+import type { UpstreamSkillSet } from '@carnival/dsh-upstream-skills'
 
 /** The packaged entry, which opens the guide by its repository path `skills/tmeet-skill/SKILL.md`. */
 export const ENTRY = fileURLToPath(new URL('../skills/tencent-meeting/SKILL.md', import.meta.url))

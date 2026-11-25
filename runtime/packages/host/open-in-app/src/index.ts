@@ -2,7 +2,7 @@
  * Host half of open-in-app: three routes on the composition's `webServer`
  * serving the resolved application catalog, per-application icons, and the
  * launch endpoint the browser split button
- * (`@deepseek-ai/dsh-client-ui-open-in-app`) posts to.
+ * (`@carnival/dsh-client-ui-open-in-app`) posts to.
  *
  * WebServer admits requests before dispatch; these routes require an owner Peer.
  * The open route validates its body at the wire: an `application/json` media
@@ -19,11 +19,11 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { isAbsolute } from 'node:path'
 import { stat } from 'node:fs/promises'
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-host-webserver'
-import type {} from '@deepseek-ai/dsh-subprocess'
-import { launchedThroughSsh, launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import z from '@deepseek-ai/schemastery'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-host-webserver'
+import type {} from '@carnival/dsh-subprocess'
+import { launchedThroughSsh, launchEnvironmentOf } from '@carnival/dsh-launch-environment'
+import z from '@carnival/schemastery'
 import { OPEN_IN_APP_CATALOG, type OpenInAppApp } from './catalog.ts'
 import {
   launchResolved, resolveLaunch, resolveOpenInAppApps,

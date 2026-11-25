@@ -4,16 +4,16 @@ import { createHash, randomUUID } from 'node:crypto'
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import type { Sharp } from 'sharp'
-import { AttachmentError, longEdgeDimensions, requestImageDimensions } from '@deepseek-ai/dsh-attachment'
-import type { ImageVariantId } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { AttachmentError, longEdgeDimensions, requestImageDimensions } from '@carnival/dsh-attachment'
+import type { ImageVariantId } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   ImageMediaType,
   ImageAttachmentRef,
   ImageRequestTarget,
   RequestImageAttachment,
   StoredImageAttachment,
-} from '@deepseek-ai/dsh-attachment'
+} from '@carnival/dsh-attachment'
 import {
   IMAGE_ENCODING_QUALITIES,
   WEBP_ENCODING_EFFORT,

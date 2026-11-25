@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { TokenUsage } from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session, SessionSeq } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
-import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { RetryId } from '@deepseek-ai/dsh-llm-retry/types'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import type { CompactionId } from '@deepseek-ai/dsh-compaction/types'
+import { Context } from '@carnival/cordis'
+import { createMessage, createUserMessage } from '@carnival/dsh-llm'
+import type { TokenUsage } from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { Session, SessionSeq } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import TokenMeter from '@carnival/dsh-token-meter'
+import type { ContextPressureProjection, TokenUsageProjection } from '@carnival/dsh-token-meter/client'
+import { brandString } from '@carnival/dsh-brand'
+import type { RetryId } from '@carnival/dsh-llm-retry/types'
+import type { ContextFormed } from '@carnival/dsh-llm'
+import type { CompactionId } from '@carnival/dsh-compaction/types'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

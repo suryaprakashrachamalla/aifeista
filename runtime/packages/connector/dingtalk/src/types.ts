@@ -1,6 +1,6 @@
 /** Credential-free DingTalk account and operation views the Plugins page presenter reads. */
 
-import type { CliAccountView } from '@deepseek-ai/dsh-cli-account/types'
+import type { CliAccountView } from '@carnival/dsh-cli-account/types'
 
 /**
  * The current dws account as the latest check observed it. `not-installed` means the managed dws was missing and the

@@ -1,25 +1,25 @@
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { describe, expect, it, vi } from 'vitest'
-import type { AttachmentId, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { LlmAttemptId } from '@deepseek-ai/dsh-llm/types'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
+import type { AttachmentId, ImageAttachmentRef } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
+import type { LlmAttemptId } from '@carnival/dsh-llm/types'
+import type { StreamChunk } from '@carnival/dsh-llm'
 import type {
   AssistantLiveChunkEvent, SessionEventLike, SessionEventLikeEntry,
   SessionLiveEventEntry, SessionTransientEventEntry,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session/types'
-import { ConversationNodeAssembler } from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-api-session-controller/client'
+import { SessionSeq } from '@carnival/dsh-session/types'
+import type { SessionEvent, SessionId } from '@carnival/dsh-session/types'
+import { ConversationNodeAssembler } from '@carnival/dsh-client-ui-conversation/client'
 import type {
   ConversationContextReader, ConversationLocation, ConversationMatch,
   ConversationNodeContext, ConversationNodeDefinition, ConversationStartMatch,
   ConversationViewDefinition,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import type { StoredEntry } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@carnival/dsh-client-ui-conversation/client'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
+import { makeTranslate } from '@carnival/dsh-client-test-runtime'
+import { resolveSlotLabel } from '@carnival/dsh-client-ui-slots'
+import type { StoredEntry } from '@carnival/dsh-client-ui-slots'
 import { de, en, es, fr, ja, NS, pt, ru, zh } from '../src/client/locales.ts'
 import type {
   StatsCall, StatsContribution, StatsSnapshot, StatsStepMetrics, StatsStepState, StatsViewNode,

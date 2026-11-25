@@ -2,13 +2,13 @@
  * High-level run API over {@link HarnessClient}: route text to prompts or native
  * commands and collect prompt activity for text and image input.
  *
- * @module @deepseek-ai/dsh-sdk-client/api
+ * @module @carnival/dsh-sdk-client/api
  */
 
 import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
-import type { SessionResumeParams } from '@deepseek-ai/dsh-sdk-protocol'
-import type { SessionEvent, TurnEndReason } from '@deepseek-ai/dsh-session'
+import type { SessionResumeParams } from '@carnival/dsh-sdk-protocol'
+import type { SessionEvent, TurnEndReason } from '@carnival/dsh-session'
 import { createProcessHarnessClient, HarnessClient, isRecord, queryInput, SdkProtocolError } from './client.ts'
 import type { RuntimeProcessOptions } from './launch.ts'
 import type { ContentBlock, DeepSeekHarnessOptions, HarnessNotification, RunResult, SdkPromptContentBlock } from './types.ts'

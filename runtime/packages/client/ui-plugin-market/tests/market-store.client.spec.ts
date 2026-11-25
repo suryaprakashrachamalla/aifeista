@@ -1,10 +1,10 @@
-import { Context } from '@deepseek-ai/cordis'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { RemoteError, TestRemote } from '@deepseek-ai/dsh-client-test-runtime'
+import { Context } from '@carnival/cordis'
+import { LocaleRuntime } from '@carnival/dsh-client-locale/client'
+import { RemoteError, TestRemote } from '@carnival/dsh-client-test-runtime'
 import type {
   MarketIndexSummary, MarketListingEntry, MarketQuery, MarketSearchResult, PluginDetail, PluginDetailDocumentId,
-} from '@deepseek-ai/dsh-api-remotes/client'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-api-remotes/client'
+import { brandString } from '@carnival/dsh-brand'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { detailKey, DiscoverController, PAGE_SIZE } from '../src/client/market-store.ts'
 import { INITIAL_QUERY } from '../src/client/presentation.ts'

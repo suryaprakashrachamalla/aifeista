@@ -1,11 +1,11 @@
-import { Context } from '@deepseek-ai/cordis'
-import { AgentModel, modelSelectionProjectionDefinition } from '@deepseek-ai/dsh-agent'
-import AgentRegistry, { type ModelSelection } from '@deepseek-ai/dsh-agent'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import { AgentModel, modelSelectionProjectionDefinition } from '@carnival/dsh-agent'
+import AgentRegistry, { type ModelSelection } from '@carnival/dsh-agent'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId, LlmRuntime } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId, LlmRuntime } from '@carnival/dsh-llm'
 import { AcpModelControl } from '../src/model-control.ts'
 
 /** Minimal LLM catalog/runtime double for pure standard-option tests. */

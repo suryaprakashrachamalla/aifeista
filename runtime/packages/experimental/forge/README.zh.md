@@ -3,7 +3,7 @@ description: "通过一个提供方无关的服务注册代码托管提供方并
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-forge
+# @carnival/dsh-experimental-forge
 
 [English](README.md) | 中文
 
@@ -28,8 +28,8 @@ kind: "package-reference"
 将注册表与至少一个提供方包一起挂载，例如 GitHub 提供方。
 
 ```yaml
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-experimental-forge-github'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-experimental-forge-github'
 ```
 
 `ctx.forge.register(provider)` 是调用方 fiber 上的 effect，返回异步 disposer，取消并等待该次注册的调用结束。取消后到达的结果会被丢弃。一个提供方在其 `hosts` 列出的主机上服务一个 forge 家族，并用 `label`（例如 `GitHub`）和 `changeRequestNoun`（`pull-request` 或 `merge-request`）称呼自己；为同一家族注册第二个提供方，或注册一个列出了已注册提供方所列主机（不区分大小写）的提供方，都会抛错。注册变化会发出 `forge/providers-changed`；注册提供方会立即轮询其已有监听。`repositoryFromRemote(url)` 与 `changeRequestFromUrl(url)` 返回服务该 URL 主机的提供方的匹配结果；`describe(forge)` 返回一个家族的 `ForgeDescription`，即它的 `label` 与 `changeRequestNoun`，没有提供方时返回 undefined。`changeRequestUrl(ref)`、`findByHead(repository, branch, signal)` 与 `readiness(repository, signal)` 委托给引用所属 forge 的提供方，没有注册提供方时抛错；`readiness` 报告提供方能否用当前凭据访问该主机；无法登录时还在 `signIn` 中给出让用户登录的 shell 命令。

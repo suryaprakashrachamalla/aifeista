@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-cordis",
+  "name": "@carnival/dsh-client-ui-cordis",
   "description": "Cordis dynamic-plugin definition card: the keyed cordis_define tool row with its run/stop switch",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/extensions/ui-cordis"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -29,14 +24,14 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-connection",
-        "@deepseek-ai/dsh-cordis-client-runner",
-        "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-renderer",
-        "@deepseek-ai/dsh-client-ui-session",
-        "@deepseek-ai/dsh-client-ui-tool",
-        "@deepseek-ai/dsh-client-ui-sidebar"
+        "@carnival/dsh-client-connection",
+        "@carnival/dsh-cordis-client-runner",
+        "@carnival/dsh-api-remotes",
+        "@carnival/dsh-client-locale",
+        "@carnival/dsh-client-ui-renderer",
+        "@carnival/dsh-client-ui-session",
+        "@carnival/dsh-client-ui-tool",
+        "@carnival/dsh-client-ui-sidebar"
       ],
       "platform": "web"
     }
@@ -47,23 +42,23 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-api-remotes": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-cordis-client-runner": "workspace:*",
-    "@deepseek-ai/dsh-client-locale": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-sidebar": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-session": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-tool": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-api-remotes": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-cordis-client-runner": "workspace:*",
+    "@carnival/dsh-client-locale": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-client-ui-primitives": "workspace:*",
+    "@carnival/dsh-client-ui-sidebar": "workspace:*",
+    "@carnival/dsh-client-ui-renderer": "workspace:*",
+    "@carnival/dsh-client-ui-session": "workspace:*",
+    "@carnival/dsh-client-ui-slots": "workspace:*",
+    "@carnival/dsh-client-ui-tool": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/cordis": "workspace:~",
     "react": "^18.2.0"
   },
   "files": [

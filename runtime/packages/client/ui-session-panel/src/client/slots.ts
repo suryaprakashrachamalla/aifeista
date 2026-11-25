@@ -1,18 +1,18 @@
 /** Session panel slot declarations and composed component props. */
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { ObservableSnapshot } from '@carnival/dsh-client-store'
 import type {
   InjectFace, PropsLocale, PropsRenderFactories, PropsRenderSlots, PropsRuntime,
-} from '@deepseek-ai/dsh-client-ui-slots'
-import type { RemoteHostFacts } from '@deepseek-ai/dsh-api-remotes/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { StateDotState } from '@deepseek-ai/dsh-client-ui-primitives'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
-import type {} from '@deepseek-ai/dsh-client-ui-context-menu/client'
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
+} from '@carnival/dsh-client-ui-slots'
+import type { RemoteHostFacts } from '@carnival/dsh-api-remotes/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { StateDotState } from '@carnival/dsh-client-ui-primitives'
+import type {} from '@carnival/dsh-client-ui-conversation/client'
+import type {} from '@carnival/dsh-client-ui-chat/client'
+import type {} from '@carnival/dsh-client-ui-context-menu/client'
+import type {} from '@carnival/dsh-client-ui-session/client'
 import type { NS } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface SlotMap {
     /**
      * Sections of the Session panel. `id` addresses the section, `order` sorts

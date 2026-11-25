@@ -9,7 +9,7 @@
     "./client": "./client.js"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "*"
+    "@carnival/schemastery": "*"
   },
   "dsh": {
     "bundle": {

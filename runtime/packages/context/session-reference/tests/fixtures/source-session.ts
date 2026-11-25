@@ -1,9 +1,9 @@
 /** Deterministic projected source shared by reference snapshot and Loader tests. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { createMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { Context } from '@carnival/cordis'
+import { createMessage, createUserMessage } from '@carnival/dsh-llm'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
 
 export const name = 'session-reference-source-fixture'
 export const inject = ['sessions']

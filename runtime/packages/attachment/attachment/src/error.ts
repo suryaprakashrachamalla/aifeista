@@ -1,6 +1,6 @@
-/** Attachment failure class. @module @deepseek-ai/dsh-attachment/error */
+/** Attachment failure class. @module @carnival/dsh-attachment/error */
 
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 
 const IMAGE_ADMISSION_ERROR_CODES = [
   'TOO_MANY_IMAGES',

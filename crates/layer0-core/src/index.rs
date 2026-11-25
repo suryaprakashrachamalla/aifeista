@@ -183,16 +183,16 @@ mod tests {
 
         fs::write(
             src.join("CompanionManager.swift"),
-            "final class CompanionManager {\n  let marker = \"hello_clicky\"\n}\n",
+            "final class CompanionManager {\n  let marker = \"hello_carnival\"\n}\n",
         )
         .unwrap();
-        fs::write(git_dir.join("config"), "hello_clicky_ignored").unwrap();
+        fs::write(git_dir.join("config"), "hello_carnival_ignored").unwrap();
 
         let index = WorkspaceIndex::new(vec![dir.path().to_path_buf()]);
         let count = index.rebuild();
         assert_eq!(count, 1);
 
-        let hits = index.search("hello_clicky", 10);
+        let hits = index.search("hello_carnival", 10);
         assert_eq!(hits.len(), 1);
         assert!(hits[0].path.contains("CompanionManager.swift"));
         assert_eq!(hits[0].line_no, 2);

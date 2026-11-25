@@ -1,5 +1,5 @@
-import { Context, Fiber, FiberState, Inject, ValidationError } from '@deepseek-ai/cordis'
-import { deepEqual, isNullable, updateVolatile, volatileEntries, type Volatile } from '@deepseek-ai/cosmokit'
+import { Context, Fiber, FiberState, Inject, ValidationError } from '@carnival/cordis'
+import { deepEqual, isNullable, updateVolatile, volatileEntries, type Volatile } from '@carnival/cosmokit'
 import { Loader } from '../index.ts'
 import { EntryGroup } from './group.ts'
 import { EntryTree, ModuleNotFoundError } from './tree.ts'

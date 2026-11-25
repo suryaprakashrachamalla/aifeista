@@ -2,8 +2,8 @@
 
 import { readFileSync } from 'node:fs'
 import z from 'zod'
-import { BUNDLED_SKILL_RANK, isSkillName } from '@deepseek-ai/dsh-skill'
-import type { SkillCandidate, SkillDefinition, SkillProvider } from '@deepseek-ai/dsh-skill'
+import { BUNDLED_SKILL_RANK, isSkillName } from '@carnival/dsh-skill'
+import type { SkillCandidate, SkillDefinition, SkillProvider } from '@carnival/dsh-skill'
 import { parse as parseYaml } from 'yaml'
 
 const Frontmatter = z.object({ name: z.string().refine(isSkillName), description: z.string().min(1) })

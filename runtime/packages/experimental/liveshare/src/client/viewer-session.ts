@@ -5,13 +5,13 @@
  * session list carries it instead of leaving the empty "new session" home page a signed-in viewer
  * cannot act on.
  *
- * @module @deepseek-ai/dsh-experimental-liveshare/src/client/viewer-session
+ * @module @carnival/dsh-experimental-liveshare/src/client/viewer-session
  */
 
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-client-connection/client'
+import type { Context as ClientContext } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-client-connection/client'
 // Type-only: pulls the Workspace navigation service merge (`ctx.uiWorkspace`).
-import type {} from '@deepseek-ai/dsh-client-ui-workspace/client'
+import type {} from '@carnival/dsh-client-ui-workspace/client'
 
 /**
  * Share one served viewer page presents. Restated from the protocol package because this Client

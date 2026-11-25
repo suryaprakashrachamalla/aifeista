@@ -1,25 +1,25 @@
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createAssistantMessage, type LlmAttemptId } from '@deepseek-ai/dsh-llm'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
+import { SessionSeq } from '@carnival/dsh-session/types'
+import type { SessionEvent, SessionId } from '@carnival/dsh-session/types'
+import { brandString } from '@carnival/dsh-brand'
+import { createAssistantMessage, type LlmAttemptId } from '@carnival/dsh-llm'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
 import {
   createScope, MutableSessionEventSource,
-} from '@deepseek-ai/dsh-api-session-controller/client'
+} from '@carnival/dsh-api-session-controller/client'
 import type {
   ISessions, SessionBinding, SessionEventLike, SessionFace, SessionListState, SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
+} from '@carnival/dsh-api-session-controller/client'
 import {
   ConversationEventRegistry, ConversationNodeAssembler, ConversationViewRegistry, UiConversation,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-client-ui-conversation/client'
 import type {
   ConversationNodeDefinition, ConversationViewDefinition, ConversationViewNode,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-client-ui-conversation/client'
 import { ConversationUpdateError } from '../src/client/conversation/assembler.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-conversation/client' {
+declare module '@carnival/dsh-client-ui-conversation/client' {
   interface ConversationViewSnapshotMap {
     /** Node ids published by the incremental-failure recovery test view. */
     'recovery-probe': readonly string[]

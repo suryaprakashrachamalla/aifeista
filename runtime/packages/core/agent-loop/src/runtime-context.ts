@@ -1,15 +1,15 @@
 /**
  * Durable admission state for the dynamic runtime-context snapshot.
- * @module @deepseek-ai/dsh-agent-loop/runtime-context
+ * @module @carnival/dsh-agent-loop/runtime-context
  */
 
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed, ContextSnapshotSection } from '@deepseek-ai/dsh-llm'
-import type { Session, SessionEvent, SessionSeq, UserMessage } from '@deepseek-ai/dsh-session'
-import { isReplacementSurfaceEvent } from '@deepseek-ai/dsh-session'
-import { deepEqualJson } from '@deepseek-ai/dsh-util-values'
-import type { Context } from '@deepseek-ai/cordis'
-declare module '@deepseek-ai/dsh-llm' {
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContextFormed, ContextSnapshotSection } from '@carnival/dsh-llm'
+import type { Session, SessionEvent, SessionSeq, UserMessage } from '@carnival/dsh-session'
+import { isReplacementSurfaceEvent } from '@carnival/dsh-session'
+import { deepEqualJson } from '@carnival/dsh-util-values'
+import type { Context } from '@carnival/cordis'
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'runtime-context': { kind: 'runtime-context' } & ContextFormed
   }

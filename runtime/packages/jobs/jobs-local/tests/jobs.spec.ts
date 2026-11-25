@@ -1,21 +1,21 @@
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { bindScopeParent, createScope, scopeOf } from '@deepseek-ai/dsh-scope'
-import type { ScopeKey } from '@deepseek-ai/dsh-scope'
-import type { JobId } from '@deepseek-ai/dsh-jobs'
+import { Context } from '@carnival/cordis'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import type { ToolCallId } from '@carnival/dsh-llm/types'
+import { createUserMessage } from '@carnival/dsh-llm'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import { bindScopeParent, createScope, scopeOf } from '@carnival/dsh-scope'
+import type { ScopeKey } from '@carnival/dsh-scope'
+import type { JobId } from '@carnival/dsh-jobs'
 import type {
   JobErrorCode, JobEvent, JobEventFilter, JobHandle, JobHooks, JobKind, JobOutcome, JobOutputSource, JobSpec, JobView,
-} from '@deepseek-ai/dsh-jobs'
-import LocalJobRegistry, { type Config as JobsConfig } from '@deepseek-ai/dsh-jobs-local'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-jobs'
+import LocalJobRegistry, { type Config as JobsConfig } from '@carnival/dsh-jobs-local'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
+import { brandString } from '@carnival/dsh-brand'
 
 vi.mock('node:crypto', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:crypto')>()
@@ -24,7 +24,7 @@ vi.mock('node:crypto', async (importOriginal) => {
 
 const randomUuid = vi.mocked(randomUUID)
 
-declare module '@deepseek-ai/dsh-jobs' {
+declare module '@carnival/dsh-jobs' {
   interface JobKindMap {
     'test-task': 'test-task'
     workflow: 'workflow'
@@ -185,7 +185,7 @@ describe('LocalJobRegistry.start', () => {
     const ctx = new Context()
     await ctx.plugin(LocalJobRegistry)
     expect(() => ctx.jobs.start(producer().spec))
-      .toThrow('background jobs unavailable: no job controller serves this agent (load @deepseek-ai/dsh-tool-jobs in its composition)')
+      .toThrow('background jobs unavailable: no job controller serves this agent (load @carnival/dsh-tool-jobs in its composition)')
     expect(() => ctx.jobs.start(producer().spec)).toThrow(expect.objectContaining(jobError('JOB_CONTROLLER_UNAVAILABLE')))
   })
 

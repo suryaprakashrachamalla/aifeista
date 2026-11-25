@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-office-kit",
+  "name": "@carnival/dsh-office-kit",
   "description": "Shared Office rendering, conversion, and recalculation with bounded queues and caching",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
@@ -9,11 +9,6 @@
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/document/office-kit"
-  },
   "exports": {
     ".": {
       "types": "./lib/types/index.d.ts",
@@ -50,22 +45,21 @@
     "src"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/dsh-api-workspace-files": "workspace:*",
-    "@deepseek-ai/dsh-fs": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/dsh-api-workspace-files": "workspace:*",
+    "@carnival/dsh-fs": "workspace:*",
+    "@carnival/dsh-session": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/libreoffice-kit": "0.2.3",
-    "@deepseek-ai/schemastery": "workspace:~",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
     "zod": "4.6.6",
-    "@deepseek-ai/dsh-home-paths": "workspace:*"
+    "@carnival/dsh-home-paths": "workspace:*"
   }
 }

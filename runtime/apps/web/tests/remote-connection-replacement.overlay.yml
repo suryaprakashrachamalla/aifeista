@@ -2,7 +2,7 @@
   disabled: true
 - insert:
     - id: qr-test-web-runtime
-      name: '@deepseek-ai/dsh-web-app'
+      name: '@carnival/dsh-web-app'
       inject: [webServer]
       config:
         openBrowser: false

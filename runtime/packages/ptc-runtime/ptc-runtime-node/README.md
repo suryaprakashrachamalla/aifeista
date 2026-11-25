@@ -3,7 +3,7 @@ description: "Run TypeScript programs in Node processes with optional retained m
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-ptc-runtime-node
+# @carnival/dsh-ptc-runtime-node
 
 English | [中文](README.zh.md)
 
@@ -34,7 +34,7 @@ Programs display text, objects, and `Image` values through top-level `inspect(..
 Configure the provider row after its required services are available:
 
 ```yaml
-- name: '@deepseek-ai/dsh-ptc-runtime-node'
+- name: '@carnival/dsh-ptc-runtime-node'
   config:
     executionMode: persistent-in-memory
     timeoutMs: 120000
@@ -64,7 +64,7 @@ Configure the provider row after its required services are available:
 
 The [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-ptc-runtime-node) defines accepted config fields. `resolve(request)` defaults cwd to the sandbox policy workspace root and supplies the numeric or null deadline choice and execution policy; `run(spec)` accepts those resolved inputs and does not fill missing values.
 
-Profile editors can import `resolvePersistentExecution` from `@deepseek-ai/dsh-ptc-runtime-node/configuration` to select retained execution from the effective program format. Merge all three returned settings atomically: Script and scoped REPL keep their syntax, while function bodies and REPL statements switch to `persistent-in-memory` with its default `replScoped`, the scoped REPL.
+Profile editors can import `resolvePersistentExecution` from `@carnival/dsh-ptc-runtime-node/configuration` to select retained execution from the effective program format. Merge all three returned settings atomically: Script and scoped REPL keep their syntax, while function bodies and REPL statements switch to `persistent-in-memory` with its default `replScoped`, the scoped REPL.
 
 ### Execution and results
 

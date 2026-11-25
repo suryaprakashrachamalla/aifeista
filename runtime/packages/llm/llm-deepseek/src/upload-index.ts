@@ -3,10 +3,10 @@
 import { createHash } from 'node:crypto'
 import { readFile, mkdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
-import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { AttachmentId, ImageVariantId as ImageVariantIdType } from '@deepseek-ai/dsh-attachment/types'
+import { withFileLock, writeFileAtomic } from '@carnival/dsh-atomic-write'
+import { resolveDshHome } from '@carnival/dsh-home-paths'
+import { brandString } from '@carnival/dsh-brand'
+import type { AttachmentId, ImageVariantId as ImageVariantIdType } from '@carnival/dsh-attachment/types'
 import type { DeepSeekFileId as DeepSeekFileIdType, DeepSeekFileScope as DeepSeekFileScopeType } from './file-id.ts'
 
 /** One durable remote upload mapping. Unix times are milliseconds. */

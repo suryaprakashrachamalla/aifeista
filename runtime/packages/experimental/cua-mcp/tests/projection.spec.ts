@@ -1,9 +1,9 @@
 /** Result projection: text passes through, screenshots become inline images, failures keep isError without DSH's error prefix. */
 import { describe, expect, it, vi } from 'vitest'
-import type { AttachmentStore, ImageAttachmentRef, ImageVariantId } from '@deepseek-ai/dsh-attachment'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import type { AttachmentStore, ImageAttachmentRef, ImageVariantId } from '@carnival/dsh-attachment'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ToolExecutionResult } from '@carnival/dsh-tools'
 import { projectToolResult } from '../src/projection.ts'
 
 const attachment: ImageAttachmentRef = {

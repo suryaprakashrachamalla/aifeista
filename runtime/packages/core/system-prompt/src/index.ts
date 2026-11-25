@@ -1,23 +1,23 @@
 /**
  * Registry for ordered system sections, dynamic context, tool schemas, and prompt variables.
  *
- * @module @deepseek-ai/dsh-system-prompt
+ * @module @carnival/dsh-system-prompt
  */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { AnonymousEntries, NamedEntries, ScopedLayers, scopeTarget } from '@deepseek-ai/dsh-scope'
-import type { ScopeKey, ScopeLayer, Scoped } from '@deepseek-ai/dsh-scope'
-import { createMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextSnapshotSection, SystemMessage, ToolSchema } from '@deepseek-ai/dsh-llm'
-import type { Session, SurfaceIntent } from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
+import { Context, Service } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import { AnonymousEntries, NamedEntries, ScopedLayers, scopeTarget } from '@carnival/dsh-scope'
+import type { ScopeKey, ScopeLayer, Scoped } from '@carnival/dsh-scope'
+import { createMessage } from '@carnival/dsh-llm'
+import type { ContextSnapshotSection, SystemMessage, ToolSchema } from '@carnival/dsh-llm'
+import type { Session, SurfaceIntent } from '@carnival/dsh-session'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
 import { assembleSystemAdmission, assertDistinctSections } from './admission.ts'
 import { sectionAdmissionsDefinition } from './projection.ts'
 import type { RenderedSection } from './admission.ts'
 import type { SectionAdmissions } from './projection.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     systemPrompt: SystemPrompt
   }
@@ -25,7 +25,7 @@ declare module '@deepseek-ai/cordis' {
   interface Events {
     /**
      * Presentation waterfall over assembled sections, contexts, and variables.
-     * Scope-filtered dispatch (`@deepseek-ai/dsh-scope`): scoped listeners
+     * Scope-filtered dispatch (`@carnival/dsh-scope`): scoped listeners
      * receive only that scope's assemblies. Returned section text determines updates;
      * omitting a previously admitted section leaves its instructions unchanged.
      * Empty text withdraws its instructions; registration disposal retires it.

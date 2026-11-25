@@ -3,7 +3,7 @@ description: "Register a CLI app plugin's entry skill with the Host Service `ctx
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-upstream-skills
+# @carnival/dsh-upstream-skills
 
 English | [中文](README.zh.md)
 
@@ -37,7 +37,7 @@ The [base bundle](../../bundle/base/cordis.patch.yml) loads the Service in every
 
 ```yaml
 - id: upstream-skills
-  name: '@deepseek-ai/dsh-upstream-skills'
+  name: '@carnival/dsh-upstream-skills'
 ```
 
 | Field | Default | Meaning |
@@ -53,8 +53,8 @@ The plugin's Host row lists `upstreamSkills` in `inject`, pins the upstream file
 
 ```ts
 import { fileURLToPath } from 'node:url'
-import type { Context } from '@deepseek-ai/cordis'
-import type { UpstreamSkillSet } from '@deepseek-ai/dsh-upstream-skills'
+import type { Context } from '@carnival/cordis'
+import type { UpstreamSkillSet } from '@carnival/dsh-upstream-skills'
 
 const VENDOR_SKILLS: UpstreamSkillSet = {
   repository: 'vendor/vendor-cli',

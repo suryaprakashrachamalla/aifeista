@@ -3,7 +3,7 @@ description: "把 CLI 应用插件的入口技能注册到 Host Service `ctx.ups
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-upstream-skills
+# @carnival/dsh-upstream-skills
 
 [English](README.md) | 中文
 
@@ -37,7 +37,7 @@ CLI 应用插件的 Host 行注入 `upstreamSkills` 并调用一次 `register`�
 
 ```yaml
 - id: upstream-skills
-  name: '@deepseek-ai/dsh-upstream-skills'
+  name: '@carnival/dsh-upstream-skills'
 ```
 
 | 字段 | 默认值 | 含义 |
@@ -53,8 +53,8 @@ CLI 应用插件的 Host 行注入 `upstreamSkills` 并调用一次 `register`�
 
 ```ts
 import { fileURLToPath } from 'node:url'
-import type { Context } from '@deepseek-ai/cordis'
-import type { UpstreamSkillSet } from '@deepseek-ai/dsh-upstream-skills'
+import type { Context } from '@carnival/cordis'
+import type { UpstreamSkillSet } from '@carnival/dsh-upstream-skills'
 
 const VENDOR_SKILLS: UpstreamSkillSet = {
   repository: 'vendor/vendor-cli',

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-api-workspace-controller",
+  "name": "@carnival/dsh-api-workspace-controller",
   "description": "Workspace Remote commands and reconnect-safe state transport",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/api/workspace-controller"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -45,11 +40,11 @@
   "dsh": {
     "client": {
       "external": [
-        "@deepseek-ai/dsh-api-gateway/client"
+        "@carnival/dsh-api-gateway/client"
       ],
       "inject": [
-        "@deepseek-ai/dsh-api-gateway",
-        "@deepseek-ai/dsh-client-connection"
+        "@carnival/dsh-api-gateway",
+        "@carnival/dsh-client-connection"
       ],
       "platform": "web"
     }
@@ -75,34 +70,34 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-deque": "workspace:*",
-    "@deepseek-ai/dsh-native-command": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-deque": "workspace:*",
+    "@carnival/dsh-native-command": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-storage-domain": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-workspace": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-host-directory-picker": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-storage-domain": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-workspace": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-api-gateway": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-store": "workspace:*",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:*",
-    "@deepseek-ai/dsh-host-directory-picker": "workspace:*",
-    "@deepseek-ai/dsh-remote-mock": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-storage-domain": "workspace:*",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@deepseek-ai/dsh-workspace": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-api-gateway": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-store": "workspace:*",
+    "@carnival/dsh-client-test-runtime": "workspace:*",
+    "@carnival/dsh-host-directory-picker": "workspace:*",
+    "@carnival/dsh-remote-mock": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-storage-domain": "workspace:*",
+    "@carnival/dsh-typert-protocol": "workspace:*",
+    "@carnival/dsh-workspace": "workspace:*"
   }
 }

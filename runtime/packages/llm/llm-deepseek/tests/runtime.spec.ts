@@ -1,13 +1,13 @@
-import * as Protocol from '@deepseek-ai/dsh-llm-deepseek'
+import * as Protocol from '@carnival/dsh-llm-deepseek'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { AttachmentId, ImageVariantId } from '@deepseek-ai/dsh-attachment/types'
-import type { AttachmentStore, ImageAttachmentRef, RequestImageAttachment } from '@deepseek-ai/dsh-attachment'
-import { createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import type { AttachmentId, ImageVariantId } from '@carnival/dsh-attachment/types'
+import type { AttachmentStore, ImageAttachmentRef, RequestImageAttachment } from '@carnival/dsh-attachment'
+import { createLaunchEnvironmentSnapshot } from '@carnival/dsh-launch-environment'
 import LlmRuntime, { type ToolCallId, createUserMessage,
   CONTEXT_WINDOW_EXCEEDED_CODE,
   createToolResultMessage,
@@ -17,16 +17,16 @@ import LlmRuntime, { type ToolCallId, createUserMessage,
   QUOTA_EXCEEDED_CODE,
   type ReasoningEffortId,
   userAgent,
-} from '@deepseek-ai/dsh-llm'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { getOrCreateAnonymousUserId, type AnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import DeepSeekLlmApiExtensionRegistry from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import type { PreparedDeepSeekLlmApiExtensions } from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import * as LlmDeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import { DeepSeekAdapter, resolveAdapterOptions } from '@deepseek-ai/dsh-llm-deepseek'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+} from '@carnival/dsh-llm'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import { getOrCreateAnonymousUserId, type AnonymousUserId } from '@carnival/dsh-anonymous-user-id'
+import type { SessionId } from '@carnival/dsh-session'
+import DeepSeekLlmApiExtensionRegistry from '@carnival/dsh-deepseek-llm-api-extensions'
+import type { PreparedDeepSeekLlmApiExtensions } from '@carnival/dsh-deepseek-llm-api-extensions'
+import * as LlmDeepSeek from '@carnival/dsh-llm-deepseek-api-key'
+import { DeepSeekAdapter, resolveAdapterOptions } from '@carnival/dsh-llm-deepseek'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import { providerError } from '../src/transport.ts'
 import { resolveRequestImageTarget } from '../src/request-pricing.ts'
 import { assemble } from './assemble.ts'
@@ -34,7 +34,7 @@ import { closeMockServers, mockServer, textEvents } from './mock-server.ts'
 import type { Behavior } from './mock-server.ts'
 import { requestImageStore } from './helpers.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

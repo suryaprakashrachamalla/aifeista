@@ -1,18 +1,18 @@
 /** Agent activation, composition, and initial model route owned by API Session. */
 
-import type {} from '@deepseek-ai/dsh-fs'
+import type {} from '@carnival/dsh-fs'
 import { randomUUID } from 'node:crypto'
 import { mkdir } from 'node:fs/promises'
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent, AgentOptions, AgentSetup } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-agent-default-model'
-import { installModelSelection } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-agent-preset-registry'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { Session, SessionId } from '@deepseek-ai/dsh-session'
-import { SessionQueryError, type SessionObservation } from '@deepseek-ai/dsh-session-query'
-import { RemoteError, remoteErrorOf } from '@deepseek-ai/dsh-typert-protocol'
-import type {} from '@deepseek-ai/dsh-typert-registry'
+import type { Context } from '@carnival/cordis'
+import type { Agent, AgentOptions, AgentSetup } from '@carnival/dsh-agent'
+import type {} from '@carnival/dsh-agent-default-model'
+import { installModelSelection } from '@carnival/dsh-agent'
+import type {} from '@carnival/dsh-agent-preset-registry'
+import { brandString } from '@carnival/dsh-brand'
+import type { Session, SessionId } from '@carnival/dsh-session'
+import { SessionQueryError, type SessionObservation } from '@carnival/dsh-session-query'
+import { RemoteError, remoteErrorOf } from '@carnival/dsh-typert-protocol'
+import type {} from '@carnival/dsh-typert-registry'
 
 /** Cold Session identity absent from persistence. */
 export class ApiSessionNotFound extends Error {}

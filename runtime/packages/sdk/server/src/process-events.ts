@@ -3,10 +3,10 @@
  * server's liveness failures. The launcher owns signal and failure handling;
  * this module only observes.
  *
- * @module @deepseek-ai/dsh-sdk-jsonrpc-server/process-events
+ * @module @carnival/dsh-sdk-jsonrpc-server/process-events
  */
 
-import { FiberState, type Context, type Fiber } from '@deepseek-ai/cordis'
+import { FiberState, type Context, type Fiber } from '@carnival/cordis'
 import type { Readable } from 'node:stream'
 import type { RuntimeObservation, RuntimeProcessEvent } from './server.ts'
 

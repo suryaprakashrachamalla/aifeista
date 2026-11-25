@@ -4,7 +4,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { renderSkillContent } from '@deepseek-ai/dsh-skill'
+import { renderSkillContent } from '@carnival/dsh-skill'
 import { expect, it } from 'vitest'
 import { FeishuSkillProvider } from '../src/skills.ts'
 

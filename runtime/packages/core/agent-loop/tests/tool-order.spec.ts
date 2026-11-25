@@ -5,23 +5,23 @@
  * happened to register in. Registration order is a concurrent loading artifact
  * and must not leak downstream.
  */
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { createUserMessage } from '@carnival/dsh-llm'
 
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore, { type SessionId, foldRequestHeader } from '@deepseek-ai/dsh-session'
-import SystemPrompt, { TOOL_ORDER_REST } from '@deepseek-ai/dsh-system-prompt'
-import type { Config as SystemPromptConfig } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
+import { Context } from '@carnival/cordis'
+import LlmRuntime from '@carnival/dsh-llm'
+import SessionStore, { type SessionId, foldRequestHeader } from '@carnival/dsh-session'
+import SystemPrompt, { TOOL_ORDER_REST } from '@carnival/dsh-system-prompt'
+import type { Config as SystemPromptConfig } from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
+import AgentRegistry, { type Agent } from '@carnival/dsh-agent'
 
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { MockAdapter, textResponse } from './mock-adapter.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 async function harness(adapter: MockAdapter, toolOrder?: SystemPromptConfig['toolOrder']) {
   const ctx = new Context()

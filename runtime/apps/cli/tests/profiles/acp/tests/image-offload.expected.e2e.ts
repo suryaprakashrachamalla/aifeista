@@ -7,7 +7,7 @@ import { expect, it } from 'vitest'
 import {
   runScenario,
   type InputScript,
-} from '@deepseek-ai/dsh-session-snapshot'
+} from '@carnival/dsh-session-snapshot'
 
 const AGENT = {
   binScript: fileURLToPath(new URL('../../../../src/bin.ts', import.meta.url)),

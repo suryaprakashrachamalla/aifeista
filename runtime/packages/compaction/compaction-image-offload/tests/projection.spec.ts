@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createAssistantMessage, createToolResultMessage, createUserMessage, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, ImageBlock } from '@deepseek-ai/dsh-llm'
-import { deriveEventMessage, foldSurface, Session, type SessionId, SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionEventMap } from '@deepseek-ai/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import { createAssistantMessage, createToolResultMessage, createUserMessage, type ToolCallId } from '@carnival/dsh-llm'
+import type { ContentBlock, ImageBlock } from '@carnival/dsh-llm'
+import { deriveEventMessage, foldSurface, Session, type SessionId, SessionLogOffset, SessionSeq } from '@carnival/dsh-session'
+import type { SessionEvent, SessionEventMap } from '@carnival/dsh-session'
 import { imageOffloadProjection } from '../src/projection.ts'
 
 function createSession(...args: Parameters<typeof Session.create>): Session {

@@ -351,7 +351,7 @@
                 <polygon points="12 2 14.8 9.2 22 12 14.8 14.8 12 22 9.2 14.8 2 12 9.2 9.2 12 2" />
               </svg>
               <div>
-                <div class="row-title">Orchestrator &amp; Clicky</div>
+                <div class="row-title">Orchestrator &amp; Voice Companion</div>
                 <div class="row-sub">Dispatch via SkillTree, Cordis &amp; spatial pointer</div>
               </div>
             </div>
@@ -502,7 +502,7 @@
             body: JSON.stringify({
               request_id: "spot-" + Date.now(),
               session_id: "spotlight-orchestrator",
-              lane: "clicky_ambient",
+              lane: "companion_ambient",
               prompt,
             }),
           }).then((r) => r.json());
@@ -522,7 +522,7 @@
             (s) => `<div class="res-item"><strong>Act · ${escapeHtml(s.id)}</strong> (${escapeHtml(s.title)})</div>`
           );
           const combined = [...memItems, ...sessItems];
-          showResults(combined.length ? combined.join("") : '<div class="res-item">Vault is empty — run an Act or Clicky prompt to record events.</div>');
+          showResults(combined.length ? combined.join("") : '<div class="res-item">Vault is empty — run an Act or Companion prompt to record events.</div>');
         }
       }
 

@@ -1,9 +1,9 @@
 /** Standard ACP session configuration over one Agent's model selection. */
 
 import type { SessionConfigOption, SessionConfigValueId } from '@agentclientprotocol/sdk'
-import { type Model, type ModelSelection } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId, LlmCallConfig, LlmRuntime } from '@deepseek-ai/dsh-llm'
+import { type Model, type ModelSelection } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId, LlmCallConfig, LlmRuntime } from '@carnival/dsh-llm'
 
 const MODEL_CONFIG_ID = 'model'
 const REASONING_CONFIG_ID = 'reasoning_effort'

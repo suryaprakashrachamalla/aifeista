@@ -1,17 +1,17 @@
 /**
  * Same-session goal-round driver over public agent, session, and goal services.
- * @module @deepseek-ai/dsh-goal-round-driver
+ * @module @carnival/dsh-goal-round-driver
  */
 
 import { isDeepStrictEqual } from 'node:util'
-import { FiberState } from '@deepseek-ai/cordis'
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import type { GoalMessageSource, GoalRef, GoalView } from '@deepseek-ai/dsh-goal'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, MessageId, MessageSource } from '@deepseek-ai/dsh-llm'
-import type { Session, SessionEvent, UserMessage } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-subagent'
+import { FiberState } from '@carnival/cordis'
+import type { Context } from '@carnival/cordis'
+import type { Agent, PreStepDecision } from '@carnival/dsh-agent'
+import type { GoalMessageSource, GoalRef, GoalView } from '@carnival/dsh-goal'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type { ContentBlock, MessageId, MessageSource } from '@carnival/dsh-llm'
+import type { Session, SessionEvent, UserMessage } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-subagent'
 import { renderGoalRoundPrompt } from './prompt.ts'
 
 export { renderGoalRoundPrompt } from './prompt.ts'

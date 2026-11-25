@@ -1,8 +1,8 @@
 import { once } from 'node:events'
 import { createServer } from 'node:http'
 import { describe, expect, it, vi } from 'vitest'
-import { LlmError, userAgent } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { LlmError, userAgent } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
 import type { DeepSeekFileId } from '../src/file-id.ts'
 import {
   DeepSeekFilesClient,

@@ -1,7 +1,7 @@
 /** Protocol-independent model capabilities and reasoning choices. */
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ReasoningEffortId } from '@deepseek-ai/dsh-llm/types'
-import type { LlmModelBadge, LlmModelInfo, LlmResolvedModelInfo } from '@deepseek-ai/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ReasoningEffortId } from '@carnival/dsh-llm/types'
+import type { LlmModelBadge, LlmModelInfo, LlmResolvedModelInfo } from '@carnival/dsh-llm'
 import type { DeepSeekCatalogModel, DeepSeekConnectionOptions } from './types.ts'
 
 const OFF_REASONING_EFFORT = brandString<ReasoningEffortId>('off')

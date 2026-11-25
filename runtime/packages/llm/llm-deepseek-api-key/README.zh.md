@@ -3,7 +3,7 @@ description: "DeepSeek API-key authentication, model discovery, and the official
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-llm-deepseek-api-key
+# @carnival/dsh-llm-deepseek-api-key
 
 [English](README.md) | 中文
 
@@ -25,11 +25,11 @@ kind: "package-reference"
 <a id="use-this-package"></a>
 ## 使用此包
 
-`apiKeyEnv` 默认为 `DEEPSEEK_API_KEY`，在每次请求和模型发现时解析凭据。密钥由 `ctx.deepseekAuth` 通过 [`dsh-credentials`](../../credentials/credentials/README.zh.md) 的凭据引用函数读取：已组合 credentials 服务时，按其优先级解析；只有未组合该服务时才直接读取启动环境。请求时凭据缺失以 `MISSING_CREDENTIAL` 失败；格式错误以 `INVALID_CREDENTIAL` 失败，其诊断点名本插件的设置命名空间与凭据引用。模型发现在凭据缺失时返回空目录，在模型选择器中隐藏该路由，但保留其设置入口。凭据格式错误和其他读取失败继续上报。添加或删除密钥会影响下一次模型发现。本插件只在挂载了 `@deepseek-ai/dsh-deepseek-auth` 的组合中启动；`base` 与 `sdk-minimal` 两个组合包挂载它。
+`apiKeyEnv` 默认为 `DEEPSEEK_API_KEY`，在每次请求和模型发现时解析凭据。密钥由 `ctx.deepseekAuth` 通过 [`dsh-credentials`](../../credentials/credentials/README.zh.md) 的凭据引用函数读取：已组合 credentials 服务时，按其优先级解析；只有未组合该服务时才直接读取启动环境。请求时凭据缺失以 `MISSING_CREDENTIAL` 失败；格式错误以 `INVALID_CREDENTIAL` 失败，其诊断点名本插件的设置命名空间与凭据引用。模型发现在凭据缺失时返回空目录，在模型选择器中隐藏该路由，但保留其设置入口。凭据格式错误和其他读取失败继续上报。添加或删除密钥会影响下一次模型发现。本插件只在挂载了 `@carnival/dsh-deepseek-auth` 的组合中启动；`base` 与 `sdk-minimal` 两个组合包挂载它。
 
 ```yaml
 - id: llm-deepseek
-  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  name: '@carnival/dsh-llm-deepseek-api-key'
   config:
     reasoningEffort: high
     apiKeyEnv: DEEPSEEK_API_KEY

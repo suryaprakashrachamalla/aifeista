@@ -6,11 +6,25 @@
 
 Command multiple coding agents side by side, watch them work inside live pixel worlds, talk to your screen out loud, automate routines, and burst heavy tasks to a bigger machine over SSH or Tailscale.
 
-[✨ What you can do](#what-you-can-do) · [🎮 Studio worlds](#watch-your-agents-work-literally) · [🚀 Get started](#get-started) · [⌨️ Shortcuts](#keyboard-shortcuts) · [💬 FAQ](#faq)
+[⬇️ Download](#download-for-macos-apple-silicon) · [✨ What you can do](#what-you-can-do) · [🎮 Studio worlds](#watch-your-agents-work-literally) · [🚀 Get started](#get-started) · [⌨️ Shortcuts](#keyboard-shortcuts) · [💬 FAQ](#faq)
 
 <!-- Drop a hero screenshot or short screen recording here: docs/images/hero.png -->
 
 </div>
+
+---
+
+## ⬇️ Download for macOS (Apple Silicon)
+
+Grab the standalone **Carnival v0.1.0** installer for Apple Silicon (`arm64`) Macs — 100% self-contained with the bundled Node runtime, Cordis engine, sidecars, and native desktop shell included (no Homebrew or terminal setup required):
+
+- **📦 Disk Image (Drag to Applications):** [Carnival-0.1.0-macOS-arm64.dmg](https://github.com/suryaprakashrachamalla/aifeista/releases/download/v0.1.0/Carnival-0.1.0-macOS-arm64.dmg)
+- **🛠️ Guided Installer Package:** [Carnival-0.1.0-macOS-arm64.pkg](https://github.com/suryaprakashrachamalla/aifeista/releases/download/v0.1.0/Carnival-0.1.0-macOS-arm64.pkg)
+
+> **First launch (unsigned preview build):** Right-click `Carnival.app` in **Applications** and choose **Open**, or run:
+> ```bash
+> xattr -dr com.apple.quarantine /Applications/Carnival.app
+> ```
 
 ---
 

@@ -3,7 +3,7 @@ description: "QR login, private login links, and owner-approved browser pairing.
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-remote-connection
+# @carnival/dsh-client-remote-connection
 
 English | [中文](README.zh.md)
 
@@ -85,10 +85,10 @@ Requests are process-local and remain in the bounded pool until expiry, includin
 Register in the root-scoped list `settings.remoteConnection.extensions` to add options after the main panel, including its default access-address, QR login, and pairing cards. Each plugin uses a unique `id`; entries render in ascending `order`, then registration order. Extensions appear alongside either the default panel or a replacement. `RemoteConnectionExtensionProps` provides the same shared state hooks, actions, and `close()` as [panel replacements](#replace-the-settings-panel). Each extension owns its rendering and localized copy.
 
 ```ts client
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
 import type { FunctionComponent } from 'react'
-import type { RemoteConnectionExtensionProps } from '@deepseek-ai/dsh-client-remote-connection/client'
+import type { RemoteConnectionExtensionProps } from '@carnival/dsh-client-remote-connection/client'
 
 declare const ConnectionOptions: FunctionComponent<RemoteConnectionExtensionProps>
 
@@ -110,10 +110,10 @@ The root-scoped, single `settings.remoteConnection.content` slot replaces the ma
 Register a replacement component from your Client plugin with a lower priority than the default panel's `0`:
 
 ```ts client
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
 import type { FunctionComponent } from 'react'
-import type { RemoteConnectionContentProps } from '@deepseek-ai/dsh-client-remote-connection/client'
+import type { RemoteConnectionContentProps } from '@carnival/dsh-client-remote-connection/client'
 
 declare const CustomPanel: FunctionComponent<RemoteConnectionContentProps>
 

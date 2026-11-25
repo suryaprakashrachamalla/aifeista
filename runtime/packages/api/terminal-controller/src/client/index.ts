@@ -1,12 +1,12 @@
 /** Client terminal model service; views are keyed independently from Host terminal identities. */
-import { Service, type Context } from '@deepseek-ai/cordis'
-import { remoteErrorOf } from '@deepseek-ai/dsh-typert-protocol'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-api-gateway/client'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
+import { Service, type Context } from '@carnival/cordis'
+import { remoteErrorOf } from '@carnival/dsh-typert-protocol'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-api-gateway/client'
+import type { ConnectionHandle } from '@carnival/dsh-client-connection/client'
 import { TerminalView, type TerminalRemote } from './model.ts'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
+import { randomUUID } from '@carnival/dsh-util-crypto'
 import type { TerminalShell, WebTerminalId, WebTerminalInfo } from '../types.ts'
 import { preferredShell, rememberShell } from './shell-preference.ts'
 import { TerminalCloseRequests, type TerminalCloseRequest } from './close-requests.ts'
@@ -18,7 +18,7 @@ import { TerminalRosters, type TerminalRosterListener } from './roster.ts'
 export type { TerminalView, TerminalViewState, TerminalViewIssue, TerminalRenderFrame, TerminalRemote } from './model.ts'
 export type { TerminalRosterListener } from './roster.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** React-free browser terminal views and explicit process cleanup. */
     webTerminals: ClientTerminals

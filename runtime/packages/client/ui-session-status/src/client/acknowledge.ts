@@ -1,9 +1,9 @@
 /** Visible main-view acknowledgements over Host reading state. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { ISessions, SessionBinding } from '@deepseek-ai/dsh-api-session-controller/client'
+import type { Context } from '@carnival/cordis'
+import type { ISessions, SessionBinding } from '@carnival/dsh-api-session-controller/client'
 // Type-only: declares the `mainView` reference source.
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type {} from '@carnival/dsh-client-ui-session/client'
+import type { SessionId } from '@carnival/dsh-session/types'
 import type { SessionReadModel } from './model.ts'
 
 /**

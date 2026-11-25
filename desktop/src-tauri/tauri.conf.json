@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "AI Carnival",
+  "productName": "Carnival",
   "version": "0.1.0",
-  "identifier": "com.aifeista.carnival",
+  "identifier": "com.carnival.desktop",
   "build": {
     "frontendDist": "../web-shell"
   },
@@ -26,8 +26,8 @@
         "resizable": false
       },
       {
-        "label": "clicky-overlay",
-        "title": "AI Carnival Clicky Overlay",
+        "label": "companion-overlay",
+        "title": "Carnival Companion Overlay",
         "url": "overlay.html",
         "width": 1360,
         "height": 880,

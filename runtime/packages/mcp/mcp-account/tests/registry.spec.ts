@@ -1,7 +1,7 @@
 /** Connectors register their server's account with `ctx.mcpAccounts`, which shows it through the connector account registry. */
-import { Context } from '@deepseek-ai/cordis'
-import ConnectorAccounts from '@deepseek-ai/dsh-client-ui-connector-account'
-import type { ConnectorAccountsView } from '@deepseek-ai/dsh-client-ui-connector-account/types'
+import { Context } from '@carnival/cordis'
+import ConnectorAccounts from '@carnival/dsh-client-ui-connector-account'
+import type { ConnectorAccountsView } from '@carnival/dsh-client-ui-connector-account/types'
 import { expect, it, onTestFinished } from 'vitest'
 import McpAccounts from '../src/index.ts'
 import { ATTEMPT, COPY, fakeManager, OPERATION } from './fixture.ts'

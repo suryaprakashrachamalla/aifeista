@@ -1,13 +1,13 @@
 /** Live title input remains owned while projection registration is pending. */
-import { Context, FiberState } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import LlmRuntime, { createUserMessage, markAgentLoopRequest } from '@deepseek-ai/dsh-llm'
-import SessionStore, { type Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionTitleProviderId } from '@deepseek-ai/dsh-session-title/types'
-import SessionTitleService, { type SessionTitleProviderRequest } from '@deepseek-ai/dsh-session-title'
-import { deepFreeze } from '@deepseek-ai/dsh-util-values'
+import { Context, FiberState } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import LlmRuntime, { createUserMessage, markAgentLoopRequest } from '@carnival/dsh-llm'
+import SessionStore, { type Session } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionTitleProviderId } from '@carnival/dsh-session-title/types'
+import SessionTitleService, { type SessionTitleProviderRequest } from '@carnival/dsh-session-title'
+import { deepFreeze } from '@carnival/dsh-util-values'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 
 const CONFIG = { fallbackMaxWords: 8, fallbackMaxBytes: 64, maxTitleBytes: 256 }

@@ -1,5 +1,5 @@
 /** Public contact options shared by Host and Client. */
-import z from '@deepseek-ai/schemastery'
+import z from '@carnival/schemastery'
 
 /** Questionnaire destination shared by Host and Client. */
 export interface ContactConfig {

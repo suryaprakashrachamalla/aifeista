@@ -16,23 +16,23 @@
  * mount under the manager's fiber, so disposing the manager unwinds every
  * instance and its registered tools.
  *
- * @module @deepseek-ai/dsh-mcp-manager
+ * @module @carnival/dsh-mcp-manager
  */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import type { Volatile, VolatileSnapshot } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { parseCredentialKey } from '@deepseek-ai/dsh-credentials'
-import { McpClientHost } from '@deepseek-ai/dsh-mcp-client'
-import type { McpCloseResult, McpOAuthAuthorization, McpProbeOptions, McpProbeResult, McpServerInstance, ReconnectConfig } from '@deepseek-ai/dsh-mcp-client'
-import type { Config as McpClientConfig, McpOAuthAttemptId, McpOAuthAttemptView, McpOAuthConfigInput } from '@deepseek-ai/dsh-mcp-client'
-import { deepEqualJson } from '@deepseek-ai/dsh-util-values'
+import { Context, Service } from '@carnival/cordis'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import type { Volatile, VolatileSnapshot } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import { parseCredentialKey } from '@carnival/dsh-credentials'
+import { McpClientHost } from '@carnival/dsh-mcp-client'
+import type { McpCloseResult, McpOAuthAuthorization, McpProbeOptions, McpProbeResult, McpServerInstance, ReconnectConfig } from '@carnival/dsh-mcp-client'
+import type { Config as McpClientConfig, McpOAuthAttemptId, McpOAuthAttemptView, McpOAuthConfigInput } from '@carnival/dsh-mcp-client'
+import { deepEqualJson } from '@carnival/dsh-util-values'
 import type { McpManagedServerStatus, McpManagedServerView } from './types.ts'
 // Side-effect type imports: declare the tool service and Loader's volatile events.
-import type {} from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/cordis-plugin-loader'
+import type {} from '@carnival/dsh-tools'
+import type {} from '@carnival/cordis-plugin-loader'
 
 export type { McpManagedServerStatus, McpManagedServerView } from './types.ts'
 
@@ -126,7 +126,7 @@ interface ManagedRecord {
   detachStatus?: () => void
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** The MCP server manager. */
     mcpManager: McpServerManager

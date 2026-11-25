@@ -5,10 +5,10 @@ import clsx from 'clsx'
 import {
   IconBranchOutlineRegular, IconCheckOutlineRegular, IconChevronDownOutlineRegular, IconEditOutlineRegular, IconPlusOutlineRegular,
   Menu, MenuItemButton, Tooltip,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { HostObservable, InjectFace, PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+} from '@carnival/dsh-client-ui-primitives'
+import type { HostObservable, InjectFace, PropsLocale } from '@carnival/dsh-client-ui-slots'
+import type {} from '@carnival/dsh-client-ui-conversation/client'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
 import { branchLabel, LOCAL_REF_PREFIX, REMOTE_REF_PREFIX } from '../branch-name.ts'
 import type { ForgeBaseBranch, ForgePanelState, ForgeWorktreeBases, ForgeWorktreeBlocker } from '../types.ts'
 import { branchSearchStatus, useBranchSearch } from './branch-search.tsx'

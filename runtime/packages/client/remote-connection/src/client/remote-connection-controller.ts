@@ -1,7 +1,7 @@
 /** Transient QR login state; secrets remain in memory until the invitation settles. */
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type {} from '@deepseek-ai/dsh-client-remote-connection/remote'
-import type { TypertClientRemote } from '@deepseek-ai/dsh-typert-protocol'
+import { createSnapshotStore, type SnapshotStore } from '@carnival/dsh-client-store'
+import type {} from '@carnival/dsh-client-remote-connection/remote'
+import type { TypertClientRemote } from '@carnival/dsh-typert-protocol'
 import type { RemoteConnectionStatus, RemoteLoginTicket } from '../types.ts'
 
 /** Client methods are generated from the Host service. */

@@ -9,24 +9,24 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, expect, it, vi } from 'vitest'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import { Context } from '@deepseek-ai/cordis'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import AuthorizationService from '@deepseek-ai/dsh-authorization'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { credentialKey } from '@deepseek-ai/dsh-credentials'
-import LocalCredentials from '@deepseek-ai/dsh-credentials-local'
-import DeepSeekAccount, { type AccountClientMetadata } from '@deepseek-ai/dsh-deepseek-account'
-import LlmRuntime, { type StreamChunk } from '@deepseek-ai/dsh-llm'
-import * as AccountRoute from '@deepseek-ai/dsh-llm-deepseek-account'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import { Context } from '@carnival/cordis'
+import Include from '@carnival/cordis-plugin-include'
+import Loader from '@carnival/cordis-plugin-loader'
+import AgentRegistry from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import AuthorizationService from '@carnival/dsh-authorization'
+import { brandString } from '@carnival/dsh-brand'
+import { credentialKey } from '@carnival/dsh-credentials'
+import LocalCredentials from '@carnival/dsh-credentials-local'
+import DeepSeekAccount, { type AccountClientMetadata } from '@carnival/dsh-deepseek-account'
+import LlmRuntime, { type StreamChunk } from '@carnival/dsh-llm'
+import * as AccountRoute from '@carnival/dsh-llm-deepseek-account'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
 import { profileComposition } from '../../../settings/settings/tests/profile-composition.ts'
 import { sourceModuleLoader, sse, start, user } from './helpers.ts'
 
@@ -107,17 +107,17 @@ async function boot(origin: string) {
   const ctx = new Context()
   cleanup.push(() => ctx.fiber.dispose())
   const modules = new Map<string, { module: unknown; config?: object }>([
-    ['@deepseek-ai/dsh-llm', { module: LlmRuntime }], ['@deepseek-ai/dsh-session', { module: SessionStore }],
-    ['@deepseek-ai/dsh-session-projection', { module: SessionProjectionRegistry }], ['@deepseek-ai/dsh-system-prompt', { module: SystemPrompt }],
-    ['@deepseek-ai/dsh-tools', { module: ToolRuntime }], ['@deepseek-ai/dsh-tool-executor-native', { module: NativeToolExecutor }],
-    ['@deepseek-ai/dsh-agent', { module: AgentRegistry }], ['@deepseek-ai/dsh-agent-loop', { module: AgentLoop, config: { agents: [] } }],
-    ['@deepseek-ai/dsh-credentials-local', { module: LocalCredentials, config: { path: join(home, '.credentials.yaml'), watch: false } }],
-    ['@deepseek-ai/dsh-authorization', { module: AuthorizationService }],
-    ['@deepseek-ai/dsh-deepseek-account', { module: DeepSeekAccount, config: {
+    ['@carnival/dsh-llm', { module: LlmRuntime }], ['@carnival/dsh-session', { module: SessionStore }],
+    ['@carnival/dsh-session-projection', { module: SessionProjectionRegistry }], ['@carnival/dsh-system-prompt', { module: SystemPrompt }],
+    ['@carnival/dsh-tools', { module: ToolRuntime }], ['@carnival/dsh-tool-executor-native', { module: NativeToolExecutor }],
+    ['@carnival/dsh-agent', { module: AgentRegistry }], ['@carnival/dsh-agent-loop', { module: AgentLoop, config: { agents: [] } }],
+    ['@carnival/dsh-credentials-local', { module: LocalCredentials, config: { path: join(home, '.credentials.yaml'), watch: false } }],
+    ['@carnival/dsh-authorization', { module: AuthorizationService }],
+    ['@carnival/dsh-deepseek-account', { module: DeepSeekAccount, config: {
       platformOrigin: origin, inferenceOrigin: origin, allowLoopbackHttp: true, logoutRetryDelayMs: 1,
     } }],
-    ['@deepseek-ai/dsh-deepseek-auth', { module: DeepSeekAuth }],
-    ['@deepseek-ai/dsh-llm-deepseek-account', { module: AccountRoute, config: { baseURL: `${origin}/anthropic` } }],
+    ['@carnival/dsh-deepseek-auth', { module: DeepSeekAuth }],
+    ['@carnival/dsh-llm-deepseek-account', { module: AccountRoute, config: { baseURL: `${origin}/anthropic` } }],
   ])
   await writeFile(join(home, 'cordis.yml'), JSON.stringify(
     [...modules].map(([name, { config }]) => ({ name, ...config === undefined ? {} : { config } })),

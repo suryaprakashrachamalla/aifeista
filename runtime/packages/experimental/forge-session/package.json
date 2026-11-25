@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-experimental-forge-session",
+  "name": "@carnival/dsh-experimental-forge-session",
   "description": "Binds change requests to the Session that created, pushed, or tracked them",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
@@ -29,68 +29,63 @@
     "src"
   ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/forge-session"
-  },
   "dependencies": {
-    "@deepseek-ai/dsh-timeout": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-timeout": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "shell-quote": "^1.12.0",
     "zod": "4.6.6"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-experimental-forge": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-shell": "workspace:*",
-    "@deepseek-ai/dsh-shell-env": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-experimental-forge": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-shell": "workspace:*",
+    "@carnival/dsh-shell-env": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-sandbox-policy": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-agent-loop": "workspace:*",
-    "@deepseek-ai/dsh-bash-local": "workspace:*",
-    "@deepseek-ai/dsh-experimental-forge": "workspace:*",
-    "@deepseek-ai/dsh-experimental-forge-github": "workspace:*",
-    "@deepseek-ai/dsh-forge-gitlab": "workspace:*",
-    "@deepseek-ai/dsh-fs-local": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-shell-env": "workspace:*",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tool-bash": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-native": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-working-directory": "workspace:*",
-    "@deepseek-ai/dsh-shell": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:*",
-    "@deepseek-ai/dsh-tool-executor-ptc": "workspace:*",
-    "@deepseek-ai/dsh-ptc-runtime-node": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-local": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-agent-loop": "workspace:*",
+    "@carnival/dsh-bash-local": "workspace:*",
+    "@carnival/dsh-experimental-forge": "workspace:*",
+    "@carnival/dsh-experimental-forge-github": "workspace:*",
+    "@carnival/dsh-forge-gitlab": "workspace:*",
+    "@carnival/dsh-fs-local": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-shell-env": "workspace:*",
+    "@carnival/dsh-subprocess-local": "workspace:*",
+    "@carnival/dsh-system-prompt": "workspace:*",
+    "@carnival/dsh-tool-bash": "workspace:*",
+    "@carnival/dsh-tool-executor-native": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-working-directory": "workspace:*",
+    "@carnival/dsh-shell": "workspace:*",
+    "@carnival/dsh-sandbox-policy": "workspace:*",
+    "@carnival/dsh-tool-executor-ptc": "workspace:*",
+    "@carnival/dsh-ptc-runtime-node": "workspace:*",
+    "@carnival/dsh-sandbox-local": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-shell": {
+    "@carnival/dsh-shell": {
       "optional": true
     },
-    "@deepseek-ai/dsh-shell-env": {
+    "@carnival/dsh-shell-env": {
       "optional": true
     },
-    "@deepseek-ai/dsh-tools": {
+    "@carnival/dsh-tools": {
       "optional": true
     },
-    "@deepseek-ai/dsh-sandbox-policy": {
+    "@carnival/dsh-sandbox-policy": {
       "optional": true
     }
   }

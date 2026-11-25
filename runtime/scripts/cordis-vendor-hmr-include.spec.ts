@@ -3,15 +3,15 @@ import { mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { Context, type Plugin } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import Timer from '@deepseek-ai/cordis-plugin-timer'
+import { Context, type Plugin } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import Timer from '@carnival/cordis-plugin-timer'
 import { expect, it, onTestFinished, vi } from 'vitest'
 
 // A literal import would add vendor HMR's `Context.hmr` declaration to the
 // repository type program, where DSH HMR declares the same property.
-const vendorHmr: string = '@deepseek-ai/cordis-plugin-hmr'
+const vendorHmr: string = '@carnival/cordis-plugin-hmr'
 
 it('logs a rejected Include refresh instead of leaving it unhandled', async () => {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), 'dsh-vendor-hmr-include-')))

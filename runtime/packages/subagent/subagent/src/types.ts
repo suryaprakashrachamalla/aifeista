@@ -4,14 +4,14 @@
  * payloads that plugins and hosts observe. Internal control interfaces, such
  * as the manager host, belong with their implementation.
  *
- * @module @deepseek-ai/dsh-subagent/types
+ * @module @carnival/dsh-subagent/types
  */
 
-import type { Agent, AgentOptions } from '@deepseek-ai/dsh-agent'
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { ContentBlock, MessageId } from '@deepseek-ai/dsh-llm'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
-import type { ObjectJsonSchema } from '@deepseek-ai/dsh-tools'
+import type { Agent, AgentOptions } from '@carnival/dsh-agent'
+import type { Branded } from '@carnival/dsh-brand'
+import type { ContentBlock, MessageId } from '@carnival/dsh-llm'
+import type { SessionEvent, SessionId } from '@carnival/dsh-session'
+import type { ObjectJsonSchema } from '@carnival/dsh-tools'
 
 /** Current concurrency capacity of one subagent tree; observing it reserves no slots. */
 export interface SubagentCapacity {

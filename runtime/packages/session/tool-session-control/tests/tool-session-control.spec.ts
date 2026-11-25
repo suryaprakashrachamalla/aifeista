@@ -1,14 +1,14 @@
 /** Session messages activate targets through the Web Session controller and attribute the real sender. */
 
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import type {} from '@deepseek-ai/dsh-api-session-controller'
-import { LlmAdapter, ToolCallId, type GenerateOptions, type StreamChunk } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
+import { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import type {} from '@carnival/dsh-api-session-controller'
+import { LlmAdapter, ToolCallId, type GenerateOptions, type StreamChunk } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionId } from '@carnival/dsh-session'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as ToolSessionControl from '../src/index.ts'
 

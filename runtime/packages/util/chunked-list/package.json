@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-chunked-list",
+  "name": "@carnival/dsh-chunked-list",
   "description": "Persistent append-only chunked lists with bounded copying and JSON checkpoint validation",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/util/chunked-list"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,10 +25,10 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "dependencies": {
     "zod": "4.6.6"

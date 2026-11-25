@@ -1,14 +1,14 @@
 /** Real SDK cancellation and caller-owned connection budgets. */
 
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { z } from 'zod'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { Client, InMemoryTransport, type Transport } from '@modelcontextprotocol/client'
 import { McpServer } from '@modelcontextprotocol/server'
 import { serveStdio } from '@modelcontextprotocol/server/stdio'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
 import { startConnection, resolveReconnectPolicy } from '../src/connection.ts'
 import { probeServer } from '../src/probe.ts'
 import { McpGeneration } from '../src/generation.ts'

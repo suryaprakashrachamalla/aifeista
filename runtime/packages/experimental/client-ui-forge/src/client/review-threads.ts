@@ -3,9 +3,9 @@
  * each filter of the thread list keeps, and the composer quote of a whole thread.
  */
 
-import type { QuoteSummary } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { ForgeAnchor, ForgeReviewThread } from '@deepseek-ai/dsh-experimental-forge/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import type { QuoteSummary } from '@carnival/dsh-client-ui-primitives'
+import type { ForgeAnchor, ForgeReviewThread } from '@carnival/dsh-experimental-forge/types'
+import { assertNever } from '@carnival/dsh-util-values'
 import type { ForgeCommitRange, ForgeDiffFile, ForgeDiffHunk } from '../types.ts'
 import { hunkRows } from './diff-rows.ts'
 

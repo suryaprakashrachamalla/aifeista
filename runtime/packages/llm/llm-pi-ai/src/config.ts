@@ -12,16 +12,16 @@
  *
  * @module dsh-llm-pi-ai/config
  */
-import type { Volatile } from '@deepseek-ai/cordis'
+import type { Volatile } from '@carnival/cordis'
 
 import type { CacheRetention, ChatTemplateKwargValue, ModelThinkingLevel, Provider, ThinkingBudgets, Transport } from '@earendil-works/pi-ai'
-import z from '@deepseek-ai/schemastery'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import type { CredentialRef } from '@deepseek-ai/dsh-credentials'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { resolveRetryPolicy, RetryPolicySchema } from '@deepseek-ai/dsh-llm'
-import type { ResolvedRetryPolicy, RetryPolicyConfig } from '@deepseek-ai/dsh-llm'
-import { deepEqualJson } from '@deepseek-ai/dsh-util-values'
+import z from '@carnival/schemastery'
+import { credentialRef } from '@carnival/dsh-credentials'
+import type { CredentialRef } from '@carnival/dsh-credentials'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import { resolveRetryPolicy, RetryPolicySchema } from '@carnival/dsh-llm'
+import type { ResolvedRetryPolicy, RetryPolicyConfig } from '@carnival/dsh-llm'
+import { deepEqualJson } from '@carnival/dsh-util-values'
 import {
   CACHE_CONTROL_FORMATS,
   CHAT_TEMPLATE_VARS,

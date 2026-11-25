@@ -1,13 +1,13 @@
-/** Canonical tool-definition fixtures for repository tests. @module @deepseek-ai/dsh-tool-testkit */
+/** Canonical tool-definition fixtures for repository tests. @module @carnival/dsh-tool-testkit */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import { defineTool } from '@deepseek-ai/dsh-tools'
+import type { Context } from '@carnival/cordis'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
+import type { ContentBlock } from '@carnival/dsh-llm'
+import { defineTool } from '@carnival/dsh-tools'
 import type {
   DefineToolOptions, InferArgs, ParameterSchemaSpec, ToolDefinition,
   ToolExecutionInput, ToolExecutionResult, ToolRunContext,
-} from '@deepseek-ai/dsh-tools'
+} from '@carnival/dsh-tools'
 
 // Expand interface fields so the fixture's content value is checked as JSON without changing runtime values.
 type JsonFields<T> = T extends string | number | boolean | null | undefined ? T

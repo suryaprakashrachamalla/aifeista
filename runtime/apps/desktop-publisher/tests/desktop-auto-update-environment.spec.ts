@@ -7,7 +7,7 @@ import {
   resolveDesktopAutoUpdateEnvironment,
   resolveDesktopAutoUpdateTarget,
   resolveDesktopUploadConfig,
-} from '@deepseek-ai/dsh-desktop-publisher/desktop-auto-update-environment.mjs'
+} from '@carnival/dsh-desktop-publisher/desktop-auto-update-environment.mjs'
 
 const RELEASE_ID = '0123456789abcdef0123456789abcdef'
 

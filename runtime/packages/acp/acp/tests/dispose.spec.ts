@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PROTOCOL_VERSION } from '@agentclientprotocol/sdk'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { Agent } from '@carnival/dsh-agent'
+import type { StreamChunk } from '@carnival/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
 import { makeBridgeHarness, type BridgeHarness } from './harness.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 describe('ACP connection ownership', () => {
   let harness: BridgeHarness | undefined

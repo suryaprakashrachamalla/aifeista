@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { compileRules } from '@deepseek-ai/dsh-experimental-forge-session/src/commands.ts'
+import { compileRules } from '@carnival/dsh-experimental-forge-session/src/commands.ts'
 import { GLAB_COMMANDS } from '../src/commands.ts'
 
 const rules = compileRules([GLAB_COMMANDS])

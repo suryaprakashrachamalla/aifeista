@@ -1,8 +1,8 @@
 /** Synthetic current-generation history whose rows wrap, for measuring transcript restyles during a resize. */
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createAssistantMessage, createSystemMessage, createToolResultMessage, createUserMessage, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-session-title'
+import { brandString } from '@carnival/dsh-brand'
+import { createAssistantMessage, createSystemMessage, createToolResultMessage, createUserMessage, type ToolCallId } from '@carnival/dsh-llm'
+import { Session, type SessionId, SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-session-title'
 
 /** Closed turns in the workload; every one is loaded before the drag. */
 export const HISTORY_TURNS = 120

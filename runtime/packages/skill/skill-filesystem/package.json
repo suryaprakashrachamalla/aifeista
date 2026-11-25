@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-skill-filesystem",
+  "name": "@carnival/dsh-skill-filesystem",
   "description": "Local filesystem skill provider for the DeepSeek Harness",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/skill/skill-filesystem"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,21 +27,21 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-fs": "workspace:*",
-    "@deepseek-ai/dsh-home-paths": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-fs": "workspace:*",
+    "@carnival/dsh-home-paths": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "dependencies": {
     "chokidar": "5.0.0",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/schemastery": "workspace:~",
     "yaml": "^2.4.2"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-fs": "workspace:*",
-    "@deepseek-ai/dsh-home-paths": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-fs": "workspace:*",
+    "@carnival/dsh-home-paths": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   }
 }

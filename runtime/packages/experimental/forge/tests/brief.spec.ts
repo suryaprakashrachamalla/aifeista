@@ -1,5 +1,5 @@
 /** Brief watches: what a poll reads for them, when it runs, and what each kind of watcher receives. */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { changeRequestKey } from '../src/index.ts'
 import type {

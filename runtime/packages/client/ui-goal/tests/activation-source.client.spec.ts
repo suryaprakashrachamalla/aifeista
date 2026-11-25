@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { RemoteResult } from '@deepseek-ai/dsh-api-remotes/client'
-import type { GoalActivationChanged, GoalId, GoalProjection, GoalView } from '@deepseek-ai/dsh-goal/client'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
+import { brandString } from '@carnival/dsh-brand'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import type { RemoteResult } from '@carnival/dsh-api-remotes/client'
+import type { GoalActivationChanged, GoalId, GoalProjection, GoalView } from '@carnival/dsh-goal/client'
+import { RemoteError } from '@carnival/dsh-client-test-runtime'
 import { createGoalActivationSource } from '../src/client/activation-source.ts'
 
 const GOAL_ID = brandString<GoalId>('g-1')

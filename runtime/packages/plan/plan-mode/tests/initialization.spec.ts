@@ -1,13 +1,13 @@
 /** Prompt assembly must not omit plan guidance during activation. */
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import PlanModeController from '@deepseek-ai/dsh-plan-mode'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { createUserMessage } from '@carnival/dsh-llm'
+import PlanModeController from '@carnival/dsh-plan-mode'
+import { Session, type SessionId } from '@carnival/dsh-session'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { MockAdapter, textResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 describe('plan-mode activation', () => {
   it.each([false, true])('rejects premature requests with restored active=%s, then includes the complete plan contribution', async (active) => {

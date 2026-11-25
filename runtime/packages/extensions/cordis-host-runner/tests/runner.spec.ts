@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import TypertGateway from '@deepseek-ai/dsh-api-gateway'
-import RemoteAccessService from '@deepseek-ai/dsh-api-remote-access'
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
-import { Peer } from '@deepseek-ai/dsh-client-connection'
+import { brandString } from '@carnival/dsh-brand'
+import TypertGateway from '@carnival/dsh-api-gateway'
+import RemoteAccessService from '@carnival/dsh-api-remote-access'
+import TypertRegistry from '@carnival/dsh-typert-registry'
+import { Peer } from '@carnival/dsh-client-connection'
 import type {
   ApprovalRequestId as ApprovalRequestIdType, CordisDynamicPluginId,
 } from '../src/types.ts'
@@ -38,8 +38,8 @@ it('routes source RPC inspect replies by agentId without resolving an Agent', as
     const resolve = vi.fn(() => { throw new Error('Client replies must not resolve an Agent') })
     ctx.typert.lookups.register('agent', {
       parameter: 'agent', wire: 'agentId', resource: 'session',
-      hostTypeSymbol: '@deepseek-ai/dsh-agent#Agent',
-      wireTypeSymbol: '@deepseek-ai/dsh-session/types#SessionId',
+      hostTypeSymbol: '@carnival/dsh-agent#Agent',
+      wireTypeSymbol: '@carnival/dsh-session/types#SessionId',
       resolve,
     })
     const peer = new Peer(ctx, { principal: { kind: 'owner' } })

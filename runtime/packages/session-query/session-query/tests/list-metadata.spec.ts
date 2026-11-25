@@ -1,10 +1,10 @@
 /** Session-list metadata is registered and read through the query service lifecycle. */
 
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import { createUserMessage } from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { Session } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { describe, expect, it, onTestFinished } from 'vitest'
 import { TestSessionQueryEngine } from './test-service.ts'
 

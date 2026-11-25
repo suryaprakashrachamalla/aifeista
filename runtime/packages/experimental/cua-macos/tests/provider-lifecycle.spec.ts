@@ -1,44 +1,44 @@
 /** Native helper replacement is synchronized with Agent and provider disposal. */
 import { randomUUID } from 'node:crypto'
-import { executeModelToolFixture, executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { executeModelToolFixture, executeToolFixture } from '@carnival/dsh-tool-testkit'
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { setImmediate } from 'node:timers/promises'
-import { Context, FiberState } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Timer from '@deepseek-ai/cordis-plugin-timer'
-import { initProfile, mountRootInclude, readProfilePatches, type ProfileContext } from '@deepseek-ai/dsh-app-boot'
-import ConfigEditor from '@deepseek-ai/dsh-config-editor'
-import Settings from '@deepseek-ai/dsh-settings'
-import Storage from '@deepseek-ai/dsh-storage'
-import * as StorageJson from '@deepseek-ai/dsh-storage-json'
-import * as StorageDomain from '@deepseek-ai/dsh-storage-domain'
-import Hmr from '@deepseek-ai/dsh-hmr'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
-import ComputerUseRegistry from '@deepseek-ai/dsh-computer-use'
-import { COMMON_GUIDANCE } from '@deepseek-ai/dsh-cua/guidance'
-import { CuaConfig, installCua } from '@deepseek-ai/dsh-cua'
-import { createConfigProjector } from '@deepseek-ai/dsh-app-boot/src/config-schema/projector.ts'
-import LocalAttachmentStore from '@deepseek-ai/dsh-attachment-local'
-import FileSystem from '@deepseek-ai/dsh-fs-local'
-import UserQuestions, { UserQuestionError } from '@deepseek-ai/dsh-user-questions'
-import NodeRuntime, { type Config as NodeRuntimeConfig } from '@deepseek-ai/dsh-ptc-runtime-node'
-import { createRunCodeTool } from '@deepseek-ai/dsh-tool-executor-ptc/run-code'
-import Sandbox from '@deepseek-ai/dsh-sandbox-local'
-import SandboxPolicy from '@deepseek-ai/dsh-sandbox-policy'
-import { LlmAdapter, LlmError, type ToolCallId, type LlmResolvedModelInfo, type StreamChunk, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import Subprocess from '@deepseek-ai/dsh-subprocess'
-import SubprocessLocal from '@deepseek-ai/dsh-subprocess-local'
+import { Context, FiberState } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Timer from '@carnival/cordis-plugin-timer'
+import { initProfile, mountRootInclude, readProfilePatches, type ProfileContext } from '@carnival/dsh-app-boot'
+import ConfigEditor from '@carnival/dsh-config-editor'
+import Settings from '@carnival/dsh-settings'
+import Storage from '@carnival/dsh-storage'
+import * as StorageJson from '@carnival/dsh-storage-json'
+import * as StorageDomain from '@carnival/dsh-storage-domain'
+import Hmr from '@carnival/dsh-hmr'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
+import ComputerUseRegistry from '@carnival/dsh-computer-use'
+import { COMMON_GUIDANCE } from '@carnival/dsh-cua/guidance'
+import { CuaConfig, installCua } from '@carnival/dsh-cua'
+import { createConfigProjector } from '@carnival/dsh-app-boot/src/config-schema/projector.ts'
+import LocalAttachmentStore from '@carnival/dsh-attachment-local'
+import FileSystem from '@carnival/dsh-fs-local'
+import UserQuestions, { UserQuestionError } from '@carnival/dsh-user-questions'
+import NodeRuntime, { type Config as NodeRuntimeConfig } from '@carnival/dsh-ptc-runtime-node'
+import { createRunCodeTool } from '@carnival/dsh-tool-executor-ptc/run-code'
+import Sandbox from '@carnival/dsh-sandbox-local'
+import SandboxPolicy from '@carnival/dsh-sandbox-policy'
+import { LlmAdapter, LlmError, type ToolCallId, type LlmResolvedModelInfo, type StreamChunk, createUserMessage } from '@carnival/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
+import Subprocess from '@carnival/dsh-subprocess'
+import SubprocessLocal from '@carnival/dsh-subprocess-local'
 import { expect, it, onTestFinished, vi } from 'vitest'
 import sharp from 'sharp'
-import type { ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
+import type { ImageAttachmentRef } from '@carnival/dsh-attachment'
 import * as NativeProvider from '../src/index.ts'
-import { NativeError, type NativeClient } from '@deepseek-ai/dsh-cua/native-client'
+import { NativeError, type NativeClient } from '@carnival/dsh-cua/native-client'
 import type { NativeBuildSpec } from '../src/native-build.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const native = vi.hoisted(() => ({
   connect: vi.fn<typeof import('../src/shared-native.ts')['createSharedNativeChannel']>(),
@@ -54,8 +54,8 @@ vi.mock('../src/native-build.ts', async importOriginal => ({
   nativeHostArchitecture: native.architecture,
   prepareNativeExecutable: native.prepare,
 }))
-vi.mock('@deepseek-ai/dsh-cua/native-client', async importOriginal => ({
-  ...await importOriginal<typeof import('@deepseek-ai/dsh-cua/native-client')>(),
+vi.mock('@carnival/dsh-cua/native-client', async importOriginal => ({
+  ...await importOriginal<typeof import('@carnival/dsh-cua/native-client')>(),
   NativeClient: class {
     disposed = false
     constructor(...args: ConstructorParameters<typeof NativeClient>) {
@@ -192,7 +192,7 @@ async function setup(
 async function thinkingTurn(f: Awaited<ReturnType<typeof setup>>) {
   const entered: PromiseWithResolvers<void> = Promise.withResolvers()
   class WaitingModel extends LlmAdapter {
-    async * stream(options: import('@deepseek-ai/dsh-llm').GenerateOptions): AsyncIterable<StreamChunk> {
+    async * stream(options: import('@carnival/dsh-llm').GenerateOptions): AsyncIterable<StreamChunk> {
       entered.resolve()
       await new Promise<void>((resolve) => {
         if (options.signal?.aborted) resolve()
@@ -923,7 +923,7 @@ it.each([
     let closed = false
     closing = (owner === 'provider' ? f.provider.dispose()
       : owner === 'agent' ? f.handle.dispose()
-        : f.ctx.cuaAccess.revoke('a'.repeat(64) as import('@deepseek-ai/dsh-cua/types').CuaApplicationId)).then(() => { closed = true })
+        : f.ctx.cuaAccess.revoke('a'.repeat(64) as import('@carnival/dsh-cua/types').CuaApplicationId)).then(() => { closed = true })
     await setImmediate()
     expect(admissionSignal?.aborted).toBe(true)
     expect(closed).toBe(false)
@@ -1068,7 +1068,7 @@ it('stores revocation without entering the HMR configuration queue', async () =>
   onTestFinished(() => { release.resolve(undefined) })
   const blocked = f.ctx.hmr.runExclusive(async () => { acquired.resolve(undefined); await release.promise })
   await acquired.promise
-  await f.ctx.cuaAccess.revoke(grant.id as import('@deepseek-ai/dsh-cua/types').CuaApplicationId)
+  await f.ctx.cuaAccess.revoke(grant.id as import('@carnival/dsh-cua/types').CuaApplicationId)
   expect((await f.ctx.cuaAccess.applications()).allowedApps).toEqual([])
   expect(await readFile(f.profile.patchPath, 'utf8')).toBe(before)
   release.resolve(undefined)

@@ -1,19 +1,19 @@
-import { modelSelectionProjectionDefinition } from '@deepseek-ai/dsh-agent'
+import { modelSelectionProjectionDefinition } from '@carnival/dsh-agent'
 /** Request immutability through the real loop, including adopted restore graphs. */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { createAssistantMessage, createUserMessage, isAgentLoopRequest } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, ToolSchema } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId, SessionLogOffset, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import * as values from '@deepseek-ai/dsh-util-values'
+import { Context } from '@carnival/cordis'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import type { Agent } from '@carnival/dsh-agent'
+import { mountAgentLoopTestDependencies } from '@carnival/dsh-agent-loop-testkit'
+import { createAssistantMessage, createUserMessage, isAgentLoopRequest } from '@carnival/dsh-llm'
+import type { GenerateOptions, ToolSchema } from '@carnival/dsh-llm'
+import { Session, type SessionId, SessionLogOffset, SESSION_FORMAT_VERSION } from '@carnival/dsh-session'
+import * as values from '@carnival/dsh-util-values'
 import { inboxProjectionDefinition } from '../src/inbox.ts'
 import { ReactLoopAgent } from '../src/agent.ts'
 import { MockAdapter, textResponse } from './mock-adapter.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const cleanups: (() => Promise<void>)[] = []
 afterEach(async () => {

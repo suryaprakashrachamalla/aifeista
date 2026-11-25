@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context, Service } from '@deepseek-ai/cordis'
+import { Context, Service } from '@carnival/cordis'
 import { access, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import LlmRuntime, { createUserMessage, INVALID_CREDENTIAL_CODE } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import AttachmentStore from '@deepseek-ai/dsh-attachment'
-import type { AttachmentId, ImageVariantId } from '@deepseek-ai/dsh-attachment/types'
+import LlmRuntime, { createUserMessage, INVALID_CREDENTIAL_CODE } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import AttachmentStore from '@carnival/dsh-attachment'
+import type { AttachmentId, ImageVariantId } from '@carnival/dsh-attachment/types'
 import type {
   ImageAttachmentLimits,
   ImageAttachmentRef,
@@ -14,17 +14,17 @@ import type {
   RequestImageAttachment,
   SaveImageAttachment,
   StoredImageAttachment,
-} from '@deepseek-ai/dsh-attachment'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import { LocalCredentialProvider } from '@deepseek-ai/dsh-credentials-local'
+} from '@carnival/dsh-attachment'
+import { credentialRef } from '@carnival/dsh-credentials'
+import { LocalCredentialProvider } from '@carnival/dsh-credentials-local'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
-import * as LlmDeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import * as LlmDeepSeek from '@carnival/dsh-llm-deepseek-api-key'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import type { ContextFormed } from '@carnival/dsh-llm'
 import { assemble } from './assemble.ts'
 import { closeMockServers, mockServer, textEvents } from './mock-server.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

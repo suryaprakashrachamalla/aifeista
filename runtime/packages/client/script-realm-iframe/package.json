@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-client-script-realm-iframe",
+  "name": "@carnival/dsh-client-script-realm-iframe",
   "description": "Optional iframe ScriptRealm provider",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/client/script-realm-iframe"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -28,11 +23,11 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-client-script-realm": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-client-script-realm": "workspace:*"
   },
   "files": [
     "locale/*.json",
@@ -46,7 +41,9 @@
   "dsh": {
     "client": {
       "platform": "web",
-      "external": ["@deepseek-ai/dsh-client-script-realm/client"]
+      "external": [
+        "@carnival/dsh-client-script-realm/client"
+      ]
     }
   },
   "scripts": {

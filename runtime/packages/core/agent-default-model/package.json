@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-agent-default-model",
+  "name": "@carnival/dsh-agent-default-model",
   "description": "Default model selection shared by Agent entry points",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/core/agent-default-model"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,19 +27,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
-    "@deepseek-ai/dsh-config-editor": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
+    "@carnival/dsh-config-editor": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-settings": "workspace:*"
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-settings": "workspace:*"
   }
 }

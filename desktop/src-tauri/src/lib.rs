@@ -12,8 +12,8 @@ use layer0_core::{default_workspace_roots, SeamRegistry, WorkspaceIndex};
 use layer0_sandbox::PrivacyGuard;
 use layer0_store::EventStore;
 use layer1_adapters::{
-    spawn_bridge_servers, AgentManager, AppState, BoundBridges, OpenBitFunAdapter, OverlayState,
-    RemoteHandoffManager, StudioRecipes, WindowCommand,
+    spawn_bridge_servers, AgentManager, AppState, BoundBridges, OverlayState,
+    RemoteHandoffManager, StudioRecipes, WindowCommand, WorkspaceCoreAdapter,
 };
 use layer1_cordis_bus::{CordisBus, CordisConfig};
 use layer1_router::OptimizationMiddleware;
@@ -26,7 +26,7 @@ struct ShellRuntime {
     cordis: CordisBus,
     agent_manager: AgentManager,
     bridges: Mutex<Option<BoundBridges>>,
-    dsh_child: Arc<Mutex<Option<Child>>>,
+    runtime_child: Arc<Mutex<Option<Child>>>,
     shutdown_lock: tokio::sync::Mutex<()>,
     shutdown_done: std::sync::atomic::AtomicBool,
 }
@@ -39,15 +39,15 @@ fn finish_sync_cleanup(rt: &ShellRuntime) {
     if stopped_agents > 0 {
         tracing::info!(count = stopped_agents, "Stopped active agent PTYs on exit");
     }
-    if let Ok(mut child_guard) = rt.dsh_child.lock() {
+    if let Ok(mut child_guard) = rt.runtime_child.lock() {
         if let Some(child) = child_guard.take() {
             kill_child_process_group(child);
         }
     }
-    let _ = rt.registry.unmount("adapter.openbitfun");
+    let _ = rt.registry.unmount("adapter.workspace_core");
     if let Ok(mut guard) = rt.bridges.lock() {
         if let Some(b) = guard.take() {
-            b.clicky_handle.abort();
+            b.companion_handle.abort();
             b.bridge_handle.abort();
         }
     }
@@ -73,15 +73,15 @@ async fn shutdown_shell_runtime_async(app_handle: &AppHandle) {
         }
         let am = rt.agent_manager.clone();
         let _ = tokio::task::spawn_blocking(move || am.stop_all()).await;
-        let child_opt = rt.dsh_child.lock().ok().and_then(|mut g| g.take());
+        let child_opt = rt.runtime_child.lock().ok().and_then(|mut g| g.take());
         if let Some(child) = child_opt {
             let _ = tokio::task::spawn_blocking(move || kill_child_process_group(child)).await;
         }
         let _ = rt.cordis.shutdown().await;
-        let _ = rt.registry.unmount("adapter.openbitfun");
+        let _ = rt.registry.unmount("adapter.workspace_core");
         if let Ok(mut guard) = rt.bridges.lock() {
             if let Some(b) = guard.take() {
-                b.clicky_handle.abort();
+                b.companion_handle.abort();
                 b.bridge_handle.abort();
             }
         }
@@ -89,31 +89,67 @@ async fn shutdown_shell_runtime_async(app_handle: &AppHandle) {
     }
 }
 
-fn find_repo_root() -> PathBuf {
-    for env_key in ["CARNIVAL_ROOT", "AIFEISTA_ROOT"] {
-        if let Ok(env_root) = std::env::var(env_key) {
-            let p = PathBuf::from(env_root);
-            if p.join("crates").exists() && p.join("runtime").exists() {
-                return p;
-            }
+fn bundle_resources_dir() -> Option<PathBuf> {
+    let exe = std::env::current_exe().ok()?;
+    let contents = exe.parent()?.parent()?;
+    let res = contents.join("Resources");
+    if res.join("runtime/lib/bin.js").exists() || res.join("runtime/apps/cli/lib/bin.js").exists() {
+        Some(res)
+    } else {
+        None
+    }
+}
+
+fn find_repo_root() -> Option<PathBuf> {
+    if let Ok(env_root) = std::env::var("CARNIVAL_ROOT") {
+        let p = PathBuf::from(env_root);
+        if p.join("crates").exists() && p.join("runtime").exists() {
+            return Some(p);
         }
     }
     let mut cur = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
     for _ in 0..6 {
         if cur.join("crates").exists() && cur.join("runtime").exists() {
-            return cur;
+            return Some(cur);
         }
         if !cur.pop() {
             break;
         }
     }
-    Path::new(env!("CARGO_MANIFEST_DIR"))
+    let fallback = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .canonicalize()
-        .unwrap_or_else(|_| PathBuf::from("."))
+        .ok()?;
+    if fallback.join("crates").exists() && fallback.join("runtime").exists() {
+        Some(fallback)
+    } else {
+        None
+    }
 }
 
-fn resolve_node_bin() -> String {
+fn resolve_workspace_root(repo_root: Option<&Path>, resources_dir: Option<&Path>) -> PathBuf {
+    if let Some(r) = repo_root {
+        return r.to_path_buf();
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        let docs = PathBuf::from(&home).join("Documents");
+        if docs.exists() {
+            return docs;
+        }
+        return PathBuf::from(home);
+    }
+    resources_dir
+        .map(|r| r.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."))
+}
+
+fn resolve_node_bin(resources_dir: Option<&Path>) -> String {
+    if let Some(res) = resources_dir {
+        let bundled = res.join("bin/node");
+        if bundled.exists() {
+            return bundled.display().to_string();
+        }
+    }
     for candidate in [
         "/opt/homebrew/bin/node",
         "/usr/local/bin/node",
@@ -126,12 +162,14 @@ fn resolve_node_bin() -> String {
     "node".to_string()
 }
 
-fn augmented_path() -> String {
+fn augmented_path(resources_dir: Option<&Path>) -> String {
     let home = std::env::var("HOME").unwrap_or_default();
-    let mut parts = vec![
-        "/opt/homebrew/bin".to_string(),
-        "/usr/local/bin".to_string(),
-    ];
+    let mut parts = Vec::new();
+    if let Some(res) = resources_dir {
+        parts.push(res.join("bin").display().to_string());
+    }
+    parts.push("/opt/homebrew/bin".to_string());
+    parts.push("/usr/local/bin".to_string());
     if !home.is_empty() {
         parts.push(format!("{home}/.cargo/bin"));
     }
@@ -193,7 +231,7 @@ fn focus_existing_instance_if_running() -> bool {
     true
 }
 
-fn spawn_dsh_web(
+fn spawn_runtime_web(
     node_bin: &str,
     harness_dir: &Path,
     path_env: &str,
@@ -202,21 +240,30 @@ fn spawn_dsh_web(
     web_url_slot: Arc<Mutex<Option<String>>>,
     last_err_slot: Arc<Mutex<Option<String>>>,
 ) -> Option<Child> {
+    let deployed_bin = harness_dir.join("lib/bin.js");
+    let built_bin = harness_dir.join("apps/cli/lib/bin.js");
+    let args: Vec<&str> = if deployed_bin.exists() {
+        vec!["lib/bin.js", "web", "--no-open", "--port", port_str]
+    } else if built_bin.exists() {
+        vec!["apps/cli/lib/bin.js", "web", "--no-open", "--port", port_str]
+    } else {
+        vec![
+            "--import",
+            "tsx/esm",
+            "apps/cli/src/bin.ts",
+            "web",
+            "--no-open",
+            "--port",
+            port_str,
+        ]
+    };
     let mut cmd = Command::new(node_bin);
-    cmd.args([
-        "--import",
-        "tsx/esm",
-        "apps/cli/src/bin.ts",
-        "web",
-        "--no-open",
-        "--port",
-        port_str,
-    ])
-    .current_dir(harness_dir)
-    .env("PATH", path_env)
-    .stdin(Stdio::null())
-    .stdout(Stdio::piped())
-    .stderr(Stdio::piped());
+    cmd.args(args)
+        .current_dir(harness_dir)
+        .env("PATH", path_env)
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
 
     #[cfg(unix)]
     cmd.process_group(0);
@@ -302,10 +349,10 @@ fn toggle_spotlight(app: AppHandle) -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn toggle_clicky_overlay(app: AppHandle) -> Result<bool, String> {
+fn toggle_companion_overlay(app: AppHandle) -> Result<bool, String> {
     let window = app
-        .get_webview_window("clicky-overlay")
-        .ok_or_else(|| "clicky-overlay window not found".to_string())?;
+        .get_webview_window("companion-overlay")
+        .ok_or_else(|| "companion-overlay window not found".to_string())?;
     let currently_visible = window.is_visible().map_err(|e| e.to_string())?;
     let next_visible = !currently_visible;
     if next_visible {
@@ -319,8 +366,8 @@ fn toggle_clicky_overlay(app: AppHandle) -> Result<bool, String> {
 #[tauri::command]
 fn set_overlay_click_through(app: AppHandle, ignore: bool) -> Result<(), String> {
     let window = app
-        .get_webview_window("clicky-overlay")
-        .ok_or_else(|| "clicky-overlay window not found".to_string())?;
+        .get_webview_window("companion-overlay")
+        .ok_or_else(|| "companion-overlay window not found".to_string())?;
     window
         .set_ignore_cursor_events(ignore)
         .map_err(|e| e.to_string())
@@ -352,7 +399,7 @@ fn dispatch_window_command(app: &AppHandle, cmd: WindowCommand) {
             }
         }
         WindowCommand::ToggleOverlay => {
-            if let Some(win) = app.get_webview_window("clicky-overlay") {
+            if let Some(win) = app.get_webview_window("companion-overlay") {
                 if win.is_visible().unwrap_or(false) {
                     let _ = win.hide();
                 } else {
@@ -361,7 +408,7 @@ fn dispatch_window_command(app: &AppHandle, cmd: WindowCommand) {
             }
         }
         WindowCommand::SetOverlayVisible(visible) => {
-            if let Some(win) = app.get_webview_window("clicky-overlay") {
+            if let Some(win) = app.get_webview_window("companion-overlay") {
                 if visible {
                     let _ = win.show();
                 } else {
@@ -370,7 +417,7 @@ fn dispatch_window_command(app: &AppHandle, cmd: WindowCommand) {
             }
         }
         WindowCommand::SetOverlayClickThrough(ignore) => {
-            if let Some(win) = app.get_webview_window("clicky-overlay") {
+            if let Some(win) = app.get_webview_window("companion-overlay") {
                 let _ = win.set_ignore_cursor_events(ignore);
             }
         }
@@ -399,30 +446,61 @@ pub fn run() {
 
     tauri::Builder::default()
         .setup(|app| {
-            let repo_root = find_repo_root();
-            let registry = SeamRegistry::new(repo_root.display().to_string());
+            let resources_dir = bundle_resources_dir();
+            let repo_root_opt = find_repo_root();
+            let workspace_root =
+                resolve_workspace_root(repo_root_opt.as_deref(), resources_dir.as_deref());
+            let runtime_dir = resources_dir
+                .as_ref()
+                .map(|r| r.join("runtime"))
+                .filter(|p| p.exists())
+                .or_else(|| repo_root_opt.as_ref().map(|r| r.join("runtime")))
+                .unwrap_or_else(|| workspace_root.join("runtime"));
+            let node_bin = resolve_node_bin(resources_dir.as_deref());
+            let path_env = augmented_path(resources_dir.as_deref());
+
+            let registry = SeamRegistry::new(workspace_root.display().to_string());
             let db_path = match app.path().app_data_dir() {
                 Ok(dir) => {
                     let _ = std::fs::create_dir_all(&dir);
                     dir.join("carnival.db")
                 }
-                Err(_) => repo_root.join("carnival.db"),
+                Err(_) => workspace_root.join("carnival.db"),
             };
             let store = EventStore::open(&db_path).expect("failed to open SQLite WAL store");
 
-            let index = WorkspaceIndex::new(default_workspace_roots(&repo_root));
-            let openbitfun = OpenBitFunAdapter::new(&repo_root, index);
+            let mut index_roots = default_workspace_roots(&workspace_root);
+            if let Some(res) = resources_dir.as_ref() {
+                if repo_root_opt.is_none() {
+                    index_roots = vec![res.join("sidecars"), res.join("runtime/packages")];
+                }
+            }
+            let index = WorkspaceIndex::new(index_roots);
+            let adapter_anchor = if repo_root_opt.is_some() {
+                workspace_root.clone()
+            } else {
+                resources_dir.clone().unwrap_or_else(|| workspace_root.clone())
+            };
+            let workspace_core = WorkspaceCoreAdapter::new(&adapter_anchor, index);
             registry
-                .mount(Arc::new(openbitfun.clone()))
-                .expect("failed to mount OpenBitFun adapter");
+                .mount(Arc::new(workspace_core.clone()))
+                .expect("failed to mount workspace_core adapter");
 
-            let cordis = CordisBus::new(CordisConfig::default_for_repo(&repo_root));
+            let mut cordis_cfg = CordisConfig::default_for_repo(&workspace_root);
+            cordis_cfg.node_bin = node_bin.clone();
+            if let Some(res) = resources_dir.as_ref() {
+                let bundled_script = res.join("sidecars/cordis-bridge/index.mjs");
+                if bundled_script.exists() {
+                    cordis_cfg.script_path = bundled_script;
+                }
+            }
+            let cordis = CordisBus::new(cordis_cfg);
             let optimizer = OptimizationMiddleware::default();
             let privacy_guard = PrivacyGuard::new();
             let cua_envelope = CapabilityEnvelope {
-                subject: "clicky-cua".into(),
-                fs_read: vec![repo_root.display().to_string()],
-                fs_write: vec![repo_root.join("crates").display().to_string()],
+                subject: "carnival-cua".into(),
+                fs_read: vec![workspace_root.display().to_string()],
+                fs_write: vec![workspace_root.display().to_string()],
                 network_allow: false,
                 cua_apps: vec!["Xcode".into(), "Figma".into(), "Visual Studio Code".into()],
                 allow_vision: true,
@@ -430,21 +508,21 @@ pub fn run() {
             };
 
             let (window_tx, mut window_rx) = tokio::sync::mpsc::unbounded_channel();
-            let agent_manager = AgentManager::new(&repo_root, Some(openbitfun.clone()));
+            let agent_manager = AgentManager::new(&workspace_root, Some(workspace_core.clone()));
 
             let state = AppState {
                 registry: registry.clone(),
                 store,
                 cordis: cordis.clone(),
                 optimizer,
-                openbitfun,
+                workspace_core,
                 privacy_guard,
                 cua_envelope,
                 overlay_state: Arc::new(RwLock::new(OverlayState::with_saved_prefs())),
                 window_tx: Some(window_tx),
                 agent_manager: agent_manager.clone(),
                 studio_recipes: StudioRecipes::default_location(),
-                remote_handoff: RemoteHandoffManager::default_location(&repo_root),
+                remote_handoff: RemoteHandoffManager::default_location(&workspace_root),
             };
 
             let runtime_handle = tauri::async_runtime::spawn(async move {
@@ -453,7 +531,7 @@ pub fn run() {
                         Ok(bound) => return Ok(bound),
                         Err(err) => {
                             if attempt == 5 {
-                                tracing::warn!(error = %err, "Retrying bridge on ephemeral clicky port");
+                                tracing::warn!(error = %err, "Retrying bridge on ephemeral companion port");
                                 return spawn_bridge_servers(state.clone(), 0, 32123).await;
                             }
                             tokio::time::sleep(Duration::from_millis(160)).await;
@@ -471,21 +549,18 @@ pub fn run() {
             let web_addr = SocketAddr::from(([127, 0, 0, 1], web_port));
             let web_url_slot: Arc<Mutex<Option<String>>> = Arc::new(Mutex::new(None));
             let last_err_slot: Arc<Mutex<Option<String>>> = Arc::new(Mutex::new(None));
-            let harness_dir = repo_root.join("runtime");
-            let node_bin = resolve_node_bin();
-            let path_env = augmented_path();
             let port_str = web_port.to_string();
 
             tracing::info!(
-                dir = %harness_dir.display(),
+                dir = %runtime_dir.display(),
                 node = %node_bin,
                 port = web_port,
                 "Launching Carnival workspace server"
             );
 
-            let dsh_child = spawn_dsh_web(
+            let runtime_child = spawn_runtime_web(
                 &node_bin,
-                &harness_dir,
+                &runtime_dir,
                 &path_env,
                 &port_str,
                 web_port,
@@ -581,13 +656,13 @@ pub fn run() {
                 }
             }
 
-            let shared_dsh = Arc::new(Mutex::new(dsh_child));
+            let shared_runtime = Arc::new(Mutex::new(runtime_child));
             app.manage(ShellRuntime {
                 registry,
                 cordis,
                 agent_manager,
                 bridges: Mutex::new(bound),
-                dsh_child: Arc::clone(&shared_dsh),
+                runtime_child: Arc::clone(&shared_runtime),
                 shutdown_lock: tokio::sync::Mutex::new(()),
                 shutdown_done: std::sync::atomic::AtomicBool::new(false),
             });
@@ -615,7 +690,7 @@ pub fn run() {
                 });
             }
 
-            if let Some(overlay) = app.get_webview_window("clicky-overlay") {
+            if let Some(overlay) = app.get_webview_window("companion-overlay") {
                 let _ = overlay.set_ignore_cursor_events(true);
             }
 
@@ -626,16 +701,16 @@ pub fn run() {
                 }
             });
 
-            // Boot supervisor: monitors dsh web child (with 1 automatic retry) and navigates main cleanly
+            // Boot supervisor: monitors workspace server child (with 1 automatic retry) and navigates main cleanly
             let nav_app_handle = app.handle().clone();
             let nav_url_slot = Arc::clone(&web_url_slot);
             let nav_err_slot = Arc::clone(&last_err_slot);
-            let nav_dsh = Arc::clone(&shared_dsh);
+            let nav_runtime = Arc::clone(&shared_runtime);
             tauri::async_runtime::spawn(async move {
                 let mut retried = false;
                 for tick in 0..240 {
-                    // Restart dsh web once if it exits prematurely during boot
-                    if let Ok(mut dst) = nav_dsh.lock() {
+                    // Restart workspace server once if it exits prematurely during boot
+                    if let Ok(mut dst) = nav_runtime.lock() {
                         if let Some(child) = dst.as_mut() {
                             if let Ok(Some(status)) = child.try_wait() {
                                 tracing::warn!(?status, "Carnival workspace server exited prematurely");
@@ -643,9 +718,9 @@ pub fn run() {
                                 if !retried {
                                     retried = true;
                                     tracing::info!("Retrying Carnival workspace server launch...");
-                                    let replacement = spawn_dsh_web(
+                                    let replacement = spawn_runtime_web(
                                         &node_bin,
-                                        &harness_dir,
+                                        &runtime_dir,
                                         &path_env,
                                         &port_str,
                                         web_port,
@@ -701,7 +776,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             toggle_spotlight,
-            toggle_clicky_overlay,
+            toggle_companion_overlay,
             set_overlay_click_through
         ])
         .build(tauri::generate_context!())

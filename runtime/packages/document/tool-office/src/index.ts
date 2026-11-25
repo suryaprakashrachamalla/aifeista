@@ -5,24 +5,24 @@
  * one source byte before the service runs, so a cached result never answers a call that cannot read the source.
  * Converted files stay in the Office kit's private output store; the model copies them into the workspace with the
  * shell, so these tools write no workspace file.
- * @module @deepseek-ai/dsh-tool-office
+ * @module @carnival/dsh-tool-office
  */
 
 import { basename } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { AttachmentError, type ImageAttachmentRef, type ImageMediaType } from '@deepseek-ai/dsh-attachment'
-import { FsError, type FsInfo, type FsTarget } from '@deepseek-ai/dsh-fs'
-import type {} from '@deepseek-ai/dsh-llm'
-import { SubagentError } from '@deepseek-ai/dsh-subagent'
-import type {} from '@deepseek-ai/dsh-skill'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { OfficeSourceKey } from '@deepseek-ai/dsh-office-kit/types'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type { Agent } from '@carnival/dsh-agent'
+import { AttachmentError, type ImageAttachmentRef, type ImageMediaType } from '@carnival/dsh-attachment'
+import { FsError, type FsInfo, type FsTarget } from '@carnival/dsh-fs'
+import type {} from '@carnival/dsh-llm'
+import { SubagentError } from '@carnival/dsh-subagent'
+import type {} from '@carnival/dsh-skill'
+import { brandString } from '@carnival/dsh-brand'
+import type { OfficeSourceKey } from '@carnival/dsh-office-kit/types'
 import { OfficeKitError, type OfficeDocumentExtension, type OfficeImageInputExtension, type OfficeKit,
-  type OfficeKitSource, type OfficeWorkbookExtension } from '@deepseek-ai/dsh-office-kit'
-import { defineTool, ToolContextUnavailableError, type ToolActivationContext, type ToolExecution } from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-working-directory'
+  type OfficeKitSource, type OfficeWorkbookExtension } from '@carnival/dsh-office-kit'
+import { defineTool, ToolContextUnavailableError, type ToolActivationContext, type ToolExecution } from '@carnival/dsh-tools'
+import type {} from '@carnival/dsh-working-directory'
 import { checkParameterNames, checkRenderArguments, checkConversionArguments, extensionOf, inputFamily, OUTPUT_FORMATS,
   RECALCULATION_FORMATS,
   type OfficeRenderArgs, type OfficeConvertArgs, type OfficeRecalculateArgs, type OfficeFamily, type OfficeOperationName,

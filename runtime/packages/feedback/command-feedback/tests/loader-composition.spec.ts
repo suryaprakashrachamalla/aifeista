@@ -3,18 +3,18 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent, AgentStatus } from '@deepseek-ai/dsh-agent'
-import CommandRuntime from '@deepseek-ai/dsh-commands'
-import SessionStore, { type SessionId } from '@deepseek-ai/dsh-session'
-import * as CommandFeedback from '@deepseek-ai/dsh-command-feedback'
-import { getOrCreateAnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import { unsupportedModel, unsupportedInbox } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent, AgentStatus } from '@carnival/dsh-agent'
+import CommandRuntime from '@carnival/dsh-commands'
+import SessionStore, { type SessionId } from '@carnival/dsh-session'
+import * as CommandFeedback from '@carnival/dsh-command-feedback'
+import { getOrCreateAnonymousUserId } from '@carnival/dsh-anonymous-user-id'
+import { unsupportedModel, unsupportedInbox } from '@carnival/dsh-agent-loop-testkit'
+import { brandString } from '@carnival/dsh-brand'
 
 let root: string | undefined
 let context: Context | undefined
@@ -59,12 +59,12 @@ describe('/feedback real Loader composition through cordis.yml', () => {
     vi.stubEnv('DSH_HOME', root)
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
-      "- name: '@deepseek-ai/dsh-session-projection'",
-      "- name: '@deepseek-ai/dsh-agent'",
-      "- name: '@deepseek-ai/dsh-session-projection'",
-      "- name: '@deepseek-ai/dsh-session'",
-      "- name: '@deepseek-ai/dsh-commands'",
-      "- name: '@deepseek-ai/dsh-command-feedback'",
+      "- name: '@carnival/dsh-session-projection'",
+      "- name: '@carnival/dsh-agent'",
+      "- name: '@carnival/dsh-session-projection'",
+      "- name: '@carnival/dsh-session'",
+      "- name: '@carnival/dsh-commands'",
+      "- name: '@carnival/dsh-command-feedback'",
       '',
     ].join('\n'))
 
@@ -73,12 +73,12 @@ describe('/feedback real Loader composition through cordis.yml', () => {
     await context.plugin(Loader)
     context.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-      ['@deepseek-ai/dsh-agent', AgentRegistry],
-      ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-      ['@deepseek-ai/dsh-session', SessionStore],
-      ['@deepseek-ai/dsh-commands', CommandRuntime],
-      ['@deepseek-ai/dsh-command-feedback', CommandFeedback],
+      ['@carnival/dsh-session-projection', SessionProjectionRegistry],
+      ['@carnival/dsh-agent', AgentRegistry],
+      ['@carnival/dsh-session-projection', SessionProjectionRegistry],
+      ['@carnival/dsh-session', SessionStore],
+      ['@carnival/dsh-commands', CommandRuntime],
+      ['@carnival/dsh-command-feedback', CommandFeedback],
     ])
     context.loader.internal = {
       version: 'v2',

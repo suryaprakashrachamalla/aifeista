@@ -1,6 +1,6 @@
 /** Login-link credentials stay in memory and clipboard feedback follows the actual write. */
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
 import { LoginLinkController } from '../src/client/login-link-controller.ts'
 import type { RemoteConnectionApi } from '../src/client/remote-connection-controller.ts'
 

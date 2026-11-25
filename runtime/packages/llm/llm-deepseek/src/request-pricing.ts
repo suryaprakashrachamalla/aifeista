@@ -10,10 +10,10 @@
  */
 
 import { MAX_IMAGE_BYTES } from './defaults.ts'
-import { offloadedImageText, requestImageHandleText, textOnlyImageText } from '@deepseek-ai/dsh-llm'
-import type { ImageAttachmentAccessResolver, ImageBlock, LlmImageRequestPrice, LlmImageRequestPricing } from '@deepseek-ai/dsh-llm'
-import { longEdgeDimensions, requestImageDimensions } from '@deepseek-ai/dsh-attachment'
-import type { ImageAttachmentRef, ImageRequestTarget } from '@deepseek-ai/dsh-attachment'
+import { offloadedImageText, requestImageHandleText, textOnlyImageText } from '@carnival/dsh-llm'
+import type { ImageAttachmentAccessResolver, ImageBlock, LlmImageRequestPrice, LlmImageRequestPricing } from '@carnival/dsh-llm'
+import { longEdgeDimensions, requestImageDimensions } from '@carnival/dsh-attachment'
+import type { ImageAttachmentRef, ImageRequestTarget } from '@carnival/dsh-attachment'
 import { deepSeekImageTokens, deepSeekRequestImageDimensions } from './image-tokens.ts'
 import type { DeepSeekCatalogModel, DeepSeekConnectionOptions } from './types.ts'
 

@@ -1,10 +1,10 @@
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { CompactionId } from '@deepseek-ai/dsh-compaction/types'
-import { compactCheckpointSource } from '@deepseek-ai/dsh-compaction'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type {} from '@deepseek-ai/dsh-tools'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import type { CompactionId } from '@carnival/dsh-compaction/types'
+import { compactCheckpointSource } from '@carnival/dsh-compaction'
+import { createUserMessage } from '@carnival/dsh-llm'
+import type {} from '@carnival/dsh-tools'
 
 export const name = 'workspace-context-compaction'
 

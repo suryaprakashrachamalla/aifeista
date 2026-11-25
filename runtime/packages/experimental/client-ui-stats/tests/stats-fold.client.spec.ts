@@ -1,14 +1,14 @@
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@carnival/dsh-llm' {
   interface MessageSourceMap {
     'agent-message': { readonly kind: 'agent-message' }
   }
 }
 
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { SessionEventLike } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { TeamId, TeamMessageId } from '@deepseek-ai/dsh-agent-team/types'
-import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { SessionEventLike } from '@carnival/dsh-api-session-controller/client'
+import type { TeamId, TeamMessageId } from '@carnival/dsh-agent-team/types'
+import type { AttachmentId } from '@carnival/dsh-attachment/types'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   LlmAttemptId,
   MessageId,
@@ -21,10 +21,10 @@ import type {
   TokenUsage,
   ToolResultMessage,
   UserMessage,
-} from '@deepseek-ai/dsh-llm'
-import type { RetryId } from '@deepseek-ai/dsh-llm-retry/types'
-import { type SessionId, SessionSeq, type SessionEventMap, type SessionEventType } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-tool-executor-ptc/types'
+} from '@carnival/dsh-llm'
+import type { RetryId } from '@carnival/dsh-llm-retry/types'
+import { type SessionId, SessionSeq, type SessionEventMap, type SessionEventType } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-tool-executor-ptc/types'
 import {
   CALL_LIMIT, fallbackState, foldEvent, isCodeMode, newState, promptOf, stepMetrics, toolSpanUnion, triggerSenderOf,
 } from '../src/client/stats-fold.ts'

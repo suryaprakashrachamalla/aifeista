@@ -1,8 +1,8 @@
 /** Composer model selection injection and inline label extension. */
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
-import type { ModelSelection } from '@deepseek-ai/dsh-api-remotes/client'
-import type { ModelCatalogModel, ModelProviderGroup } from '@deepseek-ai/dsh-api-session-controller/types'
-import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
+import type { RemoteResult } from '@carnival/dsh-typert-protocol'
+import type { ModelSelection } from '@carnival/dsh-api-remotes/client'
+import type { ModelCatalogModel, ModelProviderGroup } from '@carnival/dsh-api-session-controller/types'
+import type { SnapshotStore } from '@carnival/dsh-client-store'
 import type { ModelDirectoryState } from './directory.ts'
 
 /** Catalog data for a model name inside the composer's existing controls. */
@@ -44,7 +44,7 @@ export type ModelMenuOptions = ModelMenuControls & {
   openPane: (pane: ModelMenuPaneRef) => void
 }
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface SlotMap {
     /**
      * Session options appended after model and reasoning controls in the root menu.

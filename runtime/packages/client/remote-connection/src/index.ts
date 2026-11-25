@@ -1,15 +1,15 @@
 /** Remote-owned QR authentication and an independent shortcut to Token login. */
 import { isIPv4 } from 'node:net'
-import { FiberState, Service, type Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-client-connection'
-import type {} from '@deepseek-ai/dsh-host-webserver'
-import type {} from '@deepseek-ai/dsh-web-app'
-import type {} from '@deepseek-ai/dsh-credentials'
-import type { PeerScope } from '@deepseek-ai/dsh-client-connection'
-import type { WebEntryUrl } from '@deepseek-ai/dsh-host-webserver'
-import { HarnessError } from '@deepseek-ai/dsh-error'
-import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { FiberState, Service, type Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-client-connection'
+import type {} from '@carnival/dsh-host-webserver'
+import type {} from '@carnival/dsh-web-app'
+import type {} from '@carnival/dsh-credentials'
+import type { PeerScope } from '@carnival/dsh-client-connection'
+import type { WebEntryUrl } from '@carnival/dsh-host-webserver'
+import { HarnessError } from '@carnival/dsh-error'
+import { Remote, RemoteError, TypertRemoteService } from '@carnival/dsh-typert-protocol'
 import { LoginTickets } from './login-tickets.ts'
 import { handleLogin, isQrLogin } from './host-route.ts'
 import { RemoteBrowserAuth } from './remote-auth.ts'
@@ -22,7 +22,7 @@ import type { PairingDecision, PairingDecisionResult, PairingRequestId, PairingR
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** QR invitations, private login links, and owner-approved browser pairing. */
     remoteConnection: RemoteConnection

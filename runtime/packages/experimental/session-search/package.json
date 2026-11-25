@@ -1,15 +1,10 @@
 {
-  "name": "@deepseek-ai/dsh-experimental-session-search",
+  "name": "@carnival/dsh-experimental-session-search",
   "description": "Give agents tools to search and read earlier sessions from the current workspace.",
   "version": "0.2.3-alpha.2",
   "icon": "./icon.svg",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/session-search"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -43,13 +38,13 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-session-query-sqlite": "workspace:*",
-    "@deepseek-ai/dsh-tool-session-query": "workspace:*"
+    "@carnival/dsh-session-query-sqlite": "workspace:*",
+    "@carnival/dsh-tool-session-query": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   }
 }

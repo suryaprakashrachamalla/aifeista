@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 /** Notification integration shares the account plugin's single state stream. */
 import { afterEach, beforeEach, expect, onTestFinished, vi } from 'vitest'
-import { ok } from '@deepseek-ai/dsh-remote-mock'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import { createClientTest, type TestClient, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
-import type { AccountNotificationBatch, AccountNotificationId, AccountDetails, AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
-import type { AccountSectionInjected } from '@deepseek-ai/dsh-client-ui-settings-account/client'
+import { ok } from '@carnival/dsh-remote-mock'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import { createClientTest, type TestClient, webApp } from '@carnival/dsh-client-test-runtime/src/assembly/index.ts'
+import type { AccountNotificationBatch, AccountNotificationId, AccountDetails, AccountView, SignInAttemptId } from '@carnival/dsh-deepseek-account/types'
+import type { AccountSectionInjected } from '@carnival/dsh-client-ui-settings-account/client'
 import type { AccountNotificationsInjected } from '../src/client/AccountNotifications.tsx'
-import type { Context } from '@deepseek-ai/cordis'
-import { syncedConfig } from '@deepseek-ai/dsh-client-test-runtime'
+import type { Context } from '@carnival/cordis'
+import { syncedConfig } from '@carnival/dsh-client-test-runtime'
 import { apply as notificationsApply, inject as notificationsInject } from '../src/client/index.ts'
 import type { AccountNotificationsConfig } from '../src/types.ts'
 import { notification } from './notification-fixture.ts'
@@ -16,11 +16,11 @@ import { notification } from './notification-fixture.ts'
 const it = createClientTest({ roster: webApp })
 /** The same composition with a one-second initial polling delay synced from the Host. */
 const itWithInterval = createClientTest({ roster: webApp, provide: {
-  '@deepseek-ai/dsh-client-ui-account-notifications': { inject: notificationsInject, apply: (ctx: Context) => {
+  '@carnival/dsh-client-ui-account-notifications': { inject: notificationsInject, apply: (ctx: Context) => {
     notificationsApply(ctx, syncedConfig<AccountNotificationsConfig>({ notificationPollIntervalMs: 1_000 }))
   } },
 } })
-const SELF = '@deepseek-ai/dsh-client-ui-settings-account'
+const SELF = '@carnival/dsh-client-ui-settings-account'
 const view: AccountView = { status: 'signed-out', attempt: null,
   links: { usageUrl: 'https://platform.deepseek.com/usage', topUpUrl: 'https://platform.deepseek.com/top_up' } }
 const stored: AccountView = { ...view, status: 'credential-stored' }
@@ -332,7 +332,7 @@ it('reloads notifications without opening another account stream', async ({ star
   await c.flush()
   const stream = vi.spyOn(c.ctx.remote, '$stream')
   const before = c.mock.remote.account.getNotifications.mock.calls.length
-  await c.reload('@deepseek-ai/dsh-client-ui-account-notifications')
+  await c.reload('@carnival/dsh-client-ui-account-notifications')
   await c.flush()
   expect(stream).not.toHaveBeenCalled()
   expect(c.mock.remote.account.getNotifications).toHaveBeenCalledTimes(before + 1)

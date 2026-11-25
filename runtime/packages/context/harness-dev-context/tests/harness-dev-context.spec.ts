@@ -1,17 +1,17 @@
 /** Prompt stability of the harness checkout and Web GUI URL across processes, checkouts, and ports. */
 
 import { describe, expect, it, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { Context } from '@carnival/cordis'
+import type { Agent } from '@carnival/dsh-agent'
+import { mountAgentLoopTestDependencies, mountAgentLoopTestHarness } from '@carnival/dsh-agent-loop-testkit'
 import {
   createUserMessage, createMessage, LlmAdapter,
   type GenerateOptions, type LlmResolvedModelInfo, type StreamChunk, type SystemPromptUpdate, type SystemMessage,
-} from '@deepseek-ai/dsh-llm'
-import type { SessionId, Session } from '@deepseek-ai/dsh-session'
-import { renderContextSnapshot, renderPrompt } from '@deepseek-ai/dsh-system-prompt'
+} from '@carnival/dsh-llm'
+import type { SessionId, Session } from '@carnival/dsh-session'
+import { renderContextSnapshot, renderPrompt } from '@carnival/dsh-system-prompt'
 import * as HarnessDevContext from '../src/index.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
 const SOURCE_PROMPT = 'The runtime context names the DeepSeek Harness implementation checkout. The checkout location and current working directory are separate values and may differ; never infer the working directory from the checkout path. Use pwd to determine the current working directory. Use this checkout only to inspect or extend DSH itself.'
 const WEB_GUIDANCE = 'When the user refers to "this page", "this GUI", or "this app" without naming another target, they mean this GUI. '
@@ -281,6 +281,6 @@ describe('harness-dev-context', () => {
   })
 })
 
-function admittedMessages(assembly: import('@deepseek-ai/dsh-system-prompt').PromptAssembly) {
+function admittedMessages(assembly: import('@carnival/dsh-system-prompt').PromptAssembly) {
   return assembly.systemUpdates(false).map(update => update.message)
 }

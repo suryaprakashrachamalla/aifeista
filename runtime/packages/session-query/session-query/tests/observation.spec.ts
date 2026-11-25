@@ -1,14 +1,14 @@
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionLogOffset, SessionSeq, SESSION_FORMAT_VERSION, type SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader, SessionId as SessionIdType } from '@deepseek-ai/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import { Context } from '@carnival/cordis'
+import { createUserMessage } from '@carnival/dsh-llm'
+import SessionStore, { SessionLogOffset, SessionSeq, SESSION_FORMAT_VERSION, type SessionId } from '@carnival/dsh-session'
+import type { SessionEvent, SessionHeader, SessionId as SessionIdType } from '@carnival/dsh-session'
 import SessionPersistence, {
   SessionPersistenceCorruptionError,
   SessionPersistenceNotFoundError,
   type SessionPersistenceRevision,
   SessionReadOnlyError,
-} from '@deepseek-ai/dsh-session-persistence'
+} from '@carnival/dsh-session-persistence'
 import type {
   SessionAccess,
   SessionHandle,
@@ -16,8 +16,8 @@ import type {
   SessionHandleReadResult,
   SessionPersistenceSnapshot,
   SessionPersistenceStatOptions,
-} from '@deepseek-ai/dsh-session-persistence'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+} from '@carnival/dsh-session-persistence'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import { describe, expect, it, vi } from 'vitest'
 import { SessionObservationReader } from '../src/observation.ts'
 

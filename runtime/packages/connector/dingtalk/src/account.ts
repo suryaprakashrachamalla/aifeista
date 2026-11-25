@@ -1,8 +1,8 @@
 /** Check, sign-in, and sign-out of the dws account that the user's terminal shares, as the operations `ctx.cliAccounts` runs. */
 
 import z from 'zod'
-import type { CliOperationControl } from '@deepseek-ai/dsh-cli-account/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import type { CliOperationControl } from '@carnival/dsh-cli-account/types'
+import { assertNever } from '@carnival/dsh-util-values'
 import type { DwsRelease } from './release.ts'
 import type { DingtalkAccountState, DingtalkCommand, DingtalkOperationKind, DingtalkPhase } from './types.ts'
 

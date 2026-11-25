@@ -1,14 +1,14 @@
 /** API-key authentication, credential-gated discovery, and the official model listing for the official DeepSeek route. */
-import type { Context } from '@deepseek-ai/cordis'
-import { APP_IDENTITY, INVALID_CREDENTIAL_CODE, LlmError } from '@deepseek-ai/dsh-llm'
-import type { LlmModelBadge } from '@deepseek-ai/dsh-llm'
-import type {} from '@deepseek-ai/cordis-plugin-loader'
-import { DeepSeekAuthError } from '@deepseek-ai/dsh-deepseek-auth'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
+import type { Context } from '@carnival/cordis'
+import { APP_IDENTITY, INVALID_CREDENTIAL_CODE, LlmError } from '@carnival/dsh-llm'
+import type { LlmModelBadge } from '@carnival/dsh-llm'
+import type {} from '@carnival/cordis-plugin-loader'
+import { DeepSeekAuthError } from '@carnival/dsh-deepseek-auth'
+import { launchEnvironmentOf } from '@carnival/dsh-launch-environment'
 import {
   catalogModelInfo, createModelListingCache, refuseListedModel, registerDeepSeekProvider, resolveListedCatalog,
-} from '@deepseek-ai/dsh-llm-deepseek'
-import type { CatalogRefusal, DeepSeekCatalogModel, DeepSeekRequestAuth, ListingView, ModelListing } from '@deepseek-ai/dsh-llm-deepseek'
+} from '@carnival/dsh-llm-deepseek'
+import type { CatalogRefusal, DeepSeekCatalogModel, DeepSeekRequestAuth, ListingView, ModelListing } from '@carnival/dsh-llm-deepseek'
 import { Config, plainOptions, resolveAdapterOptions } from './config.ts'
 import type { ResolvedDeepSeekOptions } from './config.ts'
 

@@ -1,30 +1,30 @@
 /** Real Loader composition preserves retrievable source text outside the bounded preview. */
-import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { executeToolFixture } from '@carnival/dsh-tool-testkit'
 
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { createUserMessage, type ToolCallId } from '@deepseek-ai/dsh-llm'
-import * as systemPromptPlugin from '@deepseek-ai/dsh-system-prompt'
-import * as toolsPlugin from '@deepseek-ai/dsh-tools'
-import * as fsPlugin from '@deepseek-ai/dsh-fs-local'
-import * as toolFsPlugin from '@deepseek-ai/dsh-tool-fs'
-import * as sessionPlugin from '@deepseek-ai/dsh-session'
-import * as sessionProjectionPlugin from '@deepseek-ai/dsh-session-projection'
-import * as workingDirectoryPlugin from '@deepseek-ai/dsh-working-directory'
-import { Session, type SessionId } from '@deepseek-ai/dsh-session'
-import * as queryPlugin from '@deepseek-ai/dsh-session-query-sqlite'
-import * as referencePlugin from '@deepseek-ai/dsh-session-reference'
-import * as spillPlugin from '@deepseek-ai/dsh-spill-local'
-import { sessionDir } from '@deepseek-ai/dsh-spill-local'
+import { Context } from '@carnival/cordis'
+import Loader from '@carnival/cordis-plugin-loader'
+import Include from '@carnival/cordis-plugin-include'
+import { agentEvents, type Agent } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
+import { createUserMessage, type ToolCallId } from '@carnival/dsh-llm'
+import * as systemPromptPlugin from '@carnival/dsh-system-prompt'
+import * as toolsPlugin from '@carnival/dsh-tools'
+import * as fsPlugin from '@carnival/dsh-fs-local'
+import * as toolFsPlugin from '@carnival/dsh-tool-fs'
+import * as sessionPlugin from '@carnival/dsh-session'
+import * as sessionProjectionPlugin from '@carnival/dsh-session-projection'
+import * as workingDirectoryPlugin from '@carnival/dsh-working-directory'
+import { Session, type SessionId } from '@carnival/dsh-session'
+import * as queryPlugin from '@carnival/dsh-session-query-sqlite'
+import * as referencePlugin from '@carnival/dsh-session-reference'
+import * as spillPlugin from '@carnival/dsh-spill-local'
+import { sessionDir } from '@carnival/dsh-spill-local'
 import * as sourcePlugin from './fixtures/source-session.ts'
 
 let context: Context | undefined
@@ -49,17 +49,17 @@ describe('session-reference real Loader composition', () => {
     await ctx.plugin(Loader)
     ctx.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-session', sessionPlugin],
-      ['@deepseek-ai/dsh-session-projection', sessionProjectionPlugin],
-      ['@deepseek-ai/dsh-working-directory', workingDirectoryPlugin],
-      ['@deepseek-ai/dsh-system-prompt', systemPromptPlugin],
-      ['@deepseek-ai/dsh-tools', toolsPlugin],
-      ['@deepseek-ai/dsh-tool-executor-native', NativeToolExecutor],
-      ['@deepseek-ai/dsh-fs-local', fsPlugin],
-      ['@deepseek-ai/dsh-tool-fs', toolFsPlugin],
-      ['@deepseek-ai/dsh-session-query-sqlite', queryPlugin],
-      ['@deepseek-ai/dsh-session-reference', referencePlugin],
-      ['@deepseek-ai/dsh-spill-local', spillPlugin],
+      ['@carnival/dsh-session', sessionPlugin],
+      ['@carnival/dsh-session-projection', sessionProjectionPlugin],
+      ['@carnival/dsh-working-directory', workingDirectoryPlugin],
+      ['@carnival/dsh-system-prompt', systemPromptPlugin],
+      ['@carnival/dsh-tools', toolsPlugin],
+      ['@carnival/dsh-tool-executor-native', NativeToolExecutor],
+      ['@carnival/dsh-fs-local', fsPlugin],
+      ['@carnival/dsh-tool-fs', toolFsPlugin],
+      ['@carnival/dsh-session-query-sqlite', queryPlugin],
+      ['@carnival/dsh-session-reference', referencePlugin],
+      ['@carnival/dsh-spill-local', spillPlugin],
       ['./source-session.ts', sourcePlugin],
     ])
     ctx.loader.internal = {

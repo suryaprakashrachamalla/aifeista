@@ -1,6 +1,6 @@
 /** The one Remote failure class shared by owners, the Gateway, and consumers. */
 
-import { HarnessError } from '@deepseek-ai/dsh-error'
+import { HarnessError } from '@carnival/dsh-error'
 import type { RemoteErrorCode, RemoteErrorDetailsMap, RemoteFailure } from './types.ts'
 
 /**

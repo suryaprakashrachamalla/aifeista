@@ -1,10 +1,10 @@
 /** First-write lease failures and cancellation through published Session events. @module */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@carnival/cordis'
 import { mkdtemp, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { SessionId, SessionStore } from '@deepseek-ai/dsh-session'
+import { SessionId, SessionStore } from '@carnival/dsh-session'
 import * as plugin from '../src/index.ts'
 import { SessionWriteLease } from '../src/lease.ts'
 import { sessionDir } from '../../session-persistence-jsonl/src/format.ts'

@@ -665,7 +665,7 @@ describe('gate graph validation', () => {
       const install = gates.find(gate => gate.id === 'electron-install')
       expect(install).toMatchObject({
         command: process.execPath,
-        args: ['/private/pnpm.cjs', '--filter', '@deepseek-ai/dsh-desktop', 'exec', 'install-electron'],
+        args: ['/private/pnpm.cjs', '--filter', '@carnival/dsh-desktop', 'exec', 'install-electron'],
         env: { ELECTRON_GET_USE_PROXY: '1' },
         retries: 2,
         retryDelayMs: 15000,
@@ -935,7 +935,7 @@ describe('Typert contract preparation', () => {
     const needsOf = (id: string) => subject.find(item => item.id === id)?.needs
 
     expect(subject.find(item => item.id === 'playwright-install')).toMatchObject({
-      args: ['/private/pnpm.cjs', '--filter', '@deepseek-ai/dsh-web-frontend', 'exec', 'playwright', ...install],
+      args: ['/private/pnpm.cjs', '--filter', '@carnival/dsh-web-frontend', 'exec', 'playwright', ...install],
     })
     expect(needsOf('playwright-install')).toBeUndefined()
     expect(needsOf('snapshot')).toEqual(['build', 'playwright-install'])

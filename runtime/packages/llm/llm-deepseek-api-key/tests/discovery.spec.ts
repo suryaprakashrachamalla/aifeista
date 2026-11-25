@@ -1,9 +1,9 @@
 /** Model discovery requires the API-key route's own credential. */
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import LlmRuntime from '@carnival/dsh-llm'
 import { expect, it, vi } from 'vitest'
 import * as ApiKey from '../src/index.ts'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
 
 it.each([undefined, ''])('hides models without an API key: %j', async (key) => {
   vi.stubEnv('DEEPSEEK_API_KEY', key)

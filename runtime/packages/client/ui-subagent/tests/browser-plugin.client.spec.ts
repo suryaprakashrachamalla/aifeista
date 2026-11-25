@@ -1,19 +1,19 @@
 /** ui-subagent browser half: catalog actions and read-only composer routing. */
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { Context } from '@deepseek-ai/cordis'
-import { stubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
+import { createSnapshotStore } from '@carnival/dsh-client-store'
+import { Context } from '@carnival/cordis'
+import { stubConfigForm } from '@carnival/dsh-client-test-runtime'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import type {
   SessionListState, SessionSnapshot, SessionSummary, SessionProjectionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { ComposerChainProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
+} from '@carnival/dsh-api-session-controller/client'
+import type { SubagentAddress } from '@carnival/dsh-subagent/client'
+import { SlotRegistry } from '@carnival/dsh-client-ui-renderer/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { ComposerChainProps } from '@carnival/dsh-client-ui-conversation/client'
+import { apply as applyLocale, inject as localeInject } from '@carnival/dsh-client-locale/client'
 import { SubagentHeaderLineage } from '../src/client/SubagentHeaderLineage.tsx'
 import type { SubagentCatalogInjected } from '../src/client/SubagentCatalog.tsx'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
+import { resolveSlotLabel } from '@carnival/dsh-client-ui-slots'
 import { en } from '../src/client/locales.ts'
 import {
   SubagentReadOnlyComposer, type SubagentReadOnlyMatch,

@@ -1,17 +1,17 @@
 import { createHash } from 'node:crypto'
 import { afterEach, expect, it, vi } from 'vitest'
-import { Context, Service } from '@deepseek-ai/cordis'
+import { Context, Service } from '@carnival/cordis'
 import { mkdtemp, rm, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { createServer as createTcpServer, connect, Socket } from 'node:net'
 import { join } from 'node:path'
 import { createServer, request as httpRequest, IncomingMessage, ServerResponse } from 'node:http'
-import WebServer from '@deepseek-ai/dsh-host-webserver'
-import * as Connection from '@deepseek-ai/dsh-client-connection'
-import AuthorizationService from '@deepseek-ai/dsh-authorization'
-import type { AccountClientMetadata } from '@deepseek-ai/dsh-deepseek-account'
-import { LocalCredentialProvider } from '@deepseek-ai/dsh-credentials-local'
-import { credentialKey, credentialRef } from '@deepseek-ai/dsh-credentials'
+import WebServer from '@carnival/dsh-host-webserver'
+import * as Connection from '@carnival/dsh-client-connection'
+import AuthorizationService from '@carnival/dsh-authorization'
+import type { AccountClientMetadata } from '@carnival/dsh-deepseek-account'
+import { LocalCredentialProvider } from '@carnival/dsh-credentials-local'
+import { credentialKey, credentialRef } from '@carnival/dsh-credentials'
 import { DeepSeekAccount } from '../src/index.ts'
 import { browserUrl, platformHeaders, platformOrigin, loginOrigin } from '../src/protocol.ts'
 
@@ -1293,7 +1293,7 @@ it('returns no credentials when signed out or disposed', async () => {
   const f = await fixture()
   expect(await f.account.resolveRequestCredential('https://api.deepseek.com')).toBeUndefined()
   expect(await f.account.getPlatformSession()).toBeNull()
-  await f.account.cancelSignIn('missing' as import('@deepseek-ai/dsh-deepseek-account').SignInAttemptId)
+  await f.account.cancelSignIn('missing' as import('@carnival/dsh-deepseek-account').SignInAttemptId)
   await f.dispose()
   expect(await f.account.getProfile(clientMetadata())).toBeNull()
   expect(await f.account.getPlatformSession()).toBeNull()

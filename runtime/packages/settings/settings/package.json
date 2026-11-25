@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-settings",
+  "name": "@carnival/dsh-settings",
   "description": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/settings/settings"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -37,27 +32,27 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/schemastery": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
-    "@deepseek-ai/cordis-plugin-timer": "workspace:~",
-    "@deepseek-ai/dsh-app-boot": "workspace:*",
-    "@deepseek-ai/dsh-hmr": "workspace:*",
-    "@deepseek-ai/dsh-agent-default-model": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
+    "@carnival/cordis-plugin-timer": "workspace:~",
+    "@carnival/dsh-app-boot": "workspace:*",
+    "@carnival/dsh-hmr": "workspace:*",
+    "@carnival/dsh-agent-default-model": "workspace:*",
     "yaml": "^2.8.1"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-util-values": "workspace:*",
-    "@deepseek-ai/dsh-config-editor": "workspace:*",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:~",
-    "@deepseek-ai/cosmokit": "workspace:~",
+    "@carnival/dsh-util-values": "workspace:*",
+    "@carnival/dsh-config-editor": "workspace:*",
+    "@carnival/cordis-plugin-loader": "workspace:~",
+    "@carnival/cosmokit": "workspace:~",
     "yaml": "^2.8.1"
   }
 }

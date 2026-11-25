@@ -3,7 +3,7 @@ description: "把变更请求绑定到创建、推送或跟踪它们的 Session�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-forge-session
+# @carnival/dsh-experimental-forge-session
 
 [English](README.md) | 中文
 
@@ -28,10 +28,10 @@ kind: "package-reference"
 将服务与 forge 注册表、一个提供方以及 Session 投影注册表一起挂载。
 
 ```yaml
-- name: '@deepseek-ai/dsh-session-projection'
-- name: '@deepseek-ai/dsh-experimental-forge'
-- name: '@deepseek-ai/dsh-experimental-forge-github'
-- name: '@deepseek-ai/dsh-experimental-forge-session'
+- name: '@carnival/dsh-session-projection'
+- name: '@carnival/dsh-experimental-forge'
+- name: '@carnival/dsh-experimental-forge-github'
+- name: '@carnival/dsh-experimental-forge-session'
 ```
 
 提供方通过 `ctx.forgeSession.registerCommands(rule)` 注册其 CLI 的命令；该调用是调用方 fiber 上的 effect，返回其 disposer。forge-session 运行期间，[forge-github](../forge-github/README.zh.md) 注册 `gh`，[forge-gitlab](../forge-gitlab/README.zh.md) 注册 `glab`。一条规则声明其可执行文件、创建子命令、引用子命令与原始 API 请求子命令（后两组各带其接受的选项）、匹配变更请求页面路径的正则表达式、存放引用命令自身 URL 的 JSON 成员，以及一个 `select` 函数：它把一条解析后的引用命令或 API 请求命令映射为一个 URL 或一条只读查询命令。规则格式不正确，或其 id 或可执行文件已被一项仍有效的注册占用时，注册抛错。规则对同一输入总是给出同样的分类；规则对任何命令或输出的分类发生变化时，注册方要提高 `version`。

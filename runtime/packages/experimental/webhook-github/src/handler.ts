@@ -1,18 +1,18 @@
 /** GitHub HTTP authentication, parsing, and fire-and-forget dispatch. */
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { Webhooks } from '@octokit/webhooks'
-import type { CredentialRef } from '@deepseek-ai/dsh-credentials'
-import { snapshotJsonValue } from '@deepseek-ai/dsh-util-values'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import type { CredentialRef } from '@carnival/dsh-credentials'
+import { snapshotJsonValue } from '@carnival/dsh-util-values'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   WebhookDeliveryId,
   WebhookSourceId,
   VerifiedWebhookDelivery,
-} from '@deepseek-ai/dsh-webhook/types'
-import type {} from '@deepseek-ai/dsh-webhook'
-import type { WebRoute } from '@deepseek-ai/dsh-host-webserver'
+} from '@carnival/dsh-webhook/types'
+import type {} from '@carnival/dsh-webhook'
+import type { WebRoute } from '@carnival/dsh-host-webserver'
 import { readBoundedUtf8Body, WebhookHttpError } from './body.ts'
 import type { GitHubJsonObject } from './types.ts'
 

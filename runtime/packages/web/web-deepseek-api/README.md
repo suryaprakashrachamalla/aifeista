@@ -3,7 +3,7 @@ description: "DeepSeek Search and Fetch API providers, their shared authenticati
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-web-deepseek-api
+# @carnival/dsh-web-deepseek-api
 
 English | [中文](README.zh.md)
 
@@ -27,12 +27,12 @@ Search and fetch the web through the DeepSeek Search and Fetch APIs: one direct 
 Mount the plugin alongside `dsh-web` and [`dsh-deepseek-auth`](../../account/deepseek-auth/README.md), which releases its credentials, and select its providers. Shipped profiles mount it, configure no search provider, and select local HTTP fetch for fetch; an unconfigured search runs its Search API (`deepseek-search-api`) except for a model request on a DeepSeek model route, which runs [legacy Messages search](../web/README.md#provider-selection). In **Plugins > Built-in plugin settings > Web search and fetch**, choosing **DeepSeek Search API** in the **Search** menu selects `deepseek-search-api` and choosing **DeepSeek Fetch API** in the **Fetch** menu selects `deepseek-fetch-api`; each menu is saved independently, and choosing another entry restores another provider. While a menu selects one of these providers, its **Billing** menu below writes `searchBilling` or `fetchBilling`: **Automatic**, **Signed-in DeepSeek account**, or **DeepSeek API key**. A saved selection applies to the next operation.
 
 ```yaml
-- name: '@deepseek-ai/dsh-web'
+- name: '@carnival/dsh-web'
   config:
     searchProvider: deepseek-search-api
     fetchProvider: deepseek-fetch-api
-- name: '@deepseek-ai/dsh-deepseek-auth'
-- name: '@deepseek-ai/dsh-web-deepseek-api'
+- name: '@carnival/dsh-deepseek-auth'
+- name: '@carnival/dsh-web-deepseek-api'
   config:
     searchBaseURL: https://search.example.test/api/v1/tools
     searchApiKeyEnv: DEEPSEEK_SEARCH_API_KEY

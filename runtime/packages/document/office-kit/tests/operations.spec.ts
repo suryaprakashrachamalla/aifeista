@@ -2,14 +2,14 @@
 import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import type { Converter, RenderImagesRequest, RenderImagesResult, RenderedImage } from '@deepseek-ai/libreoffice-kit'
+import { Context } from '@carnival/cordis'
+import type { Converter, RenderImagesRequest, RenderImagesResult, RenderedImage } from '@carnival/libreoffice-kit'
 import { afterEach, beforeEach, expect, it, onTestFinished, vi } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import OfficeKit, { Config, type OfficeSourceKey, type OfficeKitSource, type OfficeImagesRequest } from '../src/index.ts'
 
 const kit = vi.hoisted(() => ({ create: vi.fn<() => Promise<Converter>>() }))
-vi.mock('@deepseek-ai/libreoffice-kit', () => ({ createConverter: kit.create }))
+vi.mock('@carnival/libreoffice-kit', () => ({ createConverter: kit.create }))
 
 /** Holds output-store deletions under `root` until `gate` settles. */
 const outputDeletion = vi.hoisted(() => ({ root: undefined as string | undefined, gate: undefined as Promise<void> | undefined }))

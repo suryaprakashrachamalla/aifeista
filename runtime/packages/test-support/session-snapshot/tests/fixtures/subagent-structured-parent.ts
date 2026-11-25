@@ -1,6 +1,6 @@
 /** Structured result delivery after a parent correction reaches the child. */
-import type { Context } from '@deepseek-ai/cordis'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import type { Context } from '@carnival/cordis'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
 
 export const name = 'subagent-structured-parent'
 export const inject = ['subagents', 'tools']

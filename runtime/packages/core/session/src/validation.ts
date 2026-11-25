@@ -1,12 +1,12 @@
 /**
  * Session header, seed-event, and inherited-cut validation shared by Session
  * construction and log validation.
- * @module @deepseek-ai/dsh-session/validation
+ * @module @carnival/dsh-session/validation
  */
 
 import { isAbsolute } from 'node:path'
-import { deepFreeze, snapshotJsonValue } from '@deepseek-ai/dsh-util-values'
-import type { Message } from '@deepseek-ai/dsh-llm'
+import { deepFreeze, snapshotJsonValue } from '@carnival/dsh-util-values'
+import type { Message } from '@carnival/dsh-llm'
 import { SESSION_FORMAT_VERSION, SessionLogOffset } from './types.ts'
 import type { SessionEvent, SessionHeader, SessionHeaderMeta, SessionId, SessionSeedEventState, SurfaceEventType } from './types.ts'
 import { SurfaceManager, validateSessionEventData } from './surface.ts'

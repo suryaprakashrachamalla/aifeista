@@ -1,15 +1,15 @@
 - insert:
     - id: worktree
-      name: '@deepseek-ai/dsh-experimental-worktree'
+      name: '@carnival/dsh-experimental-worktree'
     - id: tool-worktree
-      name: '@deepseek-ai/dsh-experimental-tool-worktree'
+      name: '@carnival/dsh-experimental-tool-worktree'
     - id: forge
-      name: '@deepseek-ai/dsh-experimental-forge'
+      name: '@carnival/dsh-experimental-forge'
     - id: forge-github
-      name: '@deepseek-ai/dsh-experimental-forge-github'
+      name: '@carnival/dsh-experimental-forge-github'
     - id: forge-gitlab
-      name: '@deepseek-ai/dsh-forge-gitlab'
+      name: '@carnival/dsh-forge-gitlab'
     - id: forge-session
-      name: '@deepseek-ai/dsh-experimental-forge-session'
+      name: '@carnival/dsh-experimental-forge-session'
     - id: forge-panel
-      name: '@deepseek-ai/dsh-experimental-client-ui-forge'
+      name: '@carnival/dsh-experimental-client-ui-forge'

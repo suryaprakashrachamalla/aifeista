@@ -4,8 +4,8 @@ import { join, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { inspect } from 'node:util'
 import { afterAll, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-system-prompt'
+import { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-system-prompt'
 import {
   auditStartupEntries, boot, StartupError,
   FAIL_LOUD_RELEASE_TIMEOUT_MS,
@@ -672,7 +672,7 @@ describe('auditStartupEntries', () => {
     const original = new Error('todo apply failure')
     await auditStartupEntries(ctxWith([
       { options: { id: 'missing-tool', name: './missing.mjs' }, parent: { tree: { import: () => Promise.resolve() } } },
-      { fiber: fiber(3, original), options: { id: 'tool-todo', name: '@deepseek-ai/dsh-tool-todo' } },
+      { fiber: fiber(3, original), options: { id: 'tool-todo', name: '@carnival/dsh-tool-todo' } },
       {
         fiber: fiber(0, undefined, { ready: {}, missing: {} }, ['ready']),
         options: { id: 'waiting-tool', name: './waiting.mjs' },
@@ -682,7 +682,7 @@ describe('auditStartupEntries', () => {
     expect(warn).toHaveBeenCalledWith([
       `${NAME}: warning: 3 entries did not activate`,
       'missing-tool (./missing.mjs): failed to import',
-      `tool-todo (@deepseek-ai/dsh-tool-todo): ${original.stack!}`,
+      `tool-todo (@carnival/dsh-tool-todo): ${original.stack!}`,
       'waiting-tool (./waiting.mjs): pending (waiting for service: missing)',
       '',
     ].join('\n'))
@@ -789,12 +789,12 @@ describe('auditStartupEntries', () => {
     const optionalError = new Error('todo unavailable')
     const error = await auditStartupEntries(ctxWith([
       { fiber: fiber(3, requiredError), options: { id, name: './required.mjs' } },
-      { fiber: fiber(3, optionalError), options: { id: 'tool-todo', name: '@deepseek-ai/dsh-tool-todo' } },
+      { fiber: fiber(3, optionalError), options: { id: 'tool-todo', name: '@carnival/dsh-tool-todo' } },
     ]), NAME, warn).catch((error: unknown) => error)
     expect(error).toBeInstanceOf(StartupError)
     expect((error as Error).message).toContain(`${NAME}: startup failed: 1 required plugin did not activate`)
     expect((error as Error).message).toContain(`  ${id} (required)\n    Package: ./required.mjs`)
-    expect((error as Error).message).toContain('  tool-todo\n    Package: @deepseek-ai/dsh-tool-todo')
+    expect((error as Error).message).toContain('  tool-todo\n    Package: @carnival/dsh-tool-todo')
     expect(((error as Error).cause as AggregateError).errors).toEqual([requiredError, optionalError])
     expect(warn).not.toHaveBeenCalled()
   })
@@ -876,7 +876,7 @@ describe('auditStartupEntries', () => {
     const warn = vi.fn()
     const error = await auditStartupEntries(ctxWith([
       { fiber: fiber(0, undefined, { webServer: {} }), options: { id: 'web-runtime', name: './web.mjs' } },
-      { fiber: fiber(3, original), options: { id: 'webserver', name: '@deepseek-ai/dsh-host-webserver' } },
+      { fiber: fiber(3, original), options: { id: 'webserver', name: '@carnival/dsh-host-webserver' } },
       { fiber: fiber(0, undefined, { webStartup: {} }), options: { id: 'connection', name: './connection.mjs' } },
       { fiber: fiber(0), options: { id: 'unknown', name: './unknown.mjs' } },
     ]), NAME, warn).catch((error: unknown) => error)
@@ -886,7 +886,7 @@ describe('auditStartupEntries', () => {
 
       Failed plugins (1):
         webserver (required)
-          Package: @deepseek-ai/dsh-host-webserver
+          Package: @carnival/dsh-host-webserver
           Error: listen EADDRINUSE: address already in use 127.0.0.1:3080
               at Server.listen (node:net:1:2)
 
@@ -902,7 +902,7 @@ describe('auditStartupEntries', () => {
   it('rejects a required entry pending on an injected service', async () => {
     await expect(auditStartupEntries(ctxWith([{
       fiber: fiber(0, undefined, { headlessStartup: {} }),
-      options: { id: 'headless-runner', name: '@deepseek-ai/dsh-headless' },
+      options: { id: 'headless-runner', name: '@carnival/dsh-headless' },
     }]), NAME, vi.fn())).rejects.toThrow(
       'headless-runner (required)  headlessStartup',
     )
@@ -1018,12 +1018,12 @@ describe('boot', () => {
     const dir = tmp()
     const harness = tmp()
     const absolutePlugin = join(dir, 'absolute.mjs')
-    const shadow = join(dir, 'node_modules', '@deepseek-ai', 'dsh-system-prompt')
-    const harnessPlugin = join(harness, 'node_modules', '@deepseek-ai', 'dsh-system-prompt')
+    const shadow = join(dir, 'node_modules', '@carnival', 'dsh-system-prompt')
+    const harnessPlugin = join(harness, 'node_modules', '@carnival', 'dsh-system-prompt')
     mkdirSync(shadow, { recursive: true })
     mkdirSync(harnessPlugin, { recursive: true })
     writeFileSync(join(shadow, 'package.json'), JSON.stringify({
-      name: '@deepseek-ai/dsh-system-prompt',
+      name: '@carnival/dsh-system-prompt',
       type: 'module',
       exports: './index.mjs',
     }))
@@ -1034,7 +1034,7 @@ describe('boot', () => {
       '',
     ].join('\n'))
     writeFileSync(join(harnessPlugin, 'package.json'), JSON.stringify({
-      name: '@deepseek-ai/dsh-system-prompt',
+      name: '@carnival/dsh-system-prompt',
       type: 'module',
       exports: './index.mjs',
     }))
@@ -1048,7 +1048,7 @@ describe('boot', () => {
     writeFileSync(absolutePlugin, 'export function apply(ctx) { ctx.provide("absolutePluginLoaded", true) }\n')
     const entries = [
       '- id: prompt',
-      "  name: '@deepseek-ai/dsh-system-prompt'",
+      "  name: '@carnival/dsh-system-prompt'",
       '- id: relative',
       "  name: './relative.mjs'",
     ]

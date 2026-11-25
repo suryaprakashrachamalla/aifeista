@@ -3,7 +3,7 @@ description: "在 SQLite 中保存和重新打开 Session 历史，导入现有 
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-session-persistence-sqlite
+# @carnival/dsh-session-persistence-sqlite
 
 [English](README.md) | 中文
 
@@ -32,7 +32,7 @@ kind: "package-reference"
 在组合配置中替换 JSONL 提供者的包名，保留其根目录和旧历史编码设置：
 
 ```yaml
-- name: '@deepseek-ai/dsh-session-persistence-sqlite'
+- name: '@carnival/dsh-session-persistence-sqlite'
   config:
     root: './.sessions'
 ```

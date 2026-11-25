@@ -1,5 +1,5 @@
-import type { Context } from '@deepseek-ai/cordis'
-import type { ToolExecutionInput, ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import type { Context } from '@carnival/cordis'
+import type { ToolExecutionInput, ToolExecutionResult } from '@carnival/dsh-tools'
 
 /** Dispatch one fixture call through the selected Harness tool executor. */
 export async function executeTool(

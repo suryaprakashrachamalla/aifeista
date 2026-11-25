@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import { browserUrl, logoutAccount, requestAccount, requestNotificationEvent, requestPlatform, requestNotifications } from '../src/protocol.ts'
-import type { AccountNotificationId } from '@deepseek-ai/dsh-deepseek-account/types'
+import type { AccountNotificationId } from '@carnival/dsh-deepseek-account/types'
 import { readAccountDetail } from '../src/details.ts'
 import { readNotifications } from '../src/notifications.ts'
 

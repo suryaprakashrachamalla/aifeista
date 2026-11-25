@@ -3,17 +3,17 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi, type Mock } from 'vitest'
-import { Context, LoggerLevel } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import DeepSeekLlmApiExtensionRegistry from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import type { DeepSeekLlmApiExtensionRequest } from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import * as DeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
+import { Context, LoggerLevel } from '@carnival/cordis'
+import LlmRuntime from '@carnival/dsh-llm'
+import DeepSeekLlmApiExtensionRegistry from '@carnival/dsh-deepseek-llm-api-extensions'
+import type { DeepSeekLlmApiExtensionRequest } from '@carnival/dsh-deepseek-llm-api-extensions'
+import type { SessionId } from '@carnival/dsh-session'
+import * as DeepSeek from '@carnival/dsh-llm-deepseek-api-key'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
 import { adapter, assemble, options, sse, textEvents } from './helpers.ts'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 
-declare module '@deepseek-ai/dsh-deepseek-llm-api-extensions' {
+declare module '@carnival/dsh-deepseek-llm-api-extensions' {
   interface DeepSeekLlmApiExtensionMap {
     dsh_messages_test: { value: string }
   }

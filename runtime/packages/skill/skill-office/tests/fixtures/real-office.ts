@@ -1,8 +1,8 @@
 /** Shared model configuration and context assertions for real Office workflows. */
 import { expect } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ImageBlock } from '@deepseek-ai/dsh-llm'
-import { Session, type SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
+import type { ImageBlock } from '@carnival/dsh-llm'
+import { Session, type SessionId, type SessionEvent } from '@carnival/dsh-session'
 
 /** @returns Model provider patches for the configured development or official API. */
 export function officeModelPatches() {
@@ -26,8 +26,8 @@ export function officeModelPatches() {
 /** @returns Patches mounting the Office kit and tools, which the headless profile does not compose. */
 export function officeToolPatches() {
   return [{ insert: [
-    { id: 'office-kit', name: '@deepseek-ai/dsh-office-kit' },
-    { id: 'tool-office', name: '@deepseek-ai/dsh-tool-office' },
+    { id: 'office-kit', name: '@carnival/dsh-office-kit' },
+    { id: 'tool-office', name: '@carnival/dsh-tool-office' },
   ] }]
 }
 

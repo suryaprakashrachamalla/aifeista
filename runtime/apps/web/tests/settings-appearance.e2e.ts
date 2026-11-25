@@ -4,8 +4,8 @@ import { join } from 'node:path'
 import { mkdir } from 'node:fs/promises'
 import { chromium, type Locator } from 'playwright'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import type { AccountView } from '@deepseek-ai/dsh-deepseek-account/types'
-import type {} from '@deepseek-ai/dsh-deepseek-account'
+import type { AccountView } from '@carnival/dsh-deepseek-account/types'
+import type {} from '@carnival/dsh-deepseek-account'
 import {
   captureStableAria, compareOrRefreshGolden, launchWebScaffold, webSnapshotMode,
 } from './scaffold.ts'

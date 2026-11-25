@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-sdk-app",
+  "name": "@carnival/dsh-sdk-app",
   "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/bundle/sdk-app"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -39,34 +34,34 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-action-cards": "workspace:*",
-    "@deepseek-ai/dsh-agent-preset": "workspace:*",
-    "@deepseek-ai/dsh-cmdline": "workspace:*",
-    "@deepseek-ai/dsh-creation-recommendations": "workspace:*",
-    "@deepseek-ai/dsh-office-kit": "workspace:*",
-    "@deepseek-ai/dsh-plugin-recommendations": "workspace:*",
-    "@deepseek-ai/dsh-sdk-jsonrpc-server": "workspace:*",
-    "@deepseek-ai/dsh-tool-office": "workspace:*",
-    "@deepseek-ai/schemastery": "workspace:~",
+    "@carnival/dsh-action-cards": "workspace:*",
+    "@carnival/dsh-agent-preset": "workspace:*",
+    "@carnival/dsh-cmdline": "workspace:*",
+    "@carnival/dsh-creation-recommendations": "workspace:*",
+    "@carnival/dsh-office-kit": "workspace:*",
+    "@carnival/dsh-plugin-recommendations": "workspace:*",
+    "@carnival/dsh-sdk-jsonrpc-server": "workspace:*",
+    "@carnival/dsh-tool-office": "workspace:*",
+    "@carnival/schemastery": "workspace:~",
     "commander": "^15.0.0",
-    "@deepseek-ai/dsh-skill-office": "workspace:*",
-    "@deepseek-ai/dsh-tool-workspace-dependencies": "workspace:*",
-    "@deepseek-ai/dsh-client-connection": "workspace:*",
-    "@deepseek-ai/dsh-client-file-upload": "workspace:*",
-    "@deepseek-ai/dsh-workspace": "workspace:*",
-    "@deepseek-ai/dsh-schedule": "workspace:*",
-    "@deepseek-ai/dsh-time-context": "workspace:*",
-    "@deepseek-ai/dsh-tool-schedule": "workspace:*",
-    "@deepseek-ai/dsh-tool-ask-user": "workspace:*",
-    "@deepseek-ai/dsh-tool-present": "workspace:*",
-    "@deepseek-ai/dsh-file-reference-local": "workspace:*",
-    "@deepseek-ai/dsh-deliverable-file-references": "workspace:*"
+    "@carnival/dsh-skill-office": "workspace:*",
+    "@carnival/dsh-tool-workspace-dependencies": "workspace:*",
+    "@carnival/dsh-client-connection": "workspace:*",
+    "@carnival/dsh-client-file-upload": "workspace:*",
+    "@carnival/dsh-workspace": "workspace:*",
+    "@carnival/dsh-schedule": "workspace:*",
+    "@carnival/dsh-time-context": "workspace:*",
+    "@carnival/dsh-tool-schedule": "workspace:*",
+    "@carnival/dsh-tool-ask-user": "workspace:*",
+    "@carnival/dsh-tool-present": "workspace:*",
+    "@carnival/dsh-file-reference-local": "workspace:*",
+    "@carnival/dsh-deliverable-file-references": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-include": "workspace:~",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis-plugin-include": "workspace:~",
+    "@carnival/cordis": "workspace:~"
   }
 }

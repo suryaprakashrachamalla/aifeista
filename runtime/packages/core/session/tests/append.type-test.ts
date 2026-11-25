@@ -1,7 +1,7 @@
 /** Compile-time checks for single and multiple event admission. */
 import { expectTypeOf } from 'vitest'
-import type { Session, SessionEvent, SessionEventInput } from '@deepseek-ai/dsh-session'
-import type { UserMessage } from '@deepseek-ai/dsh-llm'
+import type { Session, SessionEvent, SessionEventInput } from '@carnival/dsh-session'
+import type { UserMessage } from '@carnival/dsh-llm'
 
 /**
  * Check result cardinality and event-specific payload and surface requirements.

@@ -1,10 +1,10 @@
 /** A request the account route authenticated ends with the sign-out of its credential and ends the route's running tasks. */
-import { Context } from '@deepseek-ai/cordis'
-import { BlockAssembler, LlmRuntime } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import { BlockAssembler, LlmRuntime } from '@carnival/dsh-llm'
 import { afterEach, expect, it, vi } from 'vitest'
 import { accountStub } from '../../../account/deepseek-account/tests/account-stub.ts'
 import * as Account from '../src/index.ts'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
 
 const contexts: Context[] = []
 afterEach(async () => {

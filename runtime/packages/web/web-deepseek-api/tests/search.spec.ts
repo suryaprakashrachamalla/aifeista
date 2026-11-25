@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { Session } from '@deepseek-ai/dsh-session'
-import WebRuntime from '@deepseek-ai/dsh-web'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@carnival/cordis'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent } from '@carnival/dsh-agent'
+import type { Session } from '@carnival/dsh-session'
+import WebRuntime from '@carnival/dsh-web'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
 import {
   DeepSeekSearchApiProvider,
   DEEPSEEK_WEB_API_BASE_URL,
   mapSearchResponse,
   type DeepSeekSearchApiOptions,
-} from '@deepseek-ai/dsh-web-deepseek-api'
-import * as webApiPlugin from '@deepseek-ai/dsh-web-deepseek-api'
-import { DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
+} from '@carnival/dsh-web-deepseek-api'
+import * as webApiPlugin from '@carnival/dsh-web-deepseek-api'
+import { DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@carnival/dsh-launch-environment'
 import { customGuidance } from './guidance.ts'
 import { keyCandidate } from './sources.ts'
 

@@ -1,6 +1,6 @@
 /** Mutable credential records used by the token implementation tests. */
-import { CredentialProvider, type CredentialRecord } from '@deepseek-ai/dsh-credentials'
-import { Context } from '@deepseek-ai/cordis'
+import { CredentialProvider, type CredentialRecord } from '@carnival/dsh-credentials'
+import { Context } from '@carnival/cordis'
 import { onTestFinished } from 'vitest'
 
 export class RecordCredentials extends CredentialProvider {

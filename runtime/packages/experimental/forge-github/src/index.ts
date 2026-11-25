@@ -3,11 +3,11 @@
  * forge-session runs, the `gh` commands that bind pull requests to a Session.
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-experimental-forge'
-import type {} from '@deepseek-ai/dsh-experimental-forge-session'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import type { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-experimental-forge'
+import type {} from '@carnival/dsh-experimental-forge-session'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
 import { GH_COMMANDS } from './commands.ts'
 import { ghRunner } from './gh.ts'
 import { GitHubProvider } from './provider.ts'

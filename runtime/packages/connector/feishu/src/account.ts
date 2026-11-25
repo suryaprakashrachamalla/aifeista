@@ -1,9 +1,9 @@
 /** Check, connection, and sign-out of the CLI's default Feishu account, as the operations `ctx.cliAccounts` runs. */
 
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { brandString } from '@carnival/dsh-brand'
 import z from 'zod'
-import type { CliOperationControl } from '@deepseek-ai/dsh-cli-account/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import type { CliOperationControl } from '@carnival/dsh-cli-account/types'
+import { assertNever } from '@carnival/dsh-util-values'
 import { parseJson } from './cli.ts'
 import type { FeishuAccountState, FeishuAppId, FeishuCommand, FeishuOperationKind, FeishuPhase } from './types.ts'
 

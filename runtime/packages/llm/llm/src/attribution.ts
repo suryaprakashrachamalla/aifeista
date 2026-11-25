@@ -4,7 +4,7 @@
  * `docs/subsystems/llm-streaming.md#appidentity--app-attribution`.
  *
  * App-attribution vocabulary for provider requests.
- * @module @deepseek-ai/dsh-llm/attribution
+ * @module @carnival/dsh-llm/attribution
  */
 
 import { createRequire } from 'node:module'
@@ -60,7 +60,7 @@ function launchSuffix(): string | undefined {
 export const APP_IDENTITY: AppIdentity = {
   product: 'deepseek-harness',
   version,
-  url: 'https://github.com/deepseek-ai/deepseek-harness',
+  url: 'https://carnival.local',
   get suffix() { return launchSuffix() },
 }
 

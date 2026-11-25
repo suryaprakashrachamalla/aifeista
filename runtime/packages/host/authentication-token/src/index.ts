@@ -1,10 +1,10 @@
 /** Default token authentication, HTTP exchanges, and entry URL contribution. */
-import { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-credentials'
-import { CONNECT_PATH } from '@deepseek-ai/dsh-client-connection'
-import type { ConnectionTrustRequest, PeerScope } from '@deepseek-ai/dsh-client-connection'
-import type {} from '@deepseek-ai/dsh-host-webserver'
+import { Context } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type {} from '@carnival/dsh-credentials'
+import { CONNECT_PATH } from '@carnival/dsh-client-connection'
+import type { ConnectionTrustRequest, PeerScope } from '@carnival/dsh-client-connection'
+import type {} from '@carnival/dsh-host-webserver'
 import { BrowserAuth } from './browser-auth.ts'
 
 /** Stable plugin name. */

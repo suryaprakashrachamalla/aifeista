@@ -2,7 +2,7 @@
 import {
   useCallback, useEffect, useId, useMemo, useRef, useState, type AnimationEvent, type DragEvent, type FocusEvent, type ReactNode,
 } from 'react'
-import { IconDragHandleOutlineRegular, isBehindModal, observeComposition, useRowDragPreview } from '@deepseek-ai/dsh-client-ui-primitives'
+import { IconDragHandleOutlineRegular, isBehindModal, observeComposition, useRowDragPreview } from '@carnival/dsh-client-ui-primitives'
 import { panelElementId, toggleElementId } from './element-ids.ts'
 import { ENVIRONMENT_SECTION_ID } from './sections.ts'
 import type { SessionPanelPresentation, SessionPanelProps, SessionPanelSectionOwnerProps } from './slots.ts'

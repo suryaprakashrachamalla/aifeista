@@ -1,15 +1,15 @@
 /** Shared tasks section of the Session panel: the task rows and the progress beside the section title. */
 import { useMemo, useState } from 'react'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { TeamProjection, TeamTaskView, TeamTaskId } from '@deepseek-ai/dsh-agent-team/client'
-import type {} from '@deepseek-ai/dsh-api-session-controller/client'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { TeamProjection, TeamTaskView, TeamTaskId } from '@carnival/dsh-agent-team/client'
+import type {} from '@carnival/dsh-api-session-controller/client'
 import {
   HoverCard, HoverCardGroup, IconChevronDownOutlineRegular,
   StateDot, Tooltip, type StateDotState,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale, PropsRenderFactories, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-session-panel/client'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-client-ui-primitives'
+import type { PropsLocale, PropsRenderFactories, PropsRuntime, PropsStore } from '@carnival/dsh-client-ui-slots'
+import type {} from '@carnival/dsh-client-ui-session-panel/client'
+import type {} from '@carnival/dsh-client-ui-conversation/client'
 import { NS, type TeamKey } from './locales.ts'
 import type { createTeamBoardStore } from './team-board-store.ts'
 import css from './TeamBoard.module.css'

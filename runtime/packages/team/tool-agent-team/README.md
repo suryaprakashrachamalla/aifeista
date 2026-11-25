@@ -3,7 +3,7 @@ description: "Four task-board tools and shared-task guidance for Team-enabled Se
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-agent-team
+# @carnival/dsh-tool-agent-team
 
 English | [中文](README.zh.md)
 
@@ -27,11 +27,11 @@ This package lets every agent in a subagent tree create, claim, and complete sha
 
 Team tools are available to each model step only while the root Session enables Team mode. Prompt providers read the same selection when evaluated. Ordinary subagent controls remain available.
 
-Mount this package with `@deepseek-ai/dsh-agent-team` when models need the shared board. The root and descendants receive identical task schemas and task policy.
+Mount this package with `@carnival/dsh-agent-team` when models need the shared board. The root and descendants receive identical task schemas and task policy.
 
 ### When to choose it
 
-Choose it whenever the Team domain is mounted and models should use the board; without it, the board is reachable only through `ctx.agentTeams`. Teammates are created and reached through the standard `subagent`, `subagent_fork`, `send_message`, `list_agents`, and `interrupt_agent` tools, so the composition also needs `@deepseek-ai/dsh-tool-subagent` and `@deepseek-ai/dsh-tool-subagent-control`.
+Choose it whenever the Team domain is mounted and models should use the board; without it, the board is reachable only through `ctx.agentTeams`. Teammates are created and reached through the standard `subagent`, `subagent_fork`, `send_message`, `list_agents`, and `interrupt_agent` tools, so the composition also needs `@carnival/dsh-tool-subagent` and `@carnival/dsh-tool-subagent-control`.
 
 ### Smallest working example
 
@@ -39,7 +39,7 @@ The plugin takes no configuration; mount it beside the Team domain as in the [ag
 
 ```yaml
 - id: tool-agent-team
-  name: '@deepseek-ai/dsh-tool-agent-team'
+  name: '@carnival/dsh-tool-agent-team'
 ```
 
 A row that sets `interrupt`, `freshProvider`, or `forkProvider` does not activate, and dsh names the key in its startup warning. The [upgrade guide](../../../docs/upgrade-guide/v0.2.1-rc.2/agent-team-subagents/guide.md) maps the removed tools and keys to their replacements, and the generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-agent-team) records the empty configuration.
@@ -51,7 +51,7 @@ Ask the Lead to start a subagent to review the diff, add a review task, and wait
 The task tools complement the ordinary subagent controls:
 
 - **Manage the task board** — `team_task_create`, `team_task_list`, `team_task_get`, and `team_task_update` add, browse, read, and update shared tasks.
-- **Wait for inbox input** — `wait_agent` belongs to `@deepseek-ai/dsh-tool-subagent-control` and remains available without this package.
+- **Wait for inbox input** — `wait_agent` belongs to `@carnival/dsh-tool-subagent-control` and remains available without this package.
 - **Create and reach teammates** — `subagent`, `subagent_fork`, `send_message`, `list_agents`, and `interrupt_agent` come from the subagent tool packages and are unchanged by this package.
 
 Task `owner` arguments accept the names that `list_agents` shows: `lead`, a full name such as `reviewer/checker`, or a Session id. Task results report `owner` as that name, or as the Session id when the owner has no name; `unowned: true` filters tasks without an owner, while `unowned: false` selects assigned tasks. The `owner` and `unowned` filters cannot be combined. The Team service authorizes `ownerId` Session ids and saves the full name in `ownerName` at assignment. The root may reassign to itself or any reachable continuable descendant; historical roster records grant no authority. Other agents claim ready tasks themselves. Updates enforce ownership and revision checks.

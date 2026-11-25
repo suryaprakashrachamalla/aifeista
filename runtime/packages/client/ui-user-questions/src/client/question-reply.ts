@@ -1,11 +1,11 @@
 /** Answered-question Chat data from in-time tool results and late human replies. */
-import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
-import type { ConversationLocation, ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import { isAppendSurfaceEvent } from '@deepseek-ai/dsh-session/surface'
-import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-user-questions/types'
-import type {} from '@deepseek-ai/dsh-tool-executor-ptc/types'
+import type {} from '@carnival/dsh-client-ui-chat/client'
+import type { ConversationLocation, ConversationNodeDefinition } from '@carnival/dsh-client-ui-conversation/client'
+import type { PropsLocale } from '@carnival/dsh-client-ui-slots'
+import { isAppendSurfaceEvent } from '@carnival/dsh-session/surface'
+import type { SessionEvent } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-user-questions/types'
+import type {} from '@carnival/dsh-tool-executor-ptc/types'
 
 /** One asked question as echoed in the reply payload. */
 export interface QuestionReplyQuestion {
@@ -33,7 +33,7 @@ export interface QuestionReplyData {
   readonly time: number
 }
 
-declare module '@deepseek-ai/dsh-client-ui-chat/client' {
+declare module '@carnival/dsh-client-ui-chat/client' {
   interface ChatNodeDataMap {
     /** One answered question batch, regardless of foreground wait timing. */
     'question-reply': QuestionReplyData

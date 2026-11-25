@@ -3,7 +3,7 @@ description: "官方侧栏品牌与默认首页点击浮出的像素鲸鱼。"
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-brand-official
+# @carnival/dsh-client-ui-brand-official
 
 [English](README.md) | 中文
 

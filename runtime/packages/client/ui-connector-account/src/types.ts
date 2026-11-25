@@ -4,8 +4,8 @@
  * plugins and MCP connectors share one registry and one page.
  */
 
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { LocalizedText } from '@deepseek-ai/dsh-package-manifest'
+import type { Branded } from '@carnival/dsh-brand'
+import type { LocalizedText } from '@carnival/dsh-package-manifest'
 
 /** Identifies one Host-owned account operation across the browsers that show the account. */
 export type ConnectorOperationId = Branded<'ConnectorOperationId'>

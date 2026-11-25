@@ -22,13 +22,13 @@ afterEach(() => { vi.resetAllMocks() })
 function engineTree() {
   const root = realpathSync(mkdtempSync(join(tmpdir(), 'dsh-engine-package-')))
   onTestFinished(() => { rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 10 }) })
-  const kitDirectory = join(root, 'node_modules', '@deepseek-ai', 'libreoffice-kit')
+  const kitDirectory = join(root, 'node_modules', '@carnival', 'libreoffice-kit')
   const kitSource = join(kitDirectory, 'lib', 'index.js')
   mkdirSync(dirname(kitSource), { recursive: true })
   writeFileSync(join(kitDirectory, 'package.json'), JSON.stringify({ main: 'lib/index.js' }))
   writeFileSync(kitSource, '')
   const host = nodeCreateRequire(join(root, 'caller.cjs'))
-  const kitEntry = host.resolve('@deepseek-ai/libreoffice-kit')
+  const kitEntry = host.resolve('@carnival/libreoffice-kit')
   const kit = nodeCreateRequire(kitEntry)
   const resolve = vi.fn(kit.resolve)
   kit.resolve = Object.assign(resolve, { paths: kit.resolve.paths.bind(kit.resolve) })
@@ -37,7 +37,7 @@ function engineTree() {
     return nodeCreateRequire(from)
   })
   // A private name prevents globally installed packages from satisfying an absent fixture.
-  const name = `@deepseek-ai/libreoffice-kit-${basename(root)}`
+  const name = `@carnival/libreoffice-kit-${basename(root)}`
   const directory = join(kitDirectory, 'node_modules', name)
   return { root, name, directory, resolve, kit, kitEntry, resolveEnginePackage: createEnginePackageResolver(kitEntry) }
 }
@@ -48,10 +48,10 @@ function thrownBy(action: () => void): unknown {
 }
 
 it.each([
-  ['/App.app/Contents/Resources/app.asar/dsh/node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/package.json',
-    '/App.app/Contents/Resources/app.asar.unpacked/dsh/node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/package.json'],
-  ['C:\\DSH\\resources\\app.asar\\dsh\\node_modules\\@deepseek-ai\\libreoffice-kit-win32-x64\\package.json',
-    'C:\\DSH\\resources\\app.asar.unpacked\\dsh\\node_modules\\@deepseek-ai\\libreoffice-kit-win32-x64\\package.json'],
+  ['/App.app/Contents/Resources/app.asar/dsh/node_modules/@carnival/libreoffice-kit-darwin-arm64/package.json',
+    '/App.app/Contents/Resources/app.asar.unpacked/dsh/node_modules/@carnival/libreoffice-kit-darwin-arm64/package.json'],
+  ['C:\\DSH\\resources\\app.asar\\dsh\\node_modules\\@carnival\\libreoffice-kit-win32-x64\\package.json',
+    'C:\\DSH\\resources\\app.asar.unpacked\\dsh\\node_modules\\@carnival\\libreoffice-kit-win32-x64\\package.json'],
   ['/App/resources/app.asar.unpacked/dsh/node_modules/x/package.json', '/App/resources/app.asar.unpacked/dsh/node_modules/x/package.json'],
   ['/workspace/node_modules/x/package.json', '/workspace/node_modules/x/package.json'],
   ['/workspace/notes.asar.txt/package.json', '/workspace/notes.asar.txt/package.json'],
@@ -64,7 +64,7 @@ it.each([
 
 it('uses physical native paths and preserves the WASM logical path in an archive', () => {
   const root = '/App/resources/app.asar/dsh/node_modules'
-  const kitEntry = `${root}/@deepseek-ai/libreoffice-kit/lib/index.js`
+  const kitEntry = `${root}/@carnival/libreoffice-kit/lib/index.js`
   const kit = nodeCreateRequire(import.meta.url)
   kit.resolve = Object.assign((id: string) => `${root}/${id}`, { paths: kit.resolve.paths.bind(kit.resolve) })
   vi.mocked(createRequire).mockImplementation((from) => {
@@ -72,10 +72,10 @@ it('uses physical native paths and preserves the WASM logical path in an archive
     return nodeCreateRequire(from)
   })
   const resolveEnginePackage = createEnginePackageResolver(kitEntry)
-  expect(resolveEnginePackage('@deepseek-ai/libreoffice-kit-darwin-arm64'))
-    .toBe('/App/resources/app.asar.unpacked/dsh/node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/package.json')
-  expect(resolveEnginePackage('@deepseek-ai/libreoffice-kit-wasm'))
-    .toBe('/App/resources/app.asar/dsh/node_modules/@deepseek-ai/libreoffice-kit-wasm/package.json')
+  expect(resolveEnginePackage('@carnival/libreoffice-kit-darwin-arm64'))
+    .toBe('/App/resources/app.asar.unpacked/dsh/node_modules/@carnival/libreoffice-kit-darwin-arm64/package.json')
+  expect(resolveEnginePackage('@carnival/libreoffice-kit-wasm'))
+    .toBe('/App/resources/app.asar/dsh/node_modules/@carnival/libreoffice-kit-wasm/package.json')
 })
 
 it.each(['missing manifest', 'dangling symlink', 'absent'] as const)(

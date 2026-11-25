@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-account",
+  "name": "@carnival/dsh-mcp-account",
   "description": "MCP connector accounts on the Plugins page: each connector's OAuth server in the connector account registry, authorized through the MCP manager",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/mcp/mcp-account"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -35,17 +30,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
-    "@deepseek-ai/dsh-util-values": "workspace:*"
+    "@carnival/dsh-brand": "workspace:*",
+    "@carnival/dsh-util-values": "workspace:*"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-client-ui-connector-account": "workspace:*",
-    "@deepseek-ai/dsh-mcp-client": "workspace:*",
-    "@deepseek-ai/dsh-mcp-manager": "workspace:*",
-    "@deepseek-ai/dsh-package-manifest": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-client-ui-connector-account": "workspace:*",
+    "@carnival/dsh-mcp-client": "workspace:*",
+    "@carnival/dsh-mcp-manager": "workspace:*",
+    "@carnival/dsh-package-manifest": "workspace:*"
   }
 }

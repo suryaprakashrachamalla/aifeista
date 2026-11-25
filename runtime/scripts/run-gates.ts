@@ -626,7 +626,7 @@ function ciPlaywrightInstallGate(): Gate | undefined {
   if (raw !== 'with-deps' && raw !== 'browsers') {
     throw new Error(`run-gates: DSH_CI_PLAYWRIGHT_INSTALL must be with-deps or browsers, got ${JSON.stringify(raw)}.`)
   }
-  const args = ['--filter', '@deepseek-ai/dsh-web-frontend', 'exec', 'playwright', 'install',
+  const args = ['--filter', '@carnival/dsh-web-frontend', 'exec', 'playwright', 'install',
     ...raw === 'with-deps' ? ['--with-deps'] : [], 'chromium', 'webkit']
   return {
     id: 'playwright-install',
@@ -761,8 +761,8 @@ function electronInstallGate(): Gate {
   return {
     id: 'electron-install',
     label: 'Electron binary',
-    displayCommand: 'pnpm --filter @deepseek-ai/dsh-desktop exec install-electron',
-    ...pnpmInvocation(['--filter', '@deepseek-ai/dsh-desktop', 'exec', 'install-electron']),
+    displayCommand: 'pnpm --filter @carnival/dsh-desktop exec install-electron',
+    ...pnpmInvocation(['--filter', '@carnival/dsh-desktop', 'exec', 'install-electron']),
     env: { ELECTRON_GET_USE_PROXY: '1' },
     retries: 2,
     retryDelayMs: 15000,

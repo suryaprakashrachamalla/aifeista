@@ -1,15 +1,15 @@
 /** Covers fail-closed per-call classification and model-schema isolation. */
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { ToolExecutionPipeline } from '@deepseek-ai/dsh-tools/pipeline'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import { ToolExecutionPipeline } from '@carnival/dsh-tools/pipeline'
 
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ToolDefinition, type ToolExecutionInput, type ToolExecutionMode } from '@deepseek-ai/dsh-tools'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tool-testkit'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId } from '@carnival/dsh-llm'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import ToolRuntime, { type ToolDefinition, type ToolExecutionInput, type ToolExecutionMode } from '@carnival/dsh-tools'
+import { defineContentToolFixture } from '@carnival/dsh-tool-testkit'
 
 const testToolSignal = new AbortController().signal
 

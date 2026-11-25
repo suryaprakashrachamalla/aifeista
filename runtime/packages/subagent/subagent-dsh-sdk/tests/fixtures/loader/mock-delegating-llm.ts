@@ -1,9 +1,9 @@
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { appendFileSync } from 'node:fs'
-import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ToolCallId, ReasoningEffortId } from '@deepseek-ai/dsh-llm/types'
-import { LlmAdapter } from '@deepseek-ai/dsh-llm'
+import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { ToolCallId, ReasoningEffortId } from '@carnival/dsh-llm/types'
+import { LlmAdapter } from '@carnival/dsh-llm'
 
 /** Delegation argument sequences selected by `DSH_TEST_PARENT_ROUTE_SCRIPT`. */
 const ROUTE_SCRIPTS: Readonly<Record<string, readonly Readonly<Record<string, string>>[]>> = {

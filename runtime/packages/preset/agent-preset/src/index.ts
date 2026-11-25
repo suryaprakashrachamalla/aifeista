@@ -1,9 +1,9 @@
 /** A declarative preset row in an ordinary Cordis composition. */
-import { Context, Service } from '@deepseek-ai/cordis'
-import { EntryGroup } from '@deepseek-ai/cordis-plugin-loader'
-import z from '@deepseek-ai/schemastery'
-import type { PresetDefinition } from '@deepseek-ai/dsh-agent-preset-registry'
-import type {} from '@deepseek-ai/dsh-agent-preset-registry'
+import { Context, Service } from '@carnival/cordis'
+import { EntryGroup } from '@carnival/cordis-plugin-loader'
+import z from '@carnival/schemastery'
+import type { PresetDefinition } from '@carnival/dsh-agent-preset-registry'
+import type {} from '@carnival/dsh-agent-preset-registry'
 
 /** Definition submitted to the preset registry. */
 export type Config = PresetDefinition

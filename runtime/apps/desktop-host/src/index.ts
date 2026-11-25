@@ -2,13 +2,13 @@
 
 import { delimiter, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
-import type { PluginOperationRunId } from '@deepseek-ai/dsh-plugin-manager/diagnostic'
+import type { PluginOperationRunId } from '@carnival/dsh-plugin-manager/diagnostic'
 import { formatFatalDiagnostic } from './fatal-diagnostic.ts'
-import { loadLayeredEnv, loadProfileDirectory, reportSkippedBundles } from '@deepseek-ai/dsh-app-boot'
-import { runProfile } from '@deepseek-ai/dsh/profile-boot'
-import type {} from '@deepseek-ai/dsh-client-connection'
-import type {} from '@deepseek-ai/dsh-host-webserver'
-import type {} from '@deepseek-ai/dsh-deepseek-account'
+import { loadLayeredEnv, loadProfileDirectory, reportSkippedBundles } from '@carnival/dsh-app-boot'
+import { runProfile } from '@carnival/dsh/profile-boot'
+import type {} from '@carnival/dsh-client-connection'
+import type {} from '@carnival/dsh-host-webserver'
+import type {} from '@carnival/dsh-deepseek-account'
 import { localDragResource } from './file-drag.ts'
 
 import { installDesktopUpdateTaskControl } from './update-tasks.ts'
@@ -16,7 +16,7 @@ import { installDesktopQuitInspection } from './quit-inspection.ts'
 import { installPlatformSessionPublisher } from './platform-session.ts'
 import { installOperationDiagnostics } from './operation-diagnostics.ts'
 import { DesktopAuthenticationEnd, receiveDesktopSecret } from './authentication.ts'
-import * as DesktopAuthentication from '@deepseek-ai/dsh-host-authentication-desktop'
+import * as DesktopAuthentication from '@carnival/dsh-host-authentication-desktop'
 
 async function main(): Promise<void> {
   const runId = randomUUID() as PluginOperationRunId
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
   const projectDir = process.argv[3] as string
   // Set before the launch-environment snapshot and profile evaluation; empty means the payload sits beside the runtime directory.
   process.env.DSH_PRIMARY_RUNTIME = process.argv[4] || join(runtimeDir, '..', 'runtime', 'primary-runtime')
-  const installAnchor = join(runtimeDir, 'node_modules', '@deepseek-ai', 'dsh', 'package.json')
+  const installAnchor = join(runtimeDir, 'node_modules', '@carnival', 'dsh', 'package.json')
   const profile = loadProfileDirectory('dsh', projectDir, installAnchor)
   reportSkippedBundles('dsh', profile)
   const application = runProfile({

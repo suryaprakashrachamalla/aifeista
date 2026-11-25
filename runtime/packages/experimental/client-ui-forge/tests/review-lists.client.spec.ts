@@ -3,10 +3,10 @@
  * and tones, pasted links, description Markdown, and the page's choices.
  */
 import { describe, expect, it } from 'vitest'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ChangeRequestSummary } from '@deepseek-ai/dsh-experimental-forge/types'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { TextSearchIndex } from '@deepseek-ai/dsh-util-text-search'
+import { brandString } from '@carnival/dsh-brand'
+import type { ChangeRequestSummary } from '@carnival/dsh-experimental-forge/types'
+import type { SessionId } from '@carnival/dsh-session/types'
+import { TextSearchIndex } from '@carnival/dsh-util-text-search'
 import {
   descriptionMarkdown, mergeRepositories, pastedUrl, REVIEW_FILTERS, reviewHint, reviewListsComplete, reviewRepositories, reviewSearchKeys,
   reviewSections, summaryTone,

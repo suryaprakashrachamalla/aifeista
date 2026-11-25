@@ -3,7 +3,7 @@ description: "Program-based tool execution, generated SDKs, and nested-call limi
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-executor-ptc
+# @carnival/dsh-tool-executor-ptc
 
 English | [中文](README.zh.md)
 
@@ -28,7 +28,7 @@ Use this executor when models should call tools through `run_code` programs. Mou
 Add this row to a composition with `dsh-tools` mounted. The nearest scoped executor selects tool behavior; one scope permits only one executor.
 
 ```yaml
-- name: '@deepseek-ai/dsh-tool-executor-ptc'
+- name: '@carnival/dsh-tool-executor-ptc'
   config:
     maxSubCallsPerMinute: 1024
     maxParallelSubCalls: 10
@@ -44,7 +44,7 @@ Tool calls retain their declared JSON return values. Passing an unchanged object
 
 This package declares `ctx.ptcRuntime` and `ctx.systemPrompt` as required injections; Agent-owned programs need `ctx.workingDirectory`. The executor activates only after its runtime is available and withdraws when that runtime unloads. An enabled PTC executor without a runtime stops application startup. A withdrawn PTC selection never falls back to native execution.
 
-Shared dispatch events and the `ptc-mode` message-source declaration live in `@deepseek-ai/dsh-tool-executor-ptc/types`; Client code imports the same declarations through `@deepseek-ai/dsh-tool-executor-ptc/client`. Both entries exclude Host service declarations. Host policy extensions use `import type` from the package entry for `PtcDispatchLog` and `tools/ptc-dispatch-log` without mounting the executor.
+Shared dispatch events and the `ptc-mode` message-source declaration live in `@carnival/dsh-tool-executor-ptc/types`; Client code imports the same declarations through `@carnival/dsh-tool-executor-ptc/client`. Both entries exclude Host service declarations. Host policy extensions use `import type` from the package entry for `PtcDispatchLog` and `tools/ptc-dispatch-log` without mounting the executor.
 
 The `/run-code` entry exports `createRunCodeTool` for plugins that register a named program tool alongside native tools. Supply an explicit runtime and the complete private `ToolDefinition` list, then register the returned definition in the owning scope. Programs can call only that list, even when the Agent can call other native tools; the private definitions do not enter the tool registry. Nested calls retain normal approvals, guards, dispatch logs, screenshots, deferred context, and turn completion. `RunCodeConfig` exposes the same validated call-allowance and concurrency settings as this executor.
 

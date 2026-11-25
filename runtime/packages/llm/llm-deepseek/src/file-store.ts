@@ -1,9 +1,9 @@
 /** DeepSeek Files API upload reuse, invalidation, and quota recovery. @module dsh-llm-deepseek/file-store */
 
 import { setTimeout as delay } from 'node:timers/promises'
-import { timeoutOf, type TimeoutReason } from '@deepseek-ai/dsh-timeout'
-import type { RequestImageAttachment } from '@deepseek-ai/dsh-attachment'
-import { LlmError } from '@deepseek-ai/dsh-llm'
+import { timeoutOf, type TimeoutReason } from '@carnival/dsh-timeout'
+import type { RequestImageAttachment } from '@carnival/dsh-attachment'
+import { LlmError } from '@carnival/dsh-llm'
 import { DeepSeekFilesClient, DeepSeekFilesError, isFilesQuotaError } from './files-api.ts'
 import type { DeepSeekFileId } from './file-id.ts'
 import { messagesApiRoot } from './messages-api.ts'

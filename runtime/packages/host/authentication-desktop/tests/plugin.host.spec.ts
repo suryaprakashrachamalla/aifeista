@@ -1,6 +1,6 @@
 /** Desktop authentication is owned by its mounted plugin fiber. */
-import { Context } from '@deepseek-ai/cordis'
-import * as Connection from '@deepseek-ai/dsh-client-connection'
+import { Context } from '@carnival/cordis'
+import * as Connection from '@carnival/dsh-client-connection'
 import { expect, it, onTestFinished } from 'vitest'
 import * as DesktopAuthentication from '../src/index.ts'
 

@@ -3,13 +3,13 @@ import {
   RemoteStream,
   RemoteStreamCarrierError,
   type RemoteStreamOptions,
-} from '@deepseek-ai/dsh-api-gateway/client'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import { streamHandle } from '@deepseek-ai/dsh-remote-mock'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { LlmAttemptId } from '@deepseek-ai/dsh-llm'
-import { SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session/types'
-import type { RemoteResult, RemoteStreamHandle } from '@deepseek-ai/dsh-typert-protocol'
+} from '@carnival/dsh-api-gateway/client'
+import { RemoteError } from '@carnival/dsh-typert-protocol'
+import { streamHandle } from '@carnival/dsh-remote-mock'
+import { brandString } from '@carnival/dsh-brand'
+import type { LlmAttemptId } from '@carnival/dsh-llm'
+import { SESSION_FORMAT_VERSION } from '@carnival/dsh-session/types'
+import type { RemoteResult, RemoteStreamHandle } from '@carnival/dsh-typert-protocol'
 import {
   createSessionControlStream,
   SessionEventStream,

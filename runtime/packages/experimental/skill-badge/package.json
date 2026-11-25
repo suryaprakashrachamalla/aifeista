@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-skill-badge",
+  "name": "@carnival/dsh-skill-badge",
   "description": "Bundled dsh badge skill provider for DeepSeek Harness",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/experimental/skill-badge"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -34,11 +29,11 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~"
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/cordis": "workspace:~"
   }
 }

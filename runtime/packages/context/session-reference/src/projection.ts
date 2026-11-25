@@ -1,13 +1,13 @@
 /** Current-surface projection and byte-bounded rendering. */
 
-import { extractTextContent } from '@deepseek-ai/dsh-llm/message'
+import { extractTextContent } from '@carnival/dsh-llm/message'
 
-import { isCompactCheckpointSource } from '@deepseek-ai/dsh-compaction'
-import type { SessionSurfaceSnapshot } from '@deepseek-ai/dsh-session-query'
-import { TextRetainer } from '@deepseek-ai/dsh-output-retention'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
-import { SessionSeq } from '@deepseek-ai/dsh-session'
-import type { OptionalSessionSeq, SessionId } from '@deepseek-ai/dsh-session'
+import { isCompactCheckpointSource } from '@carnival/dsh-compaction'
+import type { SessionSurfaceSnapshot } from '@carnival/dsh-session-query'
+import { TextRetainer } from '@carnival/dsh-output-retention'
+import { assertNever } from '@carnival/dsh-util-values'
+import { SessionSeq } from '@carnival/dsh-session'
+import type { OptionalSessionSeq, SessionId } from '@carnival/dsh-session'
 import { stringifyTagSafeJson } from './serialization.ts'
 import type { ReferencedConversationItem } from './types.ts'
 

@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-creation-recommendations",
+  "name": "@carnival/dsh-creation-recommendations",
   "description": "Create persistent removable interface plugins from explicit conversation needs",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/extensions/creation-recommendations"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -30,36 +25,36 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-plugin-manager": "workspace:*",
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*"
+    "@carnival/dsh-plugin-manager": "workspace:*",
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
-    "@deepseek-ai/dsh-agent": "workspace:*",
-    "@deepseek-ai/dsh-session": "workspace:*",
-    "@deepseek-ai/dsh-session-projection": "workspace:*",
-    "@deepseek-ai/dsh-plugin-manager": "workspace:*",
-    "@deepseek-ai/dsh-api-remote-access": "workspace:*",
-    "@deepseek-ai/dsh-subagent": "workspace:*",
-    "@deepseek-ai/dsh-app-boot": "workspace:*",
-    "@deepseek-ai/dsh-skill": "workspace:*",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:*",
-    "@deepseek-ai/dsh-tool-testkit": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-llm": "workspace:*",
+    "@carnival/dsh-tools": "workspace:*",
+    "@carnival/dsh-agent": "workspace:*",
+    "@carnival/dsh-session": "workspace:*",
+    "@carnival/dsh-session-projection": "workspace:*",
+    "@carnival/dsh-plugin-manager": "workspace:*",
+    "@carnival/dsh-api-remote-access": "workspace:*",
+    "@carnival/dsh-subagent": "workspace:*",
+    "@carnival/dsh-app-boot": "workspace:*",
+    "@carnival/dsh-skill": "workspace:*",
+    "@carnival/dsh-sandbox-policy": "workspace:*",
+    "@carnival/dsh-tool-testkit": "workspace:*"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:*",
+    "@carnival/dsh-brand": "workspace:*",
     "yaml": "^2.9.0",
     "resolve.exports": "^2.0.3",
     "zod": "4.6.6",
-    "@deepseek-ai/dsh-client-ui-creation-recommendations": "workspace:*",
-    "@deepseek-ai/dsh-action-cards": "workspace:*",
-    "@deepseek-ai/dsh-client-ui-action-cards": "workspace:*"
+    "@carnival/dsh-client-ui-creation-recommendations": "workspace:*",
+    "@carnival/dsh-action-cards": "workspace:*",
+    "@carnival/dsh-client-ui-action-cards": "workspace:*"
   },
   "files": [
     "icon.svg",

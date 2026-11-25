@@ -1,10 +1,10 @@
 /** Exclusive legacy Session import with same-provider open sequencing. @module */
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { JsonlSessionPersistence } from '@deepseek-ai/dsh-session-persistence-jsonl'
-import { HarnessError } from '@deepseek-ai/dsh-llm'
+import type { SessionId } from '@carnival/dsh-session'
+import type { JsonlSessionPersistence } from '@carnival/dsh-session-persistence-jsonl'
+import { HarnessError } from '@carnival/dsh-llm'
 import { setTimeout } from 'node:timers/promises'
-import { SessionAlreadyOwnedError } from '@deepseek-ai/dsh-session-persistence'
-import type { SessionAccess, SessionHandle, SessionPersistenceOpenOptions } from '@deepseek-ai/dsh-session-persistence'
+import { SessionAlreadyOwnedError } from '@carnival/dsh-session-persistence'
+import type { SessionAccess, SessionHandle, SessionPersistenceOpenOptions } from '@carnival/dsh-session-persistence'
 import type { SqliteStore } from './sqlite.ts'
 
 /** Historical reads used by the persistence service; no JSONL writes or live handles. */

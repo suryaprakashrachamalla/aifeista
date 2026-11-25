@@ -9,19 +9,19 @@ export interface ProfileTemplate {
 /** The shipped profile templates auto-initialized on first use, by name. */
 export const PROFILE_TEMPLATES: Record<string, ProfileTemplate> = {
   acp: {
-    bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-acp-app'],
+    bundles: ['@carnival/dsh-base', '@carnival/dsh-acp-app'],
   },
   web: {
-    bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app'],
+    bundles: ['@carnival/dsh-base', '@carnival/dsh-web-app'],
   },
   headless: {
-    bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-headless'],
+    bundles: ['@carnival/dsh-base', '@carnival/dsh-headless'],
   },
   sdk: {
-    bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-sdk-app'],
+    bundles: ['@carnival/dsh-base', '@carnival/dsh-sdk-app'],
   },
   'sdk-minimal': {
-    bundles: ['@deepseek-ai/dsh-sdk-minimal'],
+    bundles: ['@carnival/dsh-sdk-minimal'],
   },
 }
 
@@ -30,22 +30,22 @@ export const PROFILE_TEMPLATES: Record<string, ProfileTemplate> = {
  * match with the {@link PROFILE_TEMPLATES} entry of the same name and leaves every other list untouched.
  */
 export const INSTALLATION_OWNED_PROFILE_TUPLES: Readonly<Record<string, readonly string[]>> = {
-  headless: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', '@deepseek-ai/dsh-headless'],
+  headless: ['@carnival/dsh-base', '@carnival/dsh-web-app', '@carnival/dsh-headless'],
 }
 
 /** Bundles an earlier release shipped and the installation no longer carries; app-boot removes them from profiles. */
 export const RETIRED_BUNDLES: ReadonlySet<string> = new Set([
   // The Web composition mounts Schedule itself
   // ([upgrade guide](../../../../docs/upgrade-guide/v0.2.0-rc.2/schedule-bundle-retired/guide.md)).
-  '@deepseek-ai/dsh-experimental-schedule-bundle',
-  '@deepseek-ai/dsh-experimental-agent-team-profile',
+  '@carnival/dsh-experimental-schedule-bundle',
+  '@carnival/dsh-experimental-agent-team-profile',
   // The Web composition mounts personalized recommendations itself
   // ([upgrade guide](../../../../docs/upgrade-guide/v0.2.2-rc.5/personalized-recommendations-bundle-retired/guide.md)).
-  '@deepseek-ai/dsh-personalized-recommendations',
+  '@carnival/dsh-personalized-recommendations',
 ])
 
 /** The bundle list a `dsh plugin` init uses for a name with no shipped template. */
-export const DEFAULT_PROFILE_BUNDLES: readonly string[] = ['@deepseek-ai/dsh-base']
+export const DEFAULT_PROFILE_BUNDLES: readonly string[] = ['@carnival/dsh-base']
 
 /**
  * The bundles the dsh installation ships for a person to switch on: each a
@@ -56,27 +56,27 @@ export const DEFAULT_PROFILE_BUNDLES: readonly string[] = ['@deepseek-ai/dsh-bas
  * [admission](../../../../.agents/notes/implemented/architecture/2026-09-21-experimental-capabilities-as-optional-bundles.md)).
  */
 export const OPTIONAL_BUNDLES: readonly string[] = [
-  '@deepseek-ai/dsh-cua-bundle',
-  '@deepseek-ai/dsh-cua-mcp',
-  '@deepseek-ai/dsh-timeline',
-  '@deepseek-ai/dsh-experimental-session-search',
-  '@deepseek-ai/dsh-experimental-ralph-bundle',
-  '@deepseek-ai/dsh-experimental-terminal-bundle',
-  '@deepseek-ai/dsh-experimental-badge-skill-bundle',
-  '@deepseek-ai/dsh-experimental-session-titles-bundle',
-  '@deepseek-ai/dsh-experimental-voice-input-bundle',
-  '@deepseek-ai/dsh-experimental-cot-translation-bundle',
-  '@deepseek-ai/dsh-experimental-auto-review',
-  '@deepseek-ai/dsh-experimental-inspector-profile',
-  '@deepseek-ai/dsh-experimental-liveshare',
-  '@deepseek-ai/dsh-experimental-plugin-market-bundle',
-  '@deepseek-ai/dsh-experimental-tool-worktree',
-  '@deepseek-ai/dsh-experimental-forge-bundle',
-  '@deepseek-ai/dsh-deepseek-chat-import',
+  '@carnival/dsh-cua-bundle',
+  '@carnival/dsh-cua-mcp',
+  '@carnival/dsh-timeline',
+  '@carnival/dsh-experimental-session-search',
+  '@carnival/dsh-experimental-ralph-bundle',
+  '@carnival/dsh-experimental-terminal-bundle',
+  '@carnival/dsh-experimental-badge-skill-bundle',
+  '@carnival/dsh-experimental-session-titles-bundle',
+  '@carnival/dsh-experimental-voice-input-bundle',
+  '@carnival/dsh-experimental-cot-translation-bundle',
+  '@carnival/dsh-experimental-auto-review',
+  '@carnival/dsh-experimental-inspector-profile',
+  '@carnival/dsh-experimental-liveshare',
+  '@carnival/dsh-experimental-plugin-market-bundle',
+  '@carnival/dsh-experimental-tool-worktree',
+  '@carnival/dsh-experimental-forge-bundle',
+  '@carnival/dsh-deepseek-chat-import',
 ]
 
 /** Public DSH release members available through the ordinary on-demand bundle installer. */
 export const ON_DEMAND_BUNDLES: readonly string[] = [
-  '@deepseek-ai/dsh-subagent-claude-code',
-  '@deepseek-ai/dsh-subagent-codex',
+  '@carnival/dsh-subagent-claude-code',
+  '@carnival/dsh-subagent-codex',
 ]

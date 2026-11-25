@@ -13,7 +13,7 @@ export type EnginePackageResolver = (name: string) => string
 
 /**
  * Locate the Kit entry the consumer imports, normally
- * `() => import.meta.resolve('@deepseek-ai/libreoffice-kit')` written in the consuming module.
+ * `() => import.meta.resolve('@carnival/libreoffice-kit')` written in the consuming module.
  * @returns The Kit entry as a file URL string or `URL`.
  * @throws When the consumer cannot resolve Kit; the resolver treats every thrown value as an absent Kit.
  */
@@ -44,7 +44,7 @@ export function resolveKitModule(lookupKitEntry: KitEntryLookup): KitModuleResol
 /**
  * Anchor engine resolution to the Kit entry actually used by the consumer, not this package's installation.
  * Each returned callback retains its own Node resolver and installs no module hooks.
- * @param kitEntry - Absolute Kit entry path or file URL, normally the consumer's `import.meta.resolve('@deepseek-ai/libreoffice-kit')`.
+ * @param kitEntry - Absolute Kit entry path or file URL, normally the consumer's `import.meta.resolve('@carnival/libreoffice-kit')`.
  * @returns A callback for Kit's `resolveEnginePackage` option. Native paths map the first ASAR segment to its unpacked copy;
  * WASM and paths outside archives stay unchanged. Kit validates the returned manifest and required engine assets.
  * @throws Node's error if `kitEntry` cannot be used by `createRequire`.
@@ -67,7 +67,7 @@ export function createEnginePackageResolver(kitEntry: string | URL): EnginePacka
       }
       throw error
     }
-    return name === '@deepseek-ai/libreoffice-kit-wasm' ? manifest : unpackedPath(manifest)
+    return name === '@carnival/libreoffice-kit-wasm' ? manifest : unpackedPath(manifest)
   }
 }
 

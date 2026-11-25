@@ -7,21 +7,21 @@ import { chmod, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PassThrough } from 'node:stream'
-import { Context } from '@deepseek-ai/cordis'
-import CliAccounts from '@deepseek-ai/dsh-cli-account'
-import type { ConnectorAccountRegistration } from '@deepseek-ai/dsh-client-ui-connector-account/types'
-import SkillRegistry from '@deepseek-ai/dsh-skill'
-import { SubprocessRuntime } from '@deepseek-ai/dsh-subprocess'
+import { Context } from '@carnival/cordis'
+import CliAccounts from '@carnival/dsh-cli-account'
+import type { ConnectorAccountRegistration } from '@carnival/dsh-client-ui-connector-account/types'
+import SkillRegistry from '@carnival/dsh-skill'
+import { SubprocessRuntime } from '@carnival/dsh-subprocess'
 import type {
   SubprocessCollectedOutputs,
   SubprocessHandle,
   SubprocessOutcome,
   SubprocessSpawnSpec,
   SubprocessTerminalEnvironment,
-} from '@deepseek-ai/dsh-subprocess'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import UpstreamSkills, { type Config as UpstreamSkillsConfig } from '@deepseek-ai/dsh-upstream-skills'
+} from '@carnival/dsh-subprocess'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import UpstreamSkills, { type Config as UpstreamSkillsConfig } from '@carnival/dsh-upstream-skills'
 import { executableFileName } from '../src/directory.ts'
 import type { TencentMeetingState } from '../src/types.ts'
 

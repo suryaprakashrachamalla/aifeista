@@ -7,28 +7,28 @@
  * `turn.complete` on `turn/end`, `session.end` on `agent/disposed`, and
  * `command.run` from the commands a mod registers. The `$` a hook receives is
  * served by {@link createHostOps} over the composed harness services.
- * @module @deepseek-ai/dsh-experimental-claude-code-mods
+ * @module @carnival/dsh-experimental-claude-code-mods
  */
 
-import { FiberState, type Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-working-directory'
-import z from '@deepseek-ai/schemastery'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { extractTextContent } from '@deepseek-ai/dsh-llm/message'
-import type { AssistantMessage, ContentBlock, TokenUsage } from '@deepseek-ai/dsh-llm'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { UserMessage } from '@deepseek-ai/dsh-session'
-import { scopeOf } from '@deepseek-ai/dsh-scope'
-import { validateJsonSchemaValue } from '@deepseek-ai/dsh-tools'
-import type { PostToolDecision, ToolExecutionResult, ToolExecutionToken } from '@deepseek-ai/dsh-tools'
+import { FiberState, type Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-working-directory'
+import z from '@carnival/schemastery'
+import type { Agent, PreStepDecision } from '@carnival/dsh-agent'
+import { Remote, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import { extractTextContent } from '@carnival/dsh-llm/message'
+import type { AssistantMessage, ContentBlock, TokenUsage } from '@carnival/dsh-llm'
+import { brandString } from '@carnival/dsh-brand'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { UserMessage } from '@carnival/dsh-session'
+import { scopeOf } from '@carnival/dsh-scope'
+import { validateJsonSchemaValue } from '@carnival/dsh-tools'
+import type { PostToolDecision, ToolExecutionResult, ToolExecutionToken } from '@carnival/dsh-tools'
 import type { LoadedMod } from './chain.ts'
 import { RewriteRefusedError } from './chain.ts'
 import { ModsEngine } from './engine.ts'
 import { createHostOps, toolCallResultOf } from './host-ops.ts'
 import type { AgentBinding } from './host-ops.ts'
-import type { JsonValue } from '@deepseek-ai/dsh-util-values'
+import type { JsonValue } from '@carnival/dsh-util-values'
 import { SurfaceTable } from './surfaces.ts'
 import { createToolNameAliases } from './tool-names.ts'
 import { messageOf, record, stringify } from './values.ts'
@@ -38,7 +38,7 @@ import type {
   SurfaceSnapshot, TurnStartResult, TurnUsage, UiRenderInput, UiRenderResult,
 } from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     claudeCodeMods: ClaudeCodeMods
   }

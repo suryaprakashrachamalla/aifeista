@@ -1,17 +1,17 @@
-import { extractTextContent } from '@deepseek-ai/dsh-llm/message'
-import type { Context } from '@deepseek-ai/cordis'
+import { extractTextContent } from '@carnival/dsh-llm/message'
+import type { Context } from '@carnival/cordis'
 import { useEffect, useId, useMemo, useState } from 'react'
-import type { FileAttachmentRef, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import type { PropsLocale, PropsRenderFactories, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { FileAttachmentRef, ImageAttachmentRef } from '@carnival/dsh-attachment'
+import type { PropsLocale, PropsRenderFactories, PropsRuntime } from '@carnival/dsh-client-ui-slots'
+import type { SessionId } from '@carnival/dsh-session/types'
 import {
   IconCheckOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconCloseOutlineRegular,
   FileTypeIcon, fileSizeText, IconEditOutlineRegular, InlineEditor, IconQueueOutlineRegular, IconSendOutlineRegular,
   IconTrashOutlineRegular, Tooltip,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InboxState } from '@deepseek-ai/dsh-agent/types'
-import type { QueueAction } from '@deepseek-ai/dsh-api-session-controller/types'
-import type { MessageId } from '@deepseek-ai/dsh-llm/types'
+} from '@carnival/dsh-client-ui-primitives'
+import type { InboxState } from '@carnival/dsh-agent/types'
+import type { QueueAction } from '@carnival/dsh-api-session-controller/types'
+import type { MessageId } from '@carnival/dsh-llm/types'
 import type { UserTextFacts } from '../index.ts'
 import { NS } from '../locales.ts'
 import css from './QueueDock.module.css'

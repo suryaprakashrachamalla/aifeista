@@ -1,23 +1,23 @@
 /** Register the card frame, the hidden answer block, the General settings switch, their copy and the body registry. */
-import type { Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
-import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import type {} from '@deepseek-ai/dsh-action-cards/remote'
+import type { Context } from '@carnival/cordis'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type {} from '@carnival/dsh-api-remotes/client'
+import type {} from '@carnival/dsh-client-locale/client'
+import type {} from '@carnival/dsh-client-ui-session/client'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
+import type {} from '@carnival/dsh-client-ui-chat/client'
+import type {} from '@carnival/dsh-client-ui-settings/client'
+import type {} from '@carnival/dsh-action-cards/remote'
 import { ACTION_CARD_FENCE, ActionCardTail, HiddenCardBlock, type TailInjected } from './Card.tsx'
 import { SettingsRow, type CardSettings, type SettingsRowInjected } from './SettingsRow.tsx'
 import { ActionCardRegistry } from './registry.ts'
 import { de, en, es, fr, ja, pt, ru, zh, type ActionCardKey } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@carnival/dsh-client-ui-slots' {
   interface LocaleNamespaceMap { actionCards: ActionCardKey }
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Card bodies by action kind; kinds register theirs inside their own `ctx.effect`. */
     actionCards: ActionCardRegistry
@@ -40,7 +40,7 @@ export function apply(ctx: Context): void {
   ctx.reflect.provide('actionCards', registry)
   ctx.effect(() => ctx.locale.register('actionCards', { en, zh, ja, es, fr, de, ru, pt }), 'action-cards: locale')
   ctx.slots.inject('conversation.chat.turnTail', () => ctx.slots.register({
-    name: 'conversation.chat.turnTail', id: '@deepseek-ai/dsh-client-ui-action-cards', locale: 'actionCards',
+    name: 'conversation.chat.turnTail', id: '@carnival/dsh-client-ui-action-cards', locale: 'actionCards',
     inject: (sessionId: SessionId): TailInjected => ({
       sessionId,
       hooks: { bodies: registry.source },
@@ -52,7 +52,7 @@ export function apply(ctx: Context): void {
     }),
   }, ActionCardTail))
   ctx.slots.inject('conversation.chat.markdown.fence', () => ctx.slots.register(
-    { name: 'conversation.chat.markdown.fence', key: ACTION_CARD_FENCE, id: '@deepseek-ai/dsh-client-ui-action-cards/block' }, HiddenCardBlock,
+    { name: 'conversation.chat.markdown.fence', key: ACTION_CARD_FENCE, id: '@carnival/dsh-client-ui-action-cards/block' }, HiddenCardBlock,
   ))
   const form = ctx.configForms.get<CardSettings>(SETTINGS_NAMESPACE)
   ctx.effect(() => ctx.configForms.whileServed([SETTINGS_NAMESPACE], () => ctx.slots.inject('settings.general.item', () =>

@@ -1,6 +1,6 @@
 import { expect, expectTypeOf, it, vi } from 'vitest'
-import type { ComposerBarInjected, ComposerBarProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { SlotCore, type ChildrenDecl, type PropsRenderSlots } from '@deepseek-ai/dsh-client-ui-slots'
+import type { ComposerBarInjected, ComposerBarProps } from '@carnival/dsh-client-ui-conversation/client'
+import { SlotCore, type ChildrenDecl, type PropsRenderSlots } from '@carnival/dsh-client-ui-slots'
 
 it('accepts props supplied by existing composer bar registrations', () => {
   const slots = new SlotCore()

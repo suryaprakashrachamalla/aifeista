@@ -3,9 +3,9 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import { createScope } from '@deepseek-ai/dsh-scope'
-import type { ToolDefinition } from '@deepseek-ai/dsh-tools'
+import { Context } from '@carnival/cordis'
+import { createScope } from '@carnival/dsh-scope'
+import type { ToolDefinition } from '@carnival/dsh-tools'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { apply, publishedShareState, type Config, type OwnerShare } from '../src/host/share-host.ts'
 import type {} from '../src/index.ts'
@@ -252,14 +252,14 @@ describe('capability catalog titles', () => {
               meta: { title: { en: 'Change requests' } },
               rows: [{ moduleName: '@fixture/forge' }],
             },
-            { name: '@deepseek-ai/dsh-base', rows: [{ moduleName: '@deepseek-ai/dsh-agent' }] },
+            { name: '@carnival/dsh-base', rows: [{ moduleName: '@carnival/dsh-agent' }] },
           ],
         },
         typert: {
           local: {
             list: () => [
               { id: '@fixture/forge#forgePanel', namespace: 'forgePanel', method: 'changeRequestStates' },
-              { id: '@deepseek-ai/dsh-agent#agentAudit', namespace: 'agentAudit', method: 'list' },
+              { id: '@carnival/dsh-agent#agentAudit', namespace: 'agentAudit', method: 'list' },
               { id: '@fixture/unbundled#status', namespace: 'unbundledStatus', method: 'read' },
             ],
           },

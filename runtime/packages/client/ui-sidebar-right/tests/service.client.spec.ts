@@ -9,14 +9,14 @@
  * complete until the tab knows how it was navigated to.
  */
 import { describe, expect, it, vi } from 'vitest'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { PaneId, TabId } from '@deepseek-ai/dsh-client-ui-dockkit'
-import { dockPaneIds, findTabPane, getPane } from '@deepseek-ai/dsh-client-ui-dockkit'
+import type { SessionId } from '@carnival/dsh-session/types'
+import type { PaneId, TabId } from '@carnival/dsh-client-ui-dockkit'
+import { dockPaneIds, findTabPane, getPane } from '@carnival/dsh-client-ui-dockkit'
 import type { SidebarRightCloseHandler } from '../src/client/service.ts'
 import { createSidebarRightStore } from '../src/client/stores.ts'
 import { controllerHarness as harness, SESSION } from './controller-harness.client.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-sidebar-right/client' {
+declare module '@carnival/dsh-client-ui-sidebar-right/client' {
   interface SidebarRightTabParamsMap {
     'test-preview': { source: string }
   }

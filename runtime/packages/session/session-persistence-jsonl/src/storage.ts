@@ -9,10 +9,10 @@
  * @module
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import { errorChain } from '@deepseek-ai/dsh-llm'
-import type { Session, SessionEvent, SessionHeader, SessionId, SessionLogOffset } from '@deepseek-ai/dsh-session'
+import type { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import { errorChain } from '@carnival/dsh-llm'
+import type { Session, SessionEvent, SessionHeader, SessionId, SessionLogOffset } from '@carnival/dsh-session'
 import {
   assertContiguous,
   SessionAlreadyExistsError,
@@ -22,7 +22,7 @@ import {
   SessionPersistenceNotFoundError,
   type SessionPersistenceRevision,
   SessionReadOnlyError,
-} from '@deepseek-ai/dsh-session-persistence'
+} from '@carnival/dsh-session-persistence'
 import type {
   SessionAccess,
   SessionHandle,
@@ -30,7 +30,7 @@ import type {
   SessionHandleFlushOptions,
   SessionHandleReadOptions,
   SessionHandleReadResult,
-} from '@deepseek-ai/dsh-session-persistence'
+} from '@carnival/dsh-session-persistence'
 import type { SessionWriteLease } from './lease.ts'
 
 /** Maximum intentional wait before a routed live session batch starts writing. */

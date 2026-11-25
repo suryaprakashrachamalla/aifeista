@@ -1,21 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
 import type {
   SessionEventLike, SessionEventLikeEntry, SessionLiveEventEntry,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { LlmAttemptId, ToolCallId } from '@deepseek-ai/dsh-llm/types'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
-import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
+} from '@carnival/dsh-api-session-controller/client'
+import { brandString } from '@carnival/dsh-brand'
+import type { LlmAttemptId, ToolCallId } from '@carnival/dsh-llm/types'
+import type { StreamChunk } from '@carnival/dsh-llm'
+import { SessionSeq } from '@carnival/dsh-session/types'
+import type { SessionEvent } from '@carnival/dsh-session/types'
 import {
   ConversationLocationIndex,
   ConversationNodeAssembler as RuntimeConversationNodeAssembler,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-client-ui-conversation/client'
 import { ConversationUpdateError } from '../src/client/conversation/assembler.ts'
 import type {
   ConversationMatch, ConversationNodeContext,
   ConversationNodeDefinition, ConversationViewDefinition, ConversationViewNode,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@carnival/dsh-client-ui-conversation/client'
 
 interface ScopeProbeStepData {
   readonly value: number
@@ -25,7 +25,7 @@ interface ScopeProbeTurnData {
   readonly valueSeenFromStep: number
 }
 
-declare module '@deepseek-ai/dsh-client-ui-conversation/client' {
+declare module '@carnival/dsh-client-ui-conversation/client' {
   interface ConversationStepDataMap {
     'scope-probe': ScopeProbeStepData
   }

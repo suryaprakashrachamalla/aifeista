@@ -1,27 +1,27 @@
 /** Host Remote of the forge panel: checkout, code host, sign-in, change request, and worktree state per Session. */
 
-import { Context, Service } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-api-remote-access'
-import { changeRequestKey } from '@deepseek-ai/dsh-experimental-forge'
+import { Context, Service } from '@carnival/cordis'
+import z from '@carnival/schemastery'
+import type { Agent } from '@carnival/dsh-agent'
+import type {} from '@carnival/dsh-api-remote-access'
+import { changeRequestKey } from '@carnival/dsh-experimental-forge'
 import type {
   BranchUpdateMethod, ChangeRequestDescription, ChangeRequestKey, ChangeRequestRef, ChangeRequestReviewer, ChangeRequestSnapshot,
   ChangeRequestUpdate, ForgeActionFailure, ForgeCommitList,
   ForgeFailure,
   ForgeLineComment, ForgeRerunRequest, ForgeReviewChange, ForgeReviewData, ForgeReviewerCandidate, ForgeReviewRequest, ForgeReviewResult,
   ForgeReviewWrite, ForgeReviewWriteResult, ForgeViewedFiles, ForgeViewedRequest, MergeMethod,
-} from '@deepseek-ai/dsh-experimental-forge'
-import type { SessionChangeRequest } from '@deepseek-ai/dsh-experimental-forge-session'
-import type { WorktreeCleanup } from '@deepseek-ai/dsh-experimental-worktree/types'
-import { appendPluginRecord } from '@deepseek-ai/dsh-session'
-import type { Session, SessionEvent, SessionId, UserMessage } from '@deepseek-ai/dsh-session'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-session-projection-cache'
-import type {} from '@deepseek-ai/dsh-session-query'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@carnival/dsh-experimental-forge'
+import type { SessionChangeRequest } from '@carnival/dsh-experimental-forge-session'
+import type { WorktreeCleanup } from '@carnival/dsh-experimental-worktree/types'
+import { appendPluginRecord } from '@carnival/dsh-session'
+import type { Session, SessionEvent, SessionId, UserMessage } from '@carnival/dsh-session'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import type {} from '@carnival/dsh-session-projection-cache'
+import type {} from '@carnival/dsh-session-query'
+import { MAX_TIMER_DELAY_MS } from '@carnival/dsh-timeout'
+import { Remote, RemoteError, TypertRemoteService } from '@carnival/dsh-typert-protocol'
+import { assertNever } from '@carnival/dsh-util-values'
 import { gitIn, hasBranch, inspectCheckout } from './git.ts'
 import type { Inspection } from './git.ts'
 import { branchNameProblem } from './branch-name.ts'
@@ -54,7 +54,7 @@ import type { HeldWork } from './worktree.ts'
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     /** Remote that serves the forge panel of the GUI. */
     forgePanel: ForgePanelController

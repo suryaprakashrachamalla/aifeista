@@ -1,4 +1,4 @@
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@carnival/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ChangeRequestDescription, ForgeViewerList, ForgeViewerQuery } from '../src/types.ts'
 import { FakeProvider, forgeContext, provide, ref } from './fake-provider.ts'

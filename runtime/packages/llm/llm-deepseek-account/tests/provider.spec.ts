@@ -2,13 +2,13 @@
 import { createServer } from 'node:http'
 import type { IncomingMessage, Server, ServerResponse } from 'node:http'
 import { afterEach, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import LlmRuntime, { type ReasoningEffortId } from '@deepseek-ai/dsh-llm'
+import { Context } from '@carnival/cordis'
+import { brandString } from '@carnival/dsh-brand'
+import LlmRuntime, { type ReasoningEffortId } from '@carnival/dsh-llm'
 import { accountStub } from '../../../account/deepseek-account/tests/account-stub.ts'
-import * as ApiKey from '@deepseek-ai/dsh-llm-deepseek-api-key'
+import * as ApiKey from '@carnival/dsh-llm-deepseek-api-key'
 import * as Account from '../src/index.ts'
-import DeepSeekAuth from '@deepseek-ai/dsh-deepseek-auth'
+import DeepSeekAuth from '@carnival/dsh-deepseek-auth'
 
 const MESSAGES = { output_modalities: ['text'], api_capabilities: { anthropic_messages: {} } }
 const FLASH = {

@@ -2,8 +2,8 @@
 /** The General settings switch follows the accepted Host value and reports refused or failed writes. */
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
-import { bindSnapshotSelector, makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import type { ConfigFormSnapshot } from '@deepseek-ai/dsh-client-ui-settings/client'
+import { bindSnapshotSelector, makeTranslate } from '@carnival/dsh-client-test-runtime'
+import type { ConfigFormSnapshot } from '@carnival/dsh-client-ui-settings/client'
 import { SettingsRow, type CardSettings } from '../src/client/SettingsRow.tsx'
 import { en } from '../src/client/locales.ts'
 

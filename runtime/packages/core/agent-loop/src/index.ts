@@ -2,14 +2,14 @@
  * Concrete agent-loop plugin: creates scoped ReactLoopAgents, publishes them
  * through the agent/session registries, and owns their ordered teardown.
  *
- * @module @deepseek-ai/dsh-agent-loop
+ * @module @carnival/dsh-agent-loop
  */
-import type { Volatile } from '@deepseek-ai/cosmokit'
+import type { Volatile } from '@carnival/cosmokit'
 
-import { Context, FiberState, Service } from '@deepseek-ai/cordis'
+import { Context, FiberState, Service } from '@carnival/cordis'
 import { randomUUID } from 'node:crypto'
-import z from '@deepseek-ai/schemastery'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import z from '@carnival/schemastery'
+import { brandString } from '@carnival/dsh-brand'
 import type {
   Agent,
   AgentFactory,
@@ -22,16 +22,16 @@ import type {
   ModelSelection,
   ModelSelectionProjectionState,
   InboxState,
-} from '@deepseek-ai/dsh-agent'
-import { modelSelectionProjectionDefinition } from '@deepseek-ai/dsh-agent'
-import { errorChain, type ReasoningEffortId } from '@deepseek-ai/dsh-llm'
-import { interruptedTurnClosers, SessionLogOffset, SessionPreparation } from '@deepseek-ai/dsh-session'
-import type { Session, SessionHeader, SessionId } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import type {} from '@deepseek-ai/dsh-tools'
-import type { ProjectionHandle } from '@deepseek-ai/dsh-session-projection'
-import { SessionPersistenceNotFoundError } from '@deepseek-ai/dsh-session-persistence'
-import type { SessionHandle, SessionPersistence } from '@deepseek-ai/dsh-session-persistence'
+} from '@carnival/dsh-agent'
+import { modelSelectionProjectionDefinition } from '@carnival/dsh-agent'
+import { errorChain, type ReasoningEffortId } from '@carnival/dsh-llm'
+import { interruptedTurnClosers, SessionLogOffset, SessionPreparation } from '@carnival/dsh-session'
+import type { Session, SessionHeader, SessionId } from '@carnival/dsh-session'
+import type {} from '@carnival/dsh-system-prompt'
+import type {} from '@carnival/dsh-tools'
+import type { ProjectionHandle } from '@carnival/dsh-session-projection'
+import { SessionPersistenceNotFoundError } from '@carnival/dsh-session-persistence'
+import type { SessionHandle, SessionPersistence } from '@carnival/dsh-session-persistence'
 import { ReactLoopAgent } from './agent.ts'
 import { inboxProjectionDefinition } from './inbox.ts'
 import { DEFAULT_MAX_PARALLEL_TOOL_CALLS } from './constants.ts'
@@ -172,7 +172,7 @@ interface AgentInitializationOptions {
   readonly signal?: AbortSignal | undefined
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@carnival/cordis' {
   interface Context {
     agentLoop: AgentLoop
     /**

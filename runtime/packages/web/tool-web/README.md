@@ -3,7 +3,7 @@ description: "The model-facing web tools (web_search, web_fetch) over ctx.web: h
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-web
+# @carnival/dsh-tool-web
 
 English | [中文](README.zh.md)
 
@@ -36,10 +36,10 @@ Choose this package when the model should discover current information or read a
 Load the web service, at least one backend, and this package; both tools register by default. The DeepSeek backend below requires [`dsh-deepseek-auth`](../../account/deepseek-auth/README.md) for its credentials.
 
 ```yaml
-- name: '@deepseek-ai/dsh-web'
-- name: '@deepseek-ai/dsh-deepseek-auth'
-- name: '@deepseek-ai/dsh-web-deepseek-api'
-- name: '@deepseek-ai/dsh-tool-web'
+- name: '@carnival/dsh-web'
+- name: '@carnival/dsh-deepseek-auth'
+- name: '@carnival/dsh-web-deepseek-api'
+- name: '@carnival/dsh-tool-web'
 ```
 
 | Field | Default | Meaning |
@@ -53,7 +53,7 @@ Load the web service, at least one backend, and this package; both tools registe
 | `searchTimeoutMs` | `30000` | Cooperative tool-call timeout budget (ms) for `web_search` |
 | `fetchMaxOutputChars` | `200000` | Cap on source characters converted synchronously and on one complete `web_fetch` output |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-web) is the exhaustive source for every accepted field and its JSDoc. `searchMaxQueries` bounds the accepted array before exact-string deduplication and provider fan-out; validation rejects an oversized array before any search starts. The timeout budgets attach to each tool definition and are enforced by [`@deepseek-ai/dsh-tool-call-timeout-policy`](../../guard/timeout-policy/README.md); the model-facing schemas expose no timeout argument.
+The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-web) is the exhaustive source for every accepted field and its JSDoc. `searchMaxQueries` bounds the accepted array before exact-string deduplication and provider fan-out; validation rejects an oversized array before any search starts. The timeout budgets attach to each tool definition and are enforced by [`@carnival/dsh-tool-call-timeout-policy`](../../guard/timeout-policy/README.md); the model-facing schemas expose no timeout argument.
 
 ### Using web_search
 

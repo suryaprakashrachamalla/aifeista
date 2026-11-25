@@ -2,24 +2,24 @@
  * Shared service mounting, real AgentLoop drivers, and structural Agent stubs
  * for agent-loop tests. Callers retain ownership of their contexts, adapters,
  * optional plugins, agents, and teardown.
- * @module @deepseek-ai/dsh-agent-loop-testkit
+ * @module @carnival/dsh-agent-loop-testkit
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent, AgentOptions, Inbox, InboxTarget } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { SessionHeader, SessionId, UserMessage } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import type { Config as SystemPromptConfig } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
-import * as PtcToolExecutor from '@deepseek-ai/dsh-tool-executor-ptc'
-import FsLocal from '@deepseek-ai/dsh-fs-local'
-import WorkingDirectory from '@deepseek-ai/dsh-working-directory'
+import type { Context } from '@carnival/cordis'
+import AgentRegistry from '@carnival/dsh-agent'
+import type { Agent, AgentOptions, Inbox, InboxTarget } from '@carnival/dsh-agent'
+import AgentLoop from '@carnival/dsh-agent-loop'
+import LlmRuntime from '@carnival/dsh-llm'
+import SessionStore from '@carnival/dsh-session'
+import type { SessionHeader, SessionId, UserMessage } from '@carnival/dsh-session'
+import SessionProjectionRegistry from '@carnival/dsh-session-projection'
+import SystemPrompt from '@carnival/dsh-system-prompt'
+import type { Config as SystemPromptConfig } from '@carnival/dsh-system-prompt'
+import ToolRuntime from '@carnival/dsh-tools'
+import * as NativeToolExecutor from '@carnival/dsh-tool-executor-native'
+import * as PtcToolExecutor from '@carnival/dsh-tool-executor-ptc'
+import FsLocal from '@carnival/dsh-fs-local'
+import WorkingDirectory from '@carnival/dsh-working-directory'
 
 export { createInboxStub, unsupportedInbox } from './inbox.ts'
 export { unsupportedModel } from './model.ts'

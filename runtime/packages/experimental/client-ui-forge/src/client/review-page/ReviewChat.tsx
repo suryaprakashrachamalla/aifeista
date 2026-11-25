@@ -6,11 +6,11 @@
  */
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
-import { Button } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { ConversationViewsProps, WorkspaceSelectedHandler, WorkspaceSessionAdopter } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { PropsLocale, PropsRenderFactories, PropsRenderSlots, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionReference } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { Button } from '@carnival/dsh-client-ui-primitives'
+import type { ConversationViewsProps, WorkspaceSelectedHandler, WorkspaceSessionAdopter } from '@carnival/dsh-client-ui-conversation/client'
+import type { PropsLocale, PropsRenderFactories, PropsRenderSlots, PropsRuntime } from '@carnival/dsh-client-ui-slots'
+import type { SessionReference } from '@carnival/dsh-api-session-controller/client'
+import type { SessionId } from '@carnival/dsh-session/types'
 import type { ForgeReviewChangeRequest } from '../../types.ts'
 import type { ForgePanelKey, NS } from '../locales.ts'
 import type {} from '../slots.ts'

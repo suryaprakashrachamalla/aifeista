@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { deepFreeze } from '@deepseek-ai/dsh-util-values'
+import { Context } from '@carnival/cordis'
+import { deepFreeze } from '@carnival/dsh-util-values'
 import SessionStore, {
   appendPluginRecord,
   Session,
   type SessionId,
   SessionLogOffset,
   SessionSeq,
-} from '@deepseek-ai/dsh-session'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import { brandString } from '@deepseek-ai/dsh-brand'
+} from '@carnival/dsh-session'
+import type { SessionEvent } from '@carnival/dsh-session'
+import { brandString } from '@carnival/dsh-brand'
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@carnival/dsh-session/types' {
   interface PluginRecordMap {
     'plugin:test/store-membership': { value: number }
   }

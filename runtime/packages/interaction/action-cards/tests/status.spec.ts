@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
-import { agentEvents, type Agent, type PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { brandString } from '@deepseek-ai/dsh-brand'
+import { agentEvents, type Agent, type PreStepDecision } from '@carnival/dsh-agent'
+import { brandString } from '@carnival/dsh-brand'
 import ActionCards, { type ActionCardId } from '../src/index.ts'
 import { ACTION, fixture } from './fixture.ts'
 

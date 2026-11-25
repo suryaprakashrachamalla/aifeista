@@ -1,7 +1,7 @@
 /** Source-only lifecycle fixture; the Web replay exercises the actual generated pairing contribution. */
 import { z } from 'zod'
-import { createTypertRemoteInfo } from '@deepseek-ai/dsh-typert-protocol/remote-info'
-import type { TypertRemoteCodecSpec } from '@deepseek-ai/dsh-typert-protocol'
+import { createTypertRemoteInfo } from '@carnival/dsh-typert-protocol/remote-info'
+import type { TypertRemoteCodecSpec } from '@carnival/dsh-typert-protocol'
 
 function codec(create: () => z.ZodType): TypertRemoteCodecSpec {
   return { mode: 'strict', typeSymbol: '@pairing-test#value', create }
@@ -13,7 +13,7 @@ const nullableId = codec(() => z.string().nullable())
 const invitationState = (): z.ZodType => z.enum(['pending', 'used', 'expired', 'cancelled', 'replaced', 'none'])
 
 export default createTypertRemoteInfo({
-  package: '@deepseek-ai/dsh-client-remote-connection',
+  package: '@carnival/dsh-client-remote-connection',
   methods: {
     'remoteConnection/status': {
       service: 'remoteConnection', invocation: { kind: 'direct' },

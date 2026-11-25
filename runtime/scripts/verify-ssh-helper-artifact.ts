@@ -92,15 +92,15 @@ export function artifactComposition(
   connection: { id: string; name: string; config: object }, workspace: string, ptc: keyof typeof PTC_EXECUTION = 'per-call',
 ): string {
   const rows = [
-    { id: 'projections', name: '@deepseek-ai/dsh-session-projection' },
-    { id: 'policy', name: '@deepseek-ai/dsh-sandbox-policy', config: { mode: 'workspace-write', workspaceRoot: workspace } },
+    { id: 'projections', name: '@carnival/dsh-session-projection' },
+    { id: 'policy', name: '@carnival/dsh-sandbox-policy', config: { mode: 'workspace-write', workspaceRoot: workspace } },
     connection,
-    { id: 'fs', name: '@deepseek-ai/dsh-fs-ssh' },
-    { id: 'subprocess', name: '@deepseek-ai/dsh-subprocess-ssh' },
-    { id: 'sandbox', name: '@deepseek-ai/dsh-sandbox-ssh' },
+    { id: 'fs', name: '@carnival/dsh-fs-ssh' },
+    { id: 'subprocess', name: '@carnival/dsh-subprocess-ssh' },
+    { id: 'sandbox', name: '@carnival/dsh-sandbox-ssh' },
   ]
   return rows.map(row => `- ${JSON.stringify(row)}`).join('\n')
-    + '\n- id: ptc\n  name: "@deepseek-ai/dsh-ptc-runtime-node"\n  inject: [ssh]\n  config:\n' + PTC_EXECUTION[ptc] + '    launch: !!js ctx.ssh.ptcLaunch\n'
+    + '\n- id: ptc\n  name: "@carnival/dsh-ptc-runtime-node"\n  inject: [ssh]\n  config:\n' + PTC_EXECUTION[ptc] + '    launch: !!js ctx.ssh.ptcLaunch\n'
 }
 
 /**

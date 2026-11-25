@@ -1,20 +1,20 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-/// Identifies one of the three integrated upstream harnesses.
+/// Identifies one of the integrated Carnival engine subsystems.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum HarnessId {
-    OpenBitFun,
-    DeepSeekHarness,
-    Clicky,
+    CarnivalCore,
+    CarnivalRuntime,
+    Companion,
 }
 
-/// Identifies which Layer-2 experience lane originated or consumes a request.
+/// Identifies which desktop experience lane originated or consumes a request.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum LaneKind {
-    ClickyAmbient,
+    CompanionAmbient,
     BuilderWorkspace,
     OptimizationDeck,
 }
@@ -34,7 +34,7 @@ pub enum CordisState {
 #[serde(rename_all = "snake_case")]
 pub enum ModelTier {
     LocalTriage,
-    DeepSeekV4,
+    PrimaryCloud,
     ByokCloud,
 }
 
@@ -85,7 +85,7 @@ impl CapabilityEnvelope {
     }
 }
 
-/// Spatial overlay command emitted for Hey Clicky / Layer 2 visual lane.
+/// Spatial overlay command emitted for the Voice & Pointer Companion lane.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SpatialCommand {
@@ -160,7 +160,7 @@ pub enum CuaActionKind {
     Scroll,
 }
 
-/// Permission-controlled desktop action routed through ClickyX Bridge.
+/// Permission-controlled desktop action routed through Carnival Bridge.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CuaActionRequest {
     pub action_id: String,

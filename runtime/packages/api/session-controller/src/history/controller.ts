@@ -1,10 +1,10 @@
 /** Independent Session snapshots and passive event subscriptions. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { SessionLogOffset, SessionSeq, isAppendSurfaceEvent } from '@deepseek-ai/dsh-session'
-import type { SessionId, SessionEvent } from '@deepseek-ai/dsh-session'
-import type { SessionObservation } from '@deepseek-ai/dsh-session-query'
-import { RemoteError, remoteErrorOf } from '@deepseek-ai/dsh-typert-protocol'
+import type { Context } from '@carnival/cordis'
+import { SessionLogOffset, SessionSeq, isAppendSurfaceEvent } from '@carnival/dsh-session'
+import type { SessionId, SessionEvent } from '@carnival/dsh-session'
+import type { SessionObservation } from '@carnival/dsh-session-query'
+import { RemoteError, remoteErrorOf } from '@carnival/dsh-typert-protocol'
 import {
   DEFAULT_MAX_MESSAGES, paginate, pageRecords, entryFor, addressId,
   validateHistoryWindow, validateAddress, rejectNotFound,

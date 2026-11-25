@@ -1,14 +1,9 @@
 {
-  "name": "@deepseek-ai/dsh-deepseek-auth",
+  "name": "@carnival/dsh-deepseek-auth",
   "description": "DeepSeek request authentication (ctx.deepseekAuth): choose between the API key and the account sign-in for one DeepSeek API request and release its headers",
   "version": "0.2.3-alpha.2",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/account/deepseek-auth"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -37,22 +32,22 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*",
-    "@deepseek-ai/dsh-launch-environment": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-deepseek-account": "workspace:*",
+    "@carnival/dsh-error": "workspace:*",
+    "@carnival/dsh-launch-environment": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-deepseek-account": {
+    "@carnival/dsh-deepseek-account": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:~",
-    "@deepseek-ai/dsh-credentials": "workspace:*",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:*",
-    "@deepseek-ai/dsh-error": "workspace:*",
-    "@deepseek-ai/dsh-launch-environment": "workspace:*"
+    "@carnival/cordis": "workspace:~",
+    "@carnival/dsh-credentials": "workspace:*",
+    "@carnival/dsh-deepseek-account": "workspace:*",
+    "@carnival/dsh-error": "workspace:*",
+    "@carnival/dsh-launch-environment": "workspace:*"
   }
 }

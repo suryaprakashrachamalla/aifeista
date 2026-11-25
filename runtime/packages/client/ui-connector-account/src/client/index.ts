@@ -4,12 +4,12 @@
  * operations this browser started. The surfaces read the shared copy from this package's dictionary and each
  * registrant's text from the Host.
  */
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
-import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type { Context } from '@carnival/cordis'
+import type {} from '@carnival/dsh-api-remotes/client'
+import type {} from '@carnival/dsh-client-locale/client'
+import type {} from '@carnival/dsh-client-ui-layout/client'
+import type {} from '@carnival/dsh-client-ui-plugin-manager/client'
+import type {} from '@carnival/dsh-client-ui-renderer/client'
 import {
   ConnectorAccountActivationEntry, ConnectorAccountBadgeEntry, ConnectorAccountSectionEntry, ConnectorAccountToastEntry,
 } from './components.tsx'
